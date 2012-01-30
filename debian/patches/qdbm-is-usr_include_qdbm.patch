@@ -1,0 +1,22 @@
+Description: Look for qdbm under $prefix/include/qdbm too.
+ The Debian package ships the header files under that directory, for
+ unknown reasons.
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-02-21
+
+Index: php/ext/dba/config.m4
+===================================================================
+--- php.orig/ext/dba/config.m4
++++ php/ext/dba/config.m4
+@@ -109,6 +109,10 @@ if test "$PHP_QDBM" != "no"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/depot.h
+       break
++    elif test -f "$i/include/qdbm/depot.h"; then
++      THIS_PREFIX=$i
++      THIS_INCLUDE=$i/include/qdbm/depot.h
++      break
+     fi
+   done
+ 

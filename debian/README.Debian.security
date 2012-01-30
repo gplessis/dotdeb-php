@@ -1,0 +1,25 @@
+the Debian stable security team does not provide security support
+for certain configurations known to be inherently insecure.  This
+includes the interpreter itself, extensions, and code written in the
+PHP language. Most specifically, the security team will not provide
+support for flaws in:
+
+- problems which are not flaws in the design of php but can be problematic
+  when used by sloppy developers (for example: not checking the contents
+  of a tar file before extracting it, using unserialize() on
+  untrusted data, or relying on a specific value of short_open_tag).
+
+- vulnerabilities involving register_globals being activated, unless
+  specifically the vulnerability activates this setting when it was
+  configured as deactivated.
+
+- vulnerabilities involving any kind of safe_mode or open_basedir
+  violation, as these are security models flawed by design and no longer
+  have upstream support either.
+
+- any "works as expected" vulnerabilities, such as "user can cause php
+  to crash by writing a malcious php script", unless such vulnerabilities
+  involve some kind of higher-level DoS or privilege escalation that would
+  not otherwise be available.
+
+ -- sean finney <seanius@debian.org>  Tue, 10 Oct 2006 12:42:06 +0200

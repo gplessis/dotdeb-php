@@ -1,0 +1,52 @@
+--- php.orig/configure.in
++++ php/configure.in
+@@ -1141,8 +1141,13 @@ dnl Build extension directory path
+ 
+ ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
+ 
++DEBIAN_PHP_API=`egrep -h '^#define ZEND_EXTENSION_API_NO|^#define ZEND_MODULE_API_NO|#define PHP_API_VERSION' $srcdir/Zend/zend_extensions.h $srcdir/Zend/zend_modules.h $srcdir/main/php.h | awk '{print $3}' | sed -e 's/^2200/200/' | sort -n | tail -n 1`
++if echo "$CPPFLAGS $CFLAGS" | grep -q -- -D_FILE_OFFSET_BITS=64; then
++  DEBIAN_PHP_API="${DEBIAN_PHP_API}+lfs"
++fi
++
+ if test -z "$EXTENSION_DIR"; then
+-  extbasedir=$ZEND_MODULE_API_NO
++  extbasedir=$DEBIAN_PHP_API
+   if test "$oldstyleextdir" = "yes"; then
+     if test "$PHP_DEBUG" = "1"; then
+       part1=debug
+@@ -1287,6 +1292,7 @@ PHP_SUBST(CXX)
+ PHP_SUBST(CXXFLAGS)
+ PHP_SUBST(CXXFLAGS_CLEAN)
+ PHP_SUBST_OLD(DEBUG_CFLAGS)
++PHP_SUBST_OLD(DEBIAN_PHP_API)
+ PHP_SUBST_OLD(EXTENSION_DIR)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
+--- php.orig/scripts/php-config.in
++++ php/scripts/php-config.in
+@@ -17,6 +17,7 @@ php_cli_binary=NONE
+ php_cgi_binary=NONE
+ configure_options="@CONFIGURE_OPTIONS@"
+ php_sapis="@PHP_INSTALLED_SAPIS@"
++phpapi="@DEBIAN_PHP_API@"
+ 
+ # Set php_cli_binary and php_cgi_binary if available
+ for sapi in $php_sapis; do
+@@ -55,6 +56,8 @@ case "$1" in
+   echo $include_dir;;
+ --php-binary)
+   echo $php_binary;;
++--phpapi)
++  echo $phpapi;;
+ --php-sapis)
+   echo $php_sapis;;
+ --configure-options)
+@@ -75,6 +78,7 @@ Options:
+   --include-dir       [$include_dir]
+   --php-binary        [$php_binary]
+   --php-sapis         [$php_sapis]
++  --phpapi            [$phpapi]
+   --configure-options [$configure_options]
+   --version           [$version]
+   --vernum            [$vernum]

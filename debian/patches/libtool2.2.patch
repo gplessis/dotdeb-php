@@ -1,0 +1,31 @@
+--- pkg-php.orig/scripts/phpize.in
++++ pkg-php/scripts/phpize.in
+@@ -5,10 +5,16 @@ prefix='@prefix@'
+ exec_prefix="`eval echo @exec_prefix@`"
+ phpdir="$prefix/lib/php5/build"
+ includedir="$prefix/include/php5"
++aclocaldir="$prefix/share/aclocal"
+ builddir="`pwd`"
+ SED="@SED@"
+ 
+-FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool libtool.m4"
++FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool"
++if [ -f "$aclocaldir/ltsugar.m4" ]; then
++    LIBTOOL_FILES="libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4"
++else
++    LIBTOOL_FILES="libtool.m4"
++fi
+ FILES="acinclude.m4 Makefile.global config.sub config.guess ltmain.sh run-tests*.php"
+ CLEAN_FILES="$FILES *.o *.lo *.la .deps .libs/ build/ include/ modules/ install-sh \
+ 	mkinstalldirs missing config.nice config.sub config.guess configure configure.in \
+@@ -144,8 +150,9 @@ phpize_copy_files()
+   test -d build || mkdir build
+  
+   (cd "$phpdir" && cp $FILES_BUILD "$builddir"/build)
++  (cd "$aclocaldir" && cp $LIBTOOL_FILES "$builddir"/build)
+   (cd "$phpdir" && cp $FILES "$builddir")
+-  (cd "$builddir" && cat acinclude.m4 ./build/libtool.m4 > aclocal.m4)
++  (cd "$builddir/build" && cat ../acinclude.m4 $LIBTOOL_FILES > ../aclocal.m4)
+ }
+ 
+ phpize_replace_prefix()

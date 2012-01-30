@@ -1,0 +1,6 @@
+# The extensions directory must exist, even if empty
+@sapi@: package-contains-empty-directory @extdir@/
+# Not a spelling mistake, just a compilation curiosity
+@sapi@: spelling-error-in-binary * ment meant
+# Not a spelling mistake, tz code for Tahiti
+@sapi@: spelling-error-in-binary * taht that

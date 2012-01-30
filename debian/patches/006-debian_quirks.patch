@@ -1,0 +1,210 @@
+Description: Changes to make php use versioned paths and other minor
+ cleanup changes.
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-01-18
+
+--- a/configure.in
++++ b/configure.in
+@@ -1005,7 +1005,7 @@ if test "$PHP_CLI" = "no"; then
+ fi
+ 
+ PHP_ARG_WITH(pear, [whether to install PEAR],
+-[  --with-pear=DIR         Install PEAR in DIR [PREFIX/lib/php]
++[  --with-pear=DIR         Install PEAR in DIR [PREFIX/lib/php5]
+   --without-pear          Do not install PEAR], DEFAULT, yes)
+ 
+ if test "$PHP_PEAR" != "no"; then
+@@ -1035,7 +1035,7 @@ dnl
+   if test "$PHP_PEAR" = "DEFAULT" || test "$PHP_PEAR" = "yes"; then
+     case $PHP_LAYOUT in
+       GNU) PEAR_INSTALLDIR=$datadir/pear;;
+-      *)   PEAR_INSTALLDIR=$libdir/php;;
++      *)   PEAR_INSTALLDIR=$libdir/php5;;
+     esac
+   fi
+ 
+@@ -1090,12 +1090,12 @@ test "$program_suffix" = "NONE" && progr
+ 
+ case $libdir in
+   '${exec_prefix}/lib')
+-    libdir=$libdir/php
++    libdir=$libdir/php5
+     ;;
+ esac
+ case $datadir in
+   '${prefix}/share')
+-    datadir=$datadir/php
++    datadir=$datadir/php5
+     ;;
+ esac
+ 
+@@ -1161,7 +1161,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
+ EXPANDED_DATADIR=$datadir
+ EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
+ EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
+-INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR
++INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR:/usr/share/pear
+ 
+ exec_prefix=$old_exec_prefix
+ libdir=$old_libdir
+--- a/ext/ext_skel
++++ b/ext/ext_skel
+@@ -70,7 +70,7 @@ if test -d "$extname" ; then
+ fi
+ 
+ if test -z "$skel_dir"; then
+-  skel_dir="skeleton"
++  skel_dir="/usr/lib/php5/skeleton"
+ fi
+ 
+ ## convert skel_dir to full path
+--- a/ext/mysqlnd/mysqlnd.c	2010-12-06 13:50:51.000000000 +0000
++++ b/ext/mysqlnd/mysqlnd.c	2011-01-03 17:53:57.000000000 +0000
+@@ -619,7 +619,7 @@ mysqld socket location
+ 		if (host_len == sizeof("localhost") - 1 && !strncasecmp(host, "localhost", host_len)) {
+ 			DBG_INF_FMT("socket=%s", socket_or_pipe? socket_or_pipe:"n/a");
+ 			if (!socket_or_pipe) {
+-				socket_or_pipe = "/tmp/mysql.sock";
++				socket_or_pipe = "/var/run/mysqld/mysqld.sock";
+ 			}
+ 			transport_len = spprintf(&transport, 0, "unix://%s", socket_or_pipe);
+ 			unix_socket = TRUE;
+--- a/php.ini-development
++++ b/php.ini-development
+@@ -781,7 +781,7 @@ default_mimetype = "text/html"
+ ;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ ; UNIX: "/path1:/path2"
+-;include_path = ".:/php/includes"
++;include_path = ".:/usr/share/php"
+ ;
+ ; Windows: "\path1;\path2"
+ ;include_path = ".;c:\php\includes"
+--- a/php.ini-production
++++ b/php.ini-production
+@@ -781,7 +781,7 @@ default_mimetype = "text/html"
+ ;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ ; UNIX: "/path1:/path2"
+-;include_path = ".:/php/includes"
++;include_path = ".:/usr/share/php"
+ ;
+ ; Windows: "\path1;\path2"
+ ;include_path = ".;c:\php\includes"
+@@ -937,54 +937,6 @@ default_socket_timeout = 60
+ ;
+ ; If you only provide the name of the extension, PHP will look for it in its
+ ; default extension directory.
+-;
+-; Windows Extensions
+-; Note that ODBC support is built in, so no dll is needed for it.
+-; Note that many DLL files are located in the extensions/ (PHP 4) ext/ (PHP 5)
+-; extension folders as well as the separate PECL DLL download (PHP 5).
+-; Be sure to appropriately set the extension_dir directive.
+-;
+-;extension=php_bz2.dll
+-;extension=php_curl.dll
+-;extension=php_fileinfo.dll
+-;extension=php_gd2.dll
+-;extension=php_gettext.dll
+-;extension=php_gmp.dll
+-;extension=php_intl.dll
+-;extension=php_imap.dll
+-;extension=php_interbase.dll
+-;extension=php_ldap.dll
+-;extension=php_mbstring.dll
+-;extension=php_exif.dll      ; Must be after mbstring as it depends on it
+-;extension=php_mysql.dll
+-;extension=php_mysqli.dll
+-;extension=php_oci8.dll      ; Use with Oracle 10gR2 Instant Client
+-;extension=php_oci8_11g.dll  ; Use with Oracle 11gR2 Instant Client
+-;extension=php_openssl.dll
+-;extension=php_pdo_firebird.dll
+-;extension=php_pdo_mssql.dll
+-;extension=php_pdo_mysql.dll
+-;extension=php_pdo_oci.dll
+-;extension=php_pdo_odbc.dll
+-;extension=php_pdo_pgsql.dll
+-;extension=php_pdo_sqlite.dll
+-;extension=php_pgsql.dll
+-;extension=php_pspell.dll
+-;extension=php_shmop.dll
+-
+-; The MIBS data available in the PHP distribution must be installed. 
+-; See http://www.php.net/manual/en/snmp.installation.php 
+-;extension=php_snmp.dll
+-
+-;extension=php_soap.dll
+-;extension=php_sockets.dll
+-;extension=php_sqlite.dll
+-;extension=php_sqlite3.dll
+-;extension=php_sybase_ct.dll
+-;extension=php_tidy.dll
+-;extension=php_xmlrpc.dll
+-;extension=php_xsl.dll
+-;extension=php_zip.dll
+ 
+ ;;;;;;;;;;;;;;;;;;;
+ ; Module Settings ;
+--- a/sapi/cli/php.1.in
++++ b/sapi/cli/php.1.in
+@@ -336,13 +336,14 @@ Shows configuration for extension
+ Show configuration file names
+ .SH FILES
+ .TP 15
+-.B php\-cli.ini
++.B /etc/php5/cli/php.ini
+ The configuration file for the CLI version of PHP.
+ .TP
+-.B php.ini
+-The standard configuration file will only be used when 
+-.B php\-cli.ini
+-cannot be found.
++.B /etc/php5/cgi/php.ini
++The configuration file for the CGI version of PHP.
++.TP
++.B /etc/php5/apache2/php.ini
++The configuration file for the version of PHP that apache2 uses.
+ .SH EXAMPLES
+ .TP 5
+ \fIphp \-r 'echo "Hello World\\n";'\fP
+--- a/scripts/Makefile.frag
++++ b/scripts/Makefile.frag
+@@ -3,8 +3,8 @@
+ # Build environment install
+ #
+ 
+-phpincludedir = $(includedir)/php
+-phpbuilddir = $(libdir)/build
++phpincludedir = $(includedir)/php5
++phpbuilddir = $(prefix)/lib/php5/build
+ 
+ BUILD_FILES = \
+ 	scripts/phpize.m4 \
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -5,8 +5,8 @@ prefix="@prefix@"
+ exec_prefix="@exec_prefix@"
+ version="@PHP_VERSION@"
+ vernum="@PHP_VERSION_ID@"
+-include_dir="@includedir@/php"
+-includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib"
++include_dir="@includedir@/php5"
++includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib $(getconf LFS_CFLAGS)"
+ ldflags="@PHP_LDFLAGS@"
+ libs="@EXTRA_LIBS@"
+ extension_dir='@EXTENSION_DIR@'
+--- a/scripts/phpize.in
++++ b/scripts/phpize.in
+@@ -3,8 +3,8 @@
+ # Variable declaration
+ prefix='@prefix@'
+ exec_prefix="`eval echo @exec_prefix@`"
+-phpdir="`eval echo @libdir@`/build"
+-includedir="`eval echo @includedir@`/php"
++phpdir="$prefix/lib/php5/build"
++includedir="$prefix/include/php5"
+ builddir="`pwd`"
+ SED="@SED@"
+ 

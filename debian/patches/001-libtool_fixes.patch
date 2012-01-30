@@ -1,0 +1,24 @@
+--- a/TSRM/configure.in
++++ b/TSRM/configure.in
+@@ -13,9 +13,6 @@ TSRM_BASIC_CHECKS
+ TSRM_THREADS_CHECKS
+ 	
+ AM_PROG_LIBTOOL
+-if test "$enable_debug" != "yes"; then
+-  AM_SET_LIBTOOL_VARIABLE([--silent])
+-fi
+ 
+ dnl TSRM_PTHREAD
+ 
+--- a/configure.in
++++ b/configure.in
+@@ -1343,9 +1343,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
+ ])
+ AC_PROG_LIBTOOL
+ 
+-if test "$enable_debug" != "yes"; then
+-  PHP_SET_LIBTOOL_VARIABLE([--silent])
+-fi
+ 
+ dnl libtool 1.4.3 needs this.
+ PHP_SET_LIBTOOL_VARIABLE([--preserve-dup-deps])

@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+NEW_CONFFILE=/etc/php5/conf.d/mssql.ini
+if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt 5.2.3-2
+then
+	rm $NEW_CONFFILE
+fi
+
+#DEBHELPER#

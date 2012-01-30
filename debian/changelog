@@ -1,0 +1,472 @@
+php5 (5.3.9-1~dotdeb.3) stable; urgency=medium
+
+  * Fixing a segfault with strtotime() https://bugs.php.net/bug.php?id=60733
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 12 Jan 2012 09:59:42 +0100
+
+php5 (5.3.9-1~dotdeb.2) stable; urgency=medium
+
+  * Removing Suhosin was a bad idea. Fixing it.
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 12 Jan 2012 09:59:42 +0100
+
+php5 (5.3.9-1~dotdeb.1) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Wed, 11 Jan 2012 10:11:42 +0100
+
+php5 (5.3.8-1~dotdeb.2) stable; urgency=medium
+
+  * Revert from libcurl4-gnutls-dev to libcurl4-openssl-dev
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 25 Aug 2011 15:09:42 +0200
+
+php5 (5.3.8-1~dotdeb.1) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Tue, 23 Aug 2011 12:11:42 +0200
+
+php5 (5.3.6-6~dotdeb.1) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sun,  3 Apr 2011 17:19:42 +0200
+
+php5 (5.3.5-0.dotdeb.1) testing; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 10 Jan 2011 16:10:42 +0100
+
+php5 (5.3.4-0.dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 31 Dec 2010 17:31:42 +0100
+
+php5 (5.3.3-0.dotdeb.1) stable; urgency=medium
+
+  * Fixes the FPM startup by setting some parameters by default. Thanks to Daniel Hahler
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 29 Sep 2010 23:23:23 +0200
+
+php5 (5.3.3-0.dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Sat, 10 Jul 2010 15:22:21 +0200
+
+php5 (5.3.2-0.dotdeb.2) stable; urgency=medium
+
+  * Fixes ext/filter : http://bugs.php.net/51192
+  * Fixes ext/gd : http://bugs.php.net/51207
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 19 Apr 2010 10:56:31 +0200
+
+php5 (5.3.2-0.dotdeb.1) stable; urgency=medium
+
+  * Fixes http://bugs.php.net/51242
+
+ -- Guillaume Plessis <gui@php.net>  Tue,  9 Mar 2010  9:53:18 +0100
+
+php5 (5.3.2-0.dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+  * Adds php5-fpm as possible dependency of the php5 meta-package
+
+ -- Guillaume Plessis <gui@php.net>  Mon,  8 Mar 2010 10:37:42 +0100
+
+php5 (5.3.1-0.dotdeb.1) stable; urgency=medium
+
+  * The php5-fpm package is now working
+  * Fixes a symlink open_basedir bypass : http://securityreason.com/achievement_exploitalert/14
+
+ -- Guillaume Plessis <gui@php.net>  Sat,  5 Nov 2009 16:19:31 +0100
+
+php5 (5.3.1-0.dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 27 Nov 2009 17:06:12 +0100
+
+php5 (5.3.0-0.dotdeb.8) stable; urgency=medium
+
+  * Adds the unofficial Suhosin patch from http://blog.adaniels.nl/articles/suhosin-patch-for-php-53/
+  * Fixes an open_basedir by pass : http://securityreason.com/achievement_securityalert/64
+  * Fixes a memory leak : http://securityreason.com/achievement_securityalert/65
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 12 Aug 2009 18:16:20 +0200
+
+php5 (5.3.0-0.dotdeb.7) stable; urgency=medium
+
+  * Fixes DateTime segfault : http://bugs.php.net/bug.php?id=47351
+  * Adds PHP-FPM patch
+  * Removes buggy use_embedded_timezonedb patch
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 16 Jul 2009 12:20:39 +0200
+
+php5 (5.3.0-0.dotdeb.6) stable; urgency=medium
+
+  * 5.3.0 final
+  * Sync with Debian's packaging method
+  * Enchant support
+  * TODO : Suhosin patch still missing
+  * mail_extra_headers is now mail.add_x_header
+  * No longer Ming support (moved to PECL)
+  * No longer Ncurses support (moved to PECL)
+  * Fixes strtotime memory leak : http://bugs.php.net/bug.php?id=47285
+  * Set the default MySQL socket to /var/run/mysql/mysqld.sock : http://bugs.php.net/bug.php?id=45468
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 01 Jul 2009 10:33:19 +0200
+
+php5 (5.3.0-0.dotdeb.5) stable; urgency=medium
+
+  * 5.3.0 RC4
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 19 Jun 2009 16:49:42 +0200
+
+php5 (5.3.0-0.dotdeb.4) stable; urgency=medium
+
+  * 5.3.0 RC3
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 16 Jun 2009 15:17:04 +0200
+
+php5 (5.3.0-0.dotdeb.3) stable; urgency=medium
+
+  * 5.3.0 RC2
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 11 May 2009 09:53:29 +0200
+
+php5 (5.3.0-0.dotdeb.2) stable; urgency=medium
+
+  * Fixes php5-modules.ini syntax
+  * Fixes http://bugs.php.net/bug.php?id=47819
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 08 Apr 2009 10:31:41 +0200
+
+php5 (5.3.0-0.dotdeb.1) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 25 Mar 2009 10:25:21 +0100
+
+php5 (5.2.9-0.dotdeb.1) stable; urgency=medium
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Sun,  8 Mar 2009 12:39:10 +0100
+
+php5 (5.2.8-0.dotdeb.2) stable; urgency=medium
+
+  * Rebuilt for Dotdeb against Lenny
+  * Sync with the Debian's packaging methods
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 24 Feb 2009 11:14:52 +0100
+
+php5 (5.2.8-0.dotdeb.1) stable; urgency=high
+
+  * Fixes a PCRE and utf8 issue (http://bugs.php.net/bug.php?id=46800)
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 11 Dec 2008 23:30:12 +0100
+
+php5 (5.2.8-0.dotdeb.0) stable; urgency=high
+
+  * New upstream release, nothing new except a new release number
+
+ -- Guillaume Plessis <gui@php.net>  Tue,  9 Dec 2008 09:26:20 +0100
+
+php5 (5.2.7-0.dotdeb.1) stable; urgency=high
+
+  * Fixes magic_quotes_gpc vulnerability
+
+ -- Guillaume Plessis <gui@php.net>  Sun,  7 Dec 2008 11:48:45 +0100
+
+php5 (5.2.7-0.dotdeb.0) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri,  5 Dec 2008 14:59:07 +0100
+
+php5 (5.2.6-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri,  2 May 2008 11:13:54 +0200
+
+php5 (5.2.5-0.dotdeb.2) stable; urgency=high
+
+  * Adds the Interbase extension
+  * Enables LFS
+  * Partial sync with Debian
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 30 Nov 2007 16:19:53 +0200
+
+php5 (5.2.5-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 12 Nov 2007 17:15:12 +0200
+
+php5 (5.2.4-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 19 Sep 2007 11:32:18 +0100
+
+php5 (5.2.3-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon,  1 Jun 2007 12:07:32 +0200
+
+php5 (5.2.2-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon,  7 May 2007 10:07:32 +0200
+
+php5 (5.2.2-0.dotdeb.0) oldstable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon,  7 May 2007 10:07:32 +0200
+
+php5 (5.2.1-0.dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri,  9 Feb 2007 03:26:46 +0100
+
+php5 (5.2.0-0.dotdeb.3) stable; urgency=high
+
+  * Fixes a severe header injection problem in the mail() function
+  * Updates Suhosin to 0.9.6.2
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 13 Nov 2006 15:31:23 +0100
+
+php5 (5.2.0-0.dotdeb.2) stable; urgency=low
+
+  * Sync with the Debian packaging method (sqlite, xmlrpc, xsl and recode are
+    now shared objects)
+
+ -- Guillaume Plessis <gui@php.net>  Thu,  9 Nov 2006 21:45:56 +0100
+
+php5 (5.2.0-0.dotdeb.1) stable; urgency=low
+
+  * New upstream release
+  * Added the Suhosin patch
+  * Added a Dotdeb section in phpinfo()
+  * Enable json and zip features by default
+
+ -- Guillaume Plessis <gui@php.net>  Fri,  3 Nov 2006 09:33:11 +0100
+
+php5 (5.1.6-0.dotdeb.2) stable; urgency=low
+
+  * Re-introduced the missing php5-pgsql packages
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 31 Aug 2006 16:05:13 +0200
+
+php5 (5.1.6-0.dotdeb.1) stable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 25 Aug 2006 11:26:24 +0200
+
+php5 (5.1.5-0.dotdeb.1) stable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 21 Aug 2006 16:42:23 +0200
+
+php5 (5.1.4-1.dotdeb.3) stable; urgency=high
+
+  * Added the control of the mail() header patch by the mail_extra_headers
+    boolean
+  * Patched some issues with the hardened-PHP security patch
+  * Added the pcntl support to the cgi version
+  * Added PHP's own SIGCHILD support
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 26 Jul 2006 17:15:45 +0200
+
+php5 (5.1.4-1.dotdeb.2) stable; urgency=high
+
+  * Patched with http://www.lancs.ac.uk/~steveb/php-mail-header-patch/
+
+ -- Guillaume Plessis <gui@php.net>  Fri,  2 Jun 2006 09:22:17 +0200
+
+php5 (5.1.4-1.dotdeb.1) stable; urgency=high
+
+  * New upstream version, fixes http://bugs.php.net/bug.php?id=37276
+
+ -- Guillaume Plessis <gui@php.net>  Thu,  4 May 2006 08:58:54 +0200
+
+php5 (5.1.3-1.dotdeb.1) stable; urgency=low
+
+  * New upstream version
+
+ -- Guillaume Plessis <gui@php.net>  Tue,  2 May 2006 09:07:34 +0200
+
+php5 (5.1.2-1.dotdeb.2) unstable; urgency=low
+
+  * PDO support added (MySQL, SQlite & Postgre)
+  * PEAR include_path is now good by default
+  * Added missing libsqlite*-dev dependencies
+  * Added missing apache2 dependency
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 30 Jan 2006 23:13:12 +0100
+
+php5 (5.1.2-1.dotdeb.1) unstable; urgency=low
+
+  * Rebuilt for Dotdeb
+  * PEAR problems should now be fixed
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 12 Jan 2006 21:41:34 +0100
+
+php5 (5.1.1-1.dotdeb.2) unstable; urgency=low
+
+  * added --enable-inline-optimization
+  * PEAR may cause problems due to the new installation process :(
+
+ -- Guillaume Plessis <gui@php.net>  Thu,  1 Dec 2005 10:22:02 +0100
+
+php5 (5.1.1-1.dotdeb.1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 28 Nov 2005 19:48:56 +0100
+
+php5 (5.1.0-1.dotdeb.1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 25 Nov 2005 11:25:14 +0100
+
+php5 (5.0.5-1.dotdeb.1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Tue,  6 Sep 2005 22:54:12 +0200
+
+php5 (5.0.4-1.dotdeb.2) unstable; urgency=low
+
+  * Rebuild for Dotdeb against Sarge
+  * Adds Zip and Pspell support
+  * Sync with the official packaging method
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 20 Jun 2005 11:07:34 +0200
+
+php5 (5.0.4-1.dotdeb.1) unstable; urgency=low
+
+  * Enable XML-RPC functions in a separate package
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 14 Apr 2005 09:55:56 +0200
+
+php5 (5.0.4-1.dotdeb.0) unstable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@php.net>  Mon, 04 Apr 2005 16:07:27 +0200
+
+php5 (5.0.3-1.dotdeb.0) unstable; urgency=low
+
+  * New release
+  * Description of the php5 package now says that it's the apache 1.3 module
+  * Conflicts now with libapache-mod-php4 instead of php4
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 16 Dec 2004 12:37:34 +0100
+
+php5 (5.0.2-1.dotdeb.5) unstable; urgency=low
+
+  * Rebuild to include the mbstring support
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 18 Nov 2004 09:48:17 +0100
+
+php5 (5.0.2-1.dotdeb.4) unstable; urgency=low
+
+  * Rebuild to include the MySQLi support
+  * Fixed : a typo prevented to enable the fast-cgi support
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 16 Nov 2004 22:56:27 +0100
+
+php5 (5.0.2-1.dotdeb.3) unstable; urgency=low
+
+  * Changed the ext/standard/info.c file to remove duplicate infos
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 13 Oct 2004 12:45:45 +0100
+
+php5 (5.0.2-1.dotdeb.2) unstable; urgency=low
+
+  * Rollback the previous changes, after making the php4* packages compatible
+  * Adding the patching to the build process
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 13 Oct 2004 10:54:13 +0100
+
+php5 (5.0.2-1.dotdeb.1) unstable; urgency=low
+
+  * Changed the PEAR installation path
+  * Removed the conflict with php4-pear
+
+ -- Guillaume Plessis <gui@php.net>  Wed, 06 Oct 2004 15:38:56 +0100
+
+php5 (5.0.2-1.dotdeb.0) unstable; urgency=low
+
+  * New upstream relase
+  * Added PEAR
+
+ -- Guillaume Plessis <gui@php.net>  Tue, 28 Aug 2004 11:42:27 +0100
+
+php5 (5.0.1-1.dotdeb.0) unstable; urgency=low
+
+  * New upstream relase
+
+ -- Guillaume Plessis <gui@php.net>  mon, 13 Aug 2004 13:55:41 +0100
+
+php5 (5.0.0-1.dotdeb.0) unstable; urgency=low
+
+  * 5.0 final!
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 14 Jul 2004 12:33:56 +0100
+
+php5 (5.0.0-0rc3.dotdeb.1) unstable; urgency=low
+
+  * Added the mysqli support
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 25 Jun 2004 12:25:19 +0100
+
+php5 (5.0.0-0rc3.dotdeb.0) unstable; urgency=low
+
+  * New upstream version
+  * Added the dbx support
+  * Added the mime-magic support
+  * Removed the MS-SQL support (crashes)
+  * Added the ncurses support for the CLI version
+
+ -- Guillaume Plessis <gui@php.net>  Fri, 11 Jun 2004 10:22:36 +0100
+
+php5 (5.0.0-0rc2.dotdeb.0) unstable; urgency=low
+
+  * New upstream version
+  * Added the XSL support
+
+ -- Guillaume Plessis <gui@php.net>  Sun, 25 Apr 2004 18:20:24 +0100
+
+php5 (5.0.0-0rc1.dotdeb.2) unstable; urgency=low
+
+  * Changed the extension_dir to install php4 in parallel
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 15 Apr 2004 23:06:36 +0100
+
+php5 (5.0.0-0rc1.1) unstable; urgency=low
+
+  * Added SOAP support (reported as wish in the BT)
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 01 Apr 2004 10:04:18 +0100
+
+php5 (5.0.0-0rc1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Guillaume Plessis <gui@php.net>  Thu, 18 Mar 2004 21:48:27 +0100
+

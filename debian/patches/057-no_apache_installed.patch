@@ -1,0 +1,84 @@
+--- php.orig/sapi/apache2handler/config.m4
++++ php/sapi/apache2handler/config.m4
+@@ -59,13 +59,13 @@ if test "$PHP_APXS2" != "no"; then
+ 
+   APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
+ 
+-  # Test that we're trying to configure with apache 2.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
+-  if test "$APACHE_VERSION" -le 2000000; then
+-    AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
+-  elif test "$APACHE_VERSION" -lt 2000044; then
+-    AC_MSG_ERROR([Please note that Apache version >= 2.0.44 is required])
+-  fi
++dnl  # Test that we're trying to configure with apache 2.x
++dnl  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++dnl  if test "$APACHE_VERSION" -le 2000000; then
++dnl    AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
++dnl  elif test "$APACHE_VERSION" -lt 2000044; then
++dnl    AC_MSG_ERROR([Please note that Apache version >= 2.0.44 is required])
++dnl  fi
+ 
+   APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
+   if test -z `$APXS -q SYSCONFDIR`; then
+--- php.orig/sapi/apache/config.m4
++++ php/sapi/apache/config.m4
+@@ -56,11 +56,11 @@ if test "$PHP_APXS" != "no"; then
+   APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
+   APACHE_INCLUDE=-I$APXS_INCLUDEDIR
+ 
+-  # Test that we're trying to configure with apache 1.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
+-  if test "$APACHE_VERSION" -ge 2000000; then
+-    AC_MSG_ERROR([You have enabled Apache 1.3 support while your server is Apache 2.  Please use the appropiate switch --with-apxs2]) 
+-  fi
++dnl  # Test that we're trying to configure with apache 1.x
++dnl  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++dnl  if test "$APACHE_VERSION" -ge 2000000; then
++dnl    AC_MSG_ERROR([You have enabled Apache 1.3 support while your server is Apache 2.  Please use the appropiate switch --with-apxs2]) 
++dnl  fi
+ 
+   for flag in $APXS_CFLAGS; do
+     case $flag in
+--- php.orig/sapi/apache2filter/config.m4
++++ php/sapi/apache2filter/config.m4
+@@ -60,13 +60,13 @@ if test "$PHP_APXS2FILTER" != "no"; then
+ 
+   APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
+ 
+-  # Test that we're trying to configure with apache 2.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
+-  if test "$APACHE_VERSION" -le 2000000; then
+-    AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
+-  elif test "$APACHE_VERSION" -lt 2000040; then
+-    AC_MSG_ERROR([Please note that Apache version >= 2.0.40 is required])
+-  fi
++dnl  # Test that we're trying to configure with apache 2.x
++dnl  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++dnl  if test "$APACHE_VERSION" -le 2000000; then
++dnl    AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
++dnl  elif test "$APACHE_VERSION" -lt 2000040; then
++dnl    AC_MSG_ERROR([Please note that Apache version >= 2.0.40 is required])
++dnl  fi
+ 
+   APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
+   if test -z `$APXS -q SYSCONFDIR`; then
+--- php.orig/sapi/apache_hooks/config.m4
++++ php/sapi/apache_hooks/config.m4
+@@ -57,11 +57,11 @@ if test "$PHP_APACHE_HOOKS" != "no"; the
+   APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
+   APACHE_INCLUDE=-I$APXS_INCLUDEDIR
+ 
+-  # Test that we're trying to configure with apache 1.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
+-  if test "$APACHE_VERSION" -ge 2000000; then
+-    AC_MSG_ERROR([You have enabled Apache 1.3 support while your server is Apache 2.  Please use the appropiate switch --with-apxs2]) 
+-  fi
++dnl  # Test that we're trying to configure with apache 1.x
++dnl  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++dnl  if test "$APACHE_VERSION" -ge 2000000; then
++dnl    AC_MSG_ERROR([You have enabled Apache 1.3 support while your server is Apache 2.  Please use the appropiate switch --with-apxs2]) 
++dnl  fi
+ 
+   for flag in $APXS_CFLAGS; do
+     case $flag in

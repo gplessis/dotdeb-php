@@ -1,0 +1,20 @@
+diff -urN php-5.1.6.old/ext/standard/info.c php-5.1.6/ext/standard/info.c
+--- php-5.1.6.old/ext/standard/info.c	2006-03-31 13:11:12.000000000 +0200
++++ php-5.1.6/ext/standard/info.c	2006-10-24 17:24:43.000000000 +0200
+@@ -631,6 +631,16 @@
+ 			zend_html_puts(zend_version, strlen(zend_version) TSRMLS_CC);
+ 		}
+ 		php_info_print_box_end();
++
++		/* Dotdeb */
++		php_info_print_box_start(0);
++		if (sapi_module.phpinfo_as_text) {
++			PUTS("This program was built by Dotdeb (http://www.dotdeb.org/).");
++		} else {
++			PUTS("This program was built by <a href=\"http://www.dotdeb.org/\">Dotdeb</a>.");
++		}
++		php_info_print_box_end();
++
+ 		efree(php_uname);
+ 	}
+ 

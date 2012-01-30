@@ -1,0 +1,20 @@
+curl CURL
+enchant Enchant
+gd GD
+gmp GMP
+imap IMAP
+interbase Interbase
+intl Internationalisation
+ldap LDAP
+mcrypt MCrypt
+mysql MySQL
+odbc ODBC
+pgsql PostgreSQL
+pspell pspell
+recode recode
+snmp SNMP
+sqlite SQLite
+sybase Sybase mssql
+tidy tidy
+xmlrpc XML-RPC
+xsl XSL

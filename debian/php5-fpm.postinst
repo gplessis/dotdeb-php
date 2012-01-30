@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+#DEBHELPER#
+
+if [ "$1" != "configure" ]; then
+    exit 0
+fi
+
+phpini="/etc/php5/fpm/php.ini"
+
+ucf /usr/share/php5/php.ini-production $phpini
+
+update-alternatives \
+        --install /usr/sbin/php-fpm php-fpm /usr/sbin/php5-fpm 50 \
+        --slave /usr/share/man/man8/php-fpm.8.gz php-fpm.8.gz /usr/share/man/man8/php5-fpm.8.gz
+
+update-rc.d php5-fpm defaults
+
+if [ -x /etc/init.d/php5-fpm ]
+then
+  if [ -f /var/run/php5-fpm.pid ] && pidof /usr/bin/php5-fpm >/dev/null
+  then
+    echo "Doing a soft restart"
+    FPM_PID=`cat /var/run/php5-fpm.pid`
+    kill -s USR2 $FPM_PID
+  fi
+fi
+
+exit 0

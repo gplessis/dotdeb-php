@@ -1,0 +1,12 @@
+#! /bin/bash
+
+set -e
+
+if [ "$1" = "purge" ]
+then
+    rm -rf /var/lib/php5
+fi
+
+#DEBHELPER#
+
+exit 0

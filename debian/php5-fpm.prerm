@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+#DEBHELPER#
+
+if [ "$1" != "remove" -a "$1" != "purge" ]; then
+        exit 0
+fi
+
+update-alternatives --remove php-fpm /usr/bin/php5-fpm
+update-rc.d -f php5-fpm remove
+
+exit 0

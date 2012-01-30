@@ -1,0 +1,38 @@
+Description: Fix php-fpm's manpage section to match location of binary
+ (/usr/sbin,) additionally, remove some stuff that is useless or
+ doesn't apply to Debian.
+Origin: vendor
+Forwarded: http://bugs.php.net/52476
+Last-Update: 2010-07-29
+
+--- a/sapi/fpm/php-fpm.8.in
++++ b/sapi/fpm/php-fpm.8.in
+@@ -112,15 +112,8 @@ The configuration file for the php-fpm d
+ .TP
+ .B php.ini
+ The standard php configuration file.
+-.SH EXAMPLES
+-You should use the init script provided to start and stop the php-fpm daemon. This situation applies for any unix systems which use init.d for their main process manager.
+-.P
+-.PD 1
+-.RS
+-sudo /etc/init.d/php-fpm start
+-.RE
+-.TP
+-If your installation has no appropriate init script, launch php-fpm with no arguments. It will launch as a daemon (background process) by default. The file @php_fpm_localstatedir@/run/php-fpm.pid determines whether php-fpm is already up and running. Once started, php-fpm then responds to several POSIX signals:
++.SH SIGNAL
++Once started, php-fpm then responds to several POSIX signals:
+ .P
+ .PD 0
+ .RS
+@@ -134,10 +127,6 @@ If your installation has no appropriate
+ .RE
+ .PD 1
+ .P
+-.SH TIPS
+-The PHP-FPM CGI daemon will work well with most popular webservers, including Apache2, lighttpd and nginx.
+-.PD 1
+-.P
+ .SH SEE ALSO
+ The PHP-FPM website:
+ .PD 0
