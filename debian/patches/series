@@ -6,7 +6,7 @@ libtool2.2.patch
 033-we_WANT_libtool.patch
 052-phpinfo_no_configure.patch
 053-extension_api.patch
-053-phpinfo_dotdeb.patch
+054-phpinfo_dotdeb.patch
 057-no_apache_installed.patch
 100-recode_is_shared.patch
 101-sqlite_is_shared.patch
