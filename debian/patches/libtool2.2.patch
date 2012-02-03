@@ -1,6 +1,7 @@
---- pkg-php.orig/scripts/phpize.in
-+++ pkg-php/scripts/phpize.in
-@@ -5,10 +5,16 @@ prefix='@prefix@'
+diff -urN php5-5.3.10.orig//scripts/phpize.in php5-5.3.10/scripts/phpize.in
+--- php5-5.3.10.orig//scripts/phpize.in	2012-02-02 22:08:42.000000000 +0000
++++ php5-5.3.10/scripts/phpize.in	2012-02-02 22:09:18.000000000 +0000
+@@ -5,10 +5,16 @@
  exec_prefix="`eval echo @exec_prefix@`"
  phpdir="$prefix/lib/php5/build"
  includedir="$prefix/include/php5"
@@ -18,7 +19,7 @@
  FILES="acinclude.m4 Makefile.global config.sub config.guess ltmain.sh run-tests*.php"
  CLEAN_FILES="$FILES *.o *.lo *.la .deps .libs/ build/ include/ modules/ install-sh \
  	mkinstalldirs missing config.nice config.sub config.guess configure configure.in \
-@@ -144,8 +150,9 @@ phpize_copy_files()
+@@ -144,8 +150,9 @@
    test -d build || mkdir build
   
    (cd "$phpdir" && cp $FILES_BUILD "$builddir"/build)

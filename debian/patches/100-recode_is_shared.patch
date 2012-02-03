@@ -1,6 +1,7 @@
---- php.orig/ext/recode/config9.m4
-+++ php/ext/recode/config9.m4
-@@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
+diff -urN php5-5.3.10.orig//ext/recode/config9.m4 php5-5.3.10/ext/recode/config9.m4
+--- php5-5.3.10.orig//ext/recode/config9.m4	2008-12-01 23:30:21.000000000 +0000
++++ php5-5.3.10/ext/recode/config9.m4	2012-02-02 22:17:12.000000000 +0000
+@@ -13,6 +13,6 @@
    fi
  
    if test -n "$recode_conflict"; then

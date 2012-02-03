@@ -1,3 +1,10 @@
+php5 (5.3.10-1~dotdeb.1) stable; urgency=high
+
+  * New upstream release
+  * Cleanup the applied patches
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu,  2 Feb 2012 21:56:42 +0000
+
 php5 (5.3.9-1~dotdeb.3) stable; urgency=medium
 
   * Fixing a segfault with strtotime() https://bugs.php.net/bug.php?id=60733

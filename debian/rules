@@ -34,8 +34,7 @@ MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
 # specify some options to our patch system
 QUILT_DIFF_OPTS=-p
 QUILT_NO_DIFF_TIMESTAMPS=1 
-QUILT_PATCH_OPTS=--ignore-whitespace
-export QUILT_DIFF_OPTS QUILT_NO_DIFF_TIMESTAMPS QUILT_PATCH_OPTS
+export QUILT_DIFF_OPTS QUILT_NO_DIFF_TIMESTAMPS
 
 PROG_SENDMAIL = /usr/sbin/sendmail
 ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))

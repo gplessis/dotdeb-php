@@ -1,6 +1,7 @@
---- a/sapi/fpm/fpm/fpm_conf.c
-+++ b/sapi/fpm/fpm/fpm_conf.c
-@@ -1182,7 +1182,7 @@ int fpm_conf_init_main(int test_conf) /*
+diff -urN php5-5.3.10.orig//sapi/fpm/fpm/fpm_conf.c php5-5.3.10/sapi/fpm/fpm/fpm_conf.c
+--- php5-5.3.10.orig//sapi/fpm/fpm/fpm_conf.c	2011-11-16 00:21:38.000000000 +0000
++++ php5-5.3.10/sapi/fpm/fpm/fpm_conf.c	2012-02-02 22:23:11.000000000 +0000
+@@ -1560,7 +1560,7 @@
  		char *tmp;
  
  		if (fpm_globals.prefix == NULL) {

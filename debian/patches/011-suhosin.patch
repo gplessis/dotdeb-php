@@ -1,6 +1,1310 @@
-diff -Nura php-5.3.9/Zend/Makefile.am suhosin-patch-5.3.9-0.9.10/Zend/Makefile.am
---- php-5.3.9/Zend/Makefile.am	2009-03-18 11:18:10.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/Makefile.am	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//configure php5-5.3.10/configure
+--- php5-5.3.10.orig//configure	2012-02-02 18:36:30.000000000 +0000
++++ php5-5.3.10/configure	2012-02-02 22:11:23.000000000 +0000
+@@ -19371,6 +19371,9 @@
+ 
+ fi
+ 
++cat >> confdefs.h <<\EOF
++#define SUHOSIN_PATCH 1
++EOF
+ 
+   echo $ac_n "checking for declared timezone""... $ac_c" 1>&6
+ echo "configure:19377: checking for declared timezone" >&5
+@@ -115830,7 +115833,7 @@
+        php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
+        strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
+        network.c php_open_temporary_file.c php_logos.c \
+-       output.c getopt.c; do
++       output.c getopt.c suhosin_patch.c ; do
+   
+       IFS=.
+       set $ac_src
+@@ -116034,7 +116037,7 @@
+     zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
+     zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
+     zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
+-    zend_closures.c zend_float.c; do
++    zend_closures.c zend_float.c zend_canary.c zend_alloc_canary.c ; do
+   
+       IFS=.
+       set $ac_src
+diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
+--- php5-5.3.10.orig//configure.in	2012-02-02 22:08:42.000000000 +0000
++++ php5-5.3.10/configure.in	2012-02-02 22:11:23.000000000 +0000
+@@ -289,6 +289,7 @@
+ sinclude(TSRM/threads.m4)
+ sinclude(TSRM/tsrm.m4)
+ 
++sinclude(main/suhosin_patch.m4)
+ 
+ divert(2)
+ 
+@@ -1403,7 +1404,7 @@
+        php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
+        strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
+        network.c php_open_temporary_file.c php_logos.c \
+-       output.c getopt.c)
++       output.c getopt.c suhosin_patch.c )
+ 
+ PHP_ADD_SOURCES(main/streams, streams.c cast.c memory.c filter.c \
+        plain_wrapper.c userspace.c transports.c xp_socket.c mmap.c \
+@@ -1431,7 +1432,7 @@
+     zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
+     zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
+     zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
+-    zend_closures.c zend_float.c)
++    zend_closures.c zend_float.c zend_canary.c zend_alloc_canary.c )
+ 
+ if test -r "$abs_srcdir/Zend/zend_objects.c"; then
+   PHP_ADD_SOURCES(Zend, zend_objects.c zend_object_handlers.c zend_objects_API.c zend_default_classes.c)
+diff -urN php5-5.3.10.orig//ext/standard/dl.c php5-5.3.10/ext/standard/dl.c
+--- php5-5.3.10.orig//ext/standard/dl.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/ext/standard/dl.c	2012-02-02 22:11:23.000000000 +0000
+@@ -254,6 +254,23 @@
+ 			return FAILURE;
+ 		}
+ 	}
++
++#if SUHOSIN_PATCH
++	if (strncmp("suhosin", module_entry->name, sizeof("suhosin")-1) == 0) {
++		void *log_func;
++		/* sucessfully loaded suhosin extension, now check for logging function replacement */
++		log_func = (void *) DL_FETCH_SYMBOL(handle, "suhosin_log");
++		if (log_func == NULL) {
++			log_func = (void *) DL_FETCH_SYMBOL(handle, "_suhosin_log");
++		}
++		if (log_func != NULL) {
++			zend_suhosin_log = log_func;
++		} else {
++                        zend_suhosin_log(S_MISC, "could not replace logging function");
++		}
++	}
++#endif	
++
+ 	return SUCCESS;
+ }
+ /* }}} */
+diff -urN php5-5.3.10.orig//ext/standard/info.c php5-5.3.10/ext/standard/info.c
+--- php5-5.3.10.orig//ext/standard/info.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/ext/standard/info.c	2012-02-02 22:11:23.000000000 +0000
+@@ -878,6 +878,33 @@
+ 		
+ 		php_info_print_table_end();
+ 
++		/* Suhosin Patch */
++		php_info_print_box_start(0);
++		if (expose_php && !sapi_module.phpinfo_as_text) {
++			PUTS("<a href=\"http://www.suhosin.org\"><img border=\"0\" src=\"");
++			if (SG(request_info).request_uri) {
++				char *elem_esc = php_info_html_esc(SG(request_info).request_uri TSRMLS_CC);
++				PUTS(elem_esc);
++				efree(elem_esc);
++			}
++			PUTS("?="SUHOSIN_LOGO_GUID"\" alt=\"Suhosin logo\" /></a>\n");
++		}
++		PUTS("This server is protected with the Suhosin Patch ");
++		if (sapi_module.phpinfo_as_text) {
++			PUTS(SUHOSIN_PATCH_VERSION);
++		} else {
++			zend_html_puts(SUHOSIN_PATCH_VERSION, strlen(SUHOSIN_PATCH_VERSION) TSRMLS_CC);
++		}
++		PUTS(!sapi_module.phpinfo_as_text?"<br />":"\n");
++		if (sapi_module.phpinfo_as_text) {
++			PUTS("Copyright (c) 2006-2007 Hardened-PHP Project\n");
++			PUTS("Copyright (c) 2007-2012 SektionEins GmbH\n");
++		} else {
++			PUTS("Copyright (c) 2006-2007 <a href=\"http://www.hardened-php.net/\">Hardened-PHP Project</a>\n");
++			PUTS("Copyright (c) 2007-2012 <a href=\"http://www.sektioneins.de/\">SektionEins GmbH</a>\n");
++		}
++		php_info_print_box_end();
++
+ 		/* Zend Engine */
+ 		php_info_print_box_start(0);
+ 		if (expose_php && !sapi_module.phpinfo_as_text) {
+diff -urN php5-5.3.10.orig//ext/standard/syslog.c php5-5.3.10/ext/standard/syslog.c
+--- php5-5.3.10.orig//ext/standard/syslog.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/ext/standard/syslog.c	2012-02-02 22:11:23.000000000 +0000
+@@ -42,6 +42,7 @@
+  */
+ PHP_MINIT_FUNCTION(syslog)
+ {
++#if !SUHOSIN_PATCH
+ 	/* error levels */
+ 	REGISTER_LONG_CONSTANT("LOG_EMERG", LOG_EMERG, CONST_CS | CONST_PERSISTENT); /* system unusable */
+ 	REGISTER_LONG_CONSTANT("LOG_ALERT", LOG_ALERT, CONST_CS | CONST_PERSISTENT); /* immediate action required */
+@@ -97,6 +98,7 @@
+ 	/* AIX doesn't have LOG_PERROR */
+ 	REGISTER_LONG_CONSTANT("LOG_PERROR", LOG_PERROR, CONST_CS | CONST_PERSISTENT); /*log to stderr*/
+ #endif
++#endif
+ 	BG(syslog_device)=NULL;
+ 
+ 	return SUCCESS;
+diff -urN php5-5.3.10.orig//main/fopen_wrappers.c php5-5.3.10/main/fopen_wrappers.c
+--- php5-5.3.10.orig//main/fopen_wrappers.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/fopen_wrappers.c	2012-02-02 22:11:23.000000000 +0000
+@@ -85,13 +85,8 @@
+ PHPAPI ZEND_INI_MH(OnUpdateBaseDir)
+ {
+ 	char **p, *pathbuf, *ptr, *end;
+-#ifndef ZTS
+-	char *base = (char *) mh_arg2;
+-#else
+-	char *base = (char *) ts_resource(*((int *) mh_arg2));
+-#endif
+ 
+-	p = (char **) (base + (size_t) mh_arg1);
++	p = &PG(open_basedir);
+ 
+ 	if (stage == PHP_INI_STAGE_STARTUP || stage == PHP_INI_STAGE_SHUTDOWN || stage == PHP_INI_STAGE_ACTIVATE || stage == PHP_INI_STAGE_DEACTIVATE) {
+ 		/* We're in a PHP_INI_SYSTEM context, no restrictions */
+diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
+--- php5-5.3.10.orig//main/main.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/main.c	2012-02-02 22:11:23.000000000 +0000
+@@ -91,6 +91,9 @@
+ 
+ #include "SAPI.h"
+ #include "rfc1867.h"
++#if SUHOSIN_PATCH
++#include "suhosin_globals.h"
++#endif
+ 
+ #if HAVE_MMAP
+ # if HAVE_UNISTD_H
+@@ -504,7 +507,7 @@
+ 	STD_PHP_INI_ENTRY("extension_dir",			PHP_EXTENSION_DIR,		PHP_INI_SYSTEM,		OnUpdateStringUnempty,	extension_dir,			php_core_globals,	core_globals)
+ 	STD_PHP_INI_ENTRY("include_path",			PHP_INCLUDE_PATH,		PHP_INI_ALL,		OnUpdateStringUnempty,	include_path,			php_core_globals,	core_globals)
+ 	PHP_INI_ENTRY("max_execution_time",			"30",		PHP_INI_ALL,			OnUpdateTimeout)
+-	STD_PHP_INI_ENTRY("open_basedir",			NULL,		PHP_INI_ALL,		OnUpdateBaseDir,			open_basedir,			php_core_globals,	core_globals)
++	PHP_INI_ENTRY("open_basedir",			NULL,		PHP_INI_ALL,		OnUpdateBaseDir)
+ 	STD_PHP_INI_ENTRY("safe_mode_exec_dir",		PHP_SAFE_MODE_EXEC_DIR,	PHP_INI_SYSTEM,		OnUpdateString,			safe_mode_exec_dir,		php_core_globals,	core_globals)
+ 
+ 	STD_PHP_INI_BOOLEAN("file_uploads",			"1",		PHP_INI_SYSTEM,		OnUpdateBool,			file_uploads,			php_core_globals,	core_globals)
+@@ -1810,6 +1813,10 @@
+ }
+ #endif
+ 
++#if SUHOSIN_PATCH
++PHPAPI void suhosin_startup();
++#endif
++
+ /* {{{ php_module_startup
+  */
+ int php_module_startup(sapi_module_struct *sf, zend_module_entry *additional_modules, uint num_additional_modules)
+@@ -1858,6 +1865,10 @@
+ 	php_win32_init_rng_lock();
+ #endif
+ 
++#if SUHOSIN_PATCH
++        suhosin_startup();
++#endif
++
+ 	module_shutdown = 0;
+ 	module_startup = 1;
+ 	sapi_initialize_empty_request(TSRMLS_C);
+@@ -1980,7 +1991,11 @@
+ 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_CONFIG_FILE_SCAN_DIR", PHP_CONFIG_FILE_SCAN_DIR, sizeof(PHP_CONFIG_FILE_SCAN_DIR)-1, CONST_PERSISTENT | CONST_CS);
+ 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_SHLIB_SUFFIX", PHP_SHLIB_SUFFIX, sizeof(PHP_SHLIB_SUFFIX)-1, CONST_PERSISTENT | CONST_CS);
+ 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_EOL", PHP_EOL, sizeof(PHP_EOL)-1, CONST_PERSISTENT | CONST_CS);
+-	REGISTER_MAIN_LONG_CONSTANT("PHP_MAXPATHLEN", MAXPATHLEN, CONST_PERSISTENT | CONST_CS);
++#if SUHOSIN_PATCH
++        REGISTER_MAIN_LONG_CONSTANT("SUHOSIN_PATCH", 1, CONST_PERSISTENT | CONST_CS);
++        REGISTER_MAIN_STRINGL_CONSTANT("SUHOSIN_PATCH_VERSION", SUHOSIN_PATCH_VERSION, sizeof(SUHOSIN_PATCH_VERSION)-1, CONST_PERSISTENT | CONST_CS);
++#endif	
++        REGISTER_MAIN_LONG_CONSTANT("PHP_MAXPATHLEN", MAXPATHLEN, CONST_PERSISTENT | CONST_CS);
+ 	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_MAX", LONG_MAX, CONST_PERSISTENT | CONST_CS);
+ 	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_SIZE", sizeof(long), CONST_PERSISTENT | CONST_CS);
+ #ifdef ZEND_MULTIBYTE
+diff -urN php5-5.3.10.orig//main/php_config.h.in php5-5.3.10/main/php_config.h.in
+--- php5-5.3.10.orig//main/php_config.h.in	2012-02-02 18:36:33.000000000 +0000
++++ php5-5.3.10/main/php_config.h.in	2012-02-02 22:11:23.000000000 +0000
+@@ -405,6 +405,9 @@
+ /* Define to 1 if you have the `alphasort' function. */
+ #undef HAVE_ALPHASORT
+ 
++/* Suhosin-Patch for PHP */
++#undef SUHOSIN_PATCH
++
+ /* Whether you have AOLserver */
+ #undef HAVE_AOLSERVER
+ 
+diff -urN php5-5.3.10.orig//main/php.h php5-5.3.10/main/php.h
+--- php5-5.3.10.orig//main/php.h	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/php.h	2012-02-02 22:11:23.000000000 +0000
+@@ -454,6 +454,10 @@
+ #endif
+ #endif /* !XtOffsetOf */
+ 
++#if SUHOSIN_PATCH
++#include "suhosin_patch.h"
++#endif
++
+ #endif
+ 
+ /*
+diff -urN php5-5.3.10.orig//main/php_logos.c php5-5.3.10/main/php_logos.c
+--- php5-5.3.10.orig//main/php_logos.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/php_logos.c	2012-02-02 22:11:23.000000000 +0000
+@@ -50,6 +50,10 @@
+ 	return zend_hash_del(&phpinfo_logo_hash, logo_string, strlen(logo_string));
+ }
+ 
++#if SUHOSIN_PATCH
++#include "suhosin_logo.h"
++#endif
++
+ int php_init_info_logos(void)
+ {
+ 	if(zend_hash_init(&phpinfo_logo_hash, 0, NULL, NULL, 1)==FAILURE) 
+@@ -58,7 +62,9 @@
+ 	php_register_info_logo(PHP_LOGO_GUID    , "image/gif", php_logo    , sizeof(php_logo));
+ 	php_register_info_logo(PHP_EGG_LOGO_GUID, "image/gif", php_egg_logo, sizeof(php_egg_logo));
+ 	php_register_info_logo(ZEND_LOGO_GUID   , "image/gif", zend_logo   , sizeof(zend_logo));
+-
++#if SUHOSIN_PATCH
++	php_register_info_logo(SUHOSIN_LOGO_GUID, "image/jpeg", suhosin_logo   , sizeof(suhosin_logo));
++#endif
+ 	return SUCCESS;
+ }
+ 
+diff -urN php5-5.3.10.orig//main/snprintf.c php5-5.3.10/main/snprintf.c
+--- php5-5.3.10.orig//main/snprintf.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/snprintf.c	2012-02-02 22:11:23.000000000 +0000
+@@ -782,6 +782,10 @@
+ 			 */
+ 			switch (*fmt) {
+ 				case 'Z':
++#if SUHOSIN_PATCH
++					zend_suhosin_log(S_MISC, "'Z' specifier within format string");
++					goto skip_output;
++#else
+ 					zvp = (zval*) va_arg(ap, zval*);
+ 					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
+ 					if (free_zcopy) {
+@@ -792,6 +796,7 @@
+ 					if (adjust_precision && precision < s_len) {
+ 						s_len = precision;
+ 					}
++#endif
+ 					break;
+ 				case 'u':
+ 					switch(modifier) {
+@@ -1093,7 +1098,11 @@
+ 
+ 
+ 				case 'n':
++#if SUHOSIN_PATCH
++					zend_suhosin_log(S_MISC, "'n' specifier within format string");
++#else
+ 					*(va_arg(ap, int *)) = cc;
++#endif
+ 					goto skip_output;
+ 
+ 					/*
+diff -urN php5-5.3.10.orig//main/spprintf.c php5-5.3.10/main/spprintf.c
+--- php5-5.3.10.orig//main/spprintf.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/main/spprintf.c	2012-02-02 22:11:23.000000000 +0000
+@@ -390,6 +390,10 @@
+ 			 */
+ 			switch (*fmt) {
+ 				case 'Z':
++#if SUHOSIN_PATCH
++					zend_suhosin_log(S_MISC, "'Z' specifier within format string");
++					goto skip_output;
++#else
+ 					zvp = (zval*) va_arg(ap, zval*);
+ 					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
+ 					if (free_zcopy) {
+@@ -400,6 +404,7 @@
+ 					if (adjust_precision && precision < s_len) {
+ 						s_len = precision;
+ 					}
++#endif
+ 					break;
+ 				case 'u':
+ 					switch(modifier) {
+@@ -700,7 +705,11 @@
+ 
+ 
+ 				case 'n':
++#if SUHOSIN_PATCH
++					zend_suhosin_log(S_MISC, "'n' specifier within format string");
++#else
+ 					*(va_arg(ap, int *)) = xbuf->len;
++#endif
+ 					goto skip_output;
+ 
+ 					/*
+diff -urN php5-5.3.10.orig//main/suhosin_globals.h php5-5.3.10/main/suhosin_globals.h
+--- php5-5.3.10.orig//main/suhosin_globals.h	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/main/suhosin_globals.h	2012-02-02 22:11:23.000000000 +0000
+@@ -0,0 +1,61 @@
++/*
++   +----------------------------------------------------------------------+
++   | Suhosin-Patch for PHP                                                |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 2004-2009 Stefan Esser                                 |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.02 of the PHP license,      |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available at through the world-wide-web at                           |
++   | http://www.php.net/license/2_02.txt.                                 |
++   | If you did not receive a copy of the PHP license and are unable to   |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@php.net so we can mail you a copy immediately.               |
++   +----------------------------------------------------------------------+
++   | Author: Stefan Esser <stefan.esser@sektioneins.de>                   |
++   +----------------------------------------------------------------------+
++ */
++
++#ifndef SUHOSIN_GLOBALS_H
++#define SUHOSIN_GLOBALS_H
++
++typedef struct _suhosin_patch_globals suhosin_patch_globals_struct;
++
++#ifdef ZTS
++# define SPG(v) TSRMG(suhosin_patch_globals_id, suhosin_patch_globals_struct *, v)
++extern int suhosin_patch_globals_id;
++#else
++# define SPG(v) (suhosin_patch_globals.v)
++extern struct _suhosin_patch_globals suhosin_patch_globals;
++#endif
++
++
++struct _suhosin_patch_globals {
++	/* logging */
++	int log_syslog;
++	int log_syslog_facility;
++	int log_syslog_priority;
++	int log_sapi;
++	int log_script;
++	int log_phpscript;
++	char *log_scriptname;
++	char *log_phpscriptname;
++	zend_bool log_phpscript_is_safe;
++	zend_bool log_use_x_forwarded_for;
++	
++	/* memory manager canary protection */
++	unsigned int canary_1;
++	unsigned int canary_2;
++	unsigned int canary_3;
++	unsigned int dummy;
++};
++
++
++#endif /* SUHOSIN_GLOBALS_H */
++
++/*
++ * Local variables:
++ * tab-width: 4
++ * c-basic-offset: 4
++ * End:
++ */
+diff -urN php5-5.3.10.orig//main/suhosin_logo.h php5-5.3.10/main/suhosin_logo.h
+--- php5-5.3.10.orig//main/suhosin_logo.h	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/main/suhosin_logo.h	2012-02-02 22:11:23.000000000 +0000
+@@ -0,0 +1,178 @@
++static unsigned char suhosin_logo[] =
++	"\xff\xd8\xff\xe0\x00\x10\x4a\x46\x49\x46\x00\x01\x01\x01\x00\x48"
++	"\x00\x48\x00\x00\xff\xe1\x00\x16\x45\x78\x69\x66\x00\x00\x4d\x4d"
++	"\x00\x2a\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\xff\xdb\x00\x43"
++	"\x00\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
++	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
++	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
++	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
++	"\x01\xff\xc0\x00\x0b\x08\x00\x27\x00\x71\x01\x01\x22\x00\xff\xc4"
++	"\x00\x1e\x00\x00\x02\x02\x02\x03\x01\x01\x00\x00\x00\x00\x00\x00"
++	"\x00\x00\x00\x00\x09\x06\x08\x05\x07\x02\x03\x0a\x01\x04\xff\xc4"
++	"\x00\x32\x10\x00\x01\x04\x03\x00\x02\x00\x05\x01\x05\x09\x01\x00"
++	"\x00\x00\x00\x05\x02\x03\x04\x06\x01\x07\x08\x00\x09\x11\x12\x13"
++	"\x14\x21\x15\x0a\x16\x31\x56\x96\x17\x18\x19\x23\x32\x41\x58\x98"
++	"\xd4\xd6\xff\xda\x00\x08\x01\x01\x00\x00\x3f\x00\xf4\xc1\xe1\xe5"
++	"\x69\xe9\x3e\xb9\xd1\x7c\x8a\x2e\x9d\x66\xe8\x3b\x29\x4d\x7f\x46"
++	"\xba\x58\x55\x54\x8d\xb1\x5f\xaa\xd9\x8d\x51\x2b\xb6\x27\x5a\x69"
++	"\xd1\x43\xaf\x16\x1a\xf0\xb2\xb1\xe9\x6d\x9f\xc2\xa4\x36\x18\xb5"
++	"\x85\x10\x41\xbe\xfc\x09\xac\x49\x29\x11\xd4\x32\x97\xec\x08\x13"
++	"\xc1\x2d\x20\xc3\x59\xeb\x26\x05\xd8\x6b\x76\x31\x43\x8f\x57\xcf"
++	"\x84\x9f\x14\xa8\x53\x81\x0b\xc3\x64\x80\xa3\x02\x0a\x41\x75\xf8"
++	"\x44\x85\x93\x81\x22\x3c\xd8\x13\xe1\xbe\xf4\x59\x91\x1f\x6a\x44"
++	"\x77\x5c\x69\xc4\x2f\x39\x5f\x0f\x2a\x8d\xeb\xba\xf8\xc3\x56\x6c"
++	"\x3b\x36\xa7\xda\xbd\x4d\xa1\xb5\x4e\xc6\xa7\xa4\x3a\xec\x15\x2d"
++	"\xa5\xb3\xea\x5a\xdc\xac\x46\xac\x01\x60\xd8\x43\xc8\x8e\x8b\xb1"
++	"\x40\x4c\x95\x8b\x34\x41\x28\x52\x91\x28\x43\xd3\xa3\xb6\xa7\x55"
++	"\x15\xe7\x5a\x96\xcb\xf1\xda\xe5\x55\xee\xfe\x1e\xbd\xd9\x41\xd3"
++	"\x28\xfd\x97\xca\x57\x2b\x85\x9c\xa4\x30\x95\xaa\xa5\x57\xa2\x35"
++	"\x15\x86\xcb\x61\x34\x41\xe4\xc7\x80\x20\x18\x21\x17\x09\x85\x0b"
++	"\x14\x9d\x21\x68\x62\x1c\x08\x11\x64\x4b\x92\xf2\xd2\xd3\x2d\x2d"
++	"\x6a\xc2\x73\x6b\x3c\x3c\x8b\x9e\xbc\x52\xaa\xa4\xab\x81\x6c\xf6"
++	"\xfa\xbd\x70\xc5\xc6\x7b\xc2\xaa\x22\x4f\x58\x04\x87\x25\x6a\x27"
++	"\x1d\xa4\x3d\x20\x75\x72\x01\x09\x71\xe5\x1c\x9e\xc3\x2e\x36\xf3"
++	"\xd0\xc6\x35\x2a\x43\x4d\x2d\x0e\x2d\xb4\xa1\x49\xce\x65\x1e\x52"
++	"\x9e\xa1\xf6\x09\xcc\xdc\x63\x66\xa8\x01\xe9\x3b\x0d\xd7\x5a\x85"
++	"\xbb\xc5\x65\xc0\x7b\x2e\x46\xa9\xd9\x56\x1d\x4c\x92\x72\x26\x4e"
++	"\x86\xd5\x68\xae\xc4\xaa\x55\xce\xd7\x83\x59\xb3\x81\xee\xce\x74"
++	"\x39\x39\x31\x9f\x8a\x25\xe8\xa5\xa5\xe5\x81\xf2\x11\x23\xcb\xa1"
++	"\x1e\x43\x12\xe3\xb1\x2a\x2b\xcd\xc8\x8d\x25\x96\xa4\x47\x7d\x95"
++	"\xa5\xc6\x9f\x61\xe4\x25\xc6\x5e\x69\xc4\xe7\x29\x5b\x6e\xb6\xa4"
++	"\xad\x0b\x4e\x72\x95\x25\x58\x56\x33\x9c\x67\xce\xef\x0f\x17\xbf"
++	"\x4c\x7b\x2d\xe6\xfe\x76\x35\x27\x5a\x07\x97\x67\xe8\xae\x8d\x71"
++	"\x0f\xb2\x13\x99\xb9\xbc\x14\xad\xb3\xb7\xe6\x11\x6f\xe0\xda\x58"
++	"\xb1\x08\xac\xa6\x6c\x2d\x7f\x05\xb7\x56\xd2\xe6\xcf\xbb\x4d\x0c"
++	"\xe3\x50\xb2\xec\x91\xf0\x4a\xb8\xd6\x22\xb8\xa7\xf6\x67\xaf\xcf"
++	"\x63\x7e\xd7\xe7\x42\xd8\xbd\xc3\x71\xa1\xf2\x7e\x9b\xa8\x97\x83"
++	"\x6e\xd1\xdc\x4b\x06\x11\x2d\xae\x26\x61\x98\x72\x10\xf4\x42\x5d"
++	"\x20\x4a\xa3\x73\xd7\xf2\xcd\x3c\x48\x32\xe4\x03\x9f\x80\x37\x08"
++	"\x36\x11\xd0\xcb\x97\x6c\x08\xed\x6d\x33\x24\xa2\x1b\xb4\x77\xdf"
++	"\x61\x5d\x5f\xc1\x43\xc2\x82\xeb\x0f\x5d\x84\x08\x68\xaa\xa4\x01"
++	"\xe1\x19\xdf\xbc\x31\x65\xfe\xd1\xf5\x7d\x7a\xb2\x2a\x33\x50\x21"
++	"\x2a\x56\x9d\xb1\x81\xab\xdb\x35\x78\x30\x83\xd9\x89\x1d\x31\xac"
++	"\x96\x14\x07\x61\xbc\x20\x68\x42\x85\x33\x19\xac\xbe\xdb\x34\x56"
++	"\xf1\xd5\xfd\x29\xa9\x28\xdb\xcb\x4c\x5a\x23\xdc\xf5\x96\xc5\x10"
++	"\xa3\x35\x5b\x14\x68\xd3\x61\x62\x64\x76\x26\xcb\x17\x3e\x34\x98"
++	"\x04\xa3\xc4\x20\x38\x90\x92\xe3\xc8\x07\x2c\x36\x74\x66\x26\x0e"
++	"\x29\x02\x64\x29\x2d\x21\xe6\x16\x9c\x6b\xce\xa3\x89\xd9\x4f\xd3"
++	"\xc4\xbd\xc5\x87\x79\x9c\x65\xf6\x39\x45\x60\xe8\xce\x9e\xab\x6d"
++	"\x13\x15\x22\xe1\x5e\x4b\x38\x42\xc4\x1e\xd5\x76\xe0\xc5\xeb\x85"
++	"\x07\x2d\x0f\xb8\xb6\xa6\xd6\x6d\x71\x0d\xa2\x43\x4c\x25\xea\xfa"
++	"\xa1\xae\x4c\xe4\x7d\xbd\x76\xa9\xfb\x06\xc2\x83\x42\xeb\xad\xe7"
++	"\xe9\x5f\x68\x6f\xba\xfb\x2f\x07\xce\xb8\x13\xc1\x9b\xeb\xb0\x76"
++	"\x45\x57\x28\x7b\xea\xbe\x0f\xf4\x30\x7b\xa0\xed\xe4\x22\x93\x21"
++	"\xfc\xbc\xe0\xb9\x75\xc1\x4f\xfc\xef\xb6\xfa\xa1\xfc\x64\xa1\x4a"
++	"\x82\xc7\x33\xad\x75\xed\x82\xbd\x3d\xdb\xf7\xa8\xbe\x5e\xbb\x36"
++	"\x62\x04\x9a\x2e\xc5\xd9\x9e\x9c\x3a\x0b\x98\x0b\x57\xac\xf1\x24"
++	"\x62\x58\x83\x15\x5b\xa6\xf2\xda\x34\x70\x03\xce\x0f\x93\x1b\x12"
++	"\xc7\xce\x54\x87\x33\x15\xd6\x53\x25\x1f\x2a\x90\x87\x12\xe3\x78"
++	"\xef\x55\x77\x4d\x4a\xd8\x7e\xef\xd2\xfd\xd1\xaf\x3a\xaf\x55\xdb"
++	"\x6a\x2d\x3d\x42\xac\x51\x79\xee\x91\xab\xe1\x05\x2d\x3c\x80\xa2"
++	"\x43\xad\x22\x2e\xd5\x33\x13\xa4\x9e\x00\xe0\x04\x10\x84\xc8\xf2"
++	"\x19\x30\x92\x1f\xaa\xc3\x28\xc9\x76\x30\x3f\xe9\x10\x61\x5e\x79"
++	"\xd5\xf7\xdf\xd0\x54\xdb\xae\xb6\xae\xfa\xe8\xa3\x57\xe0\x6c\x2d"
++	"\xf7\xbd\x49\xd6\x6e\x76\x79\xcc\x54\x0c\x5f\xff\x00\xbb\x06\x98"
++	"\xa6\x9e\x89\x61\xb4\x6f\xc3\xe3\x6a\xc2\x4f\x59\x03\xc9\x80\x2c"
++	"\x59\x24\x44\x70\x38\xd5\x96\x6a\x9e\x8b\x81\x64\xe5\xbc\xa0\x3c"
++	"\x33\xaf\x17\x9d\xff\x00\x71\x1a\xd1\x3a\x80\x66\xb3\xd9\x31\x77"
++	"\x0d\x12\xbd\xae\x29\xb5\x6a\xd6\xcf\x8d\x68\x87\x75\xcd\xe8\x65"
++	"\x5a\xbe\x3c\x04\x7b\x34\xdb\x54\x19\xa4\x63\x9c\x2a\x5d\x23\xbe"
++	"\xf4\xb1\x1c\x4d\x90\xec\x92\x2f\x49\x71\xf7\x14\xf2\x97\x9f\x15"
++	"\x57\xed\x13\x21\x2a\xf5\x33\xd1\x2a\x52\x52\xac\xb7\x62\xd1\xcb"
++	"\x46\x73\x8c\x67\x28\x56\x77\x86\xbf\x6f\x2a\x4e\x73\xfe\x95\x65"
++	"\x0b\x5a\x3e\x38\xfc\xfc\xaa\x56\x3f\x86\x73\xe3\xb9\x4a\x52\x84"
++	"\xa5\x08\x4e\x12\x94\x27\x09\x4a\x53\x8c\x61\x29\x4a\x71\xf0\x4a"
++	"\x53\x8c\x7e\x31\x8c\x63\x18\xc6\x31\x8f\xc6\x31\xf8\xc7\x9f\x7c"
++	"\xd5\xbb\xae\x5e\xe2\x1f\xab\x6e\x24\x34\x00\x8a\x25\x83\x70\x40"
++	"\x1c\xcc\xda\x45\x7f\x66\x4e\x30\x2e\x94\x7e\x74\x49\xf0\xe4\x4e"
++	"\x06\x5c\xa8\x2f\x89\x21\x2e\x98\x0e\xd9\x21\xc2\x0b\x21\x0f\xc4"
++	"\x16\x6e\x48\xd9\xe4\xe3\x4a\x19\x1e\x64\x67\x54\xff\x00\x3a\x6d"
++	"\x4f\x62\xb5\x00\x4a\xaa\x51\xfd\x2d\xe8\x0e\x6c\xaf\xc6\x7d\x6d"
++	"\xc8\x88\xc7\x67\xea\x8a\x58\x02\x73\xe3\x65\x4d\xc9\x24\xc0\x3d"
++	"\x57\xa3\x2e\x53\x16\x99\x4f\xe5\xe7\x19\x97\x3e\x3b\xcf\xc9\x4b"
++	"\x99\x7f\x33\x25\xa5\xdf\xba\x77\x2b\xd3\x3e\xc2\x7b\x8b\x94\x07"
++	"\xe9\x52\x5b\x43\x87\x34\x14\x86\x37\xcf\x41\x6b\x8e\x6a\xa5\x22"
++	"\xab\xdb\x96\xa2\xcf\x46\xd8\x9b\x45\x93\xef\xd6\xdf\x3e\x99\x9c"
++	"\x7e\x29\x10\x6b\x6c\xa2\xb8\x43\x05\x09\x44\x70\x8c\xb8\xaa\x54"
++	"\x7c\x30\x36\x5e\x1c\x5e\x5b\x9f\x6c\x0d\x81\xee\xa0\x93\x8d\x67"
++	"\x55\xf3\x87\xaf\xaa\x6b\x58\xf9\xbe\xb2\x36\x07\x42\x6e\xbd\x96"
++	"\xe3\x9f\x1f\x8f\xc9\xf4\x9d\xae\x6a\x7d\x4c\x96\xbe\x5f\xc7\xcd"
++	"\xf3\xb2\xf7\xcd\xf0\xcf\xc3\xe4\xf8\xfe\x37\x4f\x1c\x4d\xf6\x40"
++	"\xf1\x6b\x7c\x4e\xe0\xa6\x71\xad\x56\xa7\x1c\x5c\x15\x6b\xfc\xf3"
++	"\x01\x5d\xac\xf1\x75\x9a\x72\x6b\xaa\x28\xc5\x88\x6d\xfb\x33\x85"
++	"\xe0\x4e\x61\xab\xeb\x31\x2c\x71\x08\x73\x11\x3b\xfc\xb5\xc0\x96"
++	"\xcc\x87\x24\x44\xb5\x9b\x9e\xb3\x71\xba\xe9\xed\xb1\x4e\xd7\x76"
++	"\x6c\xd2\xb6\x05\xb7\x5a\xde\xeb\x34\x5b\x96\x16\xfb\x59\xa9\x5c"
++	"\x4f\x55\xca\x8a\xac\x59\xb0\xe4\x54\x39\x25\xbc\x81\x37\x2a\x09"
++	"\x5f\x9e\x3b\x6b\x7d\x1f\x69\xf3\x34\x85\x39\x84\xa7\x28\x0b\xd3"
++	"\xfd\xfb\x4b\x7a\xea\xe7\xd2\x3c\xd3\xda\x15\x68\xbc\x73\xd3\x22"
++	"\x6f\xd7\x72\x5b\x2b\x66\xee\xa8\x0d\x54\xe8\x5b\xf9\x92\x96\x92"
++	"\x93\xea\x97\x4a\xc7\x43\x10\x46\x35\xc5\xc0\x60\x8a\xe4\xc1\xb5"
++	"\x36\xc6\xae\xed\xf7\x70\xa5\x86\x99\x3d\x91\xf8\xfd\x4e\x53\xeb"
++	"\xbb\xbd\x6d\xec\x8f\xd7\x89\x3d\x31\x7f\xd7\x78\xba\x50\xbb\x74"
++	"\x9d\xf6\xac\x4e\xb9\x03\x9c\x79\xd5\xe1\xbd\x17\x68\xd9\x13\x0b"
++	"\x45\x75\x88\x00\x1d\x1f\xae\x73\x6a\x1d\x5c\x6e\x44\x9f\xa6\xfa"
++	"\x4e\xd8\x25\x8b\xc0\xbc\xb2\x99\xe3\x17\x24\xb3\x23\xe2\x48\x8b"
++	"\xfa\x22\xe7\x7e\x8f\xe6\x3f\x5f\x55\x0d\x75\xd3\x51\x0b\xd7\xed"
++	"\xd3\x6f\x97\x3b\x85\x42\x80\x7e\x5f\xdc\x1b\xd6\xba\xee\xc4\x80"
++	"\xce\x06\xa9\x15\x8c\x97\x5f\x40\x69\xb2\x4d\xc5\xb2\x5c\x1e\x01"
++	"\x87\x7e\xe0\x36\x6d\x78\x80\x4e\x3c\x02\xec\x90\x1d\x11\x81\x74"
++	"\xa5\x8b\xa4\xa0\x56\x06\xd5\x79\x72\x85\x57\x3b\xb2\x2e\xae\x90"
++	"\x18\x8d\x91\xb2\x0e\x44\x19\xaa\xb4\xcc\x08\xed\x46\xfa\xd7\x2b"
++	"\x78\x58\x72\x5d\xbb\x5e\x49\xe7\xee\xf3\x8a\x9d\x22\xa4\x19\xc8"
++	"\xe7\x08\xc3\x90\x9b\x35\x9a\xa4\x25\x8c\x4b\x9b\xa7\xf8\xbf\x81"
++	"\xf5\xdf\x22\x66\xf1\x7e\x9f\x66\x3d\xbb\xfa\x73\x73\x4d\xfd\x67"
++	"\x7b\xf4\xce\xc3\x62\x2e\x6f\xbb\x0c\xa2\xdc\x69\xfc\x8a\x17\x0e"
++	"\x3a\x9e\x83\x46\xd7\xe3\x5e\x65\x86\xc0\x51\x00\xbb\x91\xe3\xe1"
++	"\xc1\x16\xc4\xe9\x65\x5c\x14\x3e\x44\x6a\x6b\xd1\x1e\xb0\x36\xdd"
++	"\x0b\x7d\x8a\xeb\xaf\x58\x5b\x64\x3f\x38\xed\x52\x76\xe8\x46\xf7"
++	"\x86\x84\xb3\x93\xb1\x0b\xe5\xfd\xfd\x0d\xe9\x6d\xe4\xf1\x1b\x1d"
++	"\x56\xb4\x34\xe4\x6a\xf5\xa4\x9c\x2c\xc9\x64\x94\xc1\xf5\x79\x6d"
++	"\x12\x96\xf3\x47\xc5\x48\xa8\xdb\xd8\x95\x64\x29\xcf\xf6\x88\xf1"
++	"\x95\x7a\x98\xe8\xbc\x27\x19\xce\x73\x61\xd1\xb8\xc6\x31\x8c\xe7"
++	"\x39\xce\x77\x9e\xbc\xc6\x31\x8c\x63\xf3\x9c\xe7\x39\xc6\x31\x8f"
++	"\xf7\xce\x7e\x1e\x3b\x7f\x0f\x0f\x0f\x13\x57\xb9\x0a\xe1\x0b\x64"
++	"\x5f\x58\x40\xc6\xc7\x7a\x4b\xf2\x3d\xbc\x71\xf4\xa7\xd2\xca\x14"
++	"\xe2\x98\x1a\x30\x1e\xe0\x26\x5a\x6a\xf0\x9c\x67\x38\x66\x00\xb8"
++	"\x72\xe6\xbe\xac\xfe\x12\xd3\x0b\x56\x73\x8c\x63\xc7\x2b\xe1\xe2"
++	"\xe8\xdd\x7b\xff\x00\xd8\xe5\x23\x6c\xce\xa8\x69\xcf\x5e\x3a\xef"
++	"\x77\xea\xe5\xab\x0e\x82\xdb\xd9\xed\x7a\x9e\xb8\x6d\x51\x32\xdb"
++	"\x79\xc3\x36\x9a\x2d\xa3\x50\x39\x65\x0a\x63\x0e\xe5\xd4\x39\x12"
++	"\xbf\x8b\x98\xa4\xa1\x2d\xad\xb3\xcf\x65\x6a\x43\x78\xb3\x3b\x07"
++	"\xd8\xd5\xea\xae\x76\xad\x6f\xf5\xff\x00\xca\x93\xab\x96\xb0\x64"
++	"\xeb\xd6\x4a\xd5\x87\xba\xec\x24\x60\x97\x06\x76\x03\xe3\x4c\x07"
++	"\x29\x11\x8e\x34\x25\x02\x64\x29\xf0\x25\x48\x85\x3a\x33\x8b\x7a"
++	"\x3c\x86\x1e\x75\xa5\x61\xc6\x97\x9f\x8d\x25\xf5\xc9\xcd\xde\xc9"
++	"\x7d\x77\xf2\xc8\x7e\x70\xaf\x73\x5f\x2d\xec\xa2\x51\x2d\x96\xfb"
++	"\x89\xad\x80\x57\xb2\x36\x1d\x7d\x83\x45\xac\xf3\xdb\xcc\x6c\x31"
++	"\x4f\xcf\x30\x58\xd0\x12\x28\x90\x50\x42\x86\xfb\x48\x16\x3c\xc5"
++	"\x9c\xf8\xe7\xcc\x29\x88\xb3\x4a\x4b\x4e\x6c\xbc\xdb\xc7\xbb\xe9"
++	"\xb6\xa0\x8b\x11\xa1\x7d\x73\xd7\xe9\xbf\x7e\xc2\x6c\x10\x8d\xee"
++	"\x9d\xef\x63\x3a\xe0\xf5\xbe\x8c\x3e\xa1\xc7\xc5\xd1\x00\x44\x1e"
++	"\xf3\x51\xf2\xe2\xb0\xe3\xb5\x13\x7f\x32\xf1\x8c\xa6\x22\xfe\x1f"
++	"\x49\x4d\xbb\xcf\x3a\x5d\xed\x4c\xd2\xfc\x85\xed\x23\xd6\xc7\x50"
++	"\xb6\x5b\x3a\x16\x83\xb8\x6f\xfd\x32\x3f\xaa\x36\x34\xbb\xf5\x96"
++	"\xa9\xab\xcf\x9f\x8f\xac\xc3\xca\xd5\x8b\xd8\x48\x9e\x79\xaa\x30"
++	"\x87\xca\x58\x4d\x59\x96\xb9\x4f\xc5\x1b\x1c\xd2\xda\x5b\xe6\x57"
++	"\x29\xa1\x28\x7a\x2b\x5b\xff\x00\x12\x2f\x5e\x3f\xf3\xbb\x8e\x7f"
++	"\xec\xc6\x98\xff\x00\xed\x3c\xa6\xdd\xa9\xdc\x7e\xa0\xf7\xd6\x99"
++	"\x31\xa2\xf7\xaf\x6b\xe9\x82\x74\x4b\x3d\x8f\x5e\x58\x0b\x33\xab"
++	"\xef\xc3\xaf\x84\x64\xb9\xae\xb6\x25\x5f\x62\x8f\x1c\xe3\xf4\x51"
++	"\xb7\x96\xe3\x0e\x30\x42\xa9\x18\x39\xbf\x9e\x2a\x1f\x74\x19\x02"
++	"\x2d\x43\x93\x06\x63\xb1\xa7\x47\x6a\xfa\x9b\x6c\xeb\xbd\xe9\xae"
++	"\x6a\x7b\x6f\x53\x5a\x60\x5d\xb5\xcd\xe8\x67\xeb\x35\x3b\x48\xc6"
++	"\xa6\xb3\x04\xc8\xdf\xb8\x7e\x26\x64\xb0\xc9\x18\xb0\xa7\x33\xf2"
++	"\x4a\x8b\x22\x3b\x8d\x4b\x89\x1d\xf6\x9d\x65\xc4\x38\xd2\x54\x9c"
++	"\xe3\xcd\x89\xe1\xe1\xe6\x3e\x70\x81\x45\x1d\x18\xf9\x31\x83\xc8"
++	"\xbe\x14\x82\x4b\x87\x7a\x74\x28\xd2\xdd\x12\x55\x30\xe6\x0e\x49"
++	"\x31\x8e\x48\x69\xc5\xc0\x20\x91\xe4\x48\x41\x4c\xd8\xb9\x6a\x4e"
++	"\x21\xce\x99\x1b\x0e\xfd\x09\x4f\xa1\x79\x0f\x0f\x0f\x0f\x0f\x0f"
++	"\x0f\x3f\x3c\xb8\x71\x27\xc7\x72\x24\xe8\xb1\xa6\xc5\x7b\x18\xc3"
++	"\xb1\xa5\xb0\xd4\x98\xee\xe3\x19\xc6\x71\x87\x19\x79\x2b\x6d\x78"
++	"\xc6\x71\x8c\xe3\x0a\x4e\x71\x8c\xe3\x19\xfe\x38\xf2\x3b\xfb\x8b"
++	"\x48\xfe\x4e\xaa\xff\x00\x4f\x08\xff\x00\xc7\xe1\xfb\x8b\x48\xfe"
++	"\x4e\xaa\xff\x00\x4f\x08\xff\x00\xc7\xe4\x95\x86\x18\x8a\xcb\x31"
++	"\xa3\x32\xd4\x78\xf1\xdb\x43\x2c\x47\x61\xb4\x32\xcb\x2c\xb4\x9c"
++	"\x21\xb6\x99\x69\xbc\x25\xb6\xdb\x6d\x18\xc2\x10\xda\x12\x94\xa1"
++	"\x38\xc2\x53\x8c\x63\x18\xc7\x9d\xbe\x7f\xff\xd9"
++	;
+diff -urN php5-5.3.10.orig//main/suhosin_patch.c php5-5.3.10/main/suhosin_patch.c
+--- php5-5.3.10.orig//main/suhosin_patch.c	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/main/suhosin_patch.c	2012-02-02 22:11:23.000000000 +0000
+@@ -0,0 +1,470 @@
++/*
++   +----------------------------------------------------------------------+
++   | Suhosin Patch for PHP                                                |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 2004-2010 Stefan Esser                                 |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.02 of the PHP license,      |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available at through the world-wide-web at                           |
++   | http://www.php.net/license/2_02.txt.                                 |
++   | If you did not receive a copy of the PHP license and are unable to   |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@php.net so we can mail you a copy immediately.               |
++   +----------------------------------------------------------------------+
++   | Author: Stefan Esser <sesser@hardened-php.net>                       |
++   +----------------------------------------------------------------------+
++ */
++/* $Id: suhosin_patch.c,v 1.2 2004/11/21 09:38:52 ionic Exp $ */
++
++#include "php.h"
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/mman.h>
++
++#if HAVE_UNISTD_H
++#include <unistd.h>
++#endif
++#include "SAPI.h"
++#include "php_globals.h"
++
++#if SUHOSIN_PATCH
++
++#ifdef HAVE_SYS_SOCKET_H
++#include <sys/socket.h>
++#endif
++
++#if defined(PHP_WIN32) || defined(__riscos__) || defined(NETWARE)
++#undef AF_UNIX
++#endif
++
++#if defined(AF_UNIX)
++#include <sys/un.h>
++#endif
++
++#define SYSLOG_PATH  "/dev/log"
++
++#ifdef PHP_WIN32
++static HANDLE log_source = 0;
++#endif
++
++#include "snprintf.h"
++
++#include "suhosin_patch.h"
++
++#ifdef ZTS
++#include "suhosin_globals.h"
++int suhosin_patch_globals_id;
++#else
++struct _suhosin_patch_globals suhosin_patch_globals;
++#endif
++
++static char *suhosin_config = NULL;
++
++static zend_intptr_t SUHOSIN_POINTER_GUARD = 0;
++
++static void php_security_log(int loglevel, char *fmt, ...);
++
++static void suhosin_patch_globals_ctor(suhosin_patch_globals_struct *suhosin_patch_globals TSRMLS_DC)
++{
++	memset(suhosin_patch_globals, 0, sizeof(*suhosin_patch_globals));
++}
++
++ZEND_API char suhosin_get_config(int element)
++{
++        return ((char *)SUHOSIN_MANGLE_PTR(suhosin_config))[element];
++}
++
++static void suhosin_set_config(int element, char value)
++{
++        ((char *)SUHOSIN_MANGLE_PTR(suhosin_config))[element] = value;
++}
++
++static void suhosin_read_configuration_from_environment()
++{
++        char *tmp;
++        
++        /* check if canary protection should be activated or not */
++        tmp = getenv("SUHOSIN_MM_USE_CANARY_PROTECTION");
++        /* default to activated */
++        suhosin_set_config(SUHOSIN_MM_USE_CANARY_PROTECTION, 1);
++        if (tmp) {
++                int flag = zend_atoi(tmp, 0);
++                suhosin_set_config(SUHOSIN_MM_USE_CANARY_PROTECTION, flag);
++        }
++        
++        /* check if free memory should be overwritten with 0xFF or not */
++        tmp = getenv("SUHOSIN_MM_DESTROY_FREE_MEMORY");
++        /* default to deactivated */
++        suhosin_set_config(SUHOSIN_MM_DESTROY_FREE_MEMORY, 0);
++        if (tmp) {
++                int flag = zend_atoi(tmp, 0);
++                suhosin_set_config(SUHOSIN_MM_DESTROY_FREE_MEMORY, flag);
++        }
++        
++        /* check if canary violations should be ignored */
++        tmp = getenv("SUHOSIN_MM_IGNORE_CANARY_VIOLATION");
++        /* default to NOT ignore */
++        suhosin_set_config(SUHOSIN_MM_IGNORE_CANARY_VIOLATION, 0);
++        if (tmp) {
++                int flag = zend_atoi(tmp, 0);
++                suhosin_set_config(SUHOSIN_MM_IGNORE_CANARY_VIOLATION, flag);
++        }
++
++        /* check if invalid hashtable destructors should be ignored */
++        tmp = getenv("SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR");
++        /* default to NOT ignore */
++        suhosin_set_config(SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR, 0);
++        if (tmp) {
++                int flag = zend_atoi(tmp, 0);
++                suhosin_set_config(SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR, flag);
++        }
++
++        /* check if invalid linkedlist destructors should be ignored */
++        tmp = getenv("SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR");
++        /* default to NOT ignore */
++        suhosin_set_config(SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR, 0);
++        if (tmp) {
++                int flag = zend_atoi(tmp, 0);
++                suhosin_set_config(SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR, flag);
++        }
++        
++        suhosin_set_config(SUHOSIN_CONFIG_SET, 1);
++}
++
++static void suhosin_write_protect_configuration()
++{
++        /* check return value of mprotect() to ensure memory is read only now */
++        if (mprotect(SUHOSIN_MANGLE_PTR(suhosin_config), sysconf(_SC_PAGESIZE), PROT_READ) != 0) {
++                perror("suhosin");
++                _exit(1);
++        }
++}
++
++PHPAPI void suhosin_startup()
++{
++#ifdef ZTS
++	ts_allocate_id(&suhosin_patch_globals_id, sizeof(suhosin_patch_globals_struct), (ts_allocate_ctor) suhosin_patch_globals_ctor, NULL);
++#else
++	suhosin_patch_globals_ctor(&suhosin_patch_globals TSRMLS_CC);
++#endif
++	zend_suhosin_log = php_security_log;
++	
++	/* get the pointer guardian and ensure low 3 bits are 1 */
++        if (SUHOSIN_POINTER_GUARD == 0) {
++                zend_canary(&SUHOSIN_POINTER_GUARD, sizeof(SUHOSIN_POINTER_GUARD));
++                SUHOSIN_POINTER_GUARD |= 7;
++        }
++	
++	if (!suhosin_config) {
++#ifndef MAP_ANONYMOUS
++#define MAP_ANONYMOUS MAP_ANON
++#endif
++		suhosin_config = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
++		if (suhosin_config == MAP_FAILED) {
++			perror("suhosin");
++			_exit(1);
++		}
++                suhosin_config = SUHOSIN_MANGLE_PTR(suhosin_config);
++	}
++	if (!SUHOSIN_CONFIG(SUHOSIN_CONFIG_SET)) {
++        suhosin_read_configuration_from_environment();
++        suhosin_write_protect_configuration();
++    }
++}
++
++static char *loglevel2string(int loglevel)
++{
++	switch (loglevel) {
++	    case S_FILES:
++		return "FILES";
++	    case S_INCLUDE:
++		return "INCLUDE";
++	    case S_MEMORY:
++		return "MEMORY";
++	    case S_MISC:
++		return "MISC";
++		case S_SESSION:
++		return "SESSION";
++	    case S_SQL:
++		return "SQL";
++	    case S_EXECUTOR:
++		return "EXECUTOR";
++	    case S_VARS:
++		return "VARS";
++	    default:
++		return "UNKNOWN";    
++	}
++}
++
++static void php_security_log(int loglevel, char *fmt, ...)
++{
++	int s, r, i=0;
++#if defined(AF_UNIX)
++	struct sockaddr_un saun;
++#endif
++#ifdef PHP_WIN32
++	LPTSTR strs[2];
++	unsigned short etype;
++	DWORD evid;
++#endif
++	char buf[4096+64];
++	char error[4096+100];
++	char *ip_address;
++	char *fname;
++	char *alertstring;
++	int lineno;
++	va_list ap;
++	TSRMLS_FETCH();
++
++	/*SDEBUG("(suhosin_log) loglevel: %d log_syslog: %u - log_sapi: %u - log_script: %u", loglevel, SPG(log_syslog), SPG(log_sapi), SPG(log_script));*/
++	
++	if (SPG(log_use_x_forwarded_for)) {
++		ip_address = sapi_getenv("HTTP_X_FORWARDED_FOR", 20 TSRMLS_CC);
++		if (ip_address == NULL) {
++			ip_address = "X-FORWARDED-FOR not set";
++		}
++	} else {
++		ip_address = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC);
++		if (ip_address == NULL) {
++			ip_address = "REMOTE_ADDR not set";
++		}
++	}
++	
++	
++	va_start(ap, fmt);
++	ap_php_vsnprintf(error, sizeof(error), fmt, ap);
++	va_end(ap);
++	while (error[i]) {
++		if (error[i] < 32) error[i] = '.';
++		i++;
++	}
++	
++/*	if (SPG(simulation)) {
++		alertstring = "ALERT-SIMULATION";
++	} else { */
++		alertstring = "ALERT";
++/*	}*/
++	
++	if (zend_is_executing(TSRMLS_C)) {
++		if (EG(current_execute_data)) {
++			lineno = EG(current_execute_data)->opline->lineno;
++			fname = EG(current_execute_data)->op_array->filename;
++		} else {
++			lineno = zend_get_executed_lineno(TSRMLS_C);
++			fname = zend_get_executed_filename(TSRMLS_C);
++		}
++		ap_php_snprintf(buf, sizeof(buf), "%s - %s (attacker '%s', file '%s', line %u)", alertstring, error, ip_address, fname, lineno);
++	} else {
++		fname = sapi_getenv("SCRIPT_FILENAME", 15 TSRMLS_CC);
++		if (fname==NULL) {
++			fname = "unknown";
++		}
++		ap_php_snprintf(buf, sizeof(buf), "%s - %s (attacker '%s', file '%s')", alertstring, error, ip_address, fname);
++	}
++			
++	/* Syslog-Logging disabled? */
++	if (((SPG(log_syslog)|S_INTERNAL) & loglevel)==0) {
++		goto log_sapi;
++	}	
++	
++#if defined(AF_UNIX)
++	ap_php_snprintf(error, sizeof(error), "<%u>suhosin[%u]: %s\n", (unsigned int)(SPG(log_syslog_facility)|SPG(log_syslog_priority)),getpid(),buf);
++
++	s = socket(AF_UNIX, SOCK_DGRAM, 0);
++	if (s == -1) {
++		goto log_sapi;
++	}
++	
++	memset(&saun, 0, sizeof(saun));
++	saun.sun_family = AF_UNIX;
++	strcpy(saun.sun_path, SYSLOG_PATH);
++	/*saun.sun_len = sizeof(saun);*/
++	
++	r = connect(s, (struct sockaddr *)&saun, sizeof(saun));
++	if (r) {
++		close(s);
++    		s = socket(AF_UNIX, SOCK_STREAM, 0);
++		if (s == -1) {
++			goto log_sapi;
++		}
++	
++		memset(&saun, 0, sizeof(saun));
++		saun.sun_family = AF_UNIX;
++		strcpy(saun.sun_path, SYSLOG_PATH);
++		/*saun.sun_len = sizeof(saun);*/
++
++		r = connect(s, (struct sockaddr *)&saun, sizeof(saun));
++		if (r) { 
++			close(s);
++			goto log_sapi;
++		}
++	}
++	send(s, error, strlen(error), 0);
++	
++	close(s);
++#endif
++#ifdef PHP_WIN32
++	ap_php_snprintf(error, sizeof(error), "suhosin[%u]: %s", getpid(),buf);
++
++	switch (SPG(log_syslog_priority)) {			/* translate UNIX type into NT type */
++		case 1: /*LOG_ALERT:*/
++			etype = EVENTLOG_ERROR_TYPE;
++			break;
++		case 6: /*LOG_INFO:*/
++			etype = EVENTLOG_INFORMATION_TYPE;
++			break;
++		default:
++			etype = EVENTLOG_WARNING_TYPE;
++	}
++	evid = loglevel;
++	strs[0] = error;
++	/* report the event */
++	if (log_source == NULL) {
++		log_source = RegisterEventSource(NULL, "Suhosin-Patch-" SUHOSIN_PATCH_VERSION);
++	}
++	ReportEvent(log_source, etype, (unsigned short) SPG(log_syslog_priority), evid, NULL, 1, 0, strs, NULL);
++	
++#endif
++log_sapi:
++	/* SAPI Logging activated? */
++	/*SDEBUG("(suhosin_log) log_syslog: %u - log_sapi: %u - log_script: %u - log_phpscript: %u", SPG(log_syslog), SPG(log_sapi), SPG(log_script), SPG(log_phpscript));*/
++	if (((SPG(log_sapi)|S_INTERNAL) & loglevel)!=0) {
++		sapi_module.log_message(buf);
++	}
++
++/*log_script:*/
++	/* script logging activaed? */
++	if (((SPG(log_script) & loglevel)!=0) && SPG(log_scriptname)!=NULL) {
++		char cmd[8192], *cmdpos, *bufpos;
++		FILE *in;
++		int space;
++		
++		ap_php_snprintf(cmd, sizeof(cmd), "%s %s \'", SPG(log_scriptname), loglevel2string(loglevel));
++		space = sizeof(cmd) - strlen(cmd);
++		cmdpos = cmd + strlen(cmd);
++		bufpos = buf;
++		if (space <= 1) return;
++		while (space > 2 && *bufpos) {
++			if (*bufpos == '\'') {
++				if (space<=5) break;
++				*cmdpos++ = '\'';
++				*cmdpos++ = '\\';
++				*cmdpos++ = '\'';
++				*cmdpos++ = '\'';
++				bufpos++;
++				space-=4;
++			} else {
++				*cmdpos++ = *bufpos++;
++				space--;
++			}
++		}
++		*cmdpos++ = '\'';
++		*cmdpos = 0;
++		
++		if ((in=VCWD_POPEN(cmd, "r"))==NULL) {
++			php_security_log(S_INTERNAL, "Unable to execute logging shell script: %s", SPG(log_scriptname));
++			return;
++		}
++		/* read and forget the result */
++		while (1) {
++			int readbytes = fread(cmd, 1, sizeof(cmd), in);
++			if (readbytes<=0) {
++				break;
++			}
++		}
++		pclose(in);
++	}
++/*log_phpscript:*/
++	if ((SPG(log_phpscript) & loglevel)!=0 && EG(in_execution) && SPG(log_phpscriptname) && SPG(log_phpscriptname)[0]) {
++		zend_file_handle file_handle;
++		zend_op_array *new_op_array;
++		zval *result = NULL;
++		
++		/*long orig_execution_depth = SPG(execution_depth);*/
++		zend_bool orig_safe_mode = PG(safe_mode);
++		char *orig_basedir = PG(open_basedir);
++		
++		char *phpscript = SPG(log_phpscriptname);
++/*SDEBUG("scriptname %s", SPG(log_phpscriptname));`*/
++#ifdef ZEND_ENGINE_2
++		if (zend_stream_open(phpscript, &file_handle TSRMLS_CC) == SUCCESS) {
++#else
++		if (zend_open(phpscript, &file_handle) == SUCCESS && ZEND_IS_VALID_FILE_HANDLE(&file_handle)) {
++			file_handle.filename = phpscript;
++			file_handle.free_filename = 0;
++#endif		
++			if (!file_handle.opened_path) {
++				file_handle.opened_path = estrndup(phpscript, strlen(phpscript));
++			}
++			new_op_array = zend_compile_file(&file_handle, ZEND_REQUIRE TSRMLS_CC);
++			zend_destroy_file_handle(&file_handle TSRMLS_CC);
++			if (new_op_array) {
++				HashTable *active_symbol_table = EG(active_symbol_table);
++				zval *zerror, *zerror_class;
++				
++				if (active_symbol_table == NULL) {
++					active_symbol_table = &EG(symbol_table);
++				}
++				EG(return_value_ptr_ptr) = &result;
++				EG(active_op_array) = new_op_array;
++				
++				MAKE_STD_ZVAL(zerror);
++				MAKE_STD_ZVAL(zerror_class);
++				ZVAL_STRING(zerror, buf, 1);
++				ZVAL_LONG(zerror_class, loglevel);
++
++				zend_hash_update(active_symbol_table, "SUHOSIN_ERROR", sizeof("SUHOSIN_ERROR"), (void **)&zerror, sizeof(zval *), NULL);
++				zend_hash_update(active_symbol_table, "SUHOSIN_ERRORCLASS", sizeof("SUHOSIN_ERRORCLASS"), (void **)&zerror_class, sizeof(zval *), NULL);
++				
++				/*SPG(execution_depth) = 0;*/
++				if (SPG(log_phpscript_is_safe)) {
++					PG(safe_mode) = 0;
++					PG(open_basedir) = NULL;
++				}
++				
++				zend_execute(new_op_array TSRMLS_CC);
++				
++				/*SPG(execution_depth) = orig_execution_depth;*/
++				PG(safe_mode) = orig_safe_mode;
++				PG(open_basedir) = orig_basedir;
++				
++#ifdef ZEND_ENGINE_2
++				destroy_op_array(new_op_array TSRMLS_CC);
++#else
++				destroy_op_array(new_op_array);
++#endif
++				efree(new_op_array);
++#ifdef ZEND_ENGINE_2
++				if (!EG(exception))
++#endif			
++				{
++					if (EG(return_value_ptr_ptr)) {
++						zval_ptr_dtor(EG(return_value_ptr_ptr));
++						EG(return_value_ptr_ptr) = NULL;
++					}
++				}
++			} else {
++				php_security_log(S_INTERNAL, "Unable to execute logging PHP script: %s", SPG(log_phpscriptname));
++				return;
++			}
++		} else {
++			php_security_log(S_INTERNAL, "Unable to execute logging PHP script: %s", SPG(log_phpscriptname));
++			return;
++		}
++	}
++
++}
++
++
++#endif
++
++/*
++ * Local variables:
++ * tab-width: 4
++ * c-basic-offset: 4
++ * End:
++ * vim600: sw=4 ts=4 fdm=marker
++ * vim<600: sw=4 ts=4
++ */
+diff -urN php5-5.3.10.orig//main/suhosin_patch.h php5-5.3.10/main/suhosin_patch.h
+--- php5-5.3.10.orig//main/suhosin_patch.h	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/main/suhosin_patch.h	2012-02-02 22:11:23.000000000 +0000
+@@ -0,0 +1,59 @@
++/*
++   +----------------------------------------------------------------------+
++   | Suhosin Patch for PHP                                                |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 2004-2010 Stefan Esser                                 |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.02 of the PHP license,      |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available at through the world-wide-web at                           |
++   | http://www.php.net/license/2_02.txt.                                 |
++   | If you did not receive a copy of the PHP license and are unable to   |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@php.net so we can mail you a copy immediately.               |
++   +----------------------------------------------------------------------+
++   | Author: Stefan Esser <stefan.esser@sektioneins.de>                   |
++   +----------------------------------------------------------------------+
++ */
++
++#ifndef SUHOSIN_PATCH_H
++#define SUHOSIN_PATCH_H
++
++#if SUHOSIN_PATCH
++
++#include "zend.h"
++
++#define SUHOSIN_PATCH_VERSION "0.9.10"
++
++#define SUHOSIN_LOGO_GUID "SUHO8567F54-D428-14d2-A769-00DA302A5F18"
++
++#define SUHOSIN_CONFIG(idx) (suhosin_get_config(idx))
++
++#define SUHOSIN_MM_USE_CANARY_PROTECTION        0
++#define SUHOSIN_MM_DESTROY_FREE_MEMORY          1
++#define SUHOSIN_MM_IGNORE_CANARY_VIOLATION      2
++#define SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR    3
++#define SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR    4
++
++#define SUHOSIN_CONFIG_SET                      100
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/mman.h>
++
++#if defined(DARWIN)
++#include <mach/vm_param.h>
++#endif
++
++#define SUHOSIN_MANGLE_PTR(ptr)   (ptr==NULL?NULL:((void *)((zend_intptr_t)(ptr)^SUHOSIN_POINTER_GUARD)))
++
++#endif
++
++#endif /* SUHOSIN_PATCH_H */
++
++/*
++ * Local variables:
++ * tab-width: 4
++ * c-basic-offset: 4
++ * End:
++ */
+diff -urN php5-5.3.10.orig//main/suhosin_patch.m4 php5-5.3.10/main/suhosin_patch.m4
+--- php5-5.3.10.orig//main/suhosin_patch.m4	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/main/suhosin_patch.m4	2012-02-02 22:11:23.000000000 +0000
+@@ -0,0 +1,8 @@
++dnl
++dnl $Id: suhosin_patch.m4,v 1.1 2004/11/14 13:24:24 ionic Exp $
++dnl
++dnl This file contains Suhosin Patch for PHP specific autoconf functions.
++dnl
++
++AC_DEFINE(SUHOSIN_PATCH, 1, [Suhosin Patch])
++
+diff -urN php5-5.3.10.orig//sapi/apache/mod_php5.c php5-5.3.10/sapi/apache/mod_php5.c
+--- php5-5.3.10.orig//sapi/apache/mod_php5.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/apache/mod_php5.c	2012-02-02 22:11:23.000000000 +0000
+@@ -969,7 +969,11 @@
+ 	{
+ 		TSRMLS_FETCH();
+ 		if (PG(expose_php)) {
++#if SUHOSIN_PATCH
++			ap_add_version_component("PHP/" PHP_VERSION " with Suhosin-Patch");
++#else
+ 			ap_add_version_component("PHP/" PHP_VERSION);
++#endif
+ 		}
+ 	}
+ #endif
+diff -urN php5-5.3.10.orig//sapi/apache2filter/sapi_apache2.c php5-5.3.10/sapi/apache2filter/sapi_apache2.c
+--- php5-5.3.10.orig//sapi/apache2filter/sapi_apache2.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/apache2filter/sapi_apache2.c	2012-02-02 22:11:23.000000000 +0000
+@@ -583,7 +583,11 @@
+ {
+ 	TSRMLS_FETCH();
+ 	if (PG(expose_php)) {
++#if SUHOSIN_PATCH
++		ap_add_version_component(p, "PHP/" PHP_VERSION " with Suhosin-Patch");
++#else
+ 		ap_add_version_component(p, "PHP/" PHP_VERSION);
++#endif
+ 	}
+ }
+ 
+diff -urN php5-5.3.10.orig//sapi/apache2handler/sapi_apache2.c php5-5.3.10/sapi/apache2handler/sapi_apache2.c
+--- php5-5.3.10.orig//sapi/apache2handler/sapi_apache2.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/apache2handler/sapi_apache2.c	2012-02-02 22:11:23.000000000 +0000
+@@ -407,7 +407,11 @@
+ {
+ 	TSRMLS_FETCH();
+ 	if (PG(expose_php)) {
++#if SUHOSIN_PATCH
++		ap_add_version_component(p, "PHP/" PHP_VERSION " with Suhosin-Patch");
++#else
+ 		ap_add_version_component(p, "PHP/" PHP_VERSION);
++#endif
+ 	}
+ }
+ 
+diff -urN php5-5.3.10.orig//sapi/apache_hooks/mod_php5.c php5-5.3.10/sapi/apache_hooks/mod_php5.c
+--- php5-5.3.10.orig//sapi/apache_hooks/mod_php5.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/apache_hooks/mod_php5.c	2012-02-02 22:11:23.000000000 +0000
+@@ -1256,7 +1256,11 @@
+ 	{
+ 		TSRMLS_FETCH();
+ 		if (PG(expose_php)) {
++#if SUHOSIN_PATCH
++			ap_add_version_component("PHP/" PHP_VERSION " with Suhosin-Patch");
++#else
+ 			ap_add_version_component("PHP/" PHP_VERSION);
++#endif
+ 		}
+ 	}
+ #endif
+diff -urN php5-5.3.10.orig//sapi/cgi/cgi_main.c php5-5.3.10/sapi/cgi/cgi_main.c
+--- php5-5.3.10.orig//sapi/cgi/cgi_main.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/cgi/cgi_main.c	2012-02-02 22:11:23.000000000 +0000
+@@ -1932,11 +1932,19 @@
+ 								SG(headers_sent) = 1;
+ 								SG(request_info).no_headers = 1;
+ 							}
++#if SUHOSIN_PATCH
++#if ZEND_DEBUG
++							php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++#else
++							php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++#endif
++#else
+ #if ZEND_DEBUG
+ 							php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+ #else
+ 							php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+ #endif
++#endif
+ 							php_request_shutdown((void *) 0);
+ 							fcgi_shutdown();
+ 							exit_status = 0;
+diff -urN php5-5.3.10.orig//sapi/cli/php_cli.c php5-5.3.10/sapi/cli/php_cli.c
+--- php5-5.3.10.orig//sapi/cli/php_cli.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/cli/php_cli.c	2012-02-02 22:11:23.000000000 +0000
+@@ -826,7 +826,11 @@
+ 				}
+ 
+ 				request_started = 1;
+-				php_printf("PHP %s (%s) (built: %s %s) %s\nCopyright (c) 1997-2012 The PHP Group\n%s",
++				php_printf("PHP %s "
++#if SUHOSIN_PATCH
++					"with Suhosin-Patch "
++#endif
++					"(%s) (built: %s %s) %s\nCopyright (c) 1997-2012 The PHP Group\n%s",
+ 					PHP_VERSION, sapi_module.name, __DATE__, __TIME__,
+ #if ZEND_DEBUG && defined(HAVE_GCOV)
+ 					"(DEBUG GCOV)",
+diff -urN php5-5.3.10.orig//sapi/litespeed/lsapi_main.c php5-5.3.10/sapi/litespeed/lsapi_main.c
+--- php5-5.3.10.orig//sapi/litespeed/lsapi_main.c	2011-12-31 18:15:06.000000000 +0000
++++ php5-5.3.10/sapi/litespeed/lsapi_main.c	2012-02-02 22:11:23.000000000 +0000
+@@ -718,11 +718,19 @@
+                 break;
+             case 'v':
+                 if (php_request_startup(TSRMLS_C) != FAILURE) {
++#if SUHOSIN_PATCH
++  #if ZEND_DEBUG
++					php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2011 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++  #else
++					php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2011 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++  #endif
++#else					
+ #if ZEND_DEBUG
+                     php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2004 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+ #else
+                     php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2004 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+ #endif
++#endif
+ #ifdef PHP_OUTPUT_NEWAPI
+                     php_output_end_all(TSRMLS_C);
+ #else
+diff -urN php5-5.3.10.orig//sapi/milter/php_milter.c php5-5.3.10/sapi/milter/php_milter.c
+--- php5-5.3.10.orig//sapi/milter/php_milter.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/sapi/milter/php_milter.c	2012-02-02 22:11:23.000000000 +0000
+@@ -1111,7 +1111,11 @@
+ 				}
+ 				SG(headers_sent) = 1;
+ 				SG(request_info).no_headers = 1;
++#if SUHOSIN_PATCH
++				php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++#else
+ 				php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
++#endif
+ 				php_end_ob_buffers(1 TSRMLS_CC);
+ 				exit(1);
+ 				break;
+diff -urN php5-5.3.10.orig//win32/build/config.w32 php5-5.3.10/win32/build/config.w32
+--- php5-5.3.10.orig//win32/build/config.w32	2011-03-28 10:55:34.000000000 +0000
++++ php5-5.3.10/win32/build/config.w32	2012-02-02 22:11:23.000000000 +0000
+@@ -328,7 +328,7 @@
+ 	zend_stream.c zend_iterators.c zend_interfaces.c zend_objects.c \
+ 	zend_object_handlers.c zend_objects_API.c \
+ 	zend_default_classes.c zend_execute.c zend_strtod.c zend_gc.c zend_closures.c \
+-	zend_float.c");
++	zend_float.c zend_canary.c zend_alloc_canary.c");
+ 
+ if (VCVERS == 1200) {
+ 	AC_DEFINE('ZEND_DVAL_TO_LVAL_CAST_OK', 1);
+@@ -385,6 +385,7 @@
+  
+ AC_DEFINE('HAVE_USLEEP', 1);
+ AC_DEFINE('HAVE_STRCOLL', 1);
++AC_DEFINE('SUHOSIN_PATCH', 1);
+ 
+ /* For snapshot builders, where can we find the additional
+  * files that make up the snapshot template? */
+diff -urN php5-5.3.10.orig//win32/build/config.w32.h.in php5-5.3.10/win32/build/config.w32.h.in
+--- php5-5.3.10.orig//win32/build/config.w32.h.in	2010-11-26 18:25:13.000000000 +0000
++++ php5-5.3.10/win32/build/config.w32.h.in	2012-02-02 22:11:23.000000000 +0000
+@@ -152,6 +152,9 @@
+ /* Win32 supports strcoll */
+ #define HAVE_STRCOLL 1
+ 
++/* Suhosin Patch support */
++#define SUHOSIN_PATCH 1
++
+ /* Win32 supports socketpair by the emulation in win32/sockets.c */
+ #define HAVE_SOCKETPAIR 1
+ #define HAVE_SOCKLEN_T 1
+diff -urN php5-5.3.10.orig//Zend/Makefile.am php5-5.3.10/Zend/Makefile.am
+--- php5-5.3.10.orig//Zend/Makefile.am	2009-03-18 10:18:10.000000000 +0000
++++ php5-5.3.10/Zend/Makefile.am	2012-02-02 22:11:23.000000000 +0000
 @@ -17,7 +17,7 @@
  	zend_objects_API.c zend_ts_hash.c zend_stream.c \
  	zend_default_classes.c \
@@ -10,164 +1314,9 @@ diff -Nura php-5.3.9/Zend/Makefile.am suhosin-patch-5.3.9-0.9.10/Zend/Makefile.a
  
  libZend_la_LDFLAGS =
  libZend_la_LIBADD = @ZEND_EXTRA_LIBS@
-diff -Nura php-5.3.9/Zend/Zend.dsp suhosin-patch-5.3.9-0.9.10/Zend/Zend.dsp
---- php-5.3.9/Zend/Zend.dsp	2009-03-18 11:18:10.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/Zend.dsp	2012-01-11 19:29:07.000000000 +0100
-@@ -247,6 +247,14 @@
- # End Source File
- # Begin Source File
- 
-+SOURCE=.\zend_canary.c
-+# End Source File
-+# Begin Source File
-+
-+SOURCE=.\zend_alloc_canary.c
-+# End Source File
-+# Begin Source File
-+
- SOURCE=.\zend_ts_hash.c
- # End Source File
- # Begin Source File
-diff -Nura php-5.3.9/Zend/ZendTS.dsp suhosin-patch-5.3.9-0.9.10/Zend/ZendTS.dsp
---- php-5.3.9/Zend/ZendTS.dsp	2008-07-14 11:49:03.000000000 +0200
-+++ suhosin-patch-5.3.9-0.9.10/Zend/ZendTS.dsp	2012-01-11 19:29:07.000000000 +0100
-@@ -277,6 +277,14 @@
- # End Source File
- # Begin Source File
- 
-+SOURCE=.\zend_canary.c
-+# End Source File
-+# Begin Source File
-+
-+SOURCE=.\zend_alloc_canary.c
-+# End Source File
-+# Begin Source File
-+
- SOURCE=.\zend_ts_hash.c
- # End Source File
- # Begin Source File
-diff -Nura php-5.3.9/Zend/zend.c suhosin-patch-5.3.9-0.9.10/Zend/zend.c
---- php-5.3.9/Zend/zend.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend.c	2012-01-11 19:29:07.000000000 +0100
-@@ -60,6 +60,10 @@
- ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
- ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
- 
-+#if SUHOSIN_PATCH
-+ZEND_API void (*zend_suhosin_log)(int loglevel, char *fmt, ...);
-+#endif
-+
- void (*zend_on_timeout)(int seconds TSRMLS_DC);
- 
- static void (*zend_message_dispatcher_p)(long message, void *data TSRMLS_DC);
-@@ -88,6 +92,74 @@
- }
- /* }}} */
- 
-+#if SUHOSIN_PATCH
-+static ZEND_INI_MH(OnUpdateSuhosin_log_syslog)
-+{
-+	if (!new_value) {
-+		SPG(log_syslog) = S_ALL & ~S_SQL | S_MEMORY;
-+	} else {
-+		SPG(log_syslog) = atoi(new_value) | S_MEMORY;
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_syslog_facility)
-+{
-+	if (!new_value) {
-+		SPG(log_syslog_facility) = LOG_USER;
-+	} else {
-+		SPG(log_syslog_facility) = atoi(new_value);
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_syslog_priority)
-+{
-+	if (!new_value) {
-+		SPG(log_syslog_priority) = LOG_ALERT;
-+	} else {
-+		SPG(log_syslog_priority) = atoi(new_value);
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_sapi)
-+{
-+	if (!new_value) {
-+		SPG(log_sapi) = S_ALL & ~S_SQL;
-+	} else {
-+		SPG(log_sapi) = atoi(new_value);
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_script)
-+{
-+	if (!new_value) {
-+		SPG(log_script) = S_ALL & ~S_MEMORY;
-+	} else {
-+		SPG(log_script) = atoi(new_value) & (~S_MEMORY) & (~S_INTERNAL);
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_scriptname)
-+{
-+	if (SPG(log_scriptname)) {
-+		pefree(SPG(log_scriptname),1);
-+	}
-+        SPG(log_scriptname) = NULL;
-+	if (new_value) {
-+		SPG(log_scriptname) = pestrdup(new_value,1);
-+	}
-+	return SUCCESS;
-+}
-+static ZEND_INI_MH(OnUpdateSuhosin_log_phpscript)
-+{
-+	if (!new_value) {
-+		SPG(log_phpscript) = S_ALL & ~S_MEMORY;
-+	} else {
-+		SPG(log_phpscript) = atoi(new_value) & (~S_MEMORY) & (~S_INTERNAL);
-+	}
-+	return SUCCESS;
-+}
-+#endif
-+
- ZEND_INI_BEGIN()
- 	ZEND_INI_ENTRY("error_reporting",				NULL,		ZEND_INI_ALL,		OnUpdateErrorReporting)
- 	STD_ZEND_INI_BOOLEAN("zend.enable_gc",				"1",	ZEND_INI_ALL,		OnUpdateGCEnabled,      gc_enabled,     zend_gc_globals,        gc_globals)
-diff -Nura php-5.3.9/Zend/zend.h suhosin-patch-5.3.9-0.9.10/Zend/zend.h
---- php-5.3.9/Zend/zend.h	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend.h	2012-01-11 19:29:07.000000000 +0100
-@@ -627,6 +627,9 @@
- extern int (*zend_vspprintf)(char **pbuf, size_t max_len, const char *format, va_list ap);
- extern ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
- extern ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
-+#if SUHOSIN_PATCH
-+extern ZEND_API void (*zend_suhosin_log)(int loglevel, char *fmt, ...);
-+#endif
- 
- ZEND_API void zend_error(int type, const char *format, ...) ZEND_ATTRIBUTE_FORMAT(printf, 2, 3);
- 
-@@ -774,6 +777,16 @@
- #define DEBUG_BACKTRACE_PROVIDE_OBJECT (1<<0)
- #define DEBUG_BACKTRACE_IGNORE_ARGS    (1<<1)
- 
-+#if SUHOSIN_PATCH
-+#include "suhosin_globals.h"
-+#include "suhosin_patch.h"
-+#include "php_syslog.h"
-+
-+ZEND_API void zend_canary(void *buf, int len);
-+ZEND_API char suhosin_get_config(int element);
-+
-+#endif
-+
- #endif /* ZEND_H */
- 
- /*
-diff -Nura php-5.3.9/Zend/zend_alloc.c suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc.c
---- php-5.3.9/Zend/zend_alloc.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
+--- php5-5.3.10.orig//Zend/zend_alloc.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_alloc.c	2012-02-02 22:11:23.000000000 +0000
 @@ -32,6 +32,10 @@
  # include <unistd.h>
  #endif
@@ -1141,21 +2290,9 @@ diff -Nura php-5.3.9/Zend/zend_alloc.c suhosin-patch-5.3.9-0.9.10/Zend/zend_allo
  
  /*
   * Local variables:
-diff -Nura php-5.3.9/Zend/zend_alloc.h suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc.h
---- php-5.3.9/Zend/zend_alloc.h	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc.h	2012-01-11 19:29:07.000000000 +0100
-@@ -203,6 +203,8 @@
- 
- /* Heap functions */
- typedef struct _zend_mm_heap zend_mm_heap;
-+typedef struct _zend_mm_heap_canary zend_mm_heap_canary;
-+
- 
- ZEND_API zend_mm_heap *zend_mm_startup(void);
- ZEND_API void zend_mm_shutdown(zend_mm_heap *heap, int full_shutdown, int silent TSRMLS_DC);
-diff -Nura php-5.3.9/Zend/zend_alloc_canary.c suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc_canary.c
---- php-5.3.9/Zend/zend_alloc_canary.c	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_alloc_canary.c	2012-01-11 19:30:47.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_alloc_canary.c php5-5.3.10/Zend/zend_alloc_canary.c
+--- php5-5.3.10.orig//Zend/zend_alloc_canary.c	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/Zend/zend_alloc_canary.c	2012-02-02 22:11:23.000000000 +0000
 @@ -0,0 +1,2509 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -3666,9 +4803,110 @@ diff -Nura php-5.3.9/Zend/zend_alloc_canary.c suhosin-patch-5.3.9-0.9.10/Zend/ze
 + * End:
 + */
 +
-diff -Nura php-5.3.9/Zend/zend_canary.c suhosin-patch-5.3.9-0.9.10/Zend/zend_canary.c
---- php-5.3.9/Zend/zend_canary.c	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_canary.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_alloc.h php5-5.3.10/Zend/zend_alloc.h
+--- php5-5.3.10.orig//Zend/zend_alloc.h	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_alloc.h	2012-02-02 22:11:23.000000000 +0000
+@@ -203,6 +203,8 @@
+ 
+ /* Heap functions */
+ typedef struct _zend_mm_heap zend_mm_heap;
++typedef struct _zend_mm_heap_canary zend_mm_heap_canary;
++
+ 
+ ZEND_API zend_mm_heap *zend_mm_startup(void);
+ ZEND_API void zend_mm_shutdown(zend_mm_heap *heap, int full_shutdown, int silent TSRMLS_DC);
+diff -urN php5-5.3.10.orig//Zend/zend.c php5-5.3.10/Zend/zend.c
+--- php5-5.3.10.orig//Zend/zend.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend.c	2012-02-02 22:11:23.000000000 +0000
+@@ -60,6 +60,10 @@
+ ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
+ ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
+ 
++#if SUHOSIN_PATCH
++ZEND_API void (*zend_suhosin_log)(int loglevel, char *fmt, ...);
++#endif
++
+ void (*zend_on_timeout)(int seconds TSRMLS_DC);
+ 
+ static void (*zend_message_dispatcher_p)(long message, void *data TSRMLS_DC);
+@@ -88,6 +92,74 @@
+ }
+ /* }}} */
+ 
++#if SUHOSIN_PATCH
++static ZEND_INI_MH(OnUpdateSuhosin_log_syslog)
++{
++	if (!new_value) {
++		SPG(log_syslog) = S_ALL & ~S_SQL | S_MEMORY;
++	} else {
++		SPG(log_syslog) = atoi(new_value) | S_MEMORY;
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_syslog_facility)
++{
++	if (!new_value) {
++		SPG(log_syslog_facility) = LOG_USER;
++	} else {
++		SPG(log_syslog_facility) = atoi(new_value);
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_syslog_priority)
++{
++	if (!new_value) {
++		SPG(log_syslog_priority) = LOG_ALERT;
++	} else {
++		SPG(log_syslog_priority) = atoi(new_value);
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_sapi)
++{
++	if (!new_value) {
++		SPG(log_sapi) = S_ALL & ~S_SQL;
++	} else {
++		SPG(log_sapi) = atoi(new_value);
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_script)
++{
++	if (!new_value) {
++		SPG(log_script) = S_ALL & ~S_MEMORY;
++	} else {
++		SPG(log_script) = atoi(new_value) & (~S_MEMORY) & (~S_INTERNAL);
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_scriptname)
++{
++	if (SPG(log_scriptname)) {
++		pefree(SPG(log_scriptname),1);
++	}
++        SPG(log_scriptname) = NULL;
++	if (new_value) {
++		SPG(log_scriptname) = pestrdup(new_value,1);
++	}
++	return SUCCESS;
++}
++static ZEND_INI_MH(OnUpdateSuhosin_log_phpscript)
++{
++	if (!new_value) {
++		SPG(log_phpscript) = S_ALL & ~S_MEMORY;
++	} else {
++		SPG(log_phpscript) = atoi(new_value) & (~S_MEMORY) & (~S_INTERNAL);
++	}
++	return SUCCESS;
++}
++#endif
++
+ ZEND_INI_BEGIN()
+ 	ZEND_INI_ENTRY("error_reporting",				NULL,		ZEND_INI_ALL,		OnUpdateErrorReporting)
+ 	STD_ZEND_INI_BOOLEAN("zend.enable_gc",				"1",	ZEND_INI_ALL,		OnUpdateGCEnabled,      gc_enabled,     zend_gc_globals,        gc_globals)
+diff -urN php5-5.3.10.orig//Zend/zend_canary.c php5-5.3.10/Zend/zend_canary.c
+--- php5-5.3.10.orig//Zend/zend_canary.c	1970-01-01 00:00:00.000000000 +0000
++++ php5-5.3.10/Zend/zend_canary.c	2012-02-02 22:11:23.000000000 +0000
 @@ -0,0 +1,66 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -3736,9 +4974,9 @@ diff -Nura php-5.3.9/Zend/zend_canary.c suhosin-patch-5.3.9-0.9.10/Zend/zend_can
 + * vim600: sw=4 ts=4 fdm=marker
 + * vim<600: sw=4 ts=4
 + */
-diff -Nura php-5.3.9/Zend/zend_compile.c suhosin-patch-5.3.9-0.9.10/Zend/zend_compile.c
---- php-5.3.9/Zend/zend_compile.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_compile.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_compile.c php5-5.3.10/Zend/zend_compile.c
+--- php5-5.3.10.orig//Zend/zend_compile.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_compile.c	2012-02-02 22:11:23.000000000 +0000
 @@ -73,6 +73,11 @@
  }
  /* }}} */
@@ -3751,9 +4989,9 @@ diff -Nura php-5.3.9/Zend/zend_compile.c suhosin-patch-5.3.9-0.9.10/Zend/zend_co
  static void build_runtime_defined_function_key(zval *result, const char *name, int name_length TSRMLS_DC) /* {{{ */
  {
  	char char_pos_buf[32];
-diff -Nura php-5.3.9/Zend/zend_compile.h suhosin-patch-5.3.9-0.9.10/Zend/zend_compile.h
---- php-5.3.9/Zend/zend_compile.h	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_compile.h	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_compile.h php5-5.3.10/Zend/zend_compile.h
+--- php5-5.3.10.orig//Zend/zend_compile.h	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_compile.h	2012-02-02 22:11:23.000000000 +0000
 @@ -607,6 +607,11 @@
  ZEND_API int zend_auto_global_disable_jit(const char *varname, zend_uint varname_length TSRMLS_DC);
  ZEND_API size_t zend_dirname(char *path, size_t len);
@@ -3766,9 +5004,9 @@ diff -Nura php-5.3.9/Zend/zend_compile.h suhosin-patch-5.3.9-0.9.10/Zend/zend_co
  int zendlex(znode *zendlval TSRMLS_DC);
  
  /* BEGIN: OPCODES */
-diff -Nura php-5.3.9/Zend/zend_constants.c suhosin-patch-5.3.9-0.9.10/Zend/zend_constants.c
---- php-5.3.9/Zend/zend_constants.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_constants.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_constants.c php5-5.3.10/Zend/zend_constants.c
+--- php5-5.3.10.orig//Zend/zend_constants.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_constants.c	2012-02-02 22:11:23.000000000 +0000
 @@ -113,6 +113,76 @@
  
  	REGISTER_MAIN_LONG_CONSTANT("E_ALL", E_ALL, CONST_PERSISTENT | CONST_CS);
@@ -3846,9 +5084,27 @@ diff -Nura php-5.3.9/Zend/zend_constants.c suhosin-patch-5.3.9-0.9.10/Zend/zend_
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_PROVIDE_OBJECT", DEBUG_BACKTRACE_PROVIDE_OBJECT, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_IGNORE_ARGS", DEBUG_BACKTRACE_IGNORE_ARGS, CONST_PERSISTENT | CONST_CS);
  	/* true/false constants */
-diff -Nura php-5.3.9/Zend/zend_errors.h suhosin-patch-5.3.9-0.9.10/Zend/zend_errors.h
---- php-5.3.9/Zend/zend_errors.h	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_errors.h	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/Zend.dsp php5-5.3.10/Zend/Zend.dsp
+--- php5-5.3.10.orig//Zend/Zend.dsp	2009-03-18 10:18:10.000000000 +0000
++++ php5-5.3.10/Zend/Zend.dsp	2012-02-02 22:11:23.000000000 +0000
+@@ -247,6 +247,14 @@
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File
+diff -urN php5-5.3.10.orig//Zend/zend_errors.h php5-5.3.10/Zend/zend_errors.h
+--- php5-5.3.10.orig//Zend/zend_errors.h	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_errors.h	2012-02-02 22:11:23.000000000 +0000
 @@ -41,6 +41,20 @@
  #define E_ALL (E_ERROR | E_WARNING | E_PARSE | E_NOTICE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE | E_RECOVERABLE_ERROR | E_DEPRECATED | E_USER_DEPRECATED)
  #define E_CORE (E_CORE_ERROR | E_CORE_WARNING)
@@ -3870,9 +5126,39 @@ diff -Nura php-5.3.9/Zend/zend_errors.h suhosin-patch-5.3.9-0.9.10/Zend/zend_err
  #endif /* ZEND_ERRORS_H */
  
  /*
-diff -Nura php-5.3.9/Zend/zend_hash.c suhosin-patch-5.3.9-0.9.10/Zend/zend_hash.c
---- php-5.3.9/Zend/zend_hash.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_hash.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend.h php5-5.3.10/Zend/zend.h
+--- php5-5.3.10.orig//Zend/zend.h	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend.h	2012-02-02 22:11:23.000000000 +0000
+@@ -627,6 +627,9 @@
+ extern int (*zend_vspprintf)(char **pbuf, size_t max_len, const char *format, va_list ap);
+ extern ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
+ extern ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
++#if SUHOSIN_PATCH
++extern ZEND_API void (*zend_suhosin_log)(int loglevel, char *fmt, ...);
++#endif
+ 
+ ZEND_API void zend_error(int type, const char *format, ...) ZEND_ATTRIBUTE_FORMAT(printf, 2, 3);
+ 
+@@ -774,6 +777,16 @@
+ #define DEBUG_BACKTRACE_PROVIDE_OBJECT (1<<0)
+ #define DEBUG_BACKTRACE_IGNORE_ARGS    (1<<1)
+ 
++#if SUHOSIN_PATCH
++#include "suhosin_globals.h"
++#include "suhosin_patch.h"
++#include "php_syslog.h"
++
++ZEND_API void zend_canary(void *buf, int len);
++ZEND_API char suhosin_get_config(int element);
++
++#endif
++
+ #endif /* ZEND_H */
+ 
+ /*
+diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
+--- php5-5.3.10.orig//Zend/zend_hash.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_hash.c	2012-02-02 22:11:23.000000000 +0000
 @@ -20,6 +20,7 @@
  /* $Id: zend_hash.c 321634 2012-01-01 13:15:04Z felipe $ */
  
@@ -4161,9 +5447,9 @@ diff -Nura php-5.3.9/Zend/zend_hash.c suhosin-patch-5.3.9-0.9.10/Zend/zend_hash.
  	if (p) {
  		if (key_type == HASH_KEY_IS_LONG) {
  			str_length = 0;
-diff -Nura php-5.3.9/Zend/zend_llist.c suhosin-patch-5.3.9-0.9.10/Zend/zend_llist.c
---- php-5.3.9/Zend/zend_llist.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_llist.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
+--- php5-5.3.10.orig//Zend/zend_llist.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_llist.c	2012-02-02 22:11:23.000000000 +0000
 @@ -23,6 +23,194 @@
  #include "zend_llist.h"
  #include "zend_qsort.h"
@@ -4391,9 +5677,9 @@ diff -Nura php-5.3.9/Zend/zend_llist.c suhosin-patch-5.3.9-0.9.10/Zend/zend_llis
  	if ((old_tail = l->tail)) {
  		if (old_tail->prev) {
  			old_tail->prev->next = NULL;
-diff -Nura php-5.3.9/Zend/zend_operators.c suhosin-patch-5.3.9-0.9.10/Zend/zend_operators.c
---- php-5.3.9/Zend/zend_operators.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_operators.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operators.c
+--- php5-5.3.10.orig//Zend/zend_operators.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_operators.c	2012-02-02 22:11:23.000000000 +0000
 @@ -153,9 +153,14 @@
  		case IS_STRING:
  			{
@@ -4481,9 +5767,27 @@ diff -Nura php-5.3.9/Zend/zend_operators.c suhosin-patch-5.3.9-0.9.10/Zend/zend_
  	switch (type) {
  		case IS_ARRAY:
  			ALLOC_HASHTABLE(Z_ARRVAL_P(op));
-diff -Nura php-5.3.9/Zend/zend_variables.c suhosin-patch-5.3.9-0.9.10/Zend/zend_variables.c
---- php-5.3.9/Zend/zend_variables.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/Zend/zend_variables.c	2012-01-11 19:29:07.000000000 +0100
+diff -urN php5-5.3.10.orig//Zend/ZendTS.dsp php5-5.3.10/Zend/ZendTS.dsp
+--- php5-5.3.10.orig//Zend/ZendTS.dsp	2008-07-14 09:49:03.000000000 +0000
++++ php5-5.3.10/Zend/ZendTS.dsp	2012-02-02 22:11:23.000000000 +0000
+@@ -277,6 +277,14 @@
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File
+diff -urN php5-5.3.10.orig//Zend/zend_variables.c php5-5.3.10/Zend/zend_variables.c
+--- php5-5.3.10.orig//Zend/zend_variables.c	2012-01-01 13:15:04.000000000 +0000
++++ php5-5.3.10/Zend/zend_variables.c	2012-02-02 22:11:23.000000000 +0000
 @@ -34,6 +34,9 @@
  		case IS_CONSTANT:
  			CHECK_ZVAL_STRING_REL(zvalue);
@@ -4504,1307 +5808,3 @@ diff -Nura php-5.3.9/Zend/zend_variables.c suhosin-patch-5.3.9-0.9.10/Zend/zend_
  			break;
  		case IS_ARRAY:
  		case IS_CONSTANT_ARRAY:
-diff -Nura php-5.3.9/configure suhosin-patch-5.3.9-0.9.10/configure
---- php-5.3.9/configure	2012-01-10 14:37:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/configure	2012-01-11 19:29:07.000000000 +0100
-@@ -19371,6 +19371,9 @@
- 
- fi
- 
-+cat >> confdefs.h <<\EOF
-+#define SUHOSIN_PATCH 1
-+EOF
- 
-   echo $ac_n "checking for declared timezone""... $ac_c" 1>&6
- echo "configure:19377: checking for declared timezone" >&5
-@@ -115830,7 +115833,7 @@
-        php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
-        strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
-        network.c php_open_temporary_file.c php_logos.c \
--       output.c getopt.c; do
-+       output.c getopt.c suhosin_patch.c ; do
-   
-       IFS=.
-       set $ac_src
-@@ -116034,7 +116037,7 @@
-     zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
-     zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
-     zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
--    zend_closures.c zend_float.c; do
-+    zend_closures.c zend_float.c zend_canary.c zend_alloc_canary.c ; do
-   
-       IFS=.
-       set $ac_src
-diff -Nura php-5.3.9/configure.in suhosin-patch-5.3.9-0.9.10/configure.in
---- php-5.3.9/configure.in	2012-01-10 12:21:57.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/configure.in	2012-01-11 19:29:07.000000000 +0100
-@@ -289,6 +289,7 @@
- sinclude(TSRM/threads.m4)
- sinclude(TSRM/tsrm.m4)
- 
-+sinclude(main/suhosin_patch.m4)
- 
- divert(2)
- 
-@@ -1406,7 +1407,7 @@
-        php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
-        strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
-        network.c php_open_temporary_file.c php_logos.c \
--       output.c getopt.c)
-+       output.c getopt.c suhosin_patch.c )
- 
- PHP_ADD_SOURCES(main/streams, streams.c cast.c memory.c filter.c \
-        plain_wrapper.c userspace.c transports.c xp_socket.c mmap.c \
-@@ -1434,7 +1435,7 @@
-     zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
-     zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
-     zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
--    zend_closures.c zend_float.c)
-+    zend_closures.c zend_float.c zend_canary.c zend_alloc_canary.c )
- 
- if test -r "$abs_srcdir/Zend/zend_objects.c"; then
-   PHP_ADD_SOURCES(Zend, zend_objects.c zend_object_handlers.c zend_objects_API.c zend_default_classes.c)
-diff -Nura php-5.3.9/ext/standard/dl.c suhosin-patch-5.3.9-0.9.10/ext/standard/dl.c
---- php-5.3.9/ext/standard/dl.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/ext/standard/dl.c	2012-01-11 19:29:07.000000000 +0100
-@@ -254,6 +254,23 @@
- 			return FAILURE;
- 		}
- 	}
-+
-+#if SUHOSIN_PATCH
-+	if (strncmp("suhosin", module_entry->name, sizeof("suhosin")-1) == 0) {
-+		void *log_func;
-+		/* sucessfully loaded suhosin extension, now check for logging function replacement */
-+		log_func = (void *) DL_FETCH_SYMBOL(handle, "suhosin_log");
-+		if (log_func == NULL) {
-+			log_func = (void *) DL_FETCH_SYMBOL(handle, "_suhosin_log");
-+		}
-+		if (log_func != NULL) {
-+			zend_suhosin_log = log_func;
-+		} else {
-+                        zend_suhosin_log(S_MISC, "could not replace logging function");
-+		}
-+	}
-+#endif	
-+
- 	return SUCCESS;
- }
- /* }}} */
-diff -Nura php-5.3.9/ext/standard/info.c suhosin-patch-5.3.9-0.9.10/ext/standard/info.c
---- php-5.3.9/ext/standard/info.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/ext/standard/info.c	2012-01-11 22:54:58.000000000 +0100
-@@ -878,6 +878,33 @@
- 		
- 		php_info_print_table_end();
- 
-+		/* Suhosin Patch */
-+		php_info_print_box_start(0);
-+		if (expose_php && !sapi_module.phpinfo_as_text) {
-+			PUTS("<a href=\"http://www.suhosin.org\"><img border=\"0\" src=\"");
-+			if (SG(request_info).request_uri) {
-+				char *elem_esc = php_info_html_esc(SG(request_info).request_uri TSRMLS_CC);
-+				PUTS(elem_esc);
-+				efree(elem_esc);
-+			}
-+			PUTS("?="SUHOSIN_LOGO_GUID"\" alt=\"Suhosin logo\" /></a>\n");
-+		}
-+		PUTS("This server is protected with the Suhosin Patch ");
-+		if (sapi_module.phpinfo_as_text) {
-+			PUTS(SUHOSIN_PATCH_VERSION);
-+		} else {
-+			zend_html_puts(SUHOSIN_PATCH_VERSION, strlen(SUHOSIN_PATCH_VERSION) TSRMLS_CC);
-+		}
-+		PUTS(!sapi_module.phpinfo_as_text?"<br />":"\n");
-+		if (sapi_module.phpinfo_as_text) {
-+			PUTS("Copyright (c) 2006-2007 Hardened-PHP Project\n");
-+			PUTS("Copyright (c) 2007-2012 SektionEins GmbH\n");
-+		} else {
-+			PUTS("Copyright (c) 2006-2007 <a href=\"http://www.hardened-php.net/\">Hardened-PHP Project</a>\n");
-+			PUTS("Copyright (c) 2007-2012 <a href=\"http://www.sektioneins.de/\">SektionEins GmbH</a>\n");
-+		}
-+		php_info_print_box_end();
-+
- 		/* Zend Engine */
- 		php_info_print_box_start(0);
- 		if (expose_php && !sapi_module.phpinfo_as_text) {
-diff -Nura php-5.3.9/ext/standard/syslog.c suhosin-patch-5.3.9-0.9.10/ext/standard/syslog.c
---- php-5.3.9/ext/standard/syslog.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/ext/standard/syslog.c	2012-01-11 19:29:07.000000000 +0100
-@@ -42,6 +42,7 @@
-  */
- PHP_MINIT_FUNCTION(syslog)
- {
-+#if !SUHOSIN_PATCH
- 	/* error levels */
- 	REGISTER_LONG_CONSTANT("LOG_EMERG", LOG_EMERG, CONST_CS | CONST_PERSISTENT); /* system unusable */
- 	REGISTER_LONG_CONSTANT("LOG_ALERT", LOG_ALERT, CONST_CS | CONST_PERSISTENT); /* immediate action required */
-@@ -97,6 +98,7 @@
- 	/* AIX doesn't have LOG_PERROR */
- 	REGISTER_LONG_CONSTANT("LOG_PERROR", LOG_PERROR, CONST_CS | CONST_PERSISTENT); /*log to stderr*/
- #endif
-+#endif
- 	BG(syslog_device)=NULL;
- 
- 	return SUCCESS;
-diff -Nura php-5.3.9/main/fopen_wrappers.c suhosin-patch-5.3.9-0.9.10/main/fopen_wrappers.c
---- php-5.3.9/main/fopen_wrappers.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/fopen_wrappers.c	2012-01-11 19:29:07.000000000 +0100
-@@ -85,13 +85,8 @@
- PHPAPI ZEND_INI_MH(OnUpdateBaseDir)
- {
- 	char **p, *pathbuf, *ptr, *end;
--#ifndef ZTS
--	char *base = (char *) mh_arg2;
--#else
--	char *base = (char *) ts_resource(*((int *) mh_arg2));
--#endif
- 
--	p = (char **) (base + (size_t) mh_arg1);
-+	p = &PG(open_basedir);
- 
- 	if (stage == PHP_INI_STAGE_STARTUP || stage == PHP_INI_STAGE_SHUTDOWN || stage == PHP_INI_STAGE_ACTIVATE || stage == PHP_INI_STAGE_DEACTIVATE) {
- 		/* We're in a PHP_INI_SYSTEM context, no restrictions */
-diff -Nura php-5.3.9/main/main.c suhosin-patch-5.3.9-0.9.10/main/main.c
---- php-5.3.9/main/main.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/main.c	2012-01-11 19:29:07.000000000 +0100
-@@ -91,6 +91,9 @@
- 
- #include "SAPI.h"
- #include "rfc1867.h"
-+#if SUHOSIN_PATCH
-+#include "suhosin_globals.h"
-+#endif
- 
- #if HAVE_MMAP
- # if HAVE_UNISTD_H
-@@ -504,7 +507,7 @@
- 	STD_PHP_INI_ENTRY("extension_dir",			PHP_EXTENSION_DIR,		PHP_INI_SYSTEM,		OnUpdateStringUnempty,	extension_dir,			php_core_globals,	core_globals)
- 	STD_PHP_INI_ENTRY("include_path",			PHP_INCLUDE_PATH,		PHP_INI_ALL,		OnUpdateStringUnempty,	include_path,			php_core_globals,	core_globals)
- 	PHP_INI_ENTRY("max_execution_time",			"30",		PHP_INI_ALL,			OnUpdateTimeout)
--	STD_PHP_INI_ENTRY("open_basedir",			NULL,		PHP_INI_ALL,		OnUpdateBaseDir,			open_basedir,			php_core_globals,	core_globals)
-+	PHP_INI_ENTRY("open_basedir",			NULL,		PHP_INI_ALL,		OnUpdateBaseDir)
- 	STD_PHP_INI_ENTRY("safe_mode_exec_dir",		PHP_SAFE_MODE_EXEC_DIR,	PHP_INI_SYSTEM,		OnUpdateString,			safe_mode_exec_dir,		php_core_globals,	core_globals)
- 
- 	STD_PHP_INI_BOOLEAN("file_uploads",			"1",		PHP_INI_SYSTEM,		OnUpdateBool,			file_uploads,			php_core_globals,	core_globals)
-@@ -1810,6 +1813,10 @@
- }
- #endif
- 
-+#if SUHOSIN_PATCH
-+PHPAPI void suhosin_startup();
-+#endif
-+
- /* {{{ php_module_startup
-  */
- int php_module_startup(sapi_module_struct *sf, zend_module_entry *additional_modules, uint num_additional_modules)
-@@ -1858,6 +1865,10 @@
- 	php_win32_init_rng_lock();
- #endif
- 
-+#if SUHOSIN_PATCH
-+        suhosin_startup();
-+#endif
-+
- 	module_shutdown = 0;
- 	module_startup = 1;
- 	sapi_initialize_empty_request(TSRMLS_C);
-@@ -1980,7 +1991,11 @@
- 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_CONFIG_FILE_SCAN_DIR", PHP_CONFIG_FILE_SCAN_DIR, sizeof(PHP_CONFIG_FILE_SCAN_DIR)-1, CONST_PERSISTENT | CONST_CS);
- 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_SHLIB_SUFFIX", PHP_SHLIB_SUFFIX, sizeof(PHP_SHLIB_SUFFIX)-1, CONST_PERSISTENT | CONST_CS);
- 	REGISTER_MAIN_STRINGL_CONSTANT("PHP_EOL", PHP_EOL, sizeof(PHP_EOL)-1, CONST_PERSISTENT | CONST_CS);
--	REGISTER_MAIN_LONG_CONSTANT("PHP_MAXPATHLEN", MAXPATHLEN, CONST_PERSISTENT | CONST_CS);
-+#if SUHOSIN_PATCH
-+        REGISTER_MAIN_LONG_CONSTANT("SUHOSIN_PATCH", 1, CONST_PERSISTENT | CONST_CS);
-+        REGISTER_MAIN_STRINGL_CONSTANT("SUHOSIN_PATCH_VERSION", SUHOSIN_PATCH_VERSION, sizeof(SUHOSIN_PATCH_VERSION)-1, CONST_PERSISTENT | CONST_CS);
-+#endif	
-+        REGISTER_MAIN_LONG_CONSTANT("PHP_MAXPATHLEN", MAXPATHLEN, CONST_PERSISTENT | CONST_CS);
- 	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_MAX", LONG_MAX, CONST_PERSISTENT | CONST_CS);
- 	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_SIZE", sizeof(long), CONST_PERSISTENT | CONST_CS);
- #ifdef ZEND_MULTIBYTE
-diff -Nura php-5.3.9/main/php.h suhosin-patch-5.3.9-0.9.10/main/php.h
---- php-5.3.9/main/php.h	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/php.h	2012-01-11 19:29:07.000000000 +0100
-@@ -454,6 +454,10 @@
- #endif
- #endif /* !XtOffsetOf */
- 
-+#if SUHOSIN_PATCH
-+#include "suhosin_patch.h"
-+#endif
-+
- #endif
- 
- /*
-diff -Nura php-5.3.9/main/php_config.h.in suhosin-patch-5.3.9-0.9.10/main/php_config.h.in
---- php-5.3.9/main/php_config.h.in	2012-01-10 14:37:07.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/php_config.h.in	2012-01-11 19:29:07.000000000 +0100
-@@ -405,6 +405,9 @@
- /* Define to 1 if you have the `alphasort' function. */
- #undef HAVE_ALPHASORT
- 
-+/* Suhosin-Patch for PHP */
-+#undef SUHOSIN_PATCH
-+
- /* Whether you have AOLserver */
- #undef HAVE_AOLSERVER
- 
-diff -Nura php-5.3.9/main/php_logos.c suhosin-patch-5.3.9-0.9.10/main/php_logos.c
---- php-5.3.9/main/php_logos.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/php_logos.c	2012-01-11 19:29:07.000000000 +0100
-@@ -50,6 +50,10 @@
- 	return zend_hash_del(&phpinfo_logo_hash, logo_string, strlen(logo_string));
- }
- 
-+#if SUHOSIN_PATCH
-+#include "suhosin_logo.h"
-+#endif
-+
- int php_init_info_logos(void)
- {
- 	if(zend_hash_init(&phpinfo_logo_hash, 0, NULL, NULL, 1)==FAILURE) 
-@@ -58,7 +62,9 @@
- 	php_register_info_logo(PHP_LOGO_GUID    , "image/gif", php_logo    , sizeof(php_logo));
- 	php_register_info_logo(PHP_EGG_LOGO_GUID, "image/gif", php_egg_logo, sizeof(php_egg_logo));
- 	php_register_info_logo(ZEND_LOGO_GUID   , "image/gif", zend_logo   , sizeof(zend_logo));
--
-+#if SUHOSIN_PATCH
-+	php_register_info_logo(SUHOSIN_LOGO_GUID, "image/jpeg", suhosin_logo   , sizeof(suhosin_logo));
-+#endif
- 	return SUCCESS;
- }
- 
-diff -Nura php-5.3.9/main/snprintf.c suhosin-patch-5.3.9-0.9.10/main/snprintf.c
---- php-5.3.9/main/snprintf.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/snprintf.c	2012-01-11 19:29:07.000000000 +0100
-@@ -782,6 +782,10 @@
- 			 */
- 			switch (*fmt) {
- 				case 'Z':
-+#if SUHOSIN_PATCH
-+					zend_suhosin_log(S_MISC, "'Z' specifier within format string");
-+					goto skip_output;
-+#else
- 					zvp = (zval*) va_arg(ap, zval*);
- 					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
- 					if (free_zcopy) {
-@@ -792,6 +796,7 @@
- 					if (adjust_precision && precision < s_len) {
- 						s_len = precision;
- 					}
-+#endif
- 					break;
- 				case 'u':
- 					switch(modifier) {
-@@ -1093,7 +1098,11 @@
- 
- 
- 				case 'n':
-+#if SUHOSIN_PATCH
-+					zend_suhosin_log(S_MISC, "'n' specifier within format string");
-+#else
- 					*(va_arg(ap, int *)) = cc;
-+#endif
- 					goto skip_output;
- 
- 					/*
-diff -Nura php-5.3.9/main/spprintf.c suhosin-patch-5.3.9-0.9.10/main/spprintf.c
---- php-5.3.9/main/spprintf.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/spprintf.c	2012-01-11 19:29:08.000000000 +0100
-@@ -390,6 +390,10 @@
- 			 */
- 			switch (*fmt) {
- 				case 'Z':
-+#if SUHOSIN_PATCH
-+					zend_suhosin_log(S_MISC, "'Z' specifier within format string");
-+					goto skip_output;
-+#else
- 					zvp = (zval*) va_arg(ap, zval*);
- 					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
- 					if (free_zcopy) {
-@@ -400,6 +404,7 @@
- 					if (adjust_precision && precision < s_len) {
- 						s_len = precision;
- 					}
-+#endif
- 					break;
- 				case 'u':
- 					switch(modifier) {
-@@ -700,7 +705,11 @@
- 
- 
- 				case 'n':
-+#if SUHOSIN_PATCH
-+					zend_suhosin_log(S_MISC, "'n' specifier within format string");
-+#else
- 					*(va_arg(ap, int *)) = xbuf->len;
-+#endif
- 					goto skip_output;
- 
- 					/*
-diff -Nura php-5.3.9/main/suhosin_globals.h suhosin-patch-5.3.9-0.9.10/main/suhosin_globals.h
---- php-5.3.9/main/suhosin_globals.h	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/suhosin_globals.h	2012-01-11 19:29:08.000000000 +0100
-@@ -0,0 +1,61 @@
-+/*
-+   +----------------------------------------------------------------------+
-+   | Suhosin-Patch for PHP                                                |
-+   +----------------------------------------------------------------------+
-+   | Copyright (c) 2004-2009 Stefan Esser                                 |
-+   +----------------------------------------------------------------------+
-+   | This source file is subject to version 2.02 of the PHP license,      |
-+   | that is bundled with this package in the file LICENSE, and is        |
-+   | available at through the world-wide-web at                           |
-+   | http://www.php.net/license/2_02.txt.                                 |
-+   | If you did not receive a copy of the PHP license and are unable to   |
-+   | obtain it through the world-wide-web, please send a note to          |
-+   | license@php.net so we can mail you a copy immediately.               |
-+   +----------------------------------------------------------------------+
-+   | Author: Stefan Esser <stefan.esser@sektioneins.de>                   |
-+   +----------------------------------------------------------------------+
-+ */
-+
-+#ifndef SUHOSIN_GLOBALS_H
-+#define SUHOSIN_GLOBALS_H
-+
-+typedef struct _suhosin_patch_globals suhosin_patch_globals_struct;
-+
-+#ifdef ZTS
-+# define SPG(v) TSRMG(suhosin_patch_globals_id, suhosin_patch_globals_struct *, v)
-+extern int suhosin_patch_globals_id;
-+#else
-+# define SPG(v) (suhosin_patch_globals.v)
-+extern struct _suhosin_patch_globals suhosin_patch_globals;
-+#endif
-+
-+
-+struct _suhosin_patch_globals {
-+	/* logging */
-+	int log_syslog;
-+	int log_syslog_facility;
-+	int log_syslog_priority;
-+	int log_sapi;
-+	int log_script;
-+	int log_phpscript;
-+	char *log_scriptname;
-+	char *log_phpscriptname;
-+	zend_bool log_phpscript_is_safe;
-+	zend_bool log_use_x_forwarded_for;
-+	
-+	/* memory manager canary protection */
-+	unsigned int canary_1;
-+	unsigned int canary_2;
-+	unsigned int canary_3;
-+	unsigned int dummy;
-+};
-+
-+
-+#endif /* SUHOSIN_GLOBALS_H */
-+
-+/*
-+ * Local variables:
-+ * tab-width: 4
-+ * c-basic-offset: 4
-+ * End:
-+ */
-diff -Nura php-5.3.9/main/suhosin_logo.h suhosin-patch-5.3.9-0.9.10/main/suhosin_logo.h
---- php-5.3.9/main/suhosin_logo.h	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/suhosin_logo.h	2012-01-11 19:29:08.000000000 +0100
-@@ -0,0 +1,178 @@
-+static unsigned char suhosin_logo[] =
-+	"\xff\xd8\xff\xe0\x00\x10\x4a\x46\x49\x46\x00\x01\x01\x01\x00\x48"
-+	"\x00\x48\x00\x00\xff\xe1\x00\x16\x45\x78\x69\x66\x00\x00\x4d\x4d"
-+	"\x00\x2a\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\xff\xdb\x00\x43"
-+	"\x00\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
-+	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
-+	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
-+	"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01"
-+	"\x01\xff\xc0\x00\x0b\x08\x00\x27\x00\x71\x01\x01\x22\x00\xff\xc4"
-+	"\x00\x1e\x00\x00\x02\x02\x02\x03\x01\x01\x00\x00\x00\x00\x00\x00"
-+	"\x00\x00\x00\x00\x09\x06\x08\x05\x07\x02\x03\x0a\x01\x04\xff\xc4"
-+	"\x00\x32\x10\x00\x01\x04\x03\x00\x02\x00\x05\x01\x05\x09\x01\x00"
-+	"\x00\x00\x00\x05\x02\x03\x04\x06\x01\x07\x08\x00\x09\x11\x12\x13"
-+	"\x14\x21\x15\x0a\x16\x31\x56\x96\x17\x18\x19\x23\x32\x41\x58\x98"
-+	"\xd4\xd6\xff\xda\x00\x08\x01\x01\x00\x00\x3f\x00\xf4\xc1\xe1\xe5"
-+	"\x69\xe9\x3e\xb9\xd1\x7c\x8a\x2e\x9d\x66\xe8\x3b\x29\x4d\x7f\x46"
-+	"\xba\x58\x55\x54\x8d\xb1\x5f\xaa\xd9\x8d\x51\x2b\xb6\x27\x5a\x69"
-+	"\xd1\x43\xaf\x16\x1a\xf0\xb2\xb1\xe9\x6d\x9f\xc2\xa4\x36\x18\xb5"
-+	"\x85\x10\x41\xbe\xfc\x09\xac\x49\x29\x11\xd4\x32\x97\xec\x08\x13"
-+	"\xc1\x2d\x20\xc3\x59\xeb\x26\x05\xd8\x6b\x76\x31\x43\x8f\x57\xcf"
-+	"\x84\x9f\x14\xa8\x53\x81\x0b\xc3\x64\x80\xa3\x02\x0a\x41\x75\xf8"
-+	"\x44\x85\x93\x81\x22\x3c\xd8\x13\xe1\xbe\xf4\x59\x91\x1f\x6a\x44"
-+	"\x77\x5c\x69\xc4\x2f\x39\x5f\x0f\x2a\x8d\xeb\xba\xf8\xc3\x56\x6c"
-+	"\x3b\x36\xa7\xda\xbd\x4d\xa1\xb5\x4e\xc6\xa7\xa4\x3a\xec\x15\x2d"
-+	"\xa5\xb3\xea\x5a\xdc\xac\x46\xac\x01\x60\xd8\x43\xc8\x8e\x8b\xb1"
-+	"\x40\x4c\x95\x8b\x34\x41\x28\x52\x91\x28\x43\xd3\xa3\xb6\xa7\x55"
-+	"\x15\xe7\x5a\x96\xcb\xf1\xda\xe5\x55\xee\xfe\x1e\xbd\xd9\x41\xd3"
-+	"\x28\xfd\x97\xca\x57\x2b\x85\x9c\xa4\x30\x95\xaa\xa5\x57\xa2\x35"
-+	"\x15\x86\xcb\x61\x34\x41\xe4\xc7\x80\x20\x18\x21\x17\x09\x85\x0b"
-+	"\x14\x9d\x21\x68\x62\x1c\x08\x11\x64\x4b\x92\xf2\xd2\xd3\x2d\x2d"
-+	"\x6a\xc2\x73\x6b\x3c\x3c\x8b\x9e\xbc\x52\xaa\xa4\xab\x81\x6c\xf6"
-+	"\xfa\xbd\x70\xc5\xc6\x7b\xc2\xaa\x22\x4f\x58\x04\x87\x25\x6a\x27"
-+	"\x1d\xa4\x3d\x20\x75\x72\x01\x09\x71\xe5\x1c\x9e\xc3\x2e\x36\xf3"
-+	"\xd0\xc6\x35\x2a\x43\x4d\x2d\x0e\x2d\xb4\xa1\x49\xce\x65\x1e\x52"
-+	"\x9e\xa1\xf6\x09\xcc\xdc\x63\x66\xa8\x01\xe9\x3b\x0d\xd7\x5a\x85"
-+	"\xbb\xc5\x65\xc0\x7b\x2e\x46\xa9\xd9\x56\x1d\x4c\x92\x72\x26\x4e"
-+	"\x86\xd5\x68\xae\xc4\xaa\x55\xce\xd7\x83\x59\xb3\x81\xee\xce\x74"
-+	"\x39\x39\x31\x9f\x8a\x25\xe8\xa5\xa5\xe5\x81\xf2\x11\x23\xcb\xa1"
-+	"\x1e\x43\x12\xe3\xb1\x2a\x2b\xcd\xc8\x8d\x25\x96\xa4\x47\x7d\x95"
-+	"\xa5\xc6\x9f\x61\xe4\x25\xc6\x5e\x69\xc4\xe7\x29\x5b\x6e\xb6\xa4"
-+	"\xad\x0b\x4e\x72\x95\x25\x58\x56\x33\x9c\x67\xce\xef\x0f\x17\xbf"
-+	"\x4c\x7b\x2d\xe6\xfe\x76\x35\x27\x5a\x07\x97\x67\xe8\xae\x8d\x71"
-+	"\x0f\xb2\x13\x99\xb9\xbc\x14\xad\xb3\xb7\xe6\x11\x6f\xe0\xda\x58"
-+	"\xb1\x08\xac\xa6\x6c\x2d\x7f\x05\xb7\x56\xd2\xe6\xcf\xbb\x4d\x0c"
-+	"\xe3\x50\xb2\xec\x91\xf0\x4a\xb8\xd6\x22\xb8\xa7\xf6\x67\xaf\xcf"
-+	"\x63\x7e\xd7\xe7\x42\xd8\xbd\xc3\x71\xa1\xf2\x7e\x9b\xa8\x97\x83"
-+	"\x6e\xd1\xdc\x4b\x06\x11\x2d\xae\x26\x61\x98\x72\x10\xf4\x42\x5d"
-+	"\x20\x4a\xa3\x73\xd7\xf2\xcd\x3c\x48\x32\xe4\x03\x9f\x80\x37\x08"
-+	"\x36\x11\xd0\xcb\x97\x6c\x08\xed\x6d\x33\x24\xa2\x1b\xb4\x77\xdf"
-+	"\x61\x5d\x5f\xc1\x43\xc2\x82\xeb\x0f\x5d\x84\x08\x68\xaa\xa4\x01"
-+	"\xe1\x19\xdf\xbc\x31\x65\xfe\xd1\xf5\x7d\x7a\xb2\x2a\x33\x50\x21"
-+	"\x2a\x56\x9d\xb1\x81\xab\xdb\x35\x78\x30\x83\xd9\x89\x1d\x31\xac"
-+	"\x96\x14\x07\x61\xbc\x20\x68\x42\x85\x33\x19\xac\xbe\xdb\x34\x56"
-+	"\xf1\xd5\xfd\x29\xa9\x28\xdb\xcb\x4c\x5a\x23\xdc\xf5\x96\xc5\x10"
-+	"\xa3\x35\x5b\x14\x68\xd3\x61\x62\x64\x76\x26\xcb\x17\x3e\x34\x98"
-+	"\x04\xa3\xc4\x20\x38\x90\x92\xe3\xc8\x07\x2c\x36\x74\x66\x26\x0e"
-+	"\x29\x02\x64\x29\x2d\x21\xe6\x16\x9c\x6b\xce\xa3\x89\xd9\x4f\xd3"
-+	"\xc4\xbd\xc5\x87\x79\x9c\x65\xf6\x39\x45\x60\xe8\xce\x9e\xab\x6d"
-+	"\x13\x15\x22\xe1\x5e\x4b\x38\x42\xc4\x1e\xd5\x76\xe0\xc5\xeb\x85"
-+	"\x07\x2d\x0f\xb8\xb6\xa6\xd6\x6d\x71\x0d\xa2\x43\x4c\x25\xea\xfa"
-+	"\xa1\xae\x4c\xe4\x7d\xbd\x76\xa9\xfb\x06\xc2\x83\x42\xeb\xad\xe7"
-+	"\xe9\x5f\x68\x6f\xba\xfb\x2f\x07\xce\xb8\x13\xc1\x9b\xeb\xb0\x76"
-+	"\x45\x57\x28\x7b\xea\xbe\x0f\xf4\x30\x7b\xa0\xed\xe4\x22\x93\x21"
-+	"\xfc\xbc\xe0\xb9\x75\xc1\x4f\xfc\xef\xb6\xfa\xa1\xfc\x64\xa1\x4a"
-+	"\x82\xc7\x33\xad\x75\xed\x82\xbd\x3d\xdb\xf7\xa8\xbe\x5e\xbb\x36"
-+	"\x62\x04\x9a\x2e\xc5\xd9\x9e\x9c\x3a\x0b\x98\x0b\x57\xac\xf1\x24"
-+	"\x62\x58\x83\x15\x5b\xa6\xf2\xda\x34\x70\x03\xce\x0f\x93\x1b\x12"
-+	"\xc7\xce\x54\x87\x33\x15\xd6\x53\x25\x1f\x2a\x90\x87\x12\xe3\x78"
-+	"\xef\x55\x77\x4d\x4a\xd8\x7e\xef\xd2\xfd\xd1\xaf\x3a\xaf\x55\xdb"
-+	"\x6a\x2d\x3d\x42\xac\x51\x79\xee\x91\xab\xe1\x05\x2d\x3c\x80\xa2"
-+	"\x43\xad\x22\x2e\xd5\x33\x13\xa4\x9e\x00\xe0\x04\x10\x84\xc8\xf2"
-+	"\x19\x30\x92\x1f\xaa\xc3\x28\xc9\x76\x30\x3f\xe9\x10\x61\x5e\x79"
-+	"\xd5\xf7\xdf\xd0\x54\xdb\xae\xb6\xae\xfa\xe8\xa3\x57\xe0\x6c\x2d"
-+	"\xf7\xbd\x49\xd6\x6e\x76\x79\xcc\x54\x0c\x5f\xff\x00\xbb\x06\x98"
-+	"\xa6\x9e\x89\x61\xb4\x6f\xc3\xe3\x6a\xc2\x4f\x59\x03\xc9\x80\x2c"
-+	"\x59\x24\x44\x70\x38\xd5\x96\x6a\x9e\x8b\x81\x64\xe5\xbc\xa0\x3c"
-+	"\x33\xaf\x17\x9d\xff\x00\x71\x1a\xd1\x3a\x80\x66\xb3\xd9\x31\x77"
-+	"\x0d\x12\xbd\xae\x29\xb5\x6a\xd6\xcf\x8d\x68\x87\x75\xcd\xe8\x65"
-+	"\x5a\xbe\x3c\x04\x7b\x34\xdb\x54\x19\xa4\x63\x9c\x2a\x5d\x23\xbe"
-+	"\xf4\xb1\x1c\x4d\x90\xec\x92\x2f\x49\x71\xf7\x14\xf2\x97\x9f\x15"
-+	"\x57\xed\x13\x21\x2a\xf5\x33\xd1\x2a\x52\x52\xac\xb7\x62\xd1\xcb"
-+	"\x46\x73\x8c\x67\x28\x56\x77\x86\xbf\x6f\x2a\x4e\x73\xfe\x95\x65"
-+	"\x0b\x5a\x3e\x38\xfc\xfc\xaa\x56\x3f\x86\x73\xe3\xb9\x4a\x52\x84"
-+	"\xa5\x08\x4e\x12\x94\x27\x09\x4a\x53\x8c\x61\x29\x4a\x71\xf0\x4a"
-+	"\x53\x8c\x7e\x31\x8c\x63\x18\xc6\x31\x8f\xc6\x31\xf8\xc7\x9f\x7c"
-+	"\xd5\xbb\xae\x5e\xe2\x1f\xab\x6e\x24\x34\x00\x8a\x25\x83\x70\x40"
-+	"\x1c\xcc\xda\x45\x7f\x66\x4e\x30\x2e\x94\x7e\x74\x49\xf0\xe4\x4e"
-+	"\x06\x5c\xa8\x2f\x89\x21\x2e\x98\x0e\xd9\x21\xc2\x0b\x21\x0f\xc4"
-+	"\x16\x6e\x48\xd9\xe4\xe3\x4a\x19\x1e\x64\x67\x54\xff\x00\x3a\x6d"
-+	"\x4f\x62\xb5\x00\x4a\xaa\x51\xfd\x2d\xe8\x0e\x6c\xaf\xc6\x7d\x6d"
-+	"\xc8\x88\xc7\x67\xea\x8a\x58\x02\x73\xe3\x65\x4d\xc9\x24\xc0\x3d"
-+	"\x57\xa3\x2e\x53\x16\x99\x4f\xe5\xe7\x19\x97\x3e\x3b\xcf\xc9\x4b"
-+	"\x99\x7f\x33\x25\xa5\xdf\xba\x77\x2b\xd3\x3e\xc2\x7b\x8b\x94\x07"
-+	"\xe9\x52\x5b\x43\x87\x34\x14\x86\x37\xcf\x41\x6b\x8e\x6a\xa5\x22"
-+	"\xab\xdb\x96\xa2\xcf\x46\xd8\x9b\x45\x93\xef\xd6\xdf\x3e\x99\x9c"
-+	"\x7e\x29\x10\x6b\x6c\xa2\xb8\x43\x05\x09\x44\x70\x8c\xb8\xaa\x54"
-+	"\x7c\x30\x36\x5e\x1c\x5e\x5b\x9f\x6c\x0d\x81\xee\xa0\x93\x8d\x67"
-+	"\x55\xf3\x87\xaf\xaa\x6b\x58\xf9\xbe\xb2\x36\x07\x42\x6e\xbd\x96"
-+	"\xe3\x9f\x1f\x8f\xc9\xf4\x9d\xae\x6a\x7d\x4c\x96\xbe\x5f\xc7\xcd"
-+	"\xf3\xb2\xf7\xcd\xf0\xcf\xc3\xe4\xf8\xfe\x37\x4f\x1c\x4d\xf6\x40"
-+	"\xf1\x6b\x7c\x4e\xe0\xa6\x71\xad\x56\xa7\x1c\x5c\x15\x6b\xfc\xf3"
-+	"\x01\x5d\xac\xf1\x75\x9a\x72\x6b\xaa\x28\xc5\x88\x6d\xfb\x33\x85"
-+	"\xe0\x4e\x61\xab\xeb\x31\x2c\x71\x08\x73\x11\x3b\xfc\xb5\xc0\x96"
-+	"\xcc\x87\x24\x44\xb5\x9b\x9e\xb3\x71\xba\xe9\xed\xb1\x4e\xd7\x76"
-+	"\x6c\xd2\xb6\x05\xb7\x5a\xde\xeb\x34\x5b\x96\x16\xfb\x59\xa9\x5c"
-+	"\x4f\x55\xca\x8a\xac\x59\xb0\xe4\x54\x39\x25\xbc\x81\x37\x2a\x09"
-+	"\x5f\x9e\x3b\x6b\x7d\x1f\x69\xf3\x34\x85\x39\x84\xa7\x28\x0b\xd3"
-+	"\xfd\xfb\x4b\x7a\xea\xe7\xd2\x3c\xd3\xda\x15\x68\xbc\x73\xd3\x22"
-+	"\x6f\xd7\x72\x5b\x2b\x66\xee\xa8\x0d\x54\xe8\x5b\xf9\x92\x96\x92"
-+	"\x93\xea\x97\x4a\xc7\x43\x10\x46\x35\xc5\xc0\x60\x8a\xe4\xc1\xb5"
-+	"\x36\xc6\xae\xed\xf7\x70\xa5\x86\x99\x3d\x91\xf8\xfd\x4e\x53\xeb"
-+	"\xbb\xbd\x6d\xec\x8f\xd7\x89\x3d\x31\x7f\xd7\x78\xba\x50\xbb\x74"
-+	"\x9d\xf6\xac\x4e\xb9\x03\x9c\x79\xd5\xe1\xbd\x17\x68\xd9\x13\x0b"
-+	"\x45\x75\x88\x00\x1d\x1f\xae\x73\x6a\x1d\x5c\x6e\x44\x9f\xa6\xfa"
-+	"\x4e\xd8\x25\x8b\xc0\xbc\xb2\x99\xe3\x17\x24\xb3\x23\xe2\x48\x8b"
-+	"\xfa\x22\xe7\x7e\x8f\xe6\x3f\x5f\x55\x0d\x75\xd3\x51\x0b\xd7\xed"
-+	"\xd3\x6f\x97\x3b\x85\x42\x80\x7e\x5f\xdc\x1b\xd6\xba\xee\xc4\x80"
-+	"\xce\x06\xa9\x15\x8c\x97\x5f\x40\x69\xb2\x4d\xc5\xb2\x5c\x1e\x01"
-+	"\x87\x7e\xe0\x36\x6d\x78\x80\x4e\x3c\x02\xec\x90\x1d\x11\x81\x74"
-+	"\xa5\x8b\xa4\xa0\x56\x06\xd5\x79\x72\x85\x57\x3b\xb2\x2e\xae\x90"
-+	"\x18\x8d\x91\xb2\x0e\x44\x19\xaa\xb4\xcc\x08\xed\x46\xfa\xd7\x2b"
-+	"\x78\x58\x72\x5d\xbb\x5e\x49\xe7\xee\xf3\x8a\x9d\x22\xa4\x19\xc8"
-+	"\xe7\x08\xc3\x90\x9b\x35\x9a\xa4\x25\x8c\x4b\x9b\xa7\xf8\xbf\x81"
-+	"\xf5\xdf\x22\x66\xf1\x7e\x9f\x66\x3d\xbb\xfa\x73\x73\x4d\xfd\x67"
-+	"\x7b\xf4\xce\xc3\x62\x2e\x6f\xbb\x0c\xa2\xdc\x69\xfc\x8a\x17\x0e"
-+	"\x3a\x9e\x83\x46\xd7\xe3\x5e\x65\x86\xc0\x51\x00\xbb\x91\xe3\xe1"
-+	"\xc1\x16\xc4\xe9\x65\x5c\x14\x3e\x44\x6a\x6b\xd1\x1e\xb0\x36\xdd"
-+	"\x0b\x7d\x8a\xeb\xaf\x58\x5b\x64\x3f\x38\xed\x52\x76\xe8\x46\xf7"
-+	"\x86\x84\xb3\x93\xb1\x0b\xe5\xfd\xfd\x0d\xe9\x6d\xe4\xf1\x1b\x1d"
-+	"\x56\xb4\x34\xe4\x6a\xf5\xa4\x9c\x2c\xc9\x64\x94\xc1\xf5\x79\x6d"
-+	"\x12\x96\xf3\x47\xc5\x48\xa8\xdb\xd8\x95\x64\x29\xcf\xf6\x88\xf1"
-+	"\x95\x7a\x98\xe8\xbc\x27\x19\xce\x73\x61\xd1\xb8\xc6\x31\x8c\xe7"
-+	"\x39\xce\x77\x9e\xbc\xc6\x31\x8c\x63\xf3\x9c\xe7\x39\xc6\x31\x8f"
-+	"\xf7\xce\x7e\x1e\x3b\x7f\x0f\x0f\x0f\x13\x57\xb9\x0a\xe1\x0b\x64"
-+	"\x5f\x58\x40\xc6\xc7\x7a\x4b\xf2\x3d\xbc\x71\xf4\xa7\xd2\xca\x14"
-+	"\xe2\x98\x1a\x30\x1e\xe0\x26\x5a\x6a\xf0\x9c\x67\x38\x66\x00\xb8"
-+	"\x72\xe6\xbe\xac\xfe\x12\xd3\x0b\x56\x73\x8c\x63\xc7\x2b\xe1\xe2"
-+	"\xe8\xdd\x7b\xff\x00\xd8\xe5\x23\x6c\xce\xa8\x69\xcf\x5e\x3a\xef"
-+	"\x77\xea\xe5\xab\x0e\x82\xdb\xd9\xed\x7a\x9e\xb8\x6d\x51\x32\xdb"
-+	"\x79\xc3\x36\x9a\x2d\xa3\x50\x39\x65\x0a\x63\x0e\xe5\xd4\x39\x12"
-+	"\xbf\x8b\x98\xa4\xa1\x2d\xad\xb3\xcf\x65\x6a\x43\x78\xb3\x3b\x07"
-+	"\xd8\xd5\xea\xae\x76\xad\x6f\xf5\xff\x00\xca\x93\xab\x96\xb0\x64"
-+	"\xeb\xd6\x4a\xd5\x87\xba\xec\x24\x60\x97\x06\x76\x03\xe3\x4c\x07"
-+	"\x29\x11\x8e\x34\x25\x02\x64\x29\xf0\x25\x48\x85\x3a\x33\x8b\x7a"
-+	"\x3c\x86\x1e\x75\xa5\x61\xc6\x97\x9f\x8d\x25\xf5\xc9\xcd\xde\xc9"
-+	"\x7d\x77\xf2\xc8\x7e\x70\xaf\x73\x5f\x2d\xec\xa2\x51\x2d\x96\xfb"
-+	"\x89\xad\x80\x57\xb2\x36\x1d\x7d\x83\x45\xac\xf3\xdb\xcc\x6c\x31"
-+	"\x4f\xcf\x30\x58\xd0\x12\x28\x90\x50\x42\x86\xfb\x48\x16\x3c\xc5"
-+	"\x9c\xf8\xe7\xcc\x29\x88\xb3\x4a\x4b\x4e\x6c\xbc\xdb\xc7\xbb\xe9"
-+	"\xb6\xa0\x8b\x11\xa1\x7d\x73\xd7\xe9\xbf\x7e\xc2\x6c\x10\x8d\xee"
-+	"\x9d\xef\x63\x3a\xe0\xf5\xbe\x8c\x3e\xa1\xc7\xc5\xd1\x00\x44\x1e"
-+	"\xf3\x51\xf2\xe2\xb0\xe3\xb5\x13\x7f\x32\xf1\x8c\xa6\x22\xfe\x1f"
-+	"\x49\x4d\xbb\xcf\x3a\x5d\xed\x4c\xd2\xfc\x85\xed\x23\xd6\xc7\x50"
-+	"\xb6\x5b\x3a\x16\x83\xb8\x6f\xfd\x32\x3f\xaa\x36\x34\xbb\xf5\x96"
-+	"\xa9\xab\xcf\x9f\x8f\xac\xc3\xca\xd5\x8b\xd8\x48\x9e\x79\xaa\x30"
-+	"\x87\xca\x58\x4d\x59\x96\xb9\x4f\xc5\x1b\x1c\xd2\xda\x5b\xe6\x57"
-+	"\x29\xa1\x28\x7a\x2b\x5b\xff\x00\x12\x2f\x5e\x3f\xf3\xbb\x8e\x7f"
-+	"\xec\xc6\x98\xff\x00\xed\x3c\xa6\xdd\xa9\xdc\x7e\xa0\xf7\xd6\x99"
-+	"\x31\xa2\xf7\xaf\x6b\xe9\x82\x74\x4b\x3d\x8f\x5e\x58\x0b\x33\xab"
-+	"\xef\xc3\xaf\x84\x64\xb9\xae\xb6\x25\x5f\x62\x8f\x1c\xe3\xf4\x51"
-+	"\xb7\x96\xe3\x0e\x30\x42\xa9\x18\x39\xbf\x9e\x2a\x1f\x74\x19\x02"
-+	"\x2d\x43\x93\x06\x63\xb1\xa7\x47\x6a\xfa\x9b\x6c\xeb\xbd\xe9\xae"
-+	"\x6a\x7b\x6f\x53\x5a\x60\x5d\xb5\xcd\xe8\x67\xeb\x35\x3b\x48\xc6"
-+	"\xa6\xb3\x04\xc8\xdf\xb8\x7e\x26\x64\xb0\xc9\x18\xb0\xa7\x33\xf2"
-+	"\x4a\x8b\x22\x3b\x8d\x4b\x89\x1d\xf6\x9d\x65\xc4\x38\xd2\x54\x9c"
-+	"\xe3\xcd\x89\xe1\xe1\xe6\x3e\x70\x81\x45\x1d\x18\xf9\x31\x83\xc8"
-+	"\xbe\x14\x82\x4b\x87\x7a\x74\x28\xd2\xdd\x12\x55\x30\xe6\x0e\x49"
-+	"\x31\x8e\x48\x69\xc5\xc0\x20\x91\xe4\x48\x41\x4c\xd8\xb9\x6a\x4e"
-+	"\x21\xce\x99\x1b\x0e\xfd\x09\x4f\xa1\x79\x0f\x0f\x0f\x0f\x0f\x0f"
-+	"\x0f\x3f\x3c\xb8\x71\x27\xc7\x72\x24\xe8\xb1\xa6\xc5\x7b\x18\xc3"
-+	"\xb1\xa5\xb0\xd4\x98\xee\xe3\x19\xc6\x71\x87\x19\x79\x2b\x6d\x78"
-+	"\xc6\x71\x8c\xe3\x0a\x4e\x71\x8c\xe3\x19\xfe\x38\xf2\x3b\xfb\x8b"
-+	"\x48\xfe\x4e\xaa\xff\x00\x4f\x08\xff\x00\xc7\xe1\xfb\x8b\x48\xfe"
-+	"\x4e\xaa\xff\x00\x4f\x08\xff\x00\xc7\xe4\x95\x86\x18\x8a\xcb\x31"
-+	"\xa3\x32\xd4\x78\xf1\xdb\x43\x2c\x47\x61\xb4\x32\xcb\x2c\xb4\x9c"
-+	"\x21\xb6\x99\x69\xbc\x25\xb6\xdb\x6d\x18\xc2\x10\xda\x12\x94\xa1"
-+	"\x38\xc2\x53\x8c\x63\x18\xc7\x9d\xbe\x7f\xff\xd9"
-+	;
-diff -Nura php-5.3.9/main/suhosin_patch.c suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.c
---- php-5.3.9/main/suhosin_patch.c	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.c	2012-01-11 19:29:08.000000000 +0100
-@@ -0,0 +1,470 @@
-+/*
-+   +----------------------------------------------------------------------+
-+   | Suhosin Patch for PHP                                                |
-+   +----------------------------------------------------------------------+
-+   | Copyright (c) 2004-2010 Stefan Esser                                 |
-+   +----------------------------------------------------------------------+
-+   | This source file is subject to version 2.02 of the PHP license,      |
-+   | that is bundled with this package in the file LICENSE, and is        |
-+   | available at through the world-wide-web at                           |
-+   | http://www.php.net/license/2_02.txt.                                 |
-+   | If you did not receive a copy of the PHP license and are unable to   |
-+   | obtain it through the world-wide-web, please send a note to          |
-+   | license@php.net so we can mail you a copy immediately.               |
-+   +----------------------------------------------------------------------+
-+   | Author: Stefan Esser <sesser@hardened-php.net>                       |
-+   +----------------------------------------------------------------------+
-+ */
-+/* $Id: suhosin_patch.c,v 1.2 2004/11/21 09:38:52 ionic Exp $ */
-+
-+#include "php.h"
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <sys/mman.h>
-+
-+#if HAVE_UNISTD_H
-+#include <unistd.h>
-+#endif
-+#include "SAPI.h"
-+#include "php_globals.h"
-+
-+#if SUHOSIN_PATCH
-+
-+#ifdef HAVE_SYS_SOCKET_H
-+#include <sys/socket.h>
-+#endif
-+
-+#if defined(PHP_WIN32) || defined(__riscos__) || defined(NETWARE)
-+#undef AF_UNIX
-+#endif
-+
-+#if defined(AF_UNIX)
-+#include <sys/un.h>
-+#endif
-+
-+#define SYSLOG_PATH  "/dev/log"
-+
-+#ifdef PHP_WIN32
-+static HANDLE log_source = 0;
-+#endif
-+
-+#include "snprintf.h"
-+
-+#include "suhosin_patch.h"
-+
-+#ifdef ZTS
-+#include "suhosin_globals.h"
-+int suhosin_patch_globals_id;
-+#else
-+struct _suhosin_patch_globals suhosin_patch_globals;
-+#endif
-+
-+static char *suhosin_config = NULL;
-+
-+static zend_intptr_t SUHOSIN_POINTER_GUARD = 0;
-+
-+static void php_security_log(int loglevel, char *fmt, ...);
-+
-+static void suhosin_patch_globals_ctor(suhosin_patch_globals_struct *suhosin_patch_globals TSRMLS_DC)
-+{
-+	memset(suhosin_patch_globals, 0, sizeof(*suhosin_patch_globals));
-+}
-+
-+ZEND_API char suhosin_get_config(int element)
-+{
-+        return ((char *)SUHOSIN_MANGLE_PTR(suhosin_config))[element];
-+}
-+
-+static void suhosin_set_config(int element, char value)
-+{
-+        ((char *)SUHOSIN_MANGLE_PTR(suhosin_config))[element] = value;
-+}
-+
-+static void suhosin_read_configuration_from_environment()
-+{
-+        char *tmp;
-+        
-+        /* check if canary protection should be activated or not */
-+        tmp = getenv("SUHOSIN_MM_USE_CANARY_PROTECTION");
-+        /* default to activated */
-+        suhosin_set_config(SUHOSIN_MM_USE_CANARY_PROTECTION, 1);
-+        if (tmp) {
-+                int flag = zend_atoi(tmp, 0);
-+                suhosin_set_config(SUHOSIN_MM_USE_CANARY_PROTECTION, flag);
-+        }
-+        
-+        /* check if free memory should be overwritten with 0xFF or not */
-+        tmp = getenv("SUHOSIN_MM_DESTROY_FREE_MEMORY");
-+        /* default to deactivated */
-+        suhosin_set_config(SUHOSIN_MM_DESTROY_FREE_MEMORY, 0);
-+        if (tmp) {
-+                int flag = zend_atoi(tmp, 0);
-+                suhosin_set_config(SUHOSIN_MM_DESTROY_FREE_MEMORY, flag);
-+        }
-+        
-+        /* check if canary violations should be ignored */
-+        tmp = getenv("SUHOSIN_MM_IGNORE_CANARY_VIOLATION");
-+        /* default to NOT ignore */
-+        suhosin_set_config(SUHOSIN_MM_IGNORE_CANARY_VIOLATION, 0);
-+        if (tmp) {
-+                int flag = zend_atoi(tmp, 0);
-+                suhosin_set_config(SUHOSIN_MM_IGNORE_CANARY_VIOLATION, flag);
-+        }
-+
-+        /* check if invalid hashtable destructors should be ignored */
-+        tmp = getenv("SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR");
-+        /* default to NOT ignore */
-+        suhosin_set_config(SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR, 0);
-+        if (tmp) {
-+                int flag = zend_atoi(tmp, 0);
-+                suhosin_set_config(SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR, flag);
-+        }
-+
-+        /* check if invalid linkedlist destructors should be ignored */
-+        tmp = getenv("SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR");
-+        /* default to NOT ignore */
-+        suhosin_set_config(SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR, 0);
-+        if (tmp) {
-+                int flag = zend_atoi(tmp, 0);
-+                suhosin_set_config(SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR, flag);
-+        }
-+        
-+        suhosin_set_config(SUHOSIN_CONFIG_SET, 1);
-+}
-+
-+static void suhosin_write_protect_configuration()
-+{
-+        /* check return value of mprotect() to ensure memory is read only now */
-+        if (mprotect(SUHOSIN_MANGLE_PTR(suhosin_config), sysconf(_SC_PAGESIZE), PROT_READ) != 0) {
-+                perror("suhosin");
-+                _exit(1);
-+        }
-+}
-+
-+PHPAPI void suhosin_startup()
-+{
-+#ifdef ZTS
-+	ts_allocate_id(&suhosin_patch_globals_id, sizeof(suhosin_patch_globals_struct), (ts_allocate_ctor) suhosin_patch_globals_ctor, NULL);
-+#else
-+	suhosin_patch_globals_ctor(&suhosin_patch_globals TSRMLS_CC);
-+#endif
-+	zend_suhosin_log = php_security_log;
-+	
-+	/* get the pointer guardian and ensure low 3 bits are 1 */
-+        if (SUHOSIN_POINTER_GUARD == 0) {
-+                zend_canary(&SUHOSIN_POINTER_GUARD, sizeof(SUHOSIN_POINTER_GUARD));
-+                SUHOSIN_POINTER_GUARD |= 7;
-+        }
-+	
-+	if (!suhosin_config) {
-+#ifndef MAP_ANONYMOUS
-+#define MAP_ANONYMOUS MAP_ANON
-+#endif
-+		suhosin_config = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+		if (suhosin_config == MAP_FAILED) {
-+			perror("suhosin");
-+			_exit(1);
-+		}
-+                suhosin_config = SUHOSIN_MANGLE_PTR(suhosin_config);
-+	}
-+	if (!SUHOSIN_CONFIG(SUHOSIN_CONFIG_SET)) {
-+        suhosin_read_configuration_from_environment();
-+        suhosin_write_protect_configuration();
-+    }
-+}
-+
-+static char *loglevel2string(int loglevel)
-+{
-+	switch (loglevel) {
-+	    case S_FILES:
-+		return "FILES";
-+	    case S_INCLUDE:
-+		return "INCLUDE";
-+	    case S_MEMORY:
-+		return "MEMORY";
-+	    case S_MISC:
-+		return "MISC";
-+		case S_SESSION:
-+		return "SESSION";
-+	    case S_SQL:
-+		return "SQL";
-+	    case S_EXECUTOR:
-+		return "EXECUTOR";
-+	    case S_VARS:
-+		return "VARS";
-+	    default:
-+		return "UNKNOWN";    
-+	}
-+}
-+
-+static void php_security_log(int loglevel, char *fmt, ...)
-+{
-+	int s, r, i=0;
-+#if defined(AF_UNIX)
-+	struct sockaddr_un saun;
-+#endif
-+#ifdef PHP_WIN32
-+	LPTSTR strs[2];
-+	unsigned short etype;
-+	DWORD evid;
-+#endif
-+	char buf[4096+64];
-+	char error[4096+100];
-+	char *ip_address;
-+	char *fname;
-+	char *alertstring;
-+	int lineno;
-+	va_list ap;
-+	TSRMLS_FETCH();
-+
-+	/*SDEBUG("(suhosin_log) loglevel: %d log_syslog: %u - log_sapi: %u - log_script: %u", loglevel, SPG(log_syslog), SPG(log_sapi), SPG(log_script));*/
-+	
-+	if (SPG(log_use_x_forwarded_for)) {
-+		ip_address = sapi_getenv("HTTP_X_FORWARDED_FOR", 20 TSRMLS_CC);
-+		if (ip_address == NULL) {
-+			ip_address = "X-FORWARDED-FOR not set";
-+		}
-+	} else {
-+		ip_address = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC);
-+		if (ip_address == NULL) {
-+			ip_address = "REMOTE_ADDR not set";
-+		}
-+	}
-+	
-+	
-+	va_start(ap, fmt);
-+	ap_php_vsnprintf(error, sizeof(error), fmt, ap);
-+	va_end(ap);
-+	while (error[i]) {
-+		if (error[i] < 32) error[i] = '.';
-+		i++;
-+	}
-+	
-+/*	if (SPG(simulation)) {
-+		alertstring = "ALERT-SIMULATION";
-+	} else { */
-+		alertstring = "ALERT";
-+/*	}*/
-+	
-+	if (zend_is_executing(TSRMLS_C)) {
-+		if (EG(current_execute_data)) {
-+			lineno = EG(current_execute_data)->opline->lineno;
-+			fname = EG(current_execute_data)->op_array->filename;
-+		} else {
-+			lineno = zend_get_executed_lineno(TSRMLS_C);
-+			fname = zend_get_executed_filename(TSRMLS_C);
-+		}
-+		ap_php_snprintf(buf, sizeof(buf), "%s - %s (attacker '%s', file '%s', line %u)", alertstring, error, ip_address, fname, lineno);
-+	} else {
-+		fname = sapi_getenv("SCRIPT_FILENAME", 15 TSRMLS_CC);
-+		if (fname==NULL) {
-+			fname = "unknown";
-+		}
-+		ap_php_snprintf(buf, sizeof(buf), "%s - %s (attacker '%s', file '%s')", alertstring, error, ip_address, fname);
-+	}
-+			
-+	/* Syslog-Logging disabled? */
-+	if (((SPG(log_syslog)|S_INTERNAL) & loglevel)==0) {
-+		goto log_sapi;
-+	}	
-+	
-+#if defined(AF_UNIX)
-+	ap_php_snprintf(error, sizeof(error), "<%u>suhosin[%u]: %s\n", (unsigned int)(SPG(log_syslog_facility)|SPG(log_syslog_priority)),getpid(),buf);
-+
-+	s = socket(AF_UNIX, SOCK_DGRAM, 0);
-+	if (s == -1) {
-+		goto log_sapi;
-+	}
-+	
-+	memset(&saun, 0, sizeof(saun));
-+	saun.sun_family = AF_UNIX;
-+	strcpy(saun.sun_path, SYSLOG_PATH);
-+	/*saun.sun_len = sizeof(saun);*/
-+	
-+	r = connect(s, (struct sockaddr *)&saun, sizeof(saun));
-+	if (r) {
-+		close(s);
-+    		s = socket(AF_UNIX, SOCK_STREAM, 0);
-+		if (s == -1) {
-+			goto log_sapi;
-+		}
-+	
-+		memset(&saun, 0, sizeof(saun));
-+		saun.sun_family = AF_UNIX;
-+		strcpy(saun.sun_path, SYSLOG_PATH);
-+		/*saun.sun_len = sizeof(saun);*/
-+
-+		r = connect(s, (struct sockaddr *)&saun, sizeof(saun));
-+		if (r) { 
-+			close(s);
-+			goto log_sapi;
-+		}
-+	}
-+	send(s, error, strlen(error), 0);
-+	
-+	close(s);
-+#endif
-+#ifdef PHP_WIN32
-+	ap_php_snprintf(error, sizeof(error), "suhosin[%u]: %s", getpid(),buf);
-+
-+	switch (SPG(log_syslog_priority)) {			/* translate UNIX type into NT type */
-+		case 1: /*LOG_ALERT:*/
-+			etype = EVENTLOG_ERROR_TYPE;
-+			break;
-+		case 6: /*LOG_INFO:*/
-+			etype = EVENTLOG_INFORMATION_TYPE;
-+			break;
-+		default:
-+			etype = EVENTLOG_WARNING_TYPE;
-+	}
-+	evid = loglevel;
-+	strs[0] = error;
-+	/* report the event */
-+	if (log_source == NULL) {
-+		log_source = RegisterEventSource(NULL, "Suhosin-Patch-" SUHOSIN_PATCH_VERSION);
-+	}
-+	ReportEvent(log_source, etype, (unsigned short) SPG(log_syslog_priority), evid, NULL, 1, 0, strs, NULL);
-+	
-+#endif
-+log_sapi:
-+	/* SAPI Logging activated? */
-+	/*SDEBUG("(suhosin_log) log_syslog: %u - log_sapi: %u - log_script: %u - log_phpscript: %u", SPG(log_syslog), SPG(log_sapi), SPG(log_script), SPG(log_phpscript));*/
-+	if (((SPG(log_sapi)|S_INTERNAL) & loglevel)!=0) {
-+		sapi_module.log_message(buf);
-+	}
-+
-+/*log_script:*/
-+	/* script logging activaed? */
-+	if (((SPG(log_script) & loglevel)!=0) && SPG(log_scriptname)!=NULL) {
-+		char cmd[8192], *cmdpos, *bufpos;
-+		FILE *in;
-+		int space;
-+		
-+		ap_php_snprintf(cmd, sizeof(cmd), "%s %s \'", SPG(log_scriptname), loglevel2string(loglevel));
-+		space = sizeof(cmd) - strlen(cmd);
-+		cmdpos = cmd + strlen(cmd);
-+		bufpos = buf;
-+		if (space <= 1) return;
-+		while (space > 2 && *bufpos) {
-+			if (*bufpos == '\'') {
-+				if (space<=5) break;
-+				*cmdpos++ = '\'';
-+				*cmdpos++ = '\\';
-+				*cmdpos++ = '\'';
-+				*cmdpos++ = '\'';
-+				bufpos++;
-+				space-=4;
-+			} else {
-+				*cmdpos++ = *bufpos++;
-+				space--;
-+			}
-+		}
-+		*cmdpos++ = '\'';
-+		*cmdpos = 0;
-+		
-+		if ((in=VCWD_POPEN(cmd, "r"))==NULL) {
-+			php_security_log(S_INTERNAL, "Unable to execute logging shell script: %s", SPG(log_scriptname));
-+			return;
-+		}
-+		/* read and forget the result */
-+		while (1) {
-+			int readbytes = fread(cmd, 1, sizeof(cmd), in);
-+			if (readbytes<=0) {
-+				break;
-+			}
-+		}
-+		pclose(in);
-+	}
-+/*log_phpscript:*/
-+	if ((SPG(log_phpscript) & loglevel)!=0 && EG(in_execution) && SPG(log_phpscriptname) && SPG(log_phpscriptname)[0]) {
-+		zend_file_handle file_handle;
-+		zend_op_array *new_op_array;
-+		zval *result = NULL;
-+		
-+		/*long orig_execution_depth = SPG(execution_depth);*/
-+		zend_bool orig_safe_mode = PG(safe_mode);
-+		char *orig_basedir = PG(open_basedir);
-+		
-+		char *phpscript = SPG(log_phpscriptname);
-+/*SDEBUG("scriptname %s", SPG(log_phpscriptname));`*/
-+#ifdef ZEND_ENGINE_2
-+		if (zend_stream_open(phpscript, &file_handle TSRMLS_CC) == SUCCESS) {
-+#else
-+		if (zend_open(phpscript, &file_handle) == SUCCESS && ZEND_IS_VALID_FILE_HANDLE(&file_handle)) {
-+			file_handle.filename = phpscript;
-+			file_handle.free_filename = 0;
-+#endif		
-+			if (!file_handle.opened_path) {
-+				file_handle.opened_path = estrndup(phpscript, strlen(phpscript));
-+			}
-+			new_op_array = zend_compile_file(&file_handle, ZEND_REQUIRE TSRMLS_CC);
-+			zend_destroy_file_handle(&file_handle TSRMLS_CC);
-+			if (new_op_array) {
-+				HashTable *active_symbol_table = EG(active_symbol_table);
-+				zval *zerror, *zerror_class;
-+				
-+				if (active_symbol_table == NULL) {
-+					active_symbol_table = &EG(symbol_table);
-+				}
-+				EG(return_value_ptr_ptr) = &result;
-+				EG(active_op_array) = new_op_array;
-+				
-+				MAKE_STD_ZVAL(zerror);
-+				MAKE_STD_ZVAL(zerror_class);
-+				ZVAL_STRING(zerror, buf, 1);
-+				ZVAL_LONG(zerror_class, loglevel);
-+
-+				zend_hash_update(active_symbol_table, "SUHOSIN_ERROR", sizeof("SUHOSIN_ERROR"), (void **)&zerror, sizeof(zval *), NULL);
-+				zend_hash_update(active_symbol_table, "SUHOSIN_ERRORCLASS", sizeof("SUHOSIN_ERRORCLASS"), (void **)&zerror_class, sizeof(zval *), NULL);
-+				
-+				/*SPG(execution_depth) = 0;*/
-+				if (SPG(log_phpscript_is_safe)) {
-+					PG(safe_mode) = 0;
-+					PG(open_basedir) = NULL;
-+				}
-+				
-+				zend_execute(new_op_array TSRMLS_CC);
-+				
-+				/*SPG(execution_depth) = orig_execution_depth;*/
-+				PG(safe_mode) = orig_safe_mode;
-+				PG(open_basedir) = orig_basedir;
-+				
-+#ifdef ZEND_ENGINE_2
-+				destroy_op_array(new_op_array TSRMLS_CC);
-+#else
-+				destroy_op_array(new_op_array);
-+#endif
-+				efree(new_op_array);
-+#ifdef ZEND_ENGINE_2
-+				if (!EG(exception))
-+#endif			
-+				{
-+					if (EG(return_value_ptr_ptr)) {
-+						zval_ptr_dtor(EG(return_value_ptr_ptr));
-+						EG(return_value_ptr_ptr) = NULL;
-+					}
-+				}
-+			} else {
-+				php_security_log(S_INTERNAL, "Unable to execute logging PHP script: %s", SPG(log_phpscriptname));
-+				return;
-+			}
-+		} else {
-+			php_security_log(S_INTERNAL, "Unable to execute logging PHP script: %s", SPG(log_phpscriptname));
-+			return;
-+		}
-+	}
-+
-+}
-+
-+
-+#endif
-+
-+/*
-+ * Local variables:
-+ * tab-width: 4
-+ * c-basic-offset: 4
-+ * End:
-+ * vim600: sw=4 ts=4 fdm=marker
-+ * vim<600: sw=4 ts=4
-+ */
-diff -Nura php-5.3.9/main/suhosin_patch.h suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.h
---- php-5.3.9/main/suhosin_patch.h	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.h	2012-01-11 19:29:08.000000000 +0100
-@@ -0,0 +1,59 @@
-+/*
-+   +----------------------------------------------------------------------+
-+   | Suhosin Patch for PHP                                                |
-+   +----------------------------------------------------------------------+
-+   | Copyright (c) 2004-2010 Stefan Esser                                 |
-+   +----------------------------------------------------------------------+
-+   | This source file is subject to version 2.02 of the PHP license,      |
-+   | that is bundled with this package in the file LICENSE, and is        |
-+   | available at through the world-wide-web at                           |
-+   | http://www.php.net/license/2_02.txt.                                 |
-+   | If you did not receive a copy of the PHP license and are unable to   |
-+   | obtain it through the world-wide-web, please send a note to          |
-+   | license@php.net so we can mail you a copy immediately.               |
-+   +----------------------------------------------------------------------+
-+   | Author: Stefan Esser <stefan.esser@sektioneins.de>                   |
-+   +----------------------------------------------------------------------+
-+ */
-+
-+#ifndef SUHOSIN_PATCH_H
-+#define SUHOSIN_PATCH_H
-+
-+#if SUHOSIN_PATCH
-+
-+#include "zend.h"
-+
-+#define SUHOSIN_PATCH_VERSION "0.9.10"
-+
-+#define SUHOSIN_LOGO_GUID "SUHO8567F54-D428-14d2-A769-00DA302A5F18"
-+
-+#define SUHOSIN_CONFIG(idx) (suhosin_get_config(idx))
-+
-+#define SUHOSIN_MM_USE_CANARY_PROTECTION        0
-+#define SUHOSIN_MM_DESTROY_FREE_MEMORY          1
-+#define SUHOSIN_MM_IGNORE_CANARY_VIOLATION      2
-+#define SUHOSIN_HT_IGNORE_INVALID_DESTRUCTOR    3
-+#define SUHOSIN_LL_IGNORE_INVALID_DESTRUCTOR    4
-+
-+#define SUHOSIN_CONFIG_SET                      100
-+
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+
-+#if defined(DARWIN)
-+#include <mach/vm_param.h>
-+#endif
-+
-+#define SUHOSIN_MANGLE_PTR(ptr)   (ptr==NULL?NULL:((void *)((zend_intptr_t)(ptr)^SUHOSIN_POINTER_GUARD)))
-+
-+#endif
-+
-+#endif /* SUHOSIN_PATCH_H */
-+
-+/*
-+ * Local variables:
-+ * tab-width: 4
-+ * c-basic-offset: 4
-+ * End:
-+ */
-diff -Nura php-5.3.9/main/suhosin_patch.m4 suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.m4
---- php-5.3.9/main/suhosin_patch.m4	1970-01-01 01:00:00.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/main/suhosin_patch.m4	2012-01-11 19:29:08.000000000 +0100
-@@ -0,0 +1,8 @@
-+dnl
-+dnl $Id: suhosin_patch.m4,v 1.1 2004/11/14 13:24:24 ionic Exp $
-+dnl
-+dnl This file contains Suhosin Patch for PHP specific autoconf functions.
-+dnl
-+
-+AC_DEFINE(SUHOSIN_PATCH, 1, [Suhosin Patch])
-+
-diff -Nura php-5.3.9/sapi/apache/mod_php5.c suhosin-patch-5.3.9-0.9.10/sapi/apache/mod_php5.c
---- php-5.3.9/sapi/apache/mod_php5.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/apache/mod_php5.c	2012-01-11 19:29:08.000000000 +0100
-@@ -969,7 +969,11 @@
- 	{
- 		TSRMLS_FETCH();
- 		if (PG(expose_php)) {
-+#if SUHOSIN_PATCH
-+			ap_add_version_component("PHP/" PHP_VERSION " with Suhosin-Patch");
-+#else
- 			ap_add_version_component("PHP/" PHP_VERSION);
-+#endif
- 		}
- 	}
- #endif
-diff -Nura php-5.3.9/sapi/apache2filter/sapi_apache2.c suhosin-patch-5.3.9-0.9.10/sapi/apache2filter/sapi_apache2.c
---- php-5.3.9/sapi/apache2filter/sapi_apache2.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/apache2filter/sapi_apache2.c	2012-01-11 19:29:08.000000000 +0100
-@@ -583,7 +583,11 @@
- {
- 	TSRMLS_FETCH();
- 	if (PG(expose_php)) {
-+#if SUHOSIN_PATCH
-+		ap_add_version_component(p, "PHP/" PHP_VERSION " with Suhosin-Patch");
-+#else
- 		ap_add_version_component(p, "PHP/" PHP_VERSION);
-+#endif
- 	}
- }
- 
-diff -Nura php-5.3.9/sapi/apache2handler/sapi_apache2.c suhosin-patch-5.3.9-0.9.10/sapi/apache2handler/sapi_apache2.c
---- php-5.3.9/sapi/apache2handler/sapi_apache2.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/apache2handler/sapi_apache2.c	2012-01-11 19:29:08.000000000 +0100
-@@ -407,7 +407,11 @@
- {
- 	TSRMLS_FETCH();
- 	if (PG(expose_php)) {
-+#if SUHOSIN_PATCH
-+		ap_add_version_component(p, "PHP/" PHP_VERSION " with Suhosin-Patch");
-+#else
- 		ap_add_version_component(p, "PHP/" PHP_VERSION);
-+#endif
- 	}
- }
- 
-diff -Nura php-5.3.9/sapi/apache_hooks/mod_php5.c suhosin-patch-5.3.9-0.9.10/sapi/apache_hooks/mod_php5.c
---- php-5.3.9/sapi/apache_hooks/mod_php5.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/apache_hooks/mod_php5.c	2012-01-11 19:29:08.000000000 +0100
-@@ -1256,7 +1256,11 @@
- 	{
- 		TSRMLS_FETCH();
- 		if (PG(expose_php)) {
-+#if SUHOSIN_PATCH
-+			ap_add_version_component("PHP/" PHP_VERSION " with Suhosin-Patch");
-+#else
- 			ap_add_version_component("PHP/" PHP_VERSION);
-+#endif
- 		}
- 	}
- #endif
-diff -Nura php-5.3.9/sapi/cgi/cgi_main.c suhosin-patch-5.3.9-0.9.10/sapi/cgi/cgi_main.c
---- php-5.3.9/sapi/cgi/cgi_main.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/cgi/cgi_main.c	2012-01-11 19:36:52.000000000 +0100
-@@ -1932,11 +1932,19 @@
- 								SG(headers_sent) = 1;
- 								SG(request_info).no_headers = 1;
- 							}
-+#if SUHOSIN_PATCH
-+#if ZEND_DEBUG
-+							php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+#else
-+							php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+#endif
-+#else
- #if ZEND_DEBUG
- 							php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
- #else
- 							php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
- #endif
-+#endif
- 							php_request_shutdown((void *) 0);
- 							fcgi_shutdown();
- 							exit_status = 0;
-diff -Nura php-5.3.9/sapi/cli/php_cli.c suhosin-patch-5.3.9-0.9.10/sapi/cli/php_cli.c
---- php-5.3.9/sapi/cli/php_cli.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/cli/php_cli.c	2012-01-11 19:35:06.000000000 +0100
-@@ -826,7 +826,11 @@
- 				}
- 
- 				request_started = 1;
--				php_printf("PHP %s (%s) (built: %s %s) %s\nCopyright (c) 1997-2012 The PHP Group\n%s",
-+				php_printf("PHP %s "
-+#if SUHOSIN_PATCH
-+					"with Suhosin-Patch "
-+#endif
-+					"(%s) (built: %s %s) %s\nCopyright (c) 1997-2012 The PHP Group\n%s",
- 					PHP_VERSION, sapi_module.name, __DATE__, __TIME__,
- #if ZEND_DEBUG && defined(HAVE_GCOV)
- 					"(DEBUG GCOV)",
-diff -Nura php-5.3.9/sapi/litespeed/lsapi_main.c suhosin-patch-5.3.9-0.9.10/sapi/litespeed/lsapi_main.c
---- php-5.3.9/sapi/litespeed/lsapi_main.c	2011-12-31 19:15:06.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/litespeed/lsapi_main.c	2012-01-11 19:29:08.000000000 +0100
-@@ -718,11 +718,19 @@
-                 break;
-             case 'v':
-                 if (php_request_startup(TSRMLS_C) != FAILURE) {
-+#if SUHOSIN_PATCH
-+  #if ZEND_DEBUG
-+					php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2011 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+  #else
-+					php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2011 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+  #endif
-+#else					
- #if ZEND_DEBUG
-                     php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2004 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
- #else
-                     php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2004 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
- #endif
-+#endif
- #ifdef PHP_OUTPUT_NEWAPI
-                     php_output_end_all(TSRMLS_C);
- #else
-diff -Nura php-5.3.9/sapi/milter/php_milter.c suhosin-patch-5.3.9-0.9.10/sapi/milter/php_milter.c
---- php-5.3.9/sapi/milter/php_milter.c	2012-01-01 14:15:04.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/sapi/milter/php_milter.c	2012-01-11 19:33:42.000000000 +0100
-@@ -1111,7 +1111,11 @@
- 				}
- 				SG(headers_sent) = 1;
- 				SG(request_info).no_headers = 1;
-+#if SUHOSIN_PATCH
-+				php_printf("PHP %s with Suhosin-Patch (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+#else
- 				php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2012 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
-+#endif
- 				php_end_ob_buffers(1 TSRMLS_CC);
- 				exit(1);
- 				break;
-diff -Nura php-5.3.9/win32/build/config.w32 suhosin-patch-5.3.9-0.9.10/win32/build/config.w32
---- php-5.3.9/win32/build/config.w32	2011-03-28 12:55:34.000000000 +0200
-+++ suhosin-patch-5.3.9-0.9.10/win32/build/config.w32	2012-01-11 19:29:08.000000000 +0100
-@@ -328,7 +328,7 @@
- 	zend_stream.c zend_iterators.c zend_interfaces.c zend_objects.c \
- 	zend_object_handlers.c zend_objects_API.c \
- 	zend_default_classes.c zend_execute.c zend_strtod.c zend_gc.c zend_closures.c \
--	zend_float.c");
-+	zend_float.c zend_canary.c zend_alloc_canary.c");
- 
- if (VCVERS == 1200) {
- 	AC_DEFINE('ZEND_DVAL_TO_LVAL_CAST_OK', 1);
-@@ -385,6 +385,7 @@
-  
- AC_DEFINE('HAVE_USLEEP', 1);
- AC_DEFINE('HAVE_STRCOLL', 1);
-+AC_DEFINE('SUHOSIN_PATCH', 1);
- 
- /* For snapshot builders, where can we find the additional
-  * files that make up the snapshot template? */
-diff -Nura php-5.3.9/win32/build/config.w32.h.in suhosin-patch-5.3.9-0.9.10/win32/build/config.w32.h.in
---- php-5.3.9/win32/build/config.w32.h.in	2010-11-26 19:25:13.000000000 +0100
-+++ suhosin-patch-5.3.9-0.9.10/win32/build/config.w32.h.in	2012-01-11 19:29:08.000000000 +0100
-@@ -152,6 +152,9 @@
- /* Win32 supports strcoll */
- #define HAVE_STRCOLL 1
- 
-+/* Suhosin Patch support */
-+#define SUHOSIN_PATCH 1
-+
- /* Win32 supports socketpair by the emulation in win32/sockets.c */
- #define HAVE_SOCKETPAIR 1
- #define HAVE_SOCKLEN_T 1

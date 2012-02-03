@@ -1,7 +1,7 @@
-diff -urN php-5.1.6.old/ext/standard/info.c php-5.1.6/ext/standard/info.c
---- php-5.1.6.old/ext/standard/info.c	2006-03-31 13:11:12.000000000 +0200
-+++ php-5.1.6/ext/standard/info.c	2006-10-24 17:24:43.000000000 +0200
-@@ -631,6 +631,16 @@
+diff -urN php5-5.3.10.orig//ext/standard/info.c php5-5.3.10/ext/standard/info.c
+--- php5-5.3.10.orig//ext/standard/info.c	2012-02-02 22:32:44.000000000 +0000
++++ php5-5.3.10/ext/standard/info.c	2012-02-02 22:33:45.000000000 +0000
+@@ -924,6 +924,16 @@
  			zend_html_puts(zend_version, strlen(zend_version) TSRMLS_CC);
  		}
  		php_info_print_box_end();
