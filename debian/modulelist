@@ -1,4 +1,5 @@
 curl CURL
+common PDO pdo 10
 enchant Enchant
 gd GD
 gmp GMP
@@ -8,12 +9,13 @@ intl Internationalisation
 ldap LDAP
 mcrypt MCrypt
 mysql MySQL
+mysqlnd MySQL mysqlnd 10
 odbc ODBC
 pgsql PostgreSQL
 pspell pspell
 recode recode
 snmp SNMP
-sqlite SQLite
+sqlite SQLite sqlite3
 sybase Sybase mssql
 tidy tidy
 xmlrpc XML-RPC

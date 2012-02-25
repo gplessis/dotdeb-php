@@ -24,6 +24,7 @@ fi
 phpini="/etc/php5/apache2/php.ini"
 
 ucf /usr/share/php5/php.ini-production $phpini
+ucfr libapache2-mod-php5 $phpini
 
 if [ -n "$2" ]; then
 	# recover the previous state

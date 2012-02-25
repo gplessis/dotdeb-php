@@ -1,0 +1,20 @@
+Description: Adds security notices to php.ini settings
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-01-18
+
+--- a/php.ini-development
++++ b/php.ini-development
+@@ -305,6 +305,12 @@ serialize_precision = 17
+ ; or per-virtualhost web server configuration file. This directive is
+ ; *NOT* affected by whether Safe Mode is turned On or Off.
+ ; http://php.net/open-basedir
++ 
++; NOTE: this is considered a "broken" security measure.
++;       Applications relying on this feature will not receive full
++;       support by the security team.  For more information please
++;       see /usr/share/doc/php5-common/README.Debian.security
++;
+ ;open_basedir =
+ 
+ ; This directive allows you to disable certain functions for security reasons.

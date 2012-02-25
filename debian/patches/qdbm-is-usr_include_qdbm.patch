@@ -1,7 +1,13 @@
-diff -urN php5-5.3.10.orig//ext/dba/config.m4 php5-5.3.10/ext/dba/config.m4
---- php5-5.3.10.orig//ext/dba/config.m4	2011-06-27 20:28:30.000000000 +0000
-+++ php5-5.3.10/ext/dba/config.m4	2012-02-02 22:19:41.000000000 +0000
-@@ -109,6 +109,10 @@
+Description: Look for qdbm under $prefix/include/qdbm too.
+ The Debian package ships the header files under that directory, for
+ unknown reasons.
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-02-21
+
+--- a/ext/dba/config.m4
++++ b/ext/dba/config.m4
+@@ -113,6 +113,10 @@ if test "$PHP_QDBM" != "no"; then
        THIS_PREFIX=$i
        THIS_INCLUDE=$i/include/depot.h
        break

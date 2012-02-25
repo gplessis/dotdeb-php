@@ -11,6 +11,7 @@ fi
 phpini="/etc/php5/cgi/php.ini"
 
 ucf /usr/share/php5/php.ini-production $phpini
+ucfr php5-cgi $phpini
 
 update-alternatives \
         --install /usr/bin/php-cgi php-cgi /usr/bin/php5-cgi 50 \

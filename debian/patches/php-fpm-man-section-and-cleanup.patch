@@ -1,7 +1,13 @@
-diff -urN php5-5.3.10.orig//sapi/fpm/php-fpm.8.in php5-5.3.10/sapi/fpm/php-fpm.8.in
---- php5-5.3.10.orig//sapi/fpm/php-fpm.8.in	2012-02-02 17:51:44.000000000 +0000
-+++ php5-5.3.10/sapi/fpm/php-fpm.8.in	2012-02-02 22:20:54.000000000 +0000
-@@ -112,15 +112,8 @@
+Description: Fix php-fpm's manpage section to match location of binary
+ (/usr/sbin,) additionally, remove some stuff that is useless or
+ doesn't apply to Debian.
+Origin: vendor
+Forwarded: http://bugs.php.net/52476
+Last-Update: 2010-07-29
+
+--- a/sapi/fpm/php-fpm.8.in
++++ b/sapi/fpm/php-fpm.8.in
+@@ -112,15 +112,8 @@ The configuration file for the php-fpm d
  .TP
  .B php.ini
  The standard php configuration file.
@@ -19,7 +25,7 @@ diff -urN php5-5.3.10.orig//sapi/fpm/php-fpm.8.in php5-5.3.10/sapi/fpm/php-fpm.8
  .P
  .PD 0
  .RS
-@@ -134,10 +127,6 @@
+@@ -134,10 +127,6 @@ If your installation has no appropriate
  .RE
  .PD 1
  .P

@@ -16,20 +16,41 @@ export DH_OPTIONS
 # compatibility to upstream
 PHP5_COMPAT=no
 
+# Set this flag to 'yes' if you want to compile PHP5 with suhosin patch
+PHP5_SUHOSIN=no
+
 DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_HOST_ARCH   ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_ARCH        ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 
 PHP5_SOURCE_VERSION   = $(shell dpkg-parsechangelog | grep ^Version | sed "s/Version: //")
 PHP5_UPSTREAM_VERSION = $(shell echo $(PHP5_SOURCE_VERSION) | sed -e "s/-.*//" -e "s/.*://")
 PHP5_DEBIAN_REVISION  = $(shell echo $(PHP5_SOURCE_VERSION) | sed "s/.*-//")
 
-MYSQL_PORT := $(shell for i in $$(seq 1025 3600); do nc -z localhost $$i || { echo $$i; exit; } ; done)
-MYSQL_DATA_DIR ?= $(shell readlink -f mysql_db)
-ifeq (,$(MYSQL_PORT))
-    $(error Could not find available port for mysql server)
+RUN_TESTS = yes
+ifeq (nocheck,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+  $(warning Disabling checks due DEB_BUILD_OPTIONS)
+  RUN_TESTS = no
 endif
-MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
+ifeq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),hurd-i386))
+  $(warning Disabling checks on hurd-i386)
+  RUN_TESTS = no
+endif
+
+ifneq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),hurd-i386 m68k hppa ppc64))
+  CONFIGURE_APACHE_ARGS = --with-interbase=shared,/usr --with-pdo-firebird=shared,/usr
+else
+  CONFIGURE_APACHE_ARGS = --without-interbase --without-pdo-firebird
+endif
+
+ifeq (yes,$(RUN_TESTS))
+  MYSQL_PORT := $(shell for i in $$(seq 1025 3600 | sort -R); do nc -z localhost $$i || { echo $$i; exit; } ; done)
+  MYSQL_DATA_DIR ?= $(shell readlink -f mysql_db)
+  ifeq (,$(MYSQL_PORT))
+      $(error Could not find available port for mysql server)
+  endif
+  MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
+endif
 
 # specify some options to our patch system
 QUILT_DIFF_OPTS=-p
@@ -53,7 +74,7 @@ ifeq (alpha-linux-gnu,$(DEB_HOST_GNU_TYPE))
   CFLAGS += -mieee
 endif
 
-ifeq ($(DEB_HOST_GNU_TYPE), $(findstring $(DEB_HOST_GNU_TYPE), ia64-linux-gnu powerpc64-linux-gnu avr32-linux-gnu))
+ifeq ($(DEB_HOST_GNU_TYPE),$(filter $(DEB_HOST_GNU_TYPE),ia64-linux-gnu powerpc64-linux-gnu avr32-linux-gnu))
   CFLAGS += -g
 else
   CFLAGS += -gstabs
@@ -73,12 +94,6 @@ else ifeq ($(LTMAIN_DIR), /usr/share/libtool/config/)
 LIBTOOL_CONFLICTS:=libtool (<< 2.2)
 else
 LIBTOOL_CONFLICTS:=$(error "could not resolve path to ltmain.sh")
-endif
-
-# only enable interbase support on archs where it is supported
-ifneq (,$(filter $(DEB_HOST_ARCH),amd64 armel armhf i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel powerpc s390 sparc))
-	IBFLAGS=--with-interbase=shared,/usr \
-		--with-pdo-firebird=shared,/usr
 endif
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -105,9 +120,6 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-layout=GNU \
 		--with-pear=/usr/share/php \
 		--enable-calendar \
-		--enable-fileinfo \
-		--enable-hash \
-		--enable-json \
 		--enable-sysvsem \
 		--enable-sysvshm \
 		--enable-sysvmsg \
@@ -120,28 +132,14 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-iconv \
 		--enable-exif \
 		--enable-ftp \
-		--enable-dbase \
 		--with-gettext \
 		--enable-mbstring \
 		--with-onig=/usr \
-		--with-pcre-regex \
-		--with-mysql=shared,mysqlnd \
-		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
-		--with-mysqli=shared,mysqlnd \
-		--enable-pdo=shared \
-		--with-pdo-mysql=shared,mysqlnd \
-		--with-pdo-odbc=shared,unixODBC,/usr \
-		--with-pdo-pgsql=shared,/usr/bin/pg_config \
-		--with-pdo-sqlite=shared,/usr \
-		--with-pdo-dblib=shared,/usr \
-		--enable-phar \
+		--with-pcre-regex=/usr \
 		--enable-shmop \
 		--enable-sockets \
-		--enable-simplexml \
-		--enable-dom \
 		--enable-wddx \
 		--with-libxml-dir=/usr \
-		--enable-tokenizer \
 		--with-zlib \
 		--with-kerberos=/usr \
 		--with-openssl=/usr \
@@ -149,12 +147,13 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--enable-zip \
 		--with-mhash=yes \
 		--with-exec-dir=/usr/lib/php5/libexec \
-		--with-system-tzdata
+		--with-system-tzdata \
+		--with-mysql-sock=/var/run/mysqld/mysqld.sock
 
 BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
 			$$s="The following extensions are built in:"; \
 			foreach($$e as $$i) { $$s .= " $$i"; } \
-			echo("php:Extensions=" . wordwrap($$s . ".\n", 75, "\$${Newline} "));
+			echo("php:Extensions=" . wordwrap($$s . ".\n", 75, "\$${Newline}"));
 
 # include the patch/unpatch rules from quilt
 include /usr/share/quilt/quilt.make
@@ -162,6 +161,12 @@ include /usr/share/quilt/quilt.make
 prepared: prepared-stamp
 prepared-stamp: $(QUILT_STAMPFN)
 	dh_testdir
+ifeq (yes,$(PHP5_SUHOSIN))
+	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
+		quilt --quiltrc /dev/null import debian/patches/suhosin.patch
+	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
+		quilt --quiltrc /dev/null push -a || test $$? = 2
+endif
 	sed -i -e 's/EXTRA_VERSION=""/EXTRA_VERSION="-$(PHP5_DEBIAN_REVISION)"/' configure.in
 	./buildconf --force
 	touch prepared-stamp
@@ -171,8 +176,8 @@ unprepared:
 	sed -i -e 's/EXTRA_VERSION="-$(PHP5_DEBIAN_REVISION)"/EXTRA_VERSION=""/' configure.in
 	rm -f prepared-stamp
 
-test-results.txt: build-apache2-stamp build-cli-stamp build-cgi-stamp build-fpm-stamp
-ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+test-results.txt: build-apache2-stamp build-cli-stamp build-cgi-stamp
+ifeq (yes,$(RUN_TESTS))
 	mkdir -p temp_session_store
 	# start our own mysql server for the tests
 	$(SHELL) debian/setup-mysql.sh $(MYSQL_PORT) $(MYSQL_DATA_DIR)
@@ -183,19 +188,13 @@ ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	    test "$$ext" != "imap.so" || continue; \
 	    test "$$ext" != "interbase.so" || continue; \
 	    test "$$ext" != "ldap.so" || continue; \
-	    test "$$ext" != "mysql.so" || continue; \
-	    test "$$ext" != "mysqli.so" || continue; \
 	    test "$$ext" != "odbc.so" || continue; \
 	    test "$$ext" != "pgsql.so" || continue; \
-	    test "$$ext" != "pdo.so" || continue; \
 	    test "$$ext" != "pdo_dblib.so" || continue; \
 	    test "$$ext" != "pdo_firebird.so" || continue; \
-	    test "$$ext" != "pdo_mysql.so" || continue; \
 	    test "$$ext" != "pdo_odbc.so" || continue; \
 	    test "$$ext" != "pdo_pgsql.so" || continue; \
-	    test "$$ext" != "pdo_sqlite.so" || continue; \
 	    test "$$ext" != "snmp.so" || continue; \
-	    test "$$ext" != "sqlite.so" || continue; \
 	    extensions="$$extensions -d extension=$$ext"; \
 	done; \
 	[ "$$extensions" ] || { echo "extensions list is empty"; exit 1; }; \
@@ -210,7 +209,7 @@ ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	done | tee -a test-results.txt
 	$(SHELL) debian/setup-mysql.sh $(MYSQL_PORT) $(MYSQL_DATA_DIR) stop
 else
-	echo 'nocheck found in DEB_BUILD_OPTIONS' | tee test-results.txt
+	echo 'nocheck found in DEB_BUILD_OPTIONS or unsupported architecture' | tee test-results.txt
 endif
 
 build: build-apache2-stamp build-apache2filter-stamp build-cgi-stamp build-cli-stamp build-fpm-stamp build-pear-stamp test-results.txt
@@ -269,6 +268,7 @@ build-pear-stamp: build-cgi-stamp
 	       -e 's/-d output_buffering=1 -d open_basedir="" -d safe_mode=0/-d output_buffering=1 -d open_basedir="" -d safe_mode=0 -d memory_limit="-1"/' \
 	       $(CURDIR)/pear-build/usr/bin/peardev
 	sed -i -re "s#('PEAR_CONFIG_SYSCONFDIR', PHP_SYSCONFDIR)#\1 . '/pear'#" $(CURDIR)/pear-build/usr/share/php/PEAR/Config.php
+	patch -s -d $(CURDIR)/pear-build/usr/share/php/ -p1 -i $(CURDIR)/debian/patches/PEAR-Builder-print-info-about-php5-dev.patch
 	touch build-pear-stamp
 
 configure: configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-fpm-stamp configure-cgi-stamp
@@ -295,24 +295,32 @@ configure-apache2-stamp: prepared-stamp
 		--with-freetype-dir=shared,/usr \
 		--with-imap=shared,/usr \
 		--with-imap-ssl \
-		$(IBFLAGS) \
 		--enable-intl=shared \
-		--with-ttf=shared,/usr \
 		--with-t1lib=shared,/usr \
 		--with-ldap=shared,/usr \
 		--with-ldap-sasl=/usr \
 		--with-mcrypt=shared,/usr \
+		--with-mysql=shared,/usr \
+		--with-mysqli=shared,/usr/bin/mysql_config \
 		--with-pspell=shared,/usr \
 		--with-unixODBC=shared,/usr \
 		--with-recode=shared,/usr \
 		--with-xsl=shared,/usr \
 		--with-snmp=shared,/usr \
-		--with-sqlite=shared,/usr \
+		--without-sqlite \
 		--with-sqlite3=shared,/usr \
 		--with-mssql=shared,/usr \
 		--with-tidy=shared,/usr \
 		--with-xmlrpc=shared \
-		--with-pgsql=shared,/usr PGSQL_INCLUDE=`pg_config --includedir`
+		--with-pgsql=shared,/usr PGSQL_INCLUDE=`pg_config --includedir` \
+		--enable-pdo=shared \
+		--without-pdo-dblib \
+		--with-pdo-mysql=shared,/usr \
+		--with-pdo-odbc=shared,unixODBC,/usr \
+		--with-pdo-pgsql=shared,/usr/bin/pg_config \
+		--with-pdo-sqlite=shared,/usr \
+		--with-pdo-dblib=shared,/usr \
+		$(CONFIGURE_APACHE_ARGS)
 	cd apache2-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -331,7 +339,8 @@ configure-apache2filter-stamp: prepared-stamp
 		--with-config-file-scan-dir=/etc/php5/apache2filter/conf.d \
 		$(COMMON_CONFIG) \
 		--without-mm \
-		--without-sybase-ct --without-mssql \
+		--disable-pdo \
+		--without-mysql --without-sybase-ct --without-mssql \
 		--without-sqlite --without-sqlite3
 	cd apache2filter-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -351,8 +360,15 @@ configure-cgi-stamp: prepared-stamp
 		--with-config-file-scan-dir=/etc/php5/cgi/conf.d \
 		$(COMMON_CONFIG) \
 		--without-mm \
+		--enable-pdo=shared \
+		--enable-mysqlnd=shared \
+		--with-mysql=shared,mysqlnd \
+		--with-mysqli=shared,mysqlnd \
+		--with-pdo-mysql=shared,mysqlnd \
+		--without-pdo-sqlite \
 		--without-sybase-ct --without-mssql \
-		--without-sqlite --without-sqlite3
+		--without-sqlite --without-sqlite3 \
+		--enable-pcntl
 	cd cgi-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -372,8 +388,9 @@ configure-cli-stamp: prepared-stamp
 		$(COMMON_CONFIG) \
 		--without-mm \
 		--with-readline=/usr \
-		--without-sybase-ct --without-sqlite --without-sqlite3 \
-		--without-mssql --enable-pcntl
+		--disable-pdo \
+		--without-mysql --without-sybase-ct --without-sqlite \
+		--without-mssql --without-sqlite3 --enable-pcntl
 	cd cli-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -394,8 +411,9 @@ configure-fpm-stamp: prepared-stamp
 		$(COMMON_CONFIG) \
 		--with-libevent-dir=/usr \
 		--without-mm \
-		--without-sybase-ct --without-mssql \
-		--without-sqlite --without-sqlite3
+		--disable-pdo \
+		--without-mysql --without-sybase-ct --without-sqlite \
+		--without-mssql --without-sqlite3
 	cd fpm-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -407,6 +425,11 @@ clean: unprepared unpatch
 	dh_testdir
 	dh_testroot
 
+ifeq (yes,$(PHP5_SUHOSIN))
+	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
+		quilt --quiltrc /dev/null delete debian/patches/suhosin.patch \
+	        || return 0
+endif
 
 	rm -f configure-apache2-stamp build-apache2-stamp
 	rm -f configure-apache2filter-stamp build-apache2filter-stamp
@@ -426,8 +449,11 @@ clean: unprepared unpatch
 	dh_clean -Xorig
 
 	# clean up autogenerated cruft
-	cat debian/modulelist | while read package extname dsoname; do \
+	cat debian/modulelist | while read package extname dsoname priority; do \
 		rm -f debian/php5-$$package.postinst; \
+		rm -f debian/php5-$$package.preinst; \
+		rm -f debian/php5-$$package.prerm; \
+		rm -f debian/php5-$$package.postrm; \
 	done
 	for sapi in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli php5-fpm; do \
 		for cruft in postrm links; do \
@@ -435,11 +461,13 @@ clean: unprepared unpatch
 		done; \
 	done
 
+PCNTL_FUNCTIONS := $(shell < ext/pcntl/php_pcntl.h sed -ne "/^PHP_FUNCTION/ s/PHP_FUNCTION(\(.*\));/\1/;t end;d;:end p" | tr '\n' ',')
+
 install: DH_OPTIONS=
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs
 
 	chmod 01733 debian/php5-common/var/lib/php5
@@ -463,8 +491,8 @@ install: build
 		debian/libapache2-mod-php5filter/etc/apache2/mods-available/php5filter.conf
 
 	# sanitize php.ini file
-	cat php.ini-production | tr "\t" " " > debian/php5-common/usr/share/php5/php.ini-production
-	cat php.ini-production | tr "\t" " " | sed -e'/memory_limit =/ s/128M/-1/g' > debian/php5-common/usr/share/php5/php.ini-production.cli
+	cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-production
+	cat php.ini-production | tr "\t" " " | sed -e'/memory_limit =/ s/128M/-1/g;/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g' > debian/php5-common/usr/share/php5/php.ini-production.cli
 	cat php.ini-development | tr "\t" " " > debian/php5-common/usr/share/doc/php5-common/examples/php.ini-development
 	cp test-results.txt debian/php5-common/usr/share/doc/php5-common/
 
@@ -511,15 +539,18 @@ install: build
 	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-fpm php5-cli; do \
 		mkdir -p debian/$$i/$${ext}; \
 	done; \
-	cat debian/modulelist debian/extramodulelist | while read package extname dsoname; do \
+	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
+		if [ "$$package" = "mysqlnd" ]; then \
+			modulepath=cgi-build/modules; \
+		else \
+			modulepath=debian/libapache2-mod-php5/$${ext}; \
+		fi; \
 		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
 		mkdir -p debian/php5-$$package$${ext}; \
-		chrpath debian/libapache2-mod-php5/$${ext}/$$dsoname.so; \
-		chrpath -d debian/libapache2-mod-php5/$${ext}/$$dsoname.so; \
 		install -m 644 -o root -g root \
-			debian/libapache2-mod-php5/$${ext}/$$dsoname.so \
+			$${modulepath}/$$dsoname.so \
 			debian/php5-$$package$${ext}/$$dsoname.so; \
-		rm debian/libapache2-mod-php5/$${ext}/$$dsoname.so; \
+		rm $${modulepath}/$$dsoname.so; \
 	done
 
 	# install CGI
@@ -568,20 +599,26 @@ install: build
 		mv debian/php5-dev/usr/bin/$$i debian/php5-dev/usr/bin/"$$i"5; \
 		mv debian/php5-dev/usr/share/man/man1/"$$i".1 debian/php5-dev/usr/share/man/man1/"$$i"5.1; \
 	done
+	# remove windows devel file
+	rm $(CURDIR)/debian/php5-dev/usr/share/php5/skeleton/skeleton.dsp
 
 	# install common files
 	install -m755 debian/maxlifetime debian/php5-common/usr/lib/php5
+	install -m755 debian/php5enmod debian/php5-common/usr/sbin/php5enmod
+	ln -s php5enmod debian/php5-common/usr/sbin/php5dismod
 
 	# install lintian overrides
 	cp debian/php5.lintian-overrides $(CURDIR)/debian/php5-common/usr/share/lintian/overrides/php5-common
 	cp debian/php5-dev.lintian-overrides $(CURDIR)/debian/php5-dev/usr/share/lintian/overrides/php5-dev
+	cp debian/php-pear.lintian-overrides $(CURDIR)/debian/php-pear/usr/share/lintian/overrides/php-pear
 
 	# install some generic lintian overrides
 	ext=`debian/php5-dev/usr/bin/php-config5 --extension-dir | cut -b2- `; \
 	for sapi in php5-cli php5-fpm php5-cgi libapache2-mod-php5 libapache2-mod-php5filter; do \
 		mkdir -p $(CURDIR)/debian/"$$sapi"/usr/share/lintian/overrides/; \
 		sed "s/@sapi@/$$sapi/g;s,@extdir@,$$ext,g" \
-		    < $(CURDIR)/debian/php5-sapi.lintian-overrides \
+		    < $(CURDIR)/debian/php5-sapi.lintian-overrides | \
+		grep -E "^$${sapi}: " \
 		    >> $(CURDIR)/debian/"$$sapi"/usr/share/lintian/overrides/"$$sapi"; \
 	done
 
@@ -622,46 +659,59 @@ binary-arch: build install
 	dh_testroot
 	# Do this first so we don't overwrite any debhelper-generated files
 	#
-	# generate the maintscripts for various php
-	# modules from the templates.
-	cat debian/modulelist | while read package extname dsoname; do \
-		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
-		sed -e"s/@extname@/$$extname/g; s/@dsoname@/$$dsoname/g; \
-		       /#EXTRA#/ r debian/php5-$${package}.postinst.extra" \
-		  < debian/php5-module.postinst \
-		| sed -e'/#EXTRA#/ d' \
-		  > debian/php5-$${package}.postinst; \
-		c=`grep -vE '^(#|set|$$)' < debian/php5-$${package}.postinst | wc -l`; \
-		[ "$$c" != "0" ] || $(RM) debian/php5-$${package}.postinst; \
-	done
-
 	# generate the config snippets for various php
 	# modules from the templates.
-	cat debian/modulelist debian/extramodulelist | while read package extname dsoname; do \
-		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
-		mkdir -p debian/php5-$$package/etc/php5/conf.d; \
-		sed -e"s/@extname@/$$extname/g; s/@dsoname@/$$dsoname/g" \
+	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
+		if [ -z "$${dsoname}" ]; then dsoname=$$package; fi; \
+		if [ -z "$${priority}" ]; then priority=20; fi; \
+		mkdir -p debian/php5-$$package/usr/share/php5/$$package; \
+		sed -e"s|@extname@|$${extname}|g; \
+		       s/@dsoname@/$${dsoname}/g; \
+		       s/@priority@/$${priority}/g" \
 		  < debian/php5-module.ini \
-		  > debian/php5-$${package}/etc/php5/conf.d/$${dsoname}.ini; \
+		  > debian/php5-$$package/usr/share/php5/$$package/$${dsoname}.ini; \
+		echo -n "$$dsoname " >> debian/php5-$$package.modules; \
+	done
+
+	# generate the maintscripts for various php
+	# modules from the templates.
+	cat debian/modulelist | while read package extname dsoname priority; do \
+	    modules=$$(cat debian/php5-$$package.modules); \
+	    for script in postinst preinst postrm prerm; do \
+	        sed -e"s/@package@/$${package}/g; \
+	               s/@modules@/$${modules}/g; \
+	                /#EXTRA#/ r debian/php5-$${package}.$${script}.extra" \
+	          < debian/php5-module.$${script} \
+	        | sed -e'/#EXTRA#/ d' \
+	          > debian/php5-$${package}.$${script}; \
+	    done; \
+	    cp debian/php5-module.triggers debian/php5-$${package}.triggers; \
+	    rm debian/php5-$$package.modules; \
 	done
 
 	# likewise, for the different sapi implementations
 	for tmpl in postrm links; do \
-		for sapi in apache2 apache2filter cgi cli fpm; do \
-			sed -e "s/@sapi@/$$sapi/g" \
+		for sapi in cgi cli fpm; do \
+			sed -e "s/@sapi@/$$sapi/g;s/@package@/php5-$${sapi}/g" \
 		  	< debian/php5-sapi.$$tmpl \
 		  	> debian/php5-$${sapi}.$$tmpl; \
 		done; \
-		mv debian/php5-apache2.$$tmpl debian/libapache2-mod-php5.$$tmpl; \
-		mv debian/php5-apache2filter.$$tmpl debian/libapache2-mod-php5filter.$$tmpl; \
+	done
+	for tmpl in postrm links; do \
+		sed -e "s/@sapi@/apache2/g;s/@package@/libapache2-mod-php5/g" \
+		  < debian/php5-sapi.$$tmpl \
+		  > debian/libapache2-mod-php5.$$tmpl; \
+		sed -e "s/@sapi@/apache2filter/g;s/@package@/libapache2-mod-php5filter/g" \
+		  < debian/php5-sapi.$$tmpl \
+		  > debian/libapache2-mod-php5filter.$$tmpl; \
 	done
 
-	sed -i -e 's/exit 0/dpkg-maintscript-helper mv_conffile \/etc\/php5\/fpm\/main.conf \/etc\/php5\/fpm\/php-fpm.conf 5.3.5-1 -- \"\$\@\"\n\nexit 0/' debian/php5-fpm.postrm
+	sed -i -e 's|exit 0|dpkg-maintscript-helper mv_conffile /etc/php5/fpm/main.conf /etc/php5/fpm/php-fpm.conf 5.3.5-1 -- \"\$\@\"\n\nexit 0|' debian/php5-fpm.postrm
 
 	cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
 	dh_installdocs -s
 
-	cat debian/modulelist | while read package extname dsoname; do \
+	cat debian/modulelist | grep -v common | while read package extname dsoname priority; do \
 		rm -rf debian/php5-$$package/usr/share/doc/php5-$$package; \
 		ln -s php5-common debian/php5-$$package/usr/share/doc/php5-$$package; \
 	done
@@ -681,10 +731,12 @@ binary-arch: build install
 	dh_shlibdeps -s
 
 	phpapi=`./debian/php5-dev/usr/bin/php-config5 --phpapi`; \
+	stored=`cat debian/phpapi`; \
+	[ "$${phpapi%+lfs}" = "$${stored}" ] || echo "PHPAPI has changed, please modify debian/phpapi"; \
 	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli php5-fpm; do \
 		echo "php:Provides=phpapi-$${phpapi}" >> debian/$$i.substvars; \
 	done; \
-	cat debian/modulelist | while read package extname dsoname; do \
+	cat debian/modulelist | while read package extname dsoname priority; do \
 		echo "php:Depends=phpapi-$${phpapi}" >> debian/php5-$$package.substvars; \
 	done
 

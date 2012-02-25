@@ -1,3 +1,72 @@
+php5 (5.4.0~rc7-3) unstable; urgency=low
+
+  php5-fpm default www spool now listens on unix socket located
+  in /var/run/php5-fpm.sock instead of localhost:9000.  If you
+  have configured your webserver to use localhost:9000, you will
+  have to change your settings.
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 08 Feb 2012 08:25:30 +0100
+
+php5 (5.4.0~rc6-2) unstable; urgency=low
+
+  t1lib support was removed from PHP 5.4.  t1lib has many security
+  issues and is unmaintained by upstream for a very long time (3 years).
+
+  For more information see:
+    + http://bugs.debian.org/637488
+    + http://bugs.debian.org/638755
+  
+  This unfortunately also means that following functions are not
+  available in PHP5 from now:
+  
+    - imagepsloadfont
+    - imagepsfreefont
+    - imagepsencodefont
+    - imagepsextendfont
+    - imagepsslantfont
+    - imagepstext
+    - imagepsbbox
+
+  If you really need those functions you will need to install t1lib from
+  sources.  You will need to install php5-dev and recompile GD extension
+  (roughly) using following commands:
+
+    cd <path_to_php5_sources>/ext/gd/
+    phpize
+    configure --with-gd=shared,/usr --enable-gd-native-ttf \
+      --with-t1lib=<location_of_your_t1lib>
+    make
+    make install
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 01 Feb 2012 18:19:45 +0100
+
+php5 (5.3.9-4) unstable; urgency=low
+
+  * The Suhosin patch is now disabled in the default build.
+
+  If you want to re-enable it again for your installation, you can
+  set the option PHP5_SUHOSIN=yes in debian/rules and recompile PHP.
+
+ -- Ondřej Surý <ondrej@debian.org>  Sat, 28 Jan 2012 08:39:36 +0100
+
+php5 (5.3.6-13) unstable; urgency=low
+
+  * Updated blowfish crypt() algorithm fixes the 8-bit character handling
+    vulnerability (CVE-2011-2483) and adds more self-tests.  Unfortunately
+    this change is incompatible with some old (wrong) generated hashes for
+    passwords containing 8-bit characters.
+
+    It is recommended that any passwords containing characters with
+    the 8th bit set be changed after this upgrade. In order to allow users
+    to log in after the upgrade even if they have a potentially affected
+    password, the newly introduced backwards compatibility hash encoding
+    prefix of "$2x$" may be used (in place of the usual "$2a$"). Such
+    password hashes should only be used during a transition period; when
+    passwords are changed, the usual "$2a$" prefix is used, denoting the
+    correct algorithm.
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 04 Jul 2011 10:31:16 +0200
+
 php5 (5.3.1-3) unstable; urgency=low
 
   * mod_php disabled in userdirs.

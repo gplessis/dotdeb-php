@@ -1,16 +1,21 @@
-diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
---- php5-5.3.10.orig//configure.in	2012-02-02 22:06:17.000000000 +0000
-+++ php5-5.3.10/configure.in	2012-02-02 22:06:39.000000000 +0000
-@@ -1013,7 +1013,7 @@
+Description: Changes to make php use versioned paths and other minor
+ cleanup changes.
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-01-18
+
+--- a/configure.in
++++ b/configure.in
+@@ -1068,7 +1068,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
  PHP_ARG_WITH(pear, [whether to install PEAR],
--[  --with-pear=DIR         Install PEAR in DIR [PREFIX/lib/php]
-+[  --with-pear=DIR         Install PEAR in DIR [PREFIX/lib/php5]
+-[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/lib/php@:>@
++[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/lib/php5@:>@
    --without-pear          Do not install PEAR], DEFAULT, yes)
  
  if test "$PHP_PEAR" != "no"; then
-@@ -1043,7 +1043,7 @@
+@@ -1098,7 +1098,7 @@ dnl
    if test "$PHP_PEAR" = "DEFAULT" || test "$PHP_PEAR" = "yes"; then
      case $PHP_LAYOUT in
        GNU) PEAR_INSTALLDIR=$datadir/pear;;
@@ -19,7 +24,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
      esac
    fi
  
-@@ -1098,12 +1098,12 @@
+@@ -1153,12 +1153,12 @@ test "$program_suffix" = "NONE" && progr
  
  case $libdir in
    '${exec_prefix}/lib')
@@ -34,7 +39,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
      ;;
  esac
  
-@@ -1170,7 +1170,7 @@
+@@ -1225,7 +1225,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
@@ -43,10 +48,9 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
-diff -urN php5-5.3.10.orig//ext/ext_skel php5-5.3.10/ext/ext_skel
---- php5-5.3.10.orig//ext/ext_skel	2010-08-06 22:19:47.000000000 +0000
-+++ php5-5.3.10/ext/ext_skel	2012-02-02 22:06:39.000000000 +0000
-@@ -70,7 +70,7 @@
+--- a/ext/ext_skel
++++ b/ext/ext_skel
+@@ -70,7 +70,7 @@ if test -d "$extname" ; then
  fi
  
  if test -z "$skel_dir"; then
@@ -55,22 +59,9 @@ diff -urN php5-5.3.10.orig//ext/ext_skel php5-5.3.10/ext/ext_skel
  fi
  
  ## convert skel_dir to full path
-diff -urN php5-5.3.10.orig//ext/mysqlnd/mysqlnd.c php5-5.3.10/ext/mysqlnd/mysqlnd.c
---- php5-5.3.10.orig//ext/mysqlnd/mysqlnd.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/ext/mysqlnd/mysqlnd.c	2012-02-02 22:06:39.000000000 +0000
-@@ -620,7 +620,7 @@
- 		if (host_len == sizeof("localhost") - 1 && !strncasecmp(host, "localhost", host_len)) {
- 			DBG_INF_FMT("socket=%s", socket_or_pipe? socket_or_pipe:"n/a");
- 			if (!socket_or_pipe) {
--				socket_or_pipe = "/tmp/mysql.sock";
-+				socket_or_pipe = "/var/run/mysqld/mysqld.sock";
- 			}
- 			transport_len = spprintf(&transport, 0, "unix://%s", socket_or_pipe);
- 			unix_socket = TRUE;
-diff -urN php5-5.3.10.orig//php.ini-development php5-5.3.10/php.ini-development
---- php5-5.3.10.orig//php.ini-development	2011-12-15 10:31:02.000000000 +0000
-+++ php5-5.3.10/php.ini-development	2012-02-02 22:06:39.000000000 +0000
-@@ -793,7 +793,7 @@
+--- a/php.ini-development
++++ b/php.ini-development
+@@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -79,10 +70,9 @@ diff -urN php5-5.3.10.orig//php.ini-development php5-5.3.10/php.ini-development
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
---- php5-5.3.10.orig//php.ini-production	2011-12-15 10:31:02.000000000 +0000
-+++ php5-5.3.10/php.ini-production	2012-02-02 22:06:39.000000000 +0000
-@@ -793,7 +793,7 @@
+--- a/php.ini-production
++++ b/php.ini-production
+@@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -91,11 +81,10 @@ diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -949,54 +949,6 @@
- ;
+@@ -859,52 +859,6 @@ default_socket_timeout = 60
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
--;
+ ;
 -; Windows Extensions
 -; Note that ODBC support is built in, so no dll is needed for it.
 -; Note that many DLL files are located in the extensions/ (PHP 4) ext/ (PHP 5)
@@ -120,7 +109,6 @@ diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
 -;extension=php_oci8_11g.dll  ; Use with Oracle 11gR2 Instant Client
 -;extension=php_openssl.dll
 -;extension=php_pdo_firebird.dll
--;extension=php_pdo_mssql.dll
 -;extension=php_pdo_mysql.dll
 -;extension=php_pdo_oci.dll
 -;extension=php_pdo_odbc.dll
@@ -146,10 +134,33 @@ diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
-diff -urN php5-5.3.10.orig//sapi/cli/php.1.in php5-5.3.10/sapi/cli/php.1.in
---- php5-5.3.10.orig//sapi/cli/php.1.in	2010-05-11 15:07:31.000000000 +0000
-+++ php5-5.3.10/sapi/cli/php.1.in	2012-02-02 22:06:39.000000000 +0000
-@@ -336,13 +336,14 @@
+--- a/sapi/caudium/config.m4
++++ b/sapi/caudium/config.m4
+@@ -26,8 +26,8 @@ if test "$PHP_CAUDIUM" != "no"; then
+     AC_MSG_ERROR([Could not find a pike in $PHP_CAUDIUM/bin/])
+   fi
+   if $PIKE -e 'float v; int rel;sscanf(version(), "Pike v%f release %d", v, rel);v += rel/10000.0; if(v < 7.0268) exit(1); exit(0);'; then
+-    PIKE_MODULE_DIR=`$PIKE --show-paths 2>&1| grep '^Module' | sed -e 's/.*: //'`
+-    PIKE_INCLUDE_DIR=`echo $PIKE_MODULE_DIR | sed -e 's,lib/pike/modules,include/pike,' -e 's,lib/modules,include/pike,' `
++    PIKE_MODULE_DIR=`$PIKE --show-paths 2>&1| grep '^Master file' | sed -e 's/.*: //' -e 's/master.pike/modules/'`
++    PIKE_INCLUDE_DIR=`echo $PIKE_MODULE_DIR | sed -e 's,lib/modules,,' -e 's,modules,include,' `
+     if test -z "$PIKE_INCLUDE_DIR" || test -z "$PIKE_MODULE_DIR"; then
+       AC_MSG_ERROR(Failed to figure out Pike module and include directories)
+     fi
+@@ -84,7 +84,9 @@ if test "$PHP_CAUDIUM" != "no"; then
+   PIKE_VERSION=`$PIKE -e 'string v; int rel;sscanf(version(), "Pike v%s release %d", v, rel); write(v+"."+rel);'`   
+   AC_DEFINE(HAVE_CAUDIUM,1,[Whether to compile with Caudium support])
+   PHP_SELECT_SAPI(caudium, shared, caudium.c)
+-  INSTALL_IT="\$(INSTALL) -m 0755 $SAPI_SHARED $PHP_CAUDIUM/lib/$PIKE_VERSION/PHP5.so"
++  dnl FIXME: This is the ugliest hack in the world!
++  dnl INSTALL_IT="\$(mkinstalldirs) \$(INSTALL_ROOT)$PHP_CAUDIUM/lib/$PIKE_VERSION/ && \$(INSTALL) -m 0755 $SAPI_SHARED \$(INSTALL_ROOT)$PHP_CAUDIUM/lib/$PIKE_VERSION/php5.so"
++  INSTALL_IT="\$(mkinstalldirs) \$(INSTALL_ROOT)$PHP_CAUDIUM/lib/$PIKE_VERSION/ && \$(INSTALL) -m 0755 .$SAPI_SHARED \$(INSTALL_ROOT)$PHP_CAUDIUM/lib/$PIKE_VERSION/PHP5.so"
+   RESULT="  *** Pike binary used:         $PIKE
+   *** Pike include dir(s) used: $PIKE_INCLUDE_DIR
+   *** Pike version:             $PIKE_VERSION"
+--- a/sapi/cli/php.1.in
++++ b/sapi/cli/php.1.in
+@@ -346,13 +346,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
  .TP 15
@@ -169,9 +180,8 @@ diff -urN php5-5.3.10.orig//sapi/cli/php.1.in php5-5.3.10/sapi/cli/php.1.in
  .SH EXAMPLES
  .TP 5
  \fIphp \-r 'echo "Hello World\\n";'\fP
-diff -urN php5-5.3.10.orig//scripts/Makefile.frag php5-5.3.10/scripts/Makefile.frag
---- php5-5.3.10.orig//scripts/Makefile.frag	2010-07-13 17:24:13.000000000 +0000
-+++ php5-5.3.10/scripts/Makefile.frag	2012-02-02 22:06:39.000000000 +0000
+--- a/scripts/Makefile.frag
++++ b/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -183,10 +193,9 @@ diff -urN php5-5.3.10.orig//scripts/Makefile.frag php5-5.3.10/scripts/Makefile.f
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
-diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config.in
---- php5-5.3.10.orig//scripts/php-config.in	2011-04-18 11:13:37.000000000 +0000
-+++ php5-5.3.10/scripts/php-config.in	2012-02-02 22:06:39.000000000 +0000
-@@ -5,8 +5,8 @@
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -6,8 +6,8 @@ datarootdir="@datarootdir@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
  vernum="@PHP_VERSION_ID@"
@@ -197,12 +206,11 @@ diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config
  ldflags="@PHP_LDFLAGS@"
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
-diff -urN php5-5.3.10.orig//scripts/phpize.in php5-5.3.10/scripts/phpize.in
---- php5-5.3.10.orig//scripts/phpize.in	2009-06-24 07:42:33.000000000 +0000
-+++ php5-5.3.10/scripts/phpize.in	2012-02-02 22:06:39.000000000 +0000
-@@ -3,8 +3,8 @@
- # Variable declaration
+--- a/scripts/phpize.in
++++ b/scripts/phpize.in
+@@ -4,8 +4,8 @@
  prefix='@prefix@'
+ datarootdir='@datarootdir@'
  exec_prefix="`eval echo @exec_prefix@`"
 -phpdir="`eval echo @libdir@`/build"
 -includedir="`eval echo @includedir@`/php"

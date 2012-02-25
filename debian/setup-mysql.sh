@@ -17,7 +17,7 @@ action=${3:-start}
 socket=$datadir/mysql.sock
 # Commands:
 mysqladmin="mysqladmin -u root -P $port -h localhost --socket=$socket"
-mysqld="/usr/sbin/mysqld --no-defaults --bind-address=localhost --port=$port --socket=$socket --datadir=$datadir --user=$USER"
+mysqld="/usr/sbin/mysqld --no-defaults --bind-address=localhost --port=$port --socket=$socket --datadir=$datadir"
 
 # Main code #
 

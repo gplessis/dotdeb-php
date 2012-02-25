@@ -4,3 +4,15 @@
 @sapi@: spelling-error-in-binary * ment meant
 # Not a spelling mistake, tz code for Tahiti
 @sapi@: spelling-error-in-binary * taht that
+libapache2-mod-php5: embedded-library usr/lib/apache2/modules/libphp5.so: file
+libapache2-mod-php5filter: embedded-library usr/lib/apache2/modules/libphp5filter.so: file
+php5-cgi: embedded-library usr/bin/php5-cgi: file
+php5-cgi: embedded-library usr/lib/cgi-bin/php5: file
+php5-cli: embedded-library usr/bin/php5: file
+php5-fpm: embedded-library usr/sbin/php5-fpm: file
+libapache2-mod-php5: embedded-library ./usr/lib/apache2/modules/libphp5.so: file
+libapache2-mod-php5filter: embedded-library ./usr/lib/apache2/modules/libphp5filter.so: file
+php5-cgi: embedded-library ./usr/bin/php5-cgi: file
+php5-cgi: embedded-library ./usr/lib/cgi-bin/php5: file
+php5-cli: embedded-library ./usr/bin/php5: file
+php5-fpm: embedded-library ./usr/sbin/php5-fpm: file

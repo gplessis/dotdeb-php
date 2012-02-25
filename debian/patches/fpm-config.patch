@@ -1,6 +1,11 @@
-diff -urN php5-5.3.10.orig//sapi/fpm/php-fpm.conf.in php5-5.3.10/sapi/fpm/php-fpm.conf.in
---- php5-5.3.10.orig//sapi/fpm/php-fpm.conf.in	2011-10-08 21:04:10.000000000 +0000
-+++ php5-5.3.10/sapi/fpm/php-fpm.conf.in	2012-02-02 22:21:50.000000000 +0000
+Description: Add major version number to paths and allow process pools
+ to be configured in individual files in /etc/php5/fpm/pool.d/
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-07-30
+
+--- a/sapi/fpm/php-fpm.conf.in
++++ b/sapi/fpm/php-fpm.conf.in
 @@ -12,7 +12,7 @@
  ; Relative path can also be used. They will be prefixed by:
  ;  - the global prefix if it's been set (-p arguement)
@@ -38,7 +43,7 @@ diff -urN php5-5.3.10.orig//sapi/fpm/php-fpm.conf.in php5-5.3.10/sapi/fpm/php-fp
  ; Start a new pool named 'www'.
  ; the variable $pool can we used in any directive and will be replaced by the
  ; pool name ('www' here)
-@@ -442,7 +446,7 @@
+@@ -442,7 +446,7 @@ pm.max_spare_servers = 3
  ; Chdir to this directory at the start.
  ; Note: relative path can be used.
  ; Default Value: current directory or / when chroot

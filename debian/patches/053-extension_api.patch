@@ -1,11 +1,17 @@
-diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
---- php5-5.3.10.orig//configure.in	2012-02-02 22:12:05.000000000 +0000
-+++ php5-5.3.10/configure.in	2012-02-02 22:15:38.000000000 +0000
-@@ -1123,8 +1123,13 @@
+Description: Adds --phpapi argument to php-config(1)
+ .
+ TODO: make it more generic and add it to the man page.
+Origin: vendor
+Forwarded: no
+Last-Update: 2010-01-18
+
+--- a/configure.in
++++ b/configure.in
+@@ -1177,8 +1177,13 @@ dnl Build extension directory path
  
  ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
  
-+DEBIAN_PHP_API=`egrep -h '^#define ZEND_EXTENSION_API_NO|^#define ZEND_MODULE_API_NO|#define PHP_API_VERSION' $srcdir/Zend/zend_extensions.h $srcdir/Zend/zend_modules.h $srcdir/main/php.h | awk '{print $3}' | sed -e 's/^2200/200/' | sort -n | tail -n 1`
++DEBIAN_PHP_API=$ZEND_MODULE_API_NO
 +if echo "$CPPFLAGS $CFLAGS" | grep -q -- -D_FILE_OFFSET_BITS=64; then
 +  DEBIAN_PHP_API="${DEBIAN_PHP_API}+lfs"
 +fi
@@ -16,7 +22,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
    if test "$oldstyleextdir" = "yes"; then
      if test "$PHP_DEBUG" = "1"; then
        part1=debug
-@@ -1276,6 +1281,7 @@
+@@ -1321,6 +1326,7 @@ PHP_SUBST(CXX)
  PHP_SUBST(CXXFLAGS)
  PHP_SUBST(CXXFLAGS_CLEAN)
  PHP_SUBST_OLD(DEBUG_CFLAGS)
@@ -24,10 +30,9 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  PHP_SUBST_OLD(EXTENSION_DIR)
  PHP_SUBST_OLD(EXTRA_LDFLAGS)
  PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
-diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config.in
---- php5-5.3.10.orig//scripts/php-config.in	2012-02-02 22:08:42.000000000 +0000
-+++ php5-5.3.10/scripts/php-config.in	2012-02-02 22:15:38.000000000 +0000
-@@ -18,6 +18,7 @@
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -19,6 +19,7 @@ php_cli_binary=NONE
  php_cgi_binary=NONE
  configure_options="@CONFIGURE_OPTIONS@"
  php_sapis="@PHP_INSTALLED_SAPIS@"
@@ -35,7 +40,7 @@ diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config
  
  # Set php_cli_binary and php_cgi_binary if available
  for sapi in $php_sapis; do
-@@ -56,6 +57,8 @@
+@@ -57,6 +58,8 @@ case "$1" in
    echo $include_dir;;
  --php-binary)
    echo $php_binary;;
@@ -44,7 +49,7 @@ diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config
  --php-sapis)
    echo $php_sapis;;
  --configure-options)
-@@ -79,6 +82,7 @@
+@@ -80,6 +83,7 @@ Options:
    --man-dir           [$man_dir]
    --php-binary        [$php_binary]
    --php-sapis         [$php_sapis]

@@ -1,92 +1,84 @@
 Table of Contents:
----------------------------------------------------------------------
-* Using php5 with threaded webservers (eg. apache2-mpm-worker, caudium)
-* Problems starting apache2 with php5
+----------------------------------------------------------------------
+* Using PHP 5 with threaded webservers (eg. apache2-mpm-worker)
+* Problems starting Apache HTTP Server with PHP 5
 * Session storage
 * Other caveats
-* php5-cgi and apache2
-* Restarting your web server after installing modules
+* PHP 5 CGI and Apache HTTP Server
 * Configuration layout
 * Timezone data from system timezone database
 * Further documentation, errata, etc
 
+Using PHP 5 with threaded webservers (eg. apache2-mpm-worker)
+----------------------------------------------------------------------
 
-Using php5 with threaded webservers (eg. apache2-mpm-worker, caudium)
----------------------------------------------------------------------
+  After much back-and-forth with upstream (and even building our
+  packages thread-safe for a while), we're currently admitting defeat
+  on that front, and are NOT building any thread-safe versions of PHP 5
+  for any webservers. Our recommendation is that, if you need to use a
+  threaded webserver, you should use php5-fpm and interface your
+  webserver with FastCGI.
 
-   After much back-and-forth with upstream (and even building our
-   packages thread-safe for a while), we're currently admitting defeat
-   on that front, and are NOT building any thread-safe versions of
-   PHP for any webservers.  Our recommendation is that, if you need
-   to use a threaded webserver, you should use php5-cgi in either
-   'normal' CGI mode, or in FastCGI mode.
+Problems starting Apache HTTP Server with PHP 5
+----------------------------------------------------------------------
 
-Adam Conrad <adconrad@0c3.net>  Sun, 06 Feb 2005 08:24:56 -0700
+  At the time of writing, there are no *known* incompatibilities
+  between any of the PHP 5 modules we ship. However, there have been
+  many bug reports in the past due to dynamically-loaded extensions,
+  and it's possible there are still bugs in the released packages. If
+  Apache fails to start after you install PHP 5, check your list of
+  enabled extensions at the bottom of /etc/php5/apache2/php.ini (and
+  in the per-sapi configuration directory), and try commenting out or
+  reordering the extensions until you find a combination that works.
 
+  For example, in the past the mhash extension was incompatible with
+  some other common extensions. To work around this, you could list
+  the mhash extension first in php.ini.
 
-Problems starting apache2 with php5
-----------------------------------
-
-   At the time of writing, there are no *known* incompatibilities
-   between any of the php5 modules we ship.  However, there have been
-   many bug reports in the past due to dynamically-loaded extensions,
-   and it's possible there are still bugs in the released packages.  If
-   Apache fails to start after you install php5, check your list of
-   enabled extensions at the bottom of /etc/php5/apache2/php.ini (and in
-   the per-sapi configuration directory), and try commenting out or
-   reordering the extensions until you find a combination that works.
-
-   For example, in the past the mhash extension was incompatible with
-   some other common extensions.  To work around this, you could list
-   the mhash extension first in php.ini.
-
-   If you find an extension-related bug in the Debian packages, and you
-   are willing to help debug the problem, please send us a bug report
-   that lists all enabled PHP5 extensions (extension=), in the order
-   in which they appear in php.ini, as well as all enabled Apache modules
-   (LoadModule), with version numbers where possible.
-
-Steve Langasek <vorlon@debian.org>  Fri, 26 Apr 2002 13:39:00 -0500
-
+  If you find an extension-related bug in the Debian packages, and you
+  are willing to help debug the problem, please send us a bug report
+  that lists all enabled PHP 5 extensions (extension=), in the order
+  in which they appear in php.ini, as well as all enabled Apache modules
+  (LoadModule), with version numbers where possible.
 
 Session storage
----------------
+----------------------------------------------------------------------
 
-    Session files are stored in /var/lib/php5.  For security purposes, this
-    directory is unreadable by non-root users.  This means that php5 running
-    from apache2, for example, will not be able to clean up stale session
-    files.  Instead, we have a cron job run every 30 mins that cleans up
-    stale session files; /etc/cron.d/php5.  You may need to modify how
-    often this runs, if you've modified session.gc_maxlifetime in your
-    php.ini; otherwise, it may be too lax or overly aggressive in cleaning
-    out stale session files.  
-
-Andres Salomon <dilinger@debian.org>  Fri, 03 Sep 2004 03:12:54 -0400
-
+  Session files are stored in /var/lib/php5. For security purposes,
+  this directory is unreadable by non-root users. This means that PHP
+  5 running from Apache HTTP Server, for example, will not be able to
+  clean up stale session files. Instead, we have a cron job run every
+  30 mins that cleans up stale session files; /etc/cron.d/php5. You
+  may need to modify how often this runs, if you've modified
+  session.gc_maxlifetime in your php.ini; otherwise, it may be too lax
+  or overly aggressive in cleaning out stale session files.
 
 Other caveats
--------------
+----------------------------------------------------------------------
 
- * extension_dir and include_path should be commented out, if you don't need
-   special settings for them so php will look in compiled-in paths. If you set
-   them, you should also add appropriate php install directories there.
+  Configuration directives extension_dir and include_path should be
+  commented out, unless you need special settings for them so php will
+  look in compiled-in paths. If you set them, you should also add
+  appropriate php install directories there.
 
-php5-cgi and apache2
----------------------------
+PHP 5 CGI and Apache HTTP Server
+----------------------------------------------------------------------
 
-In 99% of cases, what you probably want isn't php5-cgi at all, but rather
-the libapache2-mod-php5 package, which will configure itself on
-installation and Just Work(tm).  If, however, you have a need to use
-the CGI version of php5 with apache2, the following should help
-get you going, though there are dozens of different ways to do this.
+  In 99% of cases, what you probably want isn't php5-cgi package at
+  all, but rather the libapache2-mod-php5 package, which will
+  configure itself on installation and Just Work(tm). If, however, you
+  have a need to use the CGI version of PHP 5 with Apache HTTP Server,
+  the following should help get you going, though there are dozens of
+  different ways to do this.
 
-Please note that this process will never be made automatic, as php5-cgi
-is meant to be a webserver-agnostic package that can be used with any
-httpd, and we don't want it to conflict with the httpd-specific packages
-such as libapache2-mod-php5.  If both were installed side-by-side and both
-were automatically enabled, the results would be a bit confusing, obviously.
+  Please note that this process will never be made automatic, as
+  php5-cgi is meant to be a webserver-agnostic package that can be
+  used with any httpd, and we don't want it to conflict with the
+  httpd-specific packages such as libapache2-mod-php5. If both were
+  installed side-by-side and both were automatically enabled, the
+  results would be a bit confusing, obviously.
 
-To use php5-cgi with apache2
+  To use php5-cgi with Apache HTTP Server:
   1) activate CGI (it's on by default in default debian setups)
      a) If using the prefork MPM, use 'a2enmod cgi'
      b) If using a threaded MPM, use 'a2enmod cgid'
@@ -96,53 +88,54 @@ To use php5-cgi with apache2
         Action application/x-httpd-php /cgi-bin/php5
       </IfModule>
 
-Adam Conrad <adconrad@0c3.net>  Sat, 04 Sep 2004 23:04:26 -0600
+  Note: more modern way of doing this is to install php5-fpm package
+  and use FastCGI interface of your webserver.
 
 Configuration Layout
----------------------------------------------------------------------
+----------------------------------------------------------------------
 
-Each of the 3 SAPI's (apache2/cgi/cli) have a different
-central configuration file /etc/php5/$SAPI/php.ini.  
+  Each SAPI (apache2/apache2filter/cgi/cli/fpm) have a different
+  central configuration file /etc/php5/$SAPI/php.ini.
 
-Additionally, each SAPI is configured with the compile-time option 
+  Additionally, each SAPI is configured with the compile-time option 
 
-	--with-config-file-scan-dir=/etc/php5/$SAPI/conf.d
+    --with-config-file-scan-dir=/etc/php5/$SAPI/conf.d
 
-which for all SAPI's is actually a symlink pointing to a central
-directory /etc/php5/conf.d.  Any file found in this directory ending
-in .ini will be treated as a configuration file by the php SAPI.
+  which for all SAPIs is actually a symlink pointing to a central
+  directory /etc/php5/conf.d. Any file found in this directory ending
+  in .ini will be treated as a configuration file by the php SAPI.
 
-The rationale with this method is that each SAPI can thus be
-identically configured with a minimal amount of conffile handling,
-but at the same time if you want to have SAPI-specific configuration,
-you can just remove the symlink.
+  The rationale with this method is that each SAPI can thus be
+  identically configured with a minimal amount of conffile handling,
+  but at the same time if you want to have SAPI-specific
+  configuration, you can just remove the symlink.
 
-sean finney <seanius@debian.org>  Thu, 19 Oct 2006 23:33:05 +0200
+  Note that the usage of the PHP_INI_SCAN_DIR environment variable
+  overrides what is set with --with-config-file-scan-dir and thus the
+  directory /etc/php5/$SAPI/conf.d will no longer be included.
 
 Timezone data from system timezone database
----------------------------------------------------------------------
+----------------------------------------------------------------------
 
-Debian PHP has been patched to use of the system wide timezone database
-from the tzdata package, making sure any updates there are automatically
-used by PHP aswell.
+  Debian PHP has been patched to use of the system wide timezone
+  database from the tzdata package, making sure any updates there are
+  automatically used by PHP aswell.
 
-Note that this requires that the PHP process has access to /etc/localtime
-and /usr/share/zoneinfo. For any regular installation this should be the
-case, but in specific secured environments when reading the timezone
-database is impossible PHP will give a "Timezone database is corrupt -
-this should *never* happen!" error.
+  Note that this requires that the PHP process has access to
+  /etc/localtime and /usr/share/zoneinfo. For any regular installation
+  this should be the case, but in specific secured environments when
+  reading the timezone database is impossible PHP will give a
+  "Timezone database is corrupt - this should *never* happen!" error.
  
-Thijs Kinkhorst <thijs@debian.org>  Wed, 23 Jul 2008 17:42:06 +0200
+Further documentation, errata, misc.
+----------------------------------------------------------------------
 
-Further documentation, errata, etc
----------------------------------------------------------------------
+  Errata and other general information about PHP in Debian can be
+  found in the debian wiki at:
 
-Errata and other general information about PHP in Debian can be found
-in the debian wiki at:
-
-	http://wiki.debian.org/PHP
+    http://wiki.debian.org/PHP
 	
-If after reading the documentation in this file you still have unanswered
-questions, that's a good next place to go.
+  If after reading the documentation in this file you still have
+  unanswered questions, that's a good next place to go.
 
-sean finney <seanius@debian.org>  Thu, 19 Oct 2006 22:57:52 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Thu,  9 Feb 2012 00:03:03 +0100

@@ -1,0 +1,41 @@
+--- a/ext/mssql/php_mssql.c
++++ b/ext/mssql/php_mssql.c
+@@ -178,6 +178,38 @@ const zend_function_entry mssql_function
+  	PHP_FE(mssql_execute,				arginfo_mssql_execute)
+ 	PHP_FE(mssql_free_statement,		arginfo_mssql_free_statement)
+  	PHP_FE(mssql_guid_string,			arginfo_mssql_guid_string)
++#if !defined(PHP_WIN32) && !defined(HAVE_SYBASE_CT)
++        PHP_FALIAS(sybase_connect, mssql_connect,		arginfo_mssql_connect)
++        PHP_FALIAS(sybase_pconnect, mssql_pconnect,		arginfo_mssql_connect)
++        PHP_FALIAS(sybase_close, mssql_close,			arginfo_mssql_close)
++        PHP_FALIAS(sybase_select_db, mssql_select_db,		arginfo_mssql_select_db)
++        PHP_FALIAS(sybase_query, mssql_query,			arginfo_mssql_query)
++        PHP_FALIAS(sybase_fetch_batch, mssql_fetch_batch,	arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_affected_rows, mssql_rows_affected,	arginfo_mssql_rows_affected)
++        PHP_FALIAS(sybase_free_result, mssql_free_result,	arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_get_last_message, mssql_get_last_message,	arginfo_mssql_get_last_message)
++        PHP_FALIAS(sybase_num_rows, mssql_num_rows,		arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_num_fields, mssql_num_fields,		arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_fetch_field, mssql_fetch_field,	arginfo_mssql_fetch_field)
++        PHP_FALIAS(sybase_fetch_row, mssql_fetch_row,		arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_fetch_array, mssql_fetch_array,	arginfo_mssql_fetch_array)
++        PHP_FALIAS(sybase_fetch_assoc, mssql_fetch_assoc,	arginfo_mssql_fetch_assoc)
++        PHP_FALIAS(sybase_fetch_object, mssql_fetch_object,	arginfo_mssql_fetch_batch)
++        PHP_FALIAS(sybase_field_length, mssql_field_length,	arginfo_mssql_field_length)
++        PHP_FALIAS(sybase_field_name, mssql_field_name,		arginfo_mssql_field_length)
++        PHP_FALIAS(sybase_field_type, mssql_field_type,		arginfo_mssql_field_length)
++        PHP_FALIAS(sybase_data_seek, mssql_data_seek,		arginfo_mssql_data_seek)
++        PHP_FALIAS(sybase_field_seek, mssql_field_seek,		arginfo_mssql_fetch_field)
++        PHP_FALIAS(sybase_result, mssql_result,			arginfo_mssql_result)
++        PHP_FALIAS(sybase_next_result, mssql_next_result,	arginfo_mssql_fetch_assoc)
++        PHP_FALIAS(sybase_min_error_severity, mssql_min_error_severity,	arginfo_mssql_min_error_severity)
++        PHP_FALIAS(sybase_min_message_severity, mssql_min_message_severity,	arginfo_mssql_min_error_severity)
++        PHP_FALIAS(sybase_init, mssql_init,			arginfo_mssql_init)
++        PHP_FALIAS(sybase_bind, mssql_bind,			arginfo_mssql_bind)
++        PHP_FALIAS(sybase_execute, mssql_execute,		arginfo_mssql_execute)
++        PHP_FALIAS(sybase_free_statement, mssql_free_statement,	arginfo_mssql_free_statement)
++        PHP_FALIAS(sybase_guid_string, mssql_guid_string,	arginfo_mssql_guid_string)
++#endif
+ 	PHP_FE_END
+ };
+ /* }}} */
