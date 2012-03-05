@@ -1,3 +1,9 @@
+php5 (5.4.0-1~dotdeb.1) stable; urgency=low
+
+  * Reintroduce the 019-z_off_t_as_long patch. Closes #5
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Mon,  5 Mar 2012 10:22:42 +0100
+
 php5 (5.4.0-1~dotdeb.0) stable; urgency=low
 
   * New upstream release
