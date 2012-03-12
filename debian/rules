@@ -135,7 +135,7 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-gettext \
 		--enable-mbstring \
 		--with-onig=/usr \
-		--with-pcre-regex=/usr \
+		--with-pcre-regex \
 		--enable-shmop \
 		--enable-sockets \
 		--enable-wddx \
