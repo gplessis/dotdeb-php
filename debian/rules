@@ -146,7 +146,6 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--enable-soap \
 		--enable-zip \
 		--with-mhash=yes \
-		--with-exec-dir=/usr/lib/php5/libexec \
 		--with-system-tzdata \
 		--with-mysql-sock=/var/run/mysqld/mysqld.sock
 
@@ -307,7 +306,6 @@ configure-apache2-stamp: prepared-stamp
 		--with-recode=shared,/usr \
 		--with-xsl=shared,/usr \
 		--with-snmp=shared,/usr \
-		--without-sqlite \
 		--with-sqlite3=shared,/usr \
 		--with-mssql=shared,/usr \
 		--with-tidy=shared,/usr \
@@ -341,7 +339,7 @@ configure-apache2filter-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct --without-mssql \
-		--without-sqlite --without-sqlite3
+		--without-sqlite3
 	cd apache2filter-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -367,7 +365,7 @@ configure-cgi-stamp: prepared-stamp
 		--with-pdo-mysql=shared,mysqlnd \
 		--without-pdo-sqlite \
 		--without-sybase-ct --without-mssql \
-		--without-sqlite --without-sqlite3 \
+		--without-sqlite3 \
 		--enable-pcntl
 	cd cgi-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -389,7 +387,7 @@ configure-cli-stamp: prepared-stamp
 		--without-mm \
 		--with-readline=/usr \
 		--disable-pdo \
-		--without-mysql --without-sybase-ct --without-sqlite \
+		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3 --enable-pcntl
 	cd cli-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -412,7 +410,7 @@ configure-fpm-stamp: prepared-stamp
 		--with-libevent-dir=/usr \
 		--without-mm \
 		--disable-pdo \
-		--without-mysql --without-sybase-ct --without-sqlite \
+		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3
 	cd fpm-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -692,21 +690,20 @@ binary-arch: build install
 	# likewise, for the different sapi implementations
 	for tmpl in postrm links; do \
 		for sapi in cgi cli fpm; do \
-			sed -e "s/@sapi@/$$sapi/g;s/@package@/php5-$${sapi}/g" \
-		  	< debian/php5-sapi.$$tmpl \
-		  	> debian/php5-$${sapi}.$$tmpl; \
+			sed -e "s/@sapi@/$${sapi}/g; \
+	                        s/@package@/php5-$${sapi}/g; \
+	                         /#EXTRA#/ r debian/php5-$${sapi}.$${tmpl}.extra;" \
+		  	< debian/php5-sapi.$${tmpl} \
+		  	> debian/php5-$${sapi}.$${tmpl}; \
 		done; \
+	        for sapi in "" "filter"; do \
+		        sed -e "s/@sapi@/apache2$${sapi}/g; \
+	                        s/@package@/libapache2-mod-php5$${sapi}/g; \
+	                         /#EXTRA#/ r debian/libapache2-mod-php5$${sapi}.$${tmpl}.extra;" \
+		        < debian/php5-sapi.$${tmpl} \
+		        > debian/libapache2-mod-php5$${sapi}.$${tmpl}; \
+	        done; \
 	done
-	for tmpl in postrm links; do \
-		sed -e "s/@sapi@/apache2/g;s/@package@/libapache2-mod-php5/g" \
-		  < debian/php5-sapi.$$tmpl \
-		  > debian/libapache2-mod-php5.$$tmpl; \
-		sed -e "s/@sapi@/apache2filter/g;s/@package@/libapache2-mod-php5filter/g" \
-		  < debian/php5-sapi.$$tmpl \
-		  > debian/libapache2-mod-php5filter.$$tmpl; \
-	done
-
-	sed -i -e 's|exit 0|dpkg-maintscript-helper mv_conffile /etc/php5/fpm/main.conf /etc/php5/fpm/php-fpm.conf 5.3.5-1 -- \"\$\@\"\n\nexit 0|' debian/php5-fpm.postrm
 
 	cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
 	dh_installdocs -s
@@ -760,4 +757,7 @@ binary-arch: build install
 	dh_builddeb -s
 
 binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install configure
+build-arch: build
+build-indep: build
+
+.PHONY: build build-arch build-indep clean binary-indep binary-arch binary install configure
