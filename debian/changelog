@@ -1,3 +1,10 @@
+php5 (5.3.11-1~dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+  * Right signal in php5-fpm init script.
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sun, 29 Apr 2012 23:20:42 +0200
+
 php5 (5.3.10-1~dotdeb.1) stable; urgency=high
 
   * New upstream release
