@@ -81,7 +81,7 @@ Last-Update: 2010-01-18
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -859,52 +859,6 @@ default_socket_timeout = 60
+@@ -859,51 +859,6 @@ default_socket_timeout = 60
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
  ;
@@ -124,7 +124,6 @@ Last-Update: 2010-01-18
 -
 -;extension=php_soap.dll
 -;extension=php_sockets.dll
--;extension=php_sqlite.dll
 -;extension=php_sqlite3.dll
 -;extension=php_sybase_ct.dll
 -;extension=php_tidy.dll

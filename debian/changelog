@@ -1,14 +1,38 @@
-php5 (5.4.0-3~dotdeb.0) stable; urgency=high
+php5 (5.4.1-1~dotdeb.0) stable; urgency=low
 
   * Rebuilt for Dotdeb
 
- -- Guillaume Plessis <gui@dotdeb.org>  Fri, 30 Mar 2012 19:29:42 +0200
+ -- Guillaume Plessis <gui@dotdeb.org>  Mon, 30 Apr 2012 16:35:42 +0200
 
-php5 (5.4.0-2) unstable; urgency=low
+php5 (5.4.1~rc2-1) unstable; urgency=low
 
-  * Build depend on libpng-dev | libpng12-dev (Closes: #662466)
+  * Add better configuration snippet for CGI (Closes: #571795)
+  * Update a description of PHP language based on the text from upstream
+    web page (http://www.php.net/manual/en/intro-whatis.php)
+  * Enable embed SAPI (Closes: #380731)
+  * Imported Upstream version 5.4.1~rc2
+  * Update patches to 5.4.1~rc2 release
 
- -- Ondřej Surý <ondrej@debian.org>  Mon, 05 Mar 2012 13:26:06 +0100
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 13 Apr 2012 15:10:26 +0200
+
+php5 (5.4.1~rc1-1) unstable; urgency=low
+
+  * Add information about flavor of INI file inside the INI file,
+    install php.ini-development INI to /usr/share/php5 (Closes: #667711)
+  * Imported Upstream version 5.4.1~rc1
+  * Update patches for the 5.4.1RC1 release
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 06 Apr 2012 15:04:08 +0200
+
+php5 (5.4.0-4) unstable; urgency=low
+
+  * Change id -u+getent combo to whoami (Courtesy of Michiel van
+    Leening)
+  * Fix missing FOUND declaration (pulled from dotdeb)
+  * Add Breaks for all known broken packages not working with PHP 5.4
+    (Closes: #666411)
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 06 Apr 2012 12:46:14 +0200
 
 php5 (5.4.0-3) unstable; urgency=high
 

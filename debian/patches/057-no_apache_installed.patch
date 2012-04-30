@@ -5,7 +5,7 @@ Last-Update: 2010-01-18
 
 --- a/sapi/apache2handler/config.m4
 +++ b/sapi/apache2handler/config.m4
-@@ -59,13 +59,13 @@ if test "$PHP_APXS2" != "no"; then
+@@ -58,13 +58,13 @@ if test "$PHP_APXS2" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
  
@@ -47,7 +47,7 @@ Last-Update: 2010-01-18
      case $flag in
 --- a/sapi/apache2filter/config.m4
 +++ b/sapi/apache2filter/config.m4
-@@ -60,13 +60,13 @@ if test "$PHP_APXS2FILTER" != "no"; then
+@@ -59,13 +59,13 @@ if test "$PHP_APXS2FILTER" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
  

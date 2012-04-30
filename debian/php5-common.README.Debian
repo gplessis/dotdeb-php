@@ -84,9 +84,11 @@ PHP 5 CGI and Apache HTTP Server
      b) If using a threaded MPM, use 'a2enmod cgid'
   2) activate mod_actions (a2enmod actions)
   3) Add the following to a config snippet in /etc/apache2/conf.d
-      <IfModule mod_actions.c>
-        Action application/x-httpd-php /cgi-bin/php5
-      </IfModule>
+     <IfModule mod_actions.c>
+       ScriptAlias /cgi-bin/php5-cgi /usr/lib/cgi-bin/php5
+       Action php5-cgi /cgi-bin/php5-cgi
+       AddHandler php5-cgi .php
+     </IfModule>
 
   Note: more modern way of doing this is to install php5-fpm package
   and use FastCGI interface of your webserver.
@@ -138,4 +140,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Thu,  9 Feb 2012 00:03:03 +0100
+ -- Ondřej Surý <ondrej@debian.org>, Sun,  8 Apr 2012 22:00:59 +0200

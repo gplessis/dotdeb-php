@@ -14,7 +14,7 @@ action=${3:-start}
 if [ "$(id -u)" -eq 0 ]; then
     user="mysql"
 else
-    user="$(getent passwd $(id -u) | cut -f 1 -d :)"
+    user="$(whoami)"
 fi
 
 # Some vars #

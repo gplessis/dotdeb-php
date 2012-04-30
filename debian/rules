@@ -211,7 +211,7 @@ else
 	echo 'nocheck found in DEB_BUILD_OPTIONS or unsupported architecture' | tee test-results.txt
 endif
 
-build: build-apache2-stamp build-apache2filter-stamp build-cgi-stamp build-cli-stamp build-fpm-stamp build-pear-stamp test-results.txt
+build: build-apache2-stamp build-apache2filter-stamp build-cgi-stamp build-cli-stamp build-embed-stamp build-fpm-stamp build-pear-stamp test-results.txt
 
 build-apache2-stamp: configure-apache2-stamp
 	dh_testdir
@@ -230,6 +230,12 @@ build-cli-stamp: configure-cli-stamp
 	cd cli-build && $(MAKE)
 
 	touch build-cli-stamp
+
+build-embed-stamp: configure-embed-stamp
+	dh_testdir
+	cd embed-build && $(MAKE)
+
+	touch build-embed-stamp
 
 build-fpm-stamp: configure-fpm-stamp
 	dh_testdir
@@ -270,7 +276,7 @@ build-pear-stamp: build-cgi-stamp
 	patch -s -d $(CURDIR)/pear-build/usr/share/php/ -p1 -i $(CURDIR)/debian/patches/PEAR-Builder-print-info-about-php5-dev.patch
 	touch build-pear-stamp
 
-configure: configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-fpm-stamp configure-cgi-stamp
+configure: configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-embed-stamp configure-fpm-stamp configure-cgi-stamp
 
 configure-apache2-stamp: prepared-stamp
 	dh_testdir
@@ -396,6 +402,27 @@ configure-cli-stamp: prepared-stamp
 	   Zend/
 	touch configure-cli-stamp
 
+configure-embed-stamp: prepared-stamp
+	dh_testdir
+	if [ -d embed-build ]; then rm -rf embed-build; fi
+	-mkdir embed-build
+	cd embed-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --enable-embed --disable-cgi \
+		--with-config-file-path=/etc/php5/embed \
+		--with-config-file-scan-dir=/etc/php5/embed/conf.d \
+		$(COMMON_CONFIG) \
+		--without-mm \
+		--disable-pdo \
+		--without-mysql --without-sybase-ct \
+		--without-mssql --without-sqlite3 --enable-pcntl
+	cd embed-build && \
+	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
+	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
+	   ../Zend/zend_ini_parser.c ../Zend/zend_language_parser.c \
+	   Zend/
+	touch configure-embed-stamp
+
 configure-fpm-stamp: prepared-stamp
 	dh_testdir
 	if [ -d fpm-build ]; then rm -rf fpm-build; fi
@@ -433,6 +460,7 @@ endif
 	rm -f configure-apache2filter-stamp build-apache2filter-stamp
 	rm -f configure-cgi-stamp build-cgi-stamp
 	rm -f configure-cli-stamp build-cli-stamp
+	rm -f configure-embed-stamp build-embed-stamp
 	rm -f configure-fpm-stamp build-fpm-stamp
 	rm -f build-pear-stamp
 	rm -f install-stamp
@@ -440,6 +468,7 @@ endif
 	rm -rf apache2filter-build
 	rm -rf cgi-build
 	rm -rf cli-build
+	rm -rf embed-build
 	rm -rf fpm-build
 	rm -rf pear-build pear-build-download
 	rm -f debian/copyright
@@ -453,7 +482,7 @@ endif
 		rm -f debian/php5-$$package.prerm; \
 		rm -f debian/php5-$$package.postrm; \
 	done
-	for sapi in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli php5-fpm; do \
+	for sapi in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli libphp5-embed php5-fpm; do \
 		for cruft in postrm links; do \
 			rm -f debian/$${sapi}.$${cruft}; \
 		done; \
@@ -491,8 +520,11 @@ install: build
 	# sanitize php.ini file
 	cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-production
 	cat php.ini-production | tr "\t" " " | sed -e'/memory_limit =/ s/128M/-1/g;/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g' > debian/php5-common/usr/share/php5/php.ini-production.cli
-	cat php.ini-development | tr "\t" " " > debian/php5-common/usr/share/doc/php5-common/examples/php.ini-development
+	cat php.ini-development | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-development
 	cp test-results.txt debian/php5-common/usr/share/doc/php5-common/
+
+	# install embed SAPI
+	cd embed-build && make install-headers install-build install-sapi install-programs INSTALL_ROOT=$(CURDIR)/debian/libphp5-embed
 
 	# install the apache modules' files
 	cd apache2-build && $(MAKE) install-headers install-build install-modules install-programs INSTALL_ROOT=$(CURDIR)/debian/libapache2-mod-php5
@@ -534,7 +566,7 @@ install: build
 
 	# install extensions
 	ext=`./debian/libapache2-mod-php5/usr/bin/php-config --extension-dir`;\
-	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-fpm php5-cli; do \
+	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli libphp5-embed php5-fpm; do \
 		mkdir -p debian/$$i/$${ext}; \
 	done; \
 	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
@@ -572,7 +604,10 @@ install: build
 	    > debian/php5-fpm/etc/php5/fpm/pool.d/www.conf
 
 	# move and install -dev files
+	dh_movefiles --sourcedir=debian/libphp5-embed
 	dh_movefiles --sourcedir=debian/libapache2-mod-php5
+	rm -rf debian/libphp5-embed/usr/include/ \
+	       debian/libphp5-embed/usr/bin/
 	rm -rf debian/libapache2-mod-php5/usr/lib/php5/build/ \
 	       debian/libapache2-mod-php5/usr/include/ \
 	       debian/libapache2-mod-php5/usr/bin/
@@ -612,7 +647,7 @@ install: build
 
 	# install some generic lintian overrides
 	ext=`debian/php5-dev/usr/bin/php-config5 --extension-dir | cut -b2- `; \
-	for sapi in php5-cli php5-fpm php5-cgi libapache2-mod-php5 libapache2-mod-php5filter; do \
+	for sapi in php5-cli php5-fpm php5-cgi libapache2-mod-php5 libapache2-mod-php5filter libphp5-embed; do \
 		mkdir -p $(CURDIR)/debian/"$$sapi"/usr/share/lintian/overrides/; \
 		sed "s/@sapi@/$$sapi/g;s,@extdir@,$$ext,g" \
 		    < $(CURDIR)/debian/php5-sapi.lintian-overrides | \
@@ -696,6 +731,13 @@ binary-arch: build install
 		  	< debian/php5-sapi.$${tmpl} \
 		  	> debian/php5-$${sapi}.$${tmpl}; \
 		done; \
+		for sapi in embed; do \
+			sed -e "s/@sapi@/$${sapi}/g; \
+	                        s/@package@/libphp5-$${sapi}/g; \
+	                         /#EXTRA#/ r debian/libphp5-$${sapi}.$${tmpl}.extra;" \
+		  	< debian/php5-sapi.$${tmpl} \
+		  	> debian/libphp5-$${sapi}.$${tmpl}; \
+		done; \
 	        for sapi in "" "filter"; do \
 		        sed -e "s/@sapi@/apache2$${sapi}/g; \
 	                        s/@package@/libapache2-mod-php5$${sapi}/g; \
@@ -713,7 +755,7 @@ binary-arch: build install
 		ln -s php5-common debian/php5-$$package/usr/share/doc/php5-$$package; \
 	done
 
-	for package in php5-dbg php5-dev php5-cgi php5-cli php5-fpm libapache2-mod-php5 libapache2-mod-php5filter; do \
+	for package in php5-dbg php5-dev php5-cgi php5-cli php5-fpm libapache2-mod-php5 libapache2-mod-php5filter libphp5-embed; do \
 		rm -rf debian/$$package/usr/share/doc/$$package; \
 		ln -s php5-common debian/$$package/usr/share/doc/$$package; \
 	done
@@ -730,7 +772,7 @@ binary-arch: build install
 	phpapi=`./debian/php5-dev/usr/bin/php-config5 --phpapi`; \
 	stored=`cat debian/phpapi`; \
 	[ "$${phpapi%+lfs}" = "$${stored}" ] || echo "PHPAPI has changed, please modify debian/phpapi"; \
-	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli php5-fpm; do \
+	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli libphp5-embed php5-fpm; do \
 		echo "php:Provides=phpapi-$${phpapi}" >> debian/$$i.substvars; \
 	done; \
 	cat debian/modulelist | while read package extname dsoname priority; do \
@@ -740,6 +782,10 @@ binary-arch: build install
 	for i in cgi cli fpm; do \
 		"$$i"-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
 			>> debian/php5-"$$i".substvars; \
+	done
+	for i in embed; do \
+		"$$i"-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
+			>> debian/libphp5-"$$i".substvars; \
 	done
 	for i in apache2; do \
 		"$$i"-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \

@@ -93,9 +93,8 @@ enmod() {
 dismod() {
     local modname="$(basename "${1%/[0-9]*}")"
     local live_link=""
-
     local live_link_content="../mods-available/${modname}.ini"
-    FOUND=0
+    local FOUND=0
     for live_link in $(ls -1 /etc/php5/conf.d/*.ini); do
         # assert $modname is in /etc/php5/conf.d
 	[ -e "${live_link}" ] || continue

@@ -76,10 +76,9 @@ Description: server-side, HTML-embedded scripting language (metapackage)
  installed. Removing this package won't remove PHP5 from your system, however
  it may remove other packages that depend on this one.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-common
 Architecture: any
@@ -91,10 +90,9 @@ Description: Common files for packages built from the php5 source
  This package contains the documentation and example files relevant to all
  the other packages built from the php5 source.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: libapache2-mod-php5
 Section: httpd
@@ -111,10 +109,9 @@ Description: server-side, HTML-embedded scripting language (Apache 2 module)
  .
  ${php:Extensions}
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: libapache2-mod-php5filter
 Section: httpd
@@ -134,10 +131,9 @@ Description: server-side, HTML-embedded scripting language (apache 2 filter modu
  .
  ${php:Extensions}
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-cgi
 Architecture: any
@@ -152,10 +148,9 @@ Description: server-side, HTML-embedded scripting language (CGI binary)
  .
  ${php:Extensions}
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-cli
 Architecture: any
@@ -168,10 +163,9 @@ Description: command-line interpreter for the php5 scripting language
  .
  ${php:Extensions}
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-fpm
 Architecture: any
@@ -186,10 +180,24 @@ Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
  .
  ${php:Extensions}
  .
- PHP5 is an HTML-embedded scripting language. Much of its syntax is borrowed
- from C, Java and Perl with a couple of unique PHP-specific features thrown
- in. The goal of the language is to allow web developers to write dynamically
- generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: libphp5-embed
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Provides: ${php:Provides}
+Suggests: php-pear
+Description: HTML-embedded scripting language (Embedded SAPI library)
+ This package provides the library /usr/lib/libphp5.so which can
+ be used by application developers to embed PHP scripting functionality.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-dev
 Depends: ${misc:Depends}, autoconf (>= 2.63), automake (>= 1.11), libssl-dev, libtool (>= 2.2), shtool, php5-common (>= ${binary:Version})
@@ -199,10 +207,9 @@ Description: Files for PHP5 module development
  This package provides the files from the PHP5 source needed for compiling
  additional modules.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-dbg
 Depends: ${misc:Depends}, php5-common (= ${binary:Version}), libapache2-mod-php5 (= ${binary:Version}) | libapache2-mod-php5filter (= ${binary:Version}) | php5-cgi (= ${binary:Version}) | php5-cli (= ${binary:Version}) | php5-fpm (= ${binary:Version}) | php5-curl (= ${binary:Version}) | php5-enchant (= ${binary:Version}) | php5-gd (= ${binary:Version}) | php5-gmp (= ${binary:Version}) | php5-imap (= ${binary:Version}) | php5-interbase (= ${binary:Version}) | php5-intl (= ${binary:Version}) | php5-ldap (= ${binary:Version}) | php5-mcrypt (= ${binary:Version}) | php5-mysql (= ${binary:Version}) | php5-odbc (= ${binary:Version}) | php5-pgsql (= ${binary:Version}) | php5-pspell (= ${binary:Version}) | php5-recode (= ${binary:Version}) | php5-snmp (= ${binary:Version}) | php5-sqlite (= ${binary:Version}) | php5-sybase (= ${binary:Version}) | php5-tidy (= ${binary:Version}) | php5-xmlrpc (= ${binary:Version}) | php5-xsl (= ${binary:Version})
@@ -214,10 +221,9 @@ Description: Debug symbols for PHP5
  This package provides the debug symbols for PHP5 needed for properly
  debugging errors in PHP5 with gdb.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php-pear
 Architecture: all
@@ -234,10 +240,9 @@ Description: PEAR - PHP Extension and Application Repository
  php-auth.  Note: to build and install precompiled PECL extensions, you
  will need one of the php development packages installed.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-curl
 Architecture: any
@@ -246,10 +251,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: CURL module for php5
  CURL is a library for getting files from  FTP, GOPHER, HTTP server.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-enchant
 Architecture: any
@@ -259,10 +263,9 @@ Description: Enchant module for php5
  This package provides a module for the generic spell checking library
  Enchant, which can use engines such as ispell, aspell and myspells.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-gd
 Architecture: any
@@ -272,10 +275,9 @@ Description: GD module for php5
  This package provides a module for handling graphics directly from PHP
  scripts. It supports the PNG, JPEG, XPM formats as well as Freetype/ttf fonts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-gmp
 Architecture: any
@@ -285,10 +287,9 @@ Description: GMP module for php5
  This package provides a module for arbitrary precision arithmetic via the 
  GNU Multiple Precision (GMP) Arithmetic Library.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-imap
 Architecture: any
@@ -297,10 +298,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: IMAP module for php5
  This package provides a module for IMAP functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-interbase
 Architecture: linux-any kfreebsd-any
@@ -309,10 +309,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: interbase/firebird module for php5
  This package provides a module for interbase/firebird functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-intl
 Architecture: any
@@ -324,10 +323,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: internationalisation module for php5
  This package provides a module to ease internationalisation of PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-ldap
 Architecture: any
@@ -336,10 +334,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: LDAP module for php5
  This package provides a module for LDAP functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-mcrypt
 Architecture: any
@@ -348,10 +345,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: MCrypt module for php5
  This package provides a module for MCrypt functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-mysql
 Architecture: any
@@ -366,10 +362,9 @@ Description: MySQL module for php5
  MySQL version 4.1 or later, and the pdo_mysql module for use with
  the PHP Data Object extension.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-mysqlnd
 Architecture: any
@@ -387,10 +382,9 @@ Description: MySQL module for php5 (Native Driver)
  .
  This package use the MySQL Native Driver.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-odbc
 Architecture: any
@@ -401,10 +395,9 @@ Description: ODBC module for php5
  It uses the unixODBC library as an ODBC provider.  It also contains the
  pdo_odbc module, for use with the PHP Data Object extension.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-pgsql
 Architecture: any
@@ -415,10 +408,9 @@ Description: PostgreSQL module for php5
  directly from PHP scripts.  It also includes the pdo_pgsql module for
  use with the PHP Data Object extension.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-pspell
 Architecture: any
@@ -427,10 +419,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: pspell module for php5
  This package provides a module for pspell functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-recode
 Architecture: any
@@ -439,10 +430,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: recode module for php5
  This package provides a module for recode - character set recoding.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-snmp
 Architecture: any
@@ -451,10 +441,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: SNMP module for php5
  This package provides a module for SNMP functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-sqlite
 Architecture: any
@@ -467,10 +456,9 @@ Description: SQLite module for php5
  SQL server installation like MySQL or PostgreSQL.  It also includes the
  pdo_sqlite module, for use with the PHP Data Object extension.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-sybase
 Architecture: any
@@ -482,10 +470,9 @@ Description: Sybase / MS SQL Server module for php5
  database connections directly from PHP scripts. It also includes the
  pdo_dblib module for use with the PHP Data Object extension.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-tidy
 Architecture: any
@@ -499,10 +486,9 @@ Description: tidy module for php5
  documents -- including ones with embedded scripting languages such as PHP
  or ASP within them using OO constructs.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-xmlrpc
 Architecture: any
@@ -511,10 +497,9 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: XML-RPC module for php5
  This package provides a module for XML-RPC functions in PHP scripts.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
 
 Package: php5-xsl
 Architecture: any
@@ -523,7 +508,6 @@ Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: XSL module for php5
  This package provides a module for XSL using the libxslt XSL parser.
  .
- PHP5 is a widely-used general-purpose scripting language that is
- especially suited for Web development and can be embedded into HTML.
- The goal of the language is to allow web developers to write
- dynamically generated pages quickly.
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
