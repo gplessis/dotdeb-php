@@ -727,22 +727,25 @@ binary-arch: build install
 		for sapi in cgi cli fpm; do \
 			sed -e "s/@sapi@/$${sapi}/g; \
 	                        s/@package@/php5-$${sapi}/g; \
-	                         /#EXTRA#/ r debian/php5-$${sapi}.$${tmpl}.extra;" \
+	                         /#EXTRA#/ r debian/php5-$${sapi}.$${tmpl}.extra" \
 		  	< debian/php5-sapi.$${tmpl} \
+	                | sed -e'/#EXTRA#/ d' \
 		  	> debian/php5-$${sapi}.$${tmpl}; \
 		done; \
 		for sapi in embed; do \
 			sed -e "s/@sapi@/$${sapi}/g; \
 	                        s/@package@/libphp5-$${sapi}/g; \
-	                         /#EXTRA#/ r debian/libphp5-$${sapi}.$${tmpl}.extra;" \
+	                         /#EXTRA#/ r debian/libphp5-$${sapi}.$${tmpl}.extra" \
 		  	< debian/php5-sapi.$${tmpl} \
+	                | sed -e'/#EXTRA#/ d' \
 		  	> debian/libphp5-$${sapi}.$${tmpl}; \
 		done; \
 	        for sapi in "" "filter"; do \
 		        sed -e "s/@sapi@/apache2$${sapi}/g; \
 	                        s/@package@/libapache2-mod-php5$${sapi}/g; \
-	                         /#EXTRA#/ r debian/libapache2-mod-php5$${sapi}.$${tmpl}.extra;" \
+	                         /#EXTRA#/ r debian/libapache2-mod-php5$${sapi}.$${tmpl}.extra" \
 		        < debian/php5-sapi.$${tmpl} \
+	                | sed -e'/#EXTRA#/ d' \
 		        > debian/libapache2-mod-php5$${sapi}.$${tmpl}; \
 	        done; \
 	done

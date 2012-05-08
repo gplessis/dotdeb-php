@@ -1,19 +1,39 @@
-php5 (5.4.1-1~dotdeb.0) stable; urgency=low
+php5 (5.4.3-1~dotdeb.0) stable; urgency=high
 
-  * Rebuilt for Dotdeb
+  * New upstream release
+  * Fix FPM error log (PHP bug #61045)
 
- -- Guillaume Plessis <gui@dotdeb.org>  Mon, 30 Apr 2012 16:35:42 +0200
+ -- Guillaume Plessis <gui@dotdeb.org>  Tue, 08 May 2012 22:00:42 +0200
 
-php5 (5.4.1~rc2-1) unstable; urgency=low
+php5 (5.4.2-1) unstable; urgency=low
 
+  * Imported Upstream version 5.4.2
+    + [CVE-2012-1823] Fix PHP-CGI query string parameter vulnerability.
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 04 May 2012 08:47:42 +0200
+
+php5 (5.4.1-1) unstable; urgency=low
+
+  * Imported Upstream version 5.4.1
+    + Fixed insufficient validating of upload name leading to corrupted
+      $_FILES indices). (CVE-2012-1172).
+    + Add open_basedir checks to readline_write_history and
+      readline_read_history.
+    + Add Apache 2.4 support (.deb package in experimental comming soon)
+    + Added debug info handler to DOM objects.
+  * Remove Breaks: on php applications on maintainer requests:
+    + simplesamlphp
+    + php-horde-auth
   * Add better configuration snippet for CGI (Closes: #571795)
   * Update a description of PHP language based on the text from upstream
     web page (http://www.php.net/manual/en/intro-whatis.php)
   * Enable embed SAPI (Closes: #380731)
-  * Imported Upstream version 5.4.1~rc2
-  * Update patches to 5.4.1~rc2 release
+  * Add lintian override for libphp5-embed: embedded-library
+    usr/lib/libphp5.so: file
+  * Add ldconfig to libphp5-embed.{postinst,postrm}
+  * Fix #EXTRA# processing for SAPIs (extra ; at the end of sed cmd)
 
- -- Ondřej Surý <ondrej@debian.org>  Fri, 13 Apr 2012 15:10:26 +0200
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 03 May 2012 13:29:07 +0200
 
 php5 (5.4.1~rc1-1) unstable; urgency=low
 

@@ -1,0 +1,132 @@
+diff --git a/NEWS b/NEWS
+index 9ef6abf..c5c02eb 100644
+--- a/NEWS
++++ b/NEWS
+@@ -25,10 +25,13 @@ PHP                                                                        NEWS
+   . Fixed bug #54197 ([PATH=] sections incompatibility with user_ini.filename
+     set to null). (Anatoliy)
+ 
+-- FPM
++- Fileinfo
+   . Fixed bug #61812 (Uninitialised value used in libmagic). 
+     (Laruence, Gustavo)
+ 
++- FPM
++  . Fixed bug #61045 (fpm don't send error log to fastcgi clients). (fat)
++
+ - Libxml:
+   . Fixed bug #61617 (Libxml tests failed(ht is already destroyed)).
+     (Laruence)
+diff --git a/sapi/fpm/fpm/fpm_main.c b/sapi/fpm/fpm/fpm_main.c
+index 14dccbd..a28af53 100644
+--- a/sapi/fpm/fpm/fpm_main.c
++++ b/sapi/fpm/fpm/fpm_main.c
+@@ -646,12 +646,38 @@ static void sapi_cgi_register_variables(zval *track_vars_array TSRMLS_DC)
+ 	}
+ }
+ 
+-static void sapi_cgi_log_message(char *message TSRMLS_DC)
++/* {{{ sapi_cgi_log_fastcgi
++ *
++ * Ignore level, we want to send all messages through fastcgi
++ */
++void sapi_cgi_log_fastcgi(int level, char *message, size_t len)
+ {
+-	if (CGIG(fcgi_logging)) {
+-		zlog(ZLOG_NOTICE, "PHP message: %s", message);
++	TSRMLS_FETCH();
++
++	fcgi_request *request = (fcgi_request*) SG(server_context);
++
++	/* ensure we want:
++	 * - to log (fastcgi.logging in php.ini)
++	 * - we are currently dealing with a request
++	 * - the message is not empty
++	 */
++	if (CGIG(fcgi_logging) && request && message && len > 0) {
++		char *buf = malloc(len + 2);
++		memcpy(buf, message, len);
++		memcpy(buf + len, "\n", sizeof("\n"));
++		fcgi_write(request, FCGI_STDERR, buf, len+1);
++		free(buf);
+ 	}
+ }
++/* }}} */
++
++/* {{{ sapi_cgi_log_message
++ */
++static void sapi_cgi_log_message(char *message)
++{
++	zlog(ZLOG_NOTICE, "PHP message: %s", message);
++}
++/* }}} */
+ 
+ /* {{{ php_cgi_ini_activate_user_config
+  */
+@@ -1772,6 +1798,9 @@ consult the installation file that came with this distribution, or visit \n\
+ 	fcgi_fd = fpm_run(&max_requests);
+ 	parent = 0;
+ 
++	/* onced forked tell zlog to also send messages through sapi_cgi_log_fastcgi() */
++	zlog_set_external_logger(sapi_cgi_log_fastcgi);
++
+ 	/* make php call us to get _ENV vars */
+ 	php_php_import_environment_variables = php_import_environment_variables;
+ 	php_import_environment_variables = cgi_php_import_environment_variables;
+diff --git a/sapi/fpm/fpm/zlog.c b/sapi/fpm/fpm/zlog.c
+index b127ec1..80db9d8 100644
+--- a/sapi/fpm/fpm/zlog.c
++++ b/sapi/fpm/fpm/zlog.c
+@@ -22,6 +22,7 @@
+ static int zlog_fd = -1;
+ static int zlog_level = ZLOG_NOTICE;
+ static int launched = 0;
++static void (*external_logger)(int, char *, size_t) = NULL;
+ 
+ static const char *level_names[] = {
+ 	[ZLOG_DEBUG]   = "DEBUG",
+@@ -41,6 +42,12 @@ const int syslog_priorities[] = {
+ };
+ #endif
+ 
++void zlog_set_external_logger(void (*logger)(int, char *, size_t)) /* {{{ */
++{
++	external_logger = logger;
++}
++/* }}} */
++
+ const char *zlog_get_level_name(int log_level) /* {{{ */
+ {
+ 	if (log_level < 0) {
+@@ -101,6 +108,19 @@ void zlog_ex(const char *function, int line, int flags, const char *fmt, ...) /*
+ 	int truncated = 0;
+ 	int saved_errno;
+ 
++	if (external_logger) {
++		va_start(args, fmt);
++		len = vsnprintf(buf, buf_size, fmt, args);
++		va_end(args);
++		if (len >= buf_size) {
++			memcpy(buf + buf_size - sizeof("..."), "...", sizeof("...") - 1);
++			len = buf_size - 1;
++		}
++		external_logger(flags & ZLOG_LEVEL_MASK, buf, len);
++		len = 0;
++		memset(buf, '\0', buf_size);
++	}
++
+ 	if ((flags & ZLOG_LEVEL_MASK) < zlog_level) {
+ 		return;
+ 	}
+diff --git a/sapi/fpm/fpm/zlog.h b/sapi/fpm/fpm/zlog.h
+index e6a5c01..1945922 100644
+--- a/sapi/fpm/fpm/zlog.h
++++ b/sapi/fpm/fpm/zlog.h
+@@ -9,6 +9,7 @@
+ 
+ struct timeval;
+ 
++void zlog_set_external_logger(void (*logger)(int, char *, size_t));
+ int zlog_set_fd(int new_fd);
+ int zlog_set_level(int new_value);
+ const char *zlog_get_level_name(int log_level);

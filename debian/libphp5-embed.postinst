@@ -4,6 +4,8 @@ set -e
 
 #DEBHELPER#
 
+[ "$1" = "configure" ] && ldconfig
+
 if [ "$1" != "configure" ]; then
     exit 0
 fi
