@@ -1,22 +1,3 @@
-diff --git a/NEWS b/NEWS
-index 9ef6abf..c5c02eb 100644
---- a/NEWS
-+++ b/NEWS
-@@ -25,10 +25,13 @@ PHP                                                                        NEWS
-   . Fixed bug #54197 ([PATH=] sections incompatibility with user_ini.filename
-     set to null). (Anatoliy)
- 
--- FPM
-+- Fileinfo
-   . Fixed bug #61812 (Uninitialised value used in libmagic). 
-     (Laruence, Gustavo)
- 
-+- FPM
-+  . Fixed bug #61045 (fpm don't send error log to fastcgi clients). (fat)
-+
- - Libxml:
-   . Fixed bug #61617 (Libxml tests failed(ht is already destroyed)).
-     (Laruence)
 diff --git a/sapi/fpm/fpm/fpm_main.c b/sapi/fpm/fpm/fpm_main.c
 index 14dccbd..a28af53 100644
 --- a/sapi/fpm/fpm/fpm_main.c
