@@ -1,14 +1,110 @@
-php5 (5.4.3-1~dotdeb.0) stable; urgency=high
+php5 (5.4.4-2~dotdeb.0) stable; urgency=high
 
-  * New upstream release
-  * Fix FPM error log (PHP bug #61045)
+  * Rebuilt for Dotdeb
 
- -- Guillaume Plessis <gui@dotdeb.org>  Tue, 08 May 2012 22:00:42 +0200
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 21 Jun 2012 22:20:42 -0700
+
+php5 (5.4.4-2) unstable; urgency=high
+
+  * Fix PHP5-FPM not reporting errors to web server (nginx)
+    (Closes: #677994)
+  * Bump urgency to high to replace the RC2 version in testing sooner.
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 19 Jun 2012 09:09:13 +0200
+
+php5 (5.4.4-1) unstable; urgency=low
+
+  * Imported Upstream version 5.4.4
+  * Generate 16 char salt instead of 12 char salt for SHA-512
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 14 Jun 2012 16:03:51 +0200
+
+php5 (5.4.4~rc2-1) unstable; urgency=low
+
+  * Imported Upstream version 5.4.4~rc2
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 31 May 2012 10:58:14 +0200
+
+php5 (5.4.4~rc1-1) unstable; urgency=low
+
+  * Imported Upstream version 5.4.4~rc1
+   + CVE-2012-2386: Fix integer overflow leading to heap-buffer overflow
+     in the Phar extension  
+  * Remove some READMEs removed by upstream
+   + README.SVN-RULES - upstream has moved to git
+   + README.Zeus - Zeus Web Server is dead
+  * CVE-2012-2386: one additional, similar vulnerable code construct in
+    the Phar extension
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 29 May 2012 12:12:27 +0200
+
+php5 (5.4.3-6) unstable; urgency=low
+
+  [ Ondřej Surý ]
+  * Merge 5.3.10-1 and 5.3.10-2 changelog
+  * Remove *.patch from .gitignore, it broke adding quilt patches
+  * Revert "Use system libzip (Pulled from Fedora)" (Closes: #674151)
+  * Add patch to fix tt-rss backend php crash (Closes: #666200)
+
+  [ Thorsten Glaser ]
+  * Add support for Linux/m68k atomics needed by the FPM SAPI
+    (Closes: #672277)
+
+  [ Gedalya ]
+  * Add logrotate script for php5-fpm (Closes: #673558)
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 28 May 2012 10:43:44 +0200
+
+php5 (5.4.3-5) unstable; urgency=low
+
+  * Pull patches from Fedora:
+    + Update use_embedded_timezonedb.patch to r8: fix compile error
+      without --with-system-tzdata configured
+    + Add ldconfig post/postun for -embedded (Hans de Goede)
+    + Use RTLD_NOW instead of RTLD_LAZY (pulled from Fedora)
+    + Use system libzip (pulled from Fedora)
+  * Disable undefined ZIP_OVERWRITE to allow compile with system libzip
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 21 May 2012 13:37:35 +0200
+
+php5 (5.4.3-4) unstable; urgency=low
+
+  * Fix tests ([ERROR] Can't start server: bind-address refers to
+    multiple interfaces!) (Closes: #672588)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 15 May 2012 18:01:55 +0200
+
+php5 (5.4.3-3) unstable; urgency=low
+
+  * Disable log redirection in debian/setup-mysql.sh to help diagnose
+    the setup-mysql.sh failure (still not fixed, but not reproduceable
+    on my local box)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 15 May 2012 14:27:12 +0200
+
+php5 (5.4.3-2) unstable; urgency=low
+
+  * Add --no-defaults to rest of the mysql commands in setup-mysql.sh
+    script (Closes: #672588)
+  * Add debugging info to debian/setup-mysql.sh to help diagnose any
+    further problems
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 15 May 2012 10:26:34 +0200
+
+php5 (5.4.3-1) unstable; urgency=low
+
+  * Imported Upstream version 5.4.3
+    + CVE-2012-2311: Complete fix for PHP-CGI query string parameter
+      vulnerability
+    + CVE-2012-2329: Fix a buffer overflow vulnerability in the
+      apache_request_headers() (PHP 5.3 is not vulnerable)
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 09 May 2012 08:48:10 +0200
 
 php5 (5.4.2-1) unstable; urgency=low
 
   * Imported Upstream version 5.4.2
-    + [CVE-2012-1823] Fix PHP-CGI query string parameter vulnerability.
+    + CVE-2012-1823: Fix PHP-CGI query string parameter vulnerability.
 
  -- Ondřej Surý <ondrej@debian.org>  Fri, 04 May 2012 08:47:42 +0200
 
@@ -212,6 +308,39 @@ php5 (5.4.0~beta2-1) experimental; urgency=low
   * php5-common.docs: Don't install non-existant TODO file
 
  -- Ondřej Surý <ondrej@debian.org>  Sat, 22 Oct 2011 18:39:33 +0200
+
+php5 (5.3.10-2) unstable; urgency=low
+
+  * Use $(filter pattern...,text) instead of $(findstring find,in) in
+    debian/rules to match against space separated list of words and not
+    substrings (Closes: #660647)
+  * CVE-2012-0831: magic_quotes_gpc remote disable vulnerability (NOTE:
+    magic_quotes_gpc is DEPRECATED and will be removed from PHP 5.4,
+    e.g. you should not use them!), also fix regression in CVE-2012-0831
+    (LP#930115)
+  * Depends on non-forking fuser in psmisc (Closes: #633100)
+  * Add Pre-Depends: dpkg (>= 1.15.7.2~) | dpkg-maintscript-helper to
+    allow single upgrade path (dpkg-maintscript-helper package will be
+    provided for Ubuntu Lucid PPA)
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 20 Feb 2012 17:40:24 +0100
+
+php5 (5.3.10-1) unstable; urgency=high
+
+  [ Raphael Geissert ]
+  * Remove myself from uploaders
+  * Randomly choose the mysql server's port
+
+  [ Ondřej Surý ]
+  * Fix use_embedded_timezonedb.patch in custom builds (Courtesy of
+    Dominic Scheirlinck) (Closes: #652599)
+  * Fix typo in firebird2.1-dev build dependency
+  * Update gbp.conf for 5.3.x branch
+  * Imported Upstream version 5.3.10
+    + CVE-2012-0830: Fix PHP remote vulnerability (code injection) in the
+      implementation of the max_input_vars configuration variable
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 03 Feb 2012 09:38:06 +0100
 
 php5 (5.3.9-6) unstable; urgency=low
 

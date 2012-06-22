@@ -1,4 +1,4 @@
-php5 (5.4.0~rc7-3) unstable; urgency=low
+php5 (5.4.0~rc8-1) unstable; urgency=low
 
   php5-fpm default www spool now listens on unix socket located
   in /var/run/php5-fpm.sock instead of localhost:9000.  If you

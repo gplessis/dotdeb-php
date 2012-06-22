@@ -1,8 +1,6 @@
-diff --git a/sapi/fpm/fpm/fpm_main.c b/sapi/fpm/fpm/fpm_main.c
-index 14dccbd..a28af53 100644
 --- a/sapi/fpm/fpm/fpm_main.c
 +++ b/sapi/fpm/fpm/fpm_main.c
-@@ -646,12 +646,38 @@ static void sapi_cgi_register_variables(zval *track_vars_array TSRMLS_DC)
+@@ -646,12 +646,38 @@ static void sapi_cgi_register_variables(
  	}
  }
  
@@ -44,7 +42,7 @@ index 14dccbd..a28af53 100644
  
  /* {{{ php_cgi_ini_activate_user_config
   */
-@@ -1772,6 +1798,9 @@ consult the installation file that came with this distribution, or visit \n\
+@@ -1772,6 +1798,9 @@ consult the installation file that came
  	fcgi_fd = fpm_run(&max_requests);
  	parent = 0;
  
@@ -54,8 +52,6 @@ index 14dccbd..a28af53 100644
  	/* make php call us to get _ENV vars */
  	php_php_import_environment_variables = php_import_environment_variables;
  	php_import_environment_variables = cgi_php_import_environment_variables;
-diff --git a/sapi/fpm/fpm/zlog.c b/sapi/fpm/fpm/zlog.c
-index b127ec1..80db9d8 100644
 --- a/sapi/fpm/fpm/zlog.c
 +++ b/sapi/fpm/fpm/zlog.c
 @@ -22,6 +22,7 @@
@@ -79,7 +75,7 @@ index b127ec1..80db9d8 100644
  const char *zlog_get_level_name(int log_level) /* {{{ */
  {
  	if (log_level < 0) {
-@@ -101,6 +108,19 @@ void zlog_ex(const char *function, int line, int flags, const char *fmt, ...) /*
+@@ -101,6 +108,19 @@ void zlog_ex(const char *function, int l
  	int truncated = 0;
  	int saved_errno;
  
@@ -99,8 +95,6 @@ index b127ec1..80db9d8 100644
  	if ((flags & ZLOG_LEVEL_MASK) < zlog_level) {
  		return;
  	}
-diff --git a/sapi/fpm/fpm/zlog.h b/sapi/fpm/fpm/zlog.h
-index e6a5c01..1945922 100644
 --- a/sapi/fpm/fpm/zlog.h
 +++ b/sapi/fpm/fpm/zlog.h
 @@ -9,6 +9,7 @@
