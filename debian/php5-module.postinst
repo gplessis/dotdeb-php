@@ -13,7 +13,7 @@ if [ "$1" = "configure" ]; then
 
 	# Register new conffile with UCF
 	ucf /usr/share/php5/@package@/${inifile} ${inidir}/${inifile}
-	ucfr php5-@package@ ${inidir}/${inifile}
+	ucfr --force php5-@package@ ${inidir}/${inifile}
 
 	# Move pre-extension manager conffile
 	dpkg-maintscript-helper mv_conffile /etc/php5/conf.d/${inifile} ${inidir}/${inifile} 5.4.0~rc6-1 -- "$@";
