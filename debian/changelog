@@ -1,8 +1,15 @@
-php5 (5.4.4-2~dotdeb.0) stable; urgency=high
+php5 (5.4.5-1~dotdeb.0) stable; urgency=medium
 
   * Rebuilt for Dotdeb
 
- -- Guillaume Plessis <gui@dotdeb.org>  Thu, 21 Jun 2012 22:20:42 -0700
+ -- Guillaume Plessis <gui@dotdeb.org>  Sun, 22 Jul 2012 10:59:42 +0200
+
+php5 (5.4.4-3) UNRELEASED; urgency=low
+
+  * Update ucf/ucfr scripts to not conflict between mysql and mysqlnd
+    extension (Closes: #678371)
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 21 Jun 2012 11:22:05 +0200
 
 php5 (5.4.4-2) unstable; urgency=high
 
