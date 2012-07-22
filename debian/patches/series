@@ -17,4 +17,3 @@ fpm-config.patch
 php-fpm-sysconfdir.patch
 php-5.3.9-mysqlnd.patch
 php-fpm-listen-on-unix-socket.patch
-php-fpm-error-reporting.patch
