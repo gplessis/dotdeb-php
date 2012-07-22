@@ -15,4 +15,3 @@ qdbm-is-usr_include_qdbm.patch
 php-fpm-man-section-and-cleanup.patch
 fpm-config.patch
 php-fpm-sysconfdir.patch
-fix_fpm_error_log.patch
