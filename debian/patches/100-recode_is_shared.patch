@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//ext/recode/config9.m4 php5-5.3.10/ext/recode/config9.m4
---- php5-5.3.10.orig//ext/recode/config9.m4	2008-12-01 23:30:21.000000000 +0000
-+++ php5-5.3.10/ext/recode/config9.m4	2012-02-02 22:17:12.000000000 +0000
-@@ -13,6 +13,6 @@
+Index: php-5.3.16/ext/recode/config9.m4
+===================================================================
+--- php-5.3.16.orig/ext/recode/config9.m4
++++ php-5.3.16/ext/recode/config9.m4
+@@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
    fi
  
    if test -n "$recode_conflict"; then

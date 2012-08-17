@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//sapi/apache/config.m4 php5-5.3.10/sapi/apache/config.m4
---- php5-5.3.10.orig//sapi/apache/config.m4	2007-07-11 23:20:37.000000000 +0000
-+++ php5-5.3.10/sapi/apache/config.m4	2012-02-02 22:16:27.000000000 +0000
-@@ -56,11 +56,11 @@
+Index: php-5.3.16/sapi/apache/config.m4
+===================================================================
+--- php-5.3.16.orig/sapi/apache/config.m4
++++ php-5.3.16/sapi/apache/config.m4
+@@ -56,11 +56,11 @@ if test "$PHP_APXS" != "no"; then
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
  
@@ -18,10 +19,11 @@ diff -urN php5-5.3.10.orig//sapi/apache/config.m4 php5-5.3.10/sapi/apache/config
  
    for flag in $APXS_CFLAGS; do
      case $flag in
-diff -urN php5-5.3.10.orig//sapi/apache2filter/config.m4 php5-5.3.10/sapi/apache2filter/config.m4
---- php5-5.3.10.orig//sapi/apache2filter/config.m4	2008-03-09 12:35:56.000000000 +0000
-+++ php5-5.3.10/sapi/apache2filter/config.m4	2012-02-02 22:16:27.000000000 +0000
-@@ -60,13 +60,13 @@
+Index: php-5.3.16/sapi/apache2filter/config.m4
+===================================================================
+--- php-5.3.16.orig/sapi/apache2filter/config.m4
++++ php-5.3.16/sapi/apache2filter/config.m4
+@@ -59,13 +59,13 @@ if test "$PHP_APXS2FILTER" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
  
@@ -42,10 +44,11 @@ diff -urN php5-5.3.10.orig//sapi/apache2filter/config.m4 php5-5.3.10/sapi/apache
  
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
-diff -urN php5-5.3.10.orig//sapi/apache2handler/config.m4 php5-5.3.10/sapi/apache2handler/config.m4
---- php5-5.3.10.orig//sapi/apache2handler/config.m4	2008-03-11 22:47:39.000000000 +0000
-+++ php5-5.3.10/sapi/apache2handler/config.m4	2012-02-02 22:16:27.000000000 +0000
-@@ -59,13 +59,13 @@
+Index: php-5.3.16/sapi/apache2handler/config.m4
+===================================================================
+--- php-5.3.16.orig/sapi/apache2handler/config.m4
++++ php-5.3.16/sapi/apache2handler/config.m4
+@@ -58,13 +58,13 @@ if test "$PHP_APXS2" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
  
@@ -66,10 +69,11 @@ diff -urN php5-5.3.10.orig//sapi/apache2handler/config.m4 php5-5.3.10/sapi/apach
  
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
-diff -urN php5-5.3.10.orig//sapi/apache_hooks/config.m4 php5-5.3.10/sapi/apache_hooks/config.m4
---- php5-5.3.10.orig//sapi/apache_hooks/config.m4	2007-09-26 15:44:16.000000000 +0000
-+++ php5-5.3.10/sapi/apache_hooks/config.m4	2012-02-02 22:16:27.000000000 +0000
-@@ -57,11 +57,11 @@
+Index: php-5.3.16/sapi/apache_hooks/config.m4
+===================================================================
+--- php-5.3.16.orig/sapi/apache_hooks/config.m4
++++ php-5.3.16/sapi/apache_hooks/config.m4
+@@ -57,11 +57,11 @@ if test "$PHP_APACHE_HOOKS" != "no"; the
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
  

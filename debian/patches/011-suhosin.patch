@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//configure php5-5.3.10/configure
---- php5-5.3.10.orig//configure	2012-02-02 18:36:30.000000000 +0000
-+++ php5-5.3.10/configure	2012-02-02 22:11:23.000000000 +0000
-@@ -19371,6 +19371,9 @@
+Index: php-5.3.16/configure
+===================================================================
+--- php-5.3.16.orig/configure
++++ php-5.3.16/configure
+@@ -19435,6 +19435,9 @@ EOF
  
  fi
  
@@ -10,8 +11,8 @@ diff -urN php5-5.3.10.orig//configure php5-5.3.10/configure
 +EOF
  
    echo $ac_n "checking for declared timezone""... $ac_c" 1>&6
- echo "configure:19377: checking for declared timezone" >&5
-@@ -115830,7 +115833,7 @@
+ echo "configure:19441: checking for declared timezone" >&5
+@@ -115909,7 +115912,7 @@ EOF
         php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
         strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
         network.c php_open_temporary_file.c php_logos.c \
@@ -20,7 +21,7 @@ diff -urN php5-5.3.10.orig//configure php5-5.3.10/configure
    
        IFS=.
        set $ac_src
-@@ -116034,7 +116037,7 @@
+@@ -116113,7 +116116,7 @@ esac
      zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
      zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
      zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
@@ -29,10 +30,11 @@ diff -urN php5-5.3.10.orig//configure php5-5.3.10/configure
    
        IFS=.
        set $ac_src
-diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
---- php5-5.3.10.orig//configure.in	2012-02-02 22:08:42.000000000 +0000
-+++ php5-5.3.10/configure.in	2012-02-02 22:11:23.000000000 +0000
-@@ -289,6 +289,7 @@
+Index: php-5.3.16/configure.in
+===================================================================
+--- php-5.3.16.orig/configure.in
++++ php-5.3.16/configure.in
+@@ -289,6 +289,7 @@ sinclude(Zend/Zend.m4)
  sinclude(TSRM/threads.m4)
  sinclude(TSRM/tsrm.m4)
  
@@ -40,7 +42,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  divert(2)
  
-@@ -1403,7 +1404,7 @@
+@@ -1403,7 +1404,7 @@ PHP_ADD_SOURCES(main, main.c snprintf.c 
         php_ini.c SAPI.c rfc1867.c php_content_types.c strlcpy.c \
         strlcat.c mergesort.c reentrancy.c php_variables.c php_ticks.c \
         network.c php_open_temporary_file.c php_logos.c \
@@ -49,7 +51,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  PHP_ADD_SOURCES(main/streams, streams.c cast.c memory.c filter.c \
         plain_wrapper.c userspace.c transports.c xp_socket.c mmap.c \
-@@ -1431,7 +1432,7 @@
+@@ -1431,7 +1432,7 @@ PHP_ADD_SOURCES(Zend, \
      zend_list.c zend_indent.c zend_builtin_functions.c zend_sprintf.c \
      zend_ini.c zend_qsort.c zend_multibyte.c zend_ts_hash.c zend_stream.c \
      zend_iterators.c zend_interfaces.c zend_exceptions.c zend_strtod.c zend_gc.c \
@@ -58,10 +60,11 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  if test -r "$abs_srcdir/Zend/zend_objects.c"; then
    PHP_ADD_SOURCES(Zend, zend_objects.c zend_object_handlers.c zend_objects_API.c zend_default_classes.c)
-diff -urN php5-5.3.10.orig//ext/standard/dl.c php5-5.3.10/ext/standard/dl.c
---- php5-5.3.10.orig//ext/standard/dl.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/ext/standard/dl.c	2012-02-02 22:11:23.000000000 +0000
-@@ -254,6 +254,23 @@
+Index: php-5.3.16/ext/standard/dl.c
+===================================================================
+--- php-5.3.16.orig/ext/standard/dl.c
++++ php-5.3.16/ext/standard/dl.c
+@@ -254,6 +254,23 @@ PHPAPI int php_load_extension(char *file
  			return FAILURE;
  		}
  	}
@@ -85,10 +88,11 @@ diff -urN php5-5.3.10.orig//ext/standard/dl.c php5-5.3.10/ext/standard/dl.c
  	return SUCCESS;
  }
  /* }}} */
-diff -urN php5-5.3.10.orig//ext/standard/info.c php5-5.3.10/ext/standard/info.c
---- php5-5.3.10.orig//ext/standard/info.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/ext/standard/info.c	2012-02-02 22:11:23.000000000 +0000
-@@ -878,6 +878,33 @@
+Index: php-5.3.16/ext/standard/info.c
+===================================================================
+--- php-5.3.16.orig/ext/standard/info.c
++++ php-5.3.16/ext/standard/info.c
+@@ -878,6 +878,33 @@ PHPAPI void php_print_info(int flag TSRM
  		
  		php_info_print_table_end();
  
@@ -122,10 +126,11 @@ diff -urN php5-5.3.10.orig//ext/standard/info.c php5-5.3.10/ext/standard/info.c
  		/* Zend Engine */
  		php_info_print_box_start(0);
  		if (expose_php && !sapi_module.phpinfo_as_text) {
-diff -urN php5-5.3.10.orig//ext/standard/syslog.c php5-5.3.10/ext/standard/syslog.c
---- php5-5.3.10.orig//ext/standard/syslog.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/ext/standard/syslog.c	2012-02-02 22:11:23.000000000 +0000
-@@ -42,6 +42,7 @@
+Index: php-5.3.16/ext/standard/syslog.c
+===================================================================
+--- php-5.3.16.orig/ext/standard/syslog.c
++++ php-5.3.16/ext/standard/syslog.c
+@@ -42,6 +42,7 @@ static void start_syslog(TSRMLS_D);
   */
  PHP_MINIT_FUNCTION(syslog)
  {
@@ -133,7 +138,7 @@ diff -urN php5-5.3.10.orig//ext/standard/syslog.c php5-5.3.10/ext/standard/syslo
  	/* error levels */
  	REGISTER_LONG_CONSTANT("LOG_EMERG", LOG_EMERG, CONST_CS | CONST_PERSISTENT); /* system unusable */
  	REGISTER_LONG_CONSTANT("LOG_ALERT", LOG_ALERT, CONST_CS | CONST_PERSISTENT); /* immediate action required */
-@@ -97,6 +98,7 @@
+@@ -97,6 +98,7 @@ PHP_MINIT_FUNCTION(syslog)
  	/* AIX doesn't have LOG_PERROR */
  	REGISTER_LONG_CONSTANT("LOG_PERROR", LOG_PERROR, CONST_CS | CONST_PERSISTENT); /*log to stderr*/
  #endif
@@ -141,10 +146,11 @@ diff -urN php5-5.3.10.orig//ext/standard/syslog.c php5-5.3.10/ext/standard/syslo
  	BG(syslog_device)=NULL;
  
  	return SUCCESS;
-diff -urN php5-5.3.10.orig//main/fopen_wrappers.c php5-5.3.10/main/fopen_wrappers.c
---- php5-5.3.10.orig//main/fopen_wrappers.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/fopen_wrappers.c	2012-02-02 22:11:23.000000000 +0000
-@@ -85,13 +85,8 @@
+Index: php-5.3.16/main/fopen_wrappers.c
+===================================================================
+--- php-5.3.16.orig/main/fopen_wrappers.c
++++ php-5.3.16/main/fopen_wrappers.c
+@@ -85,13 +85,8 @@ or a tightening during activation/runtim
  PHPAPI ZEND_INI_MH(OnUpdateBaseDir)
  {
  	char **p, *pathbuf, *ptr, *end;
@@ -159,9 +165,10 @@ diff -urN php5-5.3.10.orig//main/fopen_wrappers.c php5-5.3.10/main/fopen_wrapper
  
  	if (stage == PHP_INI_STAGE_STARTUP || stage == PHP_INI_STAGE_SHUTDOWN || stage == PHP_INI_STAGE_ACTIVATE || stage == PHP_INI_STAGE_DEACTIVATE) {
  		/* We're in a PHP_INI_SYSTEM context, no restrictions */
-diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
---- php5-5.3.10.orig//main/main.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/main.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/main.c
+===================================================================
+--- php-5.3.16.orig/main/main.c
++++ php-5.3.16/main/main.c
 @@ -91,6 +91,9 @@
  
  #include "SAPI.h"
@@ -170,9 +177,9 @@ diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
 +#include "suhosin_globals.h"
 +#endif
  
- #if HAVE_MMAP
+ #if HAVE_MMAP || defined(PHP_WIN32)
  # if HAVE_UNISTD_H
-@@ -504,7 +507,7 @@
+@@ -504,7 +507,7 @@ PHP_INI_BEGIN()
  	STD_PHP_INI_ENTRY("extension_dir",			PHP_EXTENSION_DIR,		PHP_INI_SYSTEM,		OnUpdateStringUnempty,	extension_dir,			php_core_globals,	core_globals)
  	STD_PHP_INI_ENTRY("include_path",			PHP_INCLUDE_PATH,		PHP_INI_ALL,		OnUpdateStringUnempty,	include_path,			php_core_globals,	core_globals)
  	PHP_INI_ENTRY("max_execution_time",			"30",		PHP_INI_ALL,			OnUpdateTimeout)
@@ -181,7 +188,7 @@ diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
  	STD_PHP_INI_ENTRY("safe_mode_exec_dir",		PHP_SAFE_MODE_EXEC_DIR,	PHP_INI_SYSTEM,		OnUpdateString,			safe_mode_exec_dir,		php_core_globals,	core_globals)
  
  	STD_PHP_INI_BOOLEAN("file_uploads",			"1",		PHP_INI_SYSTEM,		OnUpdateBool,			file_uploads,			php_core_globals,	core_globals)
-@@ -1810,6 +1813,10 @@
+@@ -1810,6 +1813,10 @@ void dummy_invalid_parameter_handler(
  }
  #endif
  
@@ -192,7 +199,7 @@ diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
  /* {{{ php_module_startup
   */
  int php_module_startup(sapi_module_struct *sf, zend_module_entry *additional_modules, uint num_additional_modules)
-@@ -1858,6 +1865,10 @@
+@@ -1858,6 +1865,10 @@ int php_module_startup(sapi_module_struc
  	php_win32_init_rng_lock();
  #endif
  
@@ -203,7 +210,7 @@ diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
  	module_shutdown = 0;
  	module_startup = 1;
  	sapi_initialize_empty_request(TSRMLS_C);
-@@ -1980,7 +1991,11 @@
+@@ -1980,7 +1991,11 @@ int php_module_startup(sapi_module_struc
  	REGISTER_MAIN_STRINGL_CONSTANT("PHP_CONFIG_FILE_SCAN_DIR", PHP_CONFIG_FILE_SCAN_DIR, sizeof(PHP_CONFIG_FILE_SCAN_DIR)-1, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_STRINGL_CONSTANT("PHP_SHLIB_SUFFIX", PHP_SHLIB_SUFFIX, sizeof(PHP_SHLIB_SUFFIX)-1, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_STRINGL_CONSTANT("PHP_EOL", PHP_EOL, sizeof(PHP_EOL)-1, CONST_PERSISTENT | CONST_CS);
@@ -216,9 +223,10 @@ diff -urN php5-5.3.10.orig//main/main.c php5-5.3.10/main/main.c
  	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_MAX", LONG_MAX, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_SIZE", sizeof(long), CONST_PERSISTENT | CONST_CS);
  #ifdef ZEND_MULTIBYTE
-diff -urN php5-5.3.10.orig//main/php_config.h.in php5-5.3.10/main/php_config.h.in
---- php5-5.3.10.orig//main/php_config.h.in	2012-02-02 18:36:33.000000000 +0000
-+++ php5-5.3.10/main/php_config.h.in	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/php_config.h.in
+===================================================================
+--- php-5.3.16.orig/main/php_config.h.in
++++ php-5.3.16/main/php_config.h.in
 @@ -405,6 +405,9 @@
  /* Define to 1 if you have the `alphasort' function. */
  #undef HAVE_ALPHASORT
@@ -229,10 +237,11 @@ diff -urN php5-5.3.10.orig//main/php_config.h.in php5-5.3.10/main/php_config.h.i
  /* Whether you have AOLserver */
  #undef HAVE_AOLSERVER
  
-diff -urN php5-5.3.10.orig//main/php.h php5-5.3.10/main/php.h
---- php5-5.3.10.orig//main/php.h	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/php.h	2012-02-02 22:11:23.000000000 +0000
-@@ -454,6 +454,10 @@
+Index: php-5.3.16/main/php.h
+===================================================================
+--- php-5.3.16.orig/main/php.h
++++ php-5.3.16/main/php.h
+@@ -449,6 +449,10 @@ END_EXTERN_C()
  #endif
  #endif /* !XtOffsetOf */
  
@@ -243,10 +252,11 @@ diff -urN php5-5.3.10.orig//main/php.h php5-5.3.10/main/php.h
  #endif
  
  /*
-diff -urN php5-5.3.10.orig//main/php_logos.c php5-5.3.10/main/php_logos.c
---- php5-5.3.10.orig//main/php_logos.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/php_logos.c	2012-02-02 22:11:23.000000000 +0000
-@@ -50,6 +50,10 @@
+Index: php-5.3.16/main/php_logos.c
+===================================================================
+--- php-5.3.16.orig/main/php_logos.c
++++ php-5.3.16/main/php_logos.c
+@@ -50,6 +50,10 @@ PHPAPI int php_unregister_info_logo(char
  	return zend_hash_del(&phpinfo_logo_hash, logo_string, strlen(logo_string));
  }
  
@@ -257,7 +267,7 @@ diff -urN php5-5.3.10.orig//main/php_logos.c php5-5.3.10/main/php_logos.c
  int php_init_info_logos(void)
  {
  	if(zend_hash_init(&phpinfo_logo_hash, 0, NULL, NULL, 1)==FAILURE) 
-@@ -58,7 +62,9 @@
+@@ -58,7 +62,9 @@ int php_init_info_logos(void)
  	php_register_info_logo(PHP_LOGO_GUID    , "image/gif", php_logo    , sizeof(php_logo));
  	php_register_info_logo(PHP_EGG_LOGO_GUID, "image/gif", php_egg_logo, sizeof(php_egg_logo));
  	php_register_info_logo(ZEND_LOGO_GUID   , "image/gif", zend_logo   , sizeof(zend_logo));
@@ -268,10 +278,11 @@ diff -urN php5-5.3.10.orig//main/php_logos.c php5-5.3.10/main/php_logos.c
  	return SUCCESS;
  }
  
-diff -urN php5-5.3.10.orig//main/snprintf.c php5-5.3.10/main/snprintf.c
---- php5-5.3.10.orig//main/snprintf.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/snprintf.c	2012-02-02 22:11:23.000000000 +0000
-@@ -782,6 +782,10 @@
+Index: php-5.3.16/main/snprintf.c
+===================================================================
+--- php-5.3.16.orig/main/snprintf.c
++++ php-5.3.16/main/snprintf.c
+@@ -782,6 +782,10 @@ static int format_converter(register buf
  			 */
  			switch (*fmt) {
  				case 'Z':
@@ -282,7 +293,7 @@ diff -urN php5-5.3.10.orig//main/snprintf.c php5-5.3.10/main/snprintf.c
  					zvp = (zval*) va_arg(ap, zval*);
  					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
  					if (free_zcopy) {
-@@ -792,6 +796,7 @@
+@@ -792,6 +796,7 @@ static int format_converter(register buf
  					if (adjust_precision && precision < s_len) {
  						s_len = precision;
  					}
@@ -290,7 +301,7 @@ diff -urN php5-5.3.10.orig//main/snprintf.c php5-5.3.10/main/snprintf.c
  					break;
  				case 'u':
  					switch(modifier) {
-@@ -1093,7 +1098,11 @@
+@@ -1093,7 +1098,11 @@ static int format_converter(register buf
  
  
  				case 'n':
@@ -302,10 +313,11 @@ diff -urN php5-5.3.10.orig//main/snprintf.c php5-5.3.10/main/snprintf.c
  					goto skip_output;
  
  					/*
-diff -urN php5-5.3.10.orig//main/spprintf.c php5-5.3.10/main/spprintf.c
---- php5-5.3.10.orig//main/spprintf.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/main/spprintf.c	2012-02-02 22:11:23.000000000 +0000
-@@ -390,6 +390,10 @@
+Index: php-5.3.16/main/spprintf.c
+===================================================================
+--- php-5.3.16.orig/main/spprintf.c
++++ php-5.3.16/main/spprintf.c
+@@ -390,6 +390,10 @@ static void xbuf_format_converter(smart_
  			 */
  			switch (*fmt) {
  				case 'Z':
@@ -316,7 +328,7 @@ diff -urN php5-5.3.10.orig//main/spprintf.c php5-5.3.10/main/spprintf.c
  					zvp = (zval*) va_arg(ap, zval*);
  					zend_make_printable_zval(zvp, &zcopy, &free_zcopy);
  					if (free_zcopy) {
-@@ -400,6 +404,7 @@
+@@ -400,6 +404,7 @@ static void xbuf_format_converter(smart_
  					if (adjust_precision && precision < s_len) {
  						s_len = precision;
  					}
@@ -324,7 +336,7 @@ diff -urN php5-5.3.10.orig//main/spprintf.c php5-5.3.10/main/spprintf.c
  					break;
  				case 'u':
  					switch(modifier) {
-@@ -700,7 +705,11 @@
+@@ -700,7 +705,11 @@ static void xbuf_format_converter(smart_
  
  
  				case 'n':
@@ -336,9 +348,10 @@ diff -urN php5-5.3.10.orig//main/spprintf.c php5-5.3.10/main/spprintf.c
  					goto skip_output;
  
  					/*
-diff -urN php5-5.3.10.orig//main/suhosin_globals.h php5-5.3.10/main/suhosin_globals.h
---- php5-5.3.10.orig//main/suhosin_globals.h	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/main/suhosin_globals.h	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/suhosin_globals.h
+===================================================================
+--- /dev/null
++++ php-5.3.16/main/suhosin_globals.h
 @@ -0,0 +1,61 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -401,9 +414,10 @@ diff -urN php5-5.3.10.orig//main/suhosin_globals.h php5-5.3.10/main/suhosin_glob
 + * c-basic-offset: 4
 + * End:
 + */
-diff -urN php5-5.3.10.orig//main/suhosin_logo.h php5-5.3.10/main/suhosin_logo.h
---- php5-5.3.10.orig//main/suhosin_logo.h	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/main/suhosin_logo.h	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/suhosin_logo.h
+===================================================================
+--- /dev/null
++++ php-5.3.16/main/suhosin_logo.h
 @@ -0,0 +1,178 @@
 +static unsigned char suhosin_logo[] =
 +	"\xff\xd8\xff\xe0\x00\x10\x4a\x46\x49\x46\x00\x01\x01\x01\x00\x48"
@@ -583,9 +597,10 @@ diff -urN php5-5.3.10.orig//main/suhosin_logo.h php5-5.3.10/main/suhosin_logo.h
 +	"\x21\xb6\x99\x69\xbc\x25\xb6\xdb\x6d\x18\xc2\x10\xda\x12\x94\xa1"
 +	"\x38\xc2\x53\x8c\x63\x18\xc7\x9d\xbe\x7f\xff\xd9"
 +	;
-diff -urN php5-5.3.10.orig//main/suhosin_patch.c php5-5.3.10/main/suhosin_patch.c
---- php5-5.3.10.orig//main/suhosin_patch.c	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/main/suhosin_patch.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/suhosin_patch.c
+===================================================================
+--- /dev/null
++++ php-5.3.16/main/suhosin_patch.c
 @@ -0,0 +1,470 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -1057,9 +1072,10 @@ diff -urN php5-5.3.10.orig//main/suhosin_patch.c php5-5.3.10/main/suhosin_patch.
 + * vim600: sw=4 ts=4 fdm=marker
 + * vim<600: sw=4 ts=4
 + */
-diff -urN php5-5.3.10.orig//main/suhosin_patch.h php5-5.3.10/main/suhosin_patch.h
---- php5-5.3.10.orig//main/suhosin_patch.h	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/main/suhosin_patch.h	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/suhosin_patch.h
+===================================================================
+--- /dev/null
++++ php-5.3.16/main/suhosin_patch.h
 @@ -0,0 +1,59 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -1120,9 +1136,10 @@ diff -urN php5-5.3.10.orig//main/suhosin_patch.h php5-5.3.10/main/suhosin_patch.
 + * c-basic-offset: 4
 + * End:
 + */
-diff -urN php5-5.3.10.orig//main/suhosin_patch.m4 php5-5.3.10/main/suhosin_patch.m4
---- php5-5.3.10.orig//main/suhosin_patch.m4	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/main/suhosin_patch.m4	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/main/suhosin_patch.m4
+===================================================================
+--- /dev/null
++++ php-5.3.16/main/suhosin_patch.m4
 @@ -0,0 +1,8 @@
 +dnl
 +dnl $Id: suhosin_patch.m4,v 1.1 2004/11/14 13:24:24 ionic Exp $
@@ -1132,10 +1149,11 @@ diff -urN php5-5.3.10.orig//main/suhosin_patch.m4 php5-5.3.10/main/suhosin_patch
 +
 +AC_DEFINE(SUHOSIN_PATCH, 1, [Suhosin Patch])
 +
-diff -urN php5-5.3.10.orig//sapi/apache/mod_php5.c php5-5.3.10/sapi/apache/mod_php5.c
---- php5-5.3.10.orig//sapi/apache/mod_php5.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/apache/mod_php5.c	2012-02-02 22:11:23.000000000 +0000
-@@ -969,7 +969,11 @@
+Index: php-5.3.16/sapi/apache/mod_php5.c
+===================================================================
+--- php-5.3.16.orig/sapi/apache/mod_php5.c
++++ php-5.3.16/sapi/apache/mod_php5.c
+@@ -969,7 +969,11 @@ static void php_init_handler(server_rec 
  	{
  		TSRMLS_FETCH();
  		if (PG(expose_php)) {
@@ -1147,10 +1165,11 @@ diff -urN php5-5.3.10.orig//sapi/apache/mod_php5.c php5-5.3.10/sapi/apache/mod_p
  		}
  	}
  #endif
-diff -urN php5-5.3.10.orig//sapi/apache2filter/sapi_apache2.c php5-5.3.10/sapi/apache2filter/sapi_apache2.c
---- php5-5.3.10.orig//sapi/apache2filter/sapi_apache2.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/apache2filter/sapi_apache2.c	2012-02-02 22:11:23.000000000 +0000
-@@ -583,7 +583,11 @@
+Index: php-5.3.16/sapi/apache2filter/sapi_apache2.c
+===================================================================
+--- php-5.3.16.orig/sapi/apache2filter/sapi_apache2.c
++++ php-5.3.16/sapi/apache2filter/sapi_apache2.c
+@@ -583,7 +583,11 @@ static void php_apache_add_version(apr_p
  {
  	TSRMLS_FETCH();
  	if (PG(expose_php)) {
@@ -1162,10 +1181,11 @@ diff -urN php5-5.3.10.orig//sapi/apache2filter/sapi_apache2.c php5-5.3.10/sapi/a
  	}
  }
  
-diff -urN php5-5.3.10.orig//sapi/apache2handler/sapi_apache2.c php5-5.3.10/sapi/apache2handler/sapi_apache2.c
---- php5-5.3.10.orig//sapi/apache2handler/sapi_apache2.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/apache2handler/sapi_apache2.c	2012-02-02 22:11:23.000000000 +0000
-@@ -407,7 +407,11 @@
+Index: php-5.3.16/sapi/apache2handler/sapi_apache2.c
+===================================================================
+--- php-5.3.16.orig/sapi/apache2handler/sapi_apache2.c
++++ php-5.3.16/sapi/apache2handler/sapi_apache2.c
+@@ -407,7 +407,11 @@ static void php_apache_add_version(apr_p
  {
  	TSRMLS_FETCH();
  	if (PG(expose_php)) {
@@ -1177,10 +1197,11 @@ diff -urN php5-5.3.10.orig//sapi/apache2handler/sapi_apache2.c php5-5.3.10/sapi/
  	}
  }
  
-diff -urN php5-5.3.10.orig//sapi/apache_hooks/mod_php5.c php5-5.3.10/sapi/apache_hooks/mod_php5.c
---- php5-5.3.10.orig//sapi/apache_hooks/mod_php5.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/apache_hooks/mod_php5.c	2012-02-02 22:11:23.000000000 +0000
-@@ -1256,7 +1256,11 @@
+Index: php-5.3.16/sapi/apache_hooks/mod_php5.c
+===================================================================
+--- php-5.3.16.orig/sapi/apache_hooks/mod_php5.c
++++ php-5.3.16/sapi/apache_hooks/mod_php5.c
+@@ -1256,7 +1256,11 @@ static void php_init_handler(server_rec 
  	{
  		TSRMLS_FETCH();
  		if (PG(expose_php)) {
@@ -1192,10 +1213,11 @@ diff -urN php5-5.3.10.orig//sapi/apache_hooks/mod_php5.c php5-5.3.10/sapi/apache
  		}
  	}
  #endif
-diff -urN php5-5.3.10.orig//sapi/cgi/cgi_main.c php5-5.3.10/sapi/cgi/cgi_main.c
---- php5-5.3.10.orig//sapi/cgi/cgi_main.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/cgi/cgi_main.c	2012-02-02 22:11:23.000000000 +0000
-@@ -1932,11 +1932,19 @@
+Index: php-5.3.16/sapi/cgi/cgi_main.c
+===================================================================
+--- php-5.3.16.orig/sapi/cgi/cgi_main.c
++++ php-5.3.16/sapi/cgi/cgi_main.c
+@@ -1955,11 +1955,19 @@ consult the installation file that came 
  								SG(headers_sent) = 1;
  								SG(request_info).no_headers = 1;
  							}
@@ -1215,10 +1237,11 @@ diff -urN php5-5.3.10.orig//sapi/cgi/cgi_main.c php5-5.3.10/sapi/cgi/cgi_main.c
  							php_request_shutdown((void *) 0);
  							fcgi_shutdown();
  							exit_status = 0;
-diff -urN php5-5.3.10.orig//sapi/cli/php_cli.c php5-5.3.10/sapi/cli/php_cli.c
---- php5-5.3.10.orig//sapi/cli/php_cli.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/cli/php_cli.c	2012-02-02 22:11:23.000000000 +0000
-@@ -826,7 +826,11 @@
+Index: php-5.3.16/sapi/cli/php_cli.c
+===================================================================
+--- php-5.3.16.orig/sapi/cli/php_cli.c
++++ php-5.3.16/sapi/cli/php_cli.c
+@@ -826,7 +826,11 @@ int main(int argc, char *argv[])
  				}
  
  				request_started = 1;
@@ -1231,10 +1254,11 @@ diff -urN php5-5.3.10.orig//sapi/cli/php_cli.c php5-5.3.10/sapi/cli/php_cli.c
  					PHP_VERSION, sapi_module.name, __DATE__, __TIME__,
  #if ZEND_DEBUG && defined(HAVE_GCOV)
  					"(DEBUG GCOV)",
-diff -urN php5-5.3.10.orig//sapi/litespeed/lsapi_main.c php5-5.3.10/sapi/litespeed/lsapi_main.c
---- php5-5.3.10.orig//sapi/litespeed/lsapi_main.c	2011-12-31 18:15:06.000000000 +0000
-+++ php5-5.3.10/sapi/litespeed/lsapi_main.c	2012-02-02 22:11:23.000000000 +0000
-@@ -718,11 +718,19 @@
+Index: php-5.3.16/sapi/litespeed/lsapi_main.c
+===================================================================
+--- php-5.3.16.orig/sapi/litespeed/lsapi_main.c
++++ php-5.3.16/sapi/litespeed/lsapi_main.c
+@@ -718,11 +718,19 @@ static int cli_main( int argc, char * ar
                  break;
              case 'v':
                  if (php_request_startup(TSRMLS_C) != FAILURE) {
@@ -1254,10 +1278,11 @@ diff -urN php5-5.3.10.orig//sapi/litespeed/lsapi_main.c php5-5.3.10/sapi/litespe
  #ifdef PHP_OUTPUT_NEWAPI
                      php_output_end_all(TSRMLS_C);
  #else
-diff -urN php5-5.3.10.orig//sapi/milter/php_milter.c php5-5.3.10/sapi/milter/php_milter.c
---- php5-5.3.10.orig//sapi/milter/php_milter.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/sapi/milter/php_milter.c	2012-02-02 22:11:23.000000000 +0000
-@@ -1111,7 +1111,11 @@
+Index: php-5.3.16/sapi/milter/php_milter.c
+===================================================================
+--- php-5.3.16.orig/sapi/milter/php_milter.c
++++ php-5.3.16/sapi/milter/php_milter.c
+@@ -1111,7 +1111,11 @@ int main(int argc, char *argv[])
  				}
  				SG(headers_sent) = 1;
  				SG(request_info).no_headers = 1;
@@ -1269,10 +1294,11 @@ diff -urN php5-5.3.10.orig//sapi/milter/php_milter.c php5-5.3.10/sapi/milter/php
  				php_end_ob_buffers(1 TSRMLS_CC);
  				exit(1);
  				break;
-diff -urN php5-5.3.10.orig//win32/build/config.w32 php5-5.3.10/win32/build/config.w32
---- php5-5.3.10.orig//win32/build/config.w32	2011-03-28 10:55:34.000000000 +0000
-+++ php5-5.3.10/win32/build/config.w32	2012-02-02 22:11:23.000000000 +0000
-@@ -328,7 +328,7 @@
+Index: php-5.3.16/win32/build/config.w32
+===================================================================
+--- php-5.3.16.orig/win32/build/config.w32
++++ php-5.3.16/win32/build/config.w32
+@@ -328,7 +328,7 @@ ADD_SOURCES("Zend", "zend_language_parse
  	zend_stream.c zend_iterators.c zend_interfaces.c zend_objects.c \
  	zend_object_handlers.c zend_objects_API.c \
  	zend_default_classes.c zend_execute.c zend_strtod.c zend_gc.c zend_closures.c \
@@ -1281,7 +1307,7 @@ diff -urN php5-5.3.10.orig//win32/build/config.w32 php5-5.3.10/win32/build/confi
  
  if (VCVERS == 1200) {
  	AC_DEFINE('ZEND_DVAL_TO_LVAL_CAST_OK', 1);
-@@ -385,6 +385,7 @@
+@@ -385,6 +385,7 @@ if (PHP_ZEND_MULTIBYTE == "yes") {
   
  AC_DEFINE('HAVE_USLEEP', 1);
  AC_DEFINE('HAVE_STRCOLL', 1);
@@ -1289,9 +1315,10 @@ diff -urN php5-5.3.10.orig//win32/build/config.w32 php5-5.3.10/win32/build/confi
  
  /* For snapshot builders, where can we find the additional
   * files that make up the snapshot template? */
-diff -urN php5-5.3.10.orig//win32/build/config.w32.h.in php5-5.3.10/win32/build/config.w32.h.in
---- php5-5.3.10.orig//win32/build/config.w32.h.in	2010-11-26 18:25:13.000000000 +0000
-+++ php5-5.3.10/win32/build/config.w32.h.in	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/win32/build/config.w32.h.in
+===================================================================
+--- php-5.3.16.orig/win32/build/config.w32.h.in
++++ php-5.3.16/win32/build/config.w32.h.in
 @@ -152,6 +152,9 @@
  /* Win32 supports strcoll */
  #define HAVE_STRCOLL 1
@@ -1302,10 +1329,11 @@ diff -urN php5-5.3.10.orig//win32/build/config.w32.h.in php5-5.3.10/win32/build/
  /* Win32 supports socketpair by the emulation in win32/sockets.c */
  #define HAVE_SOCKETPAIR 1
  #define HAVE_SOCKLEN_T 1
-diff -urN php5-5.3.10.orig//Zend/Makefile.am php5-5.3.10/Zend/Makefile.am
---- php5-5.3.10.orig//Zend/Makefile.am	2009-03-18 10:18:10.000000000 +0000
-+++ php5-5.3.10/Zend/Makefile.am	2012-02-02 22:11:23.000000000 +0000
-@@ -17,7 +17,7 @@
+Index: php-5.3.16/Zend/Makefile.am
+===================================================================
+--- php-5.3.16.orig/Zend/Makefile.am
++++ php-5.3.16/Zend/Makefile.am
+@@ -17,7 +17,7 @@ libZend_la_SOURCES=\
  	zend_objects_API.c zend_ts_hash.c zend_stream.c \
  	zend_default_classes.c \
  	zend_iterators.c zend_interfaces.c zend_exceptions.c \
@@ -1314,9 +1342,10 @@ diff -urN php5-5.3.10.orig//Zend/Makefile.am php5-5.3.10/Zend/Makefile.am
  
  libZend_la_LDFLAGS =
  libZend_la_LIBADD = @ZEND_EXTRA_LIBS@
-diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
---- php5-5.3.10.orig//Zend/zend_alloc.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_alloc.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_alloc.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_alloc.c
++++ php-5.3.16/Zend/zend_alloc.c
 @@ -32,6 +32,10 @@
  # include <unistd.h>
  #endif
@@ -1336,7 +1365,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  #if ZEND_DEBUG
  void zend_debug_alloc_output(char *format, ...)
  {
-@@ -76,6 +81,7 @@
+@@ -76,6 +81,7 @@ void zend_debug_alloc_output(char *forma
  #endif
  }
  #endif
@@ -1344,7 +1373,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  #if (defined (__GNUC__) && __GNUC__ > 2 ) && !defined(__INTEL_COMPILER) && !defined(DARWIN) && !defined(__hpux) && !defined(_AIX)
  static void zend_mm_panic(const char *message) __attribute__ ((noreturn));
-@@ -134,6 +140,8 @@
+@@ -134,6 +140,8 @@ static void zend_mm_panic(const char *me
  # endif
  #endif
  
@@ -1353,7 +1382,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  static zend_mm_storage* zend_mm_mem_dummy_init(void *params)
  {
  	return malloc(sizeof(zend_mm_storage));
-@@ -332,13 +340,28 @@
+@@ -332,13 +340,28 @@ static const zend_mm_mem_handlers mem_ha
  #define	MEM_BLOCK_GUARD  0x2A8FCC84
  #define	MEM_BLOCK_LEAK   0x6C5E8F2D
  
@@ -1384,7 +1413,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  } zend_mm_block_info;
  
  #if ZEND_DEBUG
-@@ -412,7 +435,7 @@
+@@ -412,7 +435,7 @@ typedef struct _zend_mm_free_block {
  # define ZEND_MM_CACHE_STAT 0
  #endif
  
@@ -1393,7 +1422,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	int                 use_zend_alloc;
  	void               *(*_malloc)(size_t);
  	void                (*_free)(void*);
-@@ -447,6 +470,9 @@
+@@ -447,6 +470,9 @@ struct _zend_mm_heap {
  		int miss;
  	} cache_stat[ZEND_MM_NUM_BUCKETS+1];
  #endif
@@ -1403,7 +1432,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  };
  
  #define ZEND_MM_SMALL_FREE_BUCKET(heap, index) \
-@@ -520,18 +546,31 @@
+@@ -520,18 +546,31 @@ static unsigned int _zend_mm_cookie = 0;
  /* optimized access */
  #define ZEND_MM_FREE_BLOCK_SIZE(b)		(b)->info._size
  
@@ -1438,7 +1467,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  #define ZEND_MM_BUCKET_INDEX(true_size)		((true_size>>ZEND_MM_ALIGNMENT_LOG2)-(ZEND_MM_ALIGNED_MIN_HEADER_SIZE>>ZEND_MM_ALIGNMENT_LOG2))
  
-@@ -593,6 +632,44 @@
+@@ -593,6 +632,44 @@ static unsigned int _zend_mm_cookie = 0;
  
  #endif
  
@@ -1483,7 +1512,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  #if ZEND_MM_HEAP_PROTECTION
  
-@@ -715,7 +792,7 @@
+@@ -715,7 +792,7 @@ static inline unsigned int zend_mm_low_b
  #endif
  }
  
@@ -1492,7 +1521,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  {
  	zend_mm_free_block *prev, *next;
  
-@@ -725,14 +802,14 @@
+@@ -725,14 +802,14 @@ static inline void zend_mm_add_to_rest_l
  		mm_block->parent = NULL;
  	}
  
@@ -1513,7 +1542,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  {
  	size_t size;
  	size_t index;
-@@ -749,7 +826,7 @@
+@@ -749,7 +826,7 @@ static inline void zend_mm_add_to_free_l
  		if (!*p) {
  			*p = mm_block;
  			mm_block->parent = p;
@@ -1522,7 +1551,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			heap->large_free_bitmap |= (ZEND_MM_LONG_CONST(1) << index);
  		} else {
  			size_t m;
-@@ -762,15 +839,15 @@
+@@ -762,15 +839,15 @@ static inline void zend_mm_add_to_free_l
  					if (!*p) {
  						*p = mm_block;
  						mm_block->parent = p;
@@ -1543,7 +1572,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  					mm_block->parent = NULL;
  					break;
  				}
-@@ -782,27 +859,33 @@
+@@ -782,27 +859,33 @@ static inline void zend_mm_add_to_free_l
  		index = ZEND_MM_BUCKET_INDEX(size);
  
  		prev = ZEND_MM_SMALL_FREE_BUCKET(heap, index);
@@ -1585,7 +1614,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  #if ZEND_MM_SAFE_UNLINKING
  		if (UNEXPECTED(next != mm_block)) {
  			zend_mm_panic("zend_mm_heap corrupted");
-@@ -841,14 +924,21 @@
+@@ -841,14 +924,21 @@ subst_block:
  		}
  	} else {
  
@@ -1610,7 +1639,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  		if (EXPECTED(ZEND_MM_SMALL_SIZE(ZEND_MM_FREE_BLOCK_SIZE(mm_block)))) {
  			if (EXPECTED(prev == next)) {
-@@ -864,7 +954,7 @@
+@@ -864,7 +954,7 @@ subst_block:
  	}
  }
  
@@ -1619,7 +1648,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  {
  	zend_mm_free_block* p;
  	int i;
-@@ -882,12 +972,19 @@
+@@ -882,12 +972,19 @@ static inline void zend_mm_init(zend_mm_
  #endif
  	p = ZEND_MM_SMALL_FREE_BUCKET(heap, 0);
  	for (i = 0; i < ZEND_MM_NUM_BUCKETS; i++) {
@@ -1642,7 +1671,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  }
  
  static void zend_mm_del_segment(zend_mm_heap *heap, zend_mm_segment *segment)
-@@ -908,12 +1005,13 @@
+@@ -908,12 +1005,13 @@ static void zend_mm_free_cache(zend_mm_h
  	int i;
  
  	for (i = 0; i < ZEND_MM_NUM_BUCKETS; i++) {
@@ -1658,7 +1687,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  				zend_mm_block *next_block = ZEND_MM_NEXT_BLOCK(mm_block);
  
  				heap->cached -= size;
-@@ -1009,14 +1107,20 @@
+@@ -1009,14 +1107,20 @@ static void zend_mm_random(unsigned char
  /* }}} */
  #endif
  
@@ -1680,7 +1709,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  #if 0
  	int i;
-@@ -1050,6 +1154,12 @@
+@@ -1050,6 +1154,12 @@ ZEND_API zend_mm_heap *zend_mm_startup_e
  	}
  #endif
  
@@ -1693,7 +1722,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	if (zend_mm_low_bit(block_size) != zend_mm_high_bit(block_size)) {
  		fprintf(stderr, "'block_size' must be a power of two\n");
  /* See http://support.microsoft.com/kb/190351 */
-@@ -1077,6 +1187,7 @@
+@@ -1077,6 +1187,7 @@ ZEND_API zend_mm_heap *zend_mm_startup_e
  #endif
  		exit(255);
  	}
@@ -1701,7 +1730,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	heap->storage = storage;
  	heap->block_size = block_size;
  	heap->compact_size = 0;
-@@ -1097,12 +1208,12 @@
+@@ -1097,12 +1208,12 @@ ZEND_API zend_mm_heap *zend_mm_startup_e
  	heap->reserve = NULL;
  	heap->reserve_size = reserve_size;
  	if (reserve_size > 0) {
@@ -1716,7 +1745,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  		*mm_heap = *heap;
  
-@@ -1110,22 +1221,22 @@
+@@ -1110,22 +1221,22 @@ ZEND_API zend_mm_heap *zend_mm_startup_e
  		orig = ZEND_MM_SMALL_FREE_BUCKET(heap, 0);
  		for (i = 0; i < ZEND_MM_NUM_BUCKETS; i++) {
  			q = p;
@@ -1746,7 +1775,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  		free(heap);
  		heap = mm_heap;
-@@ -1133,7 +1244,11 @@
+@@ -1133,7 +1244,11 @@ ZEND_API zend_mm_heap *zend_mm_startup_e
  	return heap;
  }
  
@@ -1759,7 +1788,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  {
  	int i;
  	size_t seg_size;
-@@ -1203,6 +1318,27 @@
+@@ -1203,6 +1318,27 @@ ZEND_API zend_mm_heap *zend_mm_startup(v
  	return heap;
  }
  
@@ -1787,7 +1816,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  #if ZEND_DEBUG
  static long zend_mm_find_leaks(zend_mm_segment *segment, zend_mm_block *b)
  {
-@@ -1571,7 +1707,11 @@
+@@ -1571,7 +1707,11 @@ static int zend_mm_check_heap(zend_mm_he
  }
  #endif
  
@@ -1800,7 +1829,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  {
  	zend_mm_storage *storage;
  	zend_mm_segment *segment;
-@@ -1581,7 +1721,7 @@
+@@ -1581,7 +1721,7 @@ ZEND_API void zend_mm_shutdown(zend_mm_h
  	if (heap->reserve) {
  #if ZEND_DEBUG
  		if (!silent) {
@@ -1809,7 +1838,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		}
  #endif
  		heap->reserve = NULL;
-@@ -1664,12 +1804,23 @@
+@@ -1664,12 +1804,23 @@ ZEND_API void zend_mm_shutdown(zend_mm_h
  		heap->size = 0;
  		heap->peak = 0;
  		if (heap->reserve_size) {
@@ -1834,7 +1863,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  static void zend_mm_safe_error(zend_mm_heap *heap,
  	const char *format,
  	size_t limit,
-@@ -1680,7 +1831,11 @@
+@@ -1680,7 +1831,11 @@ static void zend_mm_safe_error(zend_mm_h
  	size_t size)
  {
  	if (heap->reserve) {
@@ -1846,7 +1875,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		heap->reserve = NULL;
  	}
  	if (heap->overflow == 0) {
-@@ -1755,7 +1910,7 @@
+@@ -1755,7 +1910,7 @@ static zend_mm_free_block *zend_mm_searc
  		p = heap->large_free_buckets[index];
  		for (m = true_size << (ZEND_MM_NUM_BUCKETS - index); ; m <<= 1) {
  			if (UNEXPECTED(ZEND_MM_FREE_BLOCK_SIZE(p) == true_size)) {
@@ -1855,7 +1884,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			} else if (ZEND_MM_FREE_BLOCK_SIZE(p) >= true_size &&
  			           ZEND_MM_FREE_BLOCK_SIZE(p) < best_size) {
  				best_size = ZEND_MM_FREE_BLOCK_SIZE(p);
-@@ -1779,7 +1934,7 @@
+@@ -1779,7 +1934,7 @@ static zend_mm_free_block *zend_mm_searc
  
  		for (p = rst; p; p = p->child[p->child[0] != NULL]) {
  			if (UNEXPECTED(ZEND_MM_FREE_BLOCK_SIZE(p) == true_size)) {
@@ -1864,7 +1893,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			} else if (ZEND_MM_FREE_BLOCK_SIZE(p) > true_size &&
  			           ZEND_MM_FREE_BLOCK_SIZE(p) < best_size) {
  				best_size = ZEND_MM_FREE_BLOCK_SIZE(p);
-@@ -1788,7 +1943,7 @@
+@@ -1788,7 +1943,7 @@ static zend_mm_free_block *zend_mm_searc
  		}
  
  		if (best_fit) {
@@ -1873,7 +1902,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		}
  		bitmap = bitmap >> 1;
  		if (!bitmap) {
-@@ -1804,9 +1959,12 @@
+@@ -1804,9 +1959,12 @@ static zend_mm_free_block *zend_mm_searc
  			best_fit = p;
  		}
  	}
@@ -1887,7 +1916,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  static void *_zend_mm_alloc_int(zend_mm_heap *heap, size_t size ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
  {
  	zend_mm_free_block *best_fit;
-@@ -1816,7 +1974,7 @@
+@@ -1816,7 +1974,7 @@ static void *_zend_mm_alloc_int(zend_mm_
  	size_t segment_size;
  	zend_mm_segment *segment;
  	int keep_rest = 0;
@@ -1896,7 +1925,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	if (EXPECTED(ZEND_MM_SMALL_SIZE(true_size))) {
  		size_t index = ZEND_MM_BUCKET_INDEX(true_size);
  		size_t bitmap;
-@@ -1831,9 +1989,14 @@
+@@ -1831,9 +1989,14 @@ static void *_zend_mm_alloc_int(zend_mm_
  			heap->cache_stat[index].count--;
  			heap->cache_stat[index].hit++;
  #endif
@@ -1912,7 +1941,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			ZEND_MM_CHECK_MAGIC(best_fit, MEM_BLOCK_CACHED);
  			ZEND_MM_SET_DEBUG_INFO(best_fit, size, 1, 0);
  			return ZEND_MM_DATA_OF(best_fit);
-@@ -1847,7 +2010,7 @@
+@@ -1847,7 +2010,7 @@ static void *_zend_mm_alloc_int(zend_mm_
  		if (bitmap) {
  			/* Found some "small" free block that can be used */
  			index += zend_mm_low_bit(bitmap);
@@ -1921,7 +1950,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  #if ZEND_MM_CACHE_STAT
  			heap->cache_stat[ZEND_MM_NUM_BUCKETS].hit++;
  #endif
-@@ -1862,7 +2025,7 @@
+@@ -1862,7 +2025,7 @@ static void *_zend_mm_alloc_int(zend_mm_
  	best_fit = zend_mm_search_large_block(heap, true_size);
  
  	if (!best_fit && heap->real_size >= heap->limit - heap->block_size) {
@@ -1930,7 +1959,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		size_t best_size = -1;
  
  		while (p != ZEND_MM_REST_BUCKET(heap)) {
-@@ -1874,7 +2037,7 @@
+@@ -1874,7 +2037,7 @@ static void *_zend_mm_alloc_int(zend_mm_
  				best_size = ZEND_MM_FREE_BLOCK_SIZE(p);
  				best_fit = p;
  			}
@@ -1939,7 +1968,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		}
  	}
  
-@@ -1973,13 +2136,19 @@
+@@ -1973,13 +2136,19 @@ zend_mm_finished_searching_for_block:
  
  	ZEND_MM_SET_DEBUG_INFO(best_fit, size, 1, 1);
  
@@ -1960,7 +1989,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	return ZEND_MM_DATA_OF(best_fit);
  }
  
-@@ -1996,19 +2165,26 @@
+@@ -1996,19 +2165,26 @@ static void _zend_mm_free_int(zend_mm_he
  
  	mm_block = ZEND_MM_HEADER_OF(p);
  	size = ZEND_MM_BLOCK_SIZE(mm_block);
@@ -1989,7 +2018,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		heap->cached += size;
  		ZEND_MM_SET_MAGIC(mm_block, MEM_BLOCK_CACHED);
  #if ZEND_MM_CACHE_STAT
-@@ -2044,6 +2220,9 @@
+@@ -2044,6 +2220,9 @@ static void _zend_mm_free_int(zend_mm_he
  	HANDLE_UNBLOCK_INTERRUPTIONS();
  }
  
@@ -1999,7 +2028,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  static void *_zend_mm_realloc_int(zend_mm_heap *heap, void *p, size_t size ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
  {
  	zend_mm_block *mm_block = ZEND_MM_HEADER_OF(p);
-@@ -2053,11 +2232,18 @@
+@@ -2053,11 +2232,18 @@ static void *_zend_mm_realloc_int(zend_m
  	void *ptr;
  
  	if (UNEXPECTED(!p) || !ZEND_MM_VALID_PTR(p)) {
@@ -2018,7 +2047,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	ZEND_MM_CHECK_PROTECTION(mm_block);
  
  	if (UNEXPECTED(true_size < size)) {
-@@ -2089,6 +2275,11 @@
+@@ -2089,6 +2275,11 @@ static void *_zend_mm_realloc_int(zend_m
  			HANDLE_UNBLOCK_INTERRUPTIONS();
  		}
  		ZEND_MM_SET_DEBUG_INFO(mm_block, size, 0, 0);
@@ -2030,7 +2059,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  		return p;
  	}
  
-@@ -2104,17 +2295,22 @@
+@@ -2104,17 +2295,22 @@ static void *_zend_mm_realloc_int(zend_m
  			heap->cache_stat[index].count--;
  			heap->cache_stat[index].hit++;
  #endif
@@ -2057,7 +2086,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  #endif
  
  			heap->cached -= true_size - orig_size;
-@@ -2123,14 +2319,13 @@
+@@ -2123,14 +2319,13 @@ static void *_zend_mm_realloc_int(zend_m
  			cache = &heap->cache[index];
  
  			((zend_mm_free_block*)mm_block)->prev_free_block = *cache;
@@ -2073,7 +2102,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			return ptr;
  		}
  	}
-@@ -2173,6 +2368,11 @@
+@@ -2173,6 +2368,11 @@ static void *_zend_mm_realloc_int(zend_m
  				heap->peak = heap->size;
  			}
  			HANDLE_UNBLOCK_INTERRUPTIONS();
@@ -2085,7 +2114,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  			return p;
  		} else if (ZEND_MM_IS_FIRST_BLOCK(mm_block) &&
  				   ZEND_MM_IS_GUARD_BLOCK(ZEND_MM_BLOCK_AT(next_block, ZEND_MM_FREE_BLOCK_SIZE(next_block)))) {
-@@ -2275,38 +2475,74 @@
+@@ -2275,38 +2475,74 @@ out_of_memory:
  		}
  
  		HANDLE_UNBLOCK_INTERRUPTIONS();
@@ -2164,7 +2193,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  	if (!ZEND_MM_VALID_PTR(p)) {
  		return 0;
  	}
-@@ -2318,6 +2554,24 @@
+@@ -2318,6 +2554,24 @@ ZEND_API size_t _zend_mm_block_size(zend
  	return ZEND_MM_BLOCK_SIZE(mm_block);
  #endif
  }
@@ -2189,7 +2218,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  /**********************/
  /* Allocation Manager */
-@@ -2335,6 +2589,7 @@
+@@ -2335,6 +2589,7 @@ static int alloc_globals_id;
  static zend_alloc_globals alloc_globals;
  #endif
  
@@ -2197,7 +2226,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  ZEND_API int is_zend_mm(TSRMLS_D)
  {
  	return AG(mm_heap)->use_zend_alloc;
-@@ -2347,7 +2602,13 @@
+@@ -2347,7 +2602,13 @@ ZEND_API void *_emalloc(size_t size ZEND
  	if (UNEXPECTED(!AG(mm_heap)->use_zend_alloc)) {
  		return AG(mm_heap)->_malloc(size);
  	}
@@ -2211,7 +2240,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  }
  
  ZEND_API void _efree(void *ptr ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
-@@ -2358,7 +2619,13 @@
+@@ -2358,7 +2619,13 @@ ZEND_API void _efree(void *ptr ZEND_FILE
  		AG(mm_heap)->_free(ptr);
  		return;
  	}
@@ -2226,7 +2255,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  }
  
  ZEND_API void *_erealloc(void *ptr, size_t size, int allow_failure ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
-@@ -2368,7 +2635,13 @@
+@@ -2368,7 +2635,13 @@ ZEND_API void *_erealloc(void *ptr, size
  	if (UNEXPECTED(!AG(mm_heap)->use_zend_alloc)) {
  		return AG(mm_heap)->_realloc(ptr, size);
  	}
@@ -2240,7 +2269,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  }
  
  ZEND_API size_t _zend_mem_block_size(void *ptr TSRMLS_DC ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
-@@ -2376,8 +2649,15 @@
+@@ -2376,8 +2649,15 @@ ZEND_API size_t _zend_mem_block_size(voi
  	if (UNEXPECTED(!AG(mm_heap)->use_zend_alloc)) {
  		return 0;
  	}
@@ -2257,7 +2286,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  #if defined(__GNUC__) && defined(i386)
  
-@@ -2448,7 +2728,7 @@
+@@ -2448,7 +2728,7 @@ static inline size_t safe_address(size_t
  }
  #endif
  
@@ -2266,7 +2295,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  ZEND_API void *_safe_emalloc(size_t nmemb, size_t size, size_t offset ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC)
  {
  	return emalloc_rel(safe_address(nmemb, size, offset));
-@@ -2561,6 +2841,7 @@
+@@ -2561,6 +2841,7 @@ ZEND_API void shutdown_memory_manager(in
  {
  	zend_mm_shutdown(AG(mm_heap), full_shutdown, silent TSRMLS_CC);
  }
@@ -2274,7 +2303,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  static void alloc_globals_ctor(zend_alloc_globals *alloc_globals TSRMLS_DC)
  {
-@@ -2585,6 +2866,7 @@
+@@ -2585,6 +2866,7 @@ static void alloc_globals_dtor(zend_allo
  }
  #endif
  
@@ -2282,7 +2311,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  ZEND_API void start_memory_manager(TSRMLS_D)
  {
  #ifdef ZTS
-@@ -2649,6 +2931,7 @@
+@@ -2649,6 +2931,7 @@ ZEND_API void _full_mem_check(int silent
  	zend_debug_alloc_output("------------------------------------------------\n");
  }
  #endif
@@ -2290,9 +2319,10 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.c php5-5.3.10/Zend/zend_alloc.c
  
  /*
   * Local variables:
-diff -urN php5-5.3.10.orig//Zend/zend_alloc_canary.c php5-5.3.10/Zend/zend_alloc_canary.c
---- php5-5.3.10.orig//Zend/zend_alloc_canary.c	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/Zend/zend_alloc_canary.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_alloc_canary.c
+===================================================================
+--- /dev/null
++++ php-5.3.16/Zend/zend_alloc_canary.c
 @@ -0,0 +1,2509 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -4803,10 +4833,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc_canary.c php5-5.3.10/Zend/zend_alloc
 + * End:
 + */
 +
-diff -urN php5-5.3.10.orig//Zend/zend_alloc.h php5-5.3.10/Zend/zend_alloc.h
---- php5-5.3.10.orig//Zend/zend_alloc.h	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_alloc.h	2012-02-02 22:11:23.000000000 +0000
-@@ -203,6 +203,8 @@
+Index: php-5.3.16/Zend/zend_alloc.h
+===================================================================
+--- php-5.3.16.orig/Zend/zend_alloc.h
++++ php-5.3.16/Zend/zend_alloc.h
+@@ -203,6 +203,8 @@ END_EXTERN_C()
  
  /* Heap functions */
  typedef struct _zend_mm_heap zend_mm_heap;
@@ -4815,10 +4846,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_alloc.h php5-5.3.10/Zend/zend_alloc.h
  
  ZEND_API zend_mm_heap *zend_mm_startup(void);
  ZEND_API void zend_mm_shutdown(zend_mm_heap *heap, int full_shutdown, int silent TSRMLS_DC);
-diff -urN php5-5.3.10.orig//Zend/zend.c php5-5.3.10/Zend/zend.c
---- php5-5.3.10.orig//Zend/zend.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend.c	2012-02-02 22:11:23.000000000 +0000
-@@ -60,6 +60,10 @@
+Index: php-5.3.16/Zend/zend.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend.c
++++ php-5.3.16/Zend/zend.c
+@@ -60,6 +60,10 @@ int (*zend_vspprintf)(char **pbuf, size_
  ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
  ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
  
@@ -4829,7 +4861,7 @@ diff -urN php5-5.3.10.orig//Zend/zend.c php5-5.3.10/Zend/zend.c
  void (*zend_on_timeout)(int seconds TSRMLS_DC);
  
  static void (*zend_message_dispatcher_p)(long message, void *data TSRMLS_DC);
-@@ -88,6 +92,74 @@
+@@ -88,6 +92,74 @@ static ZEND_INI_MH(OnUpdateGCEnabled) /*
  }
  /* }}} */
  
@@ -4904,9 +4936,10 @@ diff -urN php5-5.3.10.orig//Zend/zend.c php5-5.3.10/Zend/zend.c
  ZEND_INI_BEGIN()
  	ZEND_INI_ENTRY("error_reporting",				NULL,		ZEND_INI_ALL,		OnUpdateErrorReporting)
  	STD_ZEND_INI_BOOLEAN("zend.enable_gc",				"1",	ZEND_INI_ALL,		OnUpdateGCEnabled,      gc_enabled,     zend_gc_globals,        gc_globals)
-diff -urN php5-5.3.10.orig//Zend/zend_canary.c php5-5.3.10/Zend/zend_canary.c
---- php5-5.3.10.orig//Zend/zend_canary.c	1970-01-01 00:00:00.000000000 +0000
-+++ php5-5.3.10/Zend/zend_canary.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_canary.c
+===================================================================
+--- /dev/null
++++ php-5.3.16/Zend/zend_canary.c
 @@ -0,0 +1,66 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -4974,10 +5007,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_canary.c php5-5.3.10/Zend/zend_canary.c
 + * vim600: sw=4 ts=4 fdm=marker
 + * vim<600: sw=4 ts=4
 + */
-diff -urN php5-5.3.10.orig//Zend/zend_compile.c php5-5.3.10/Zend/zend_compile.c
---- php5-5.3.10.orig//Zend/zend_compile.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_compile.c	2012-02-02 22:11:23.000000000 +0000
-@@ -73,6 +73,11 @@
+Index: php-5.3.16/Zend/zend_compile.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_compile.c
++++ php-5.3.16/Zend/zend_compile.c
+@@ -73,6 +73,11 @@ static void zend_destroy_property_info_i
  }
  /* }}} */
  
@@ -4989,10 +5023,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_compile.c php5-5.3.10/Zend/zend_compile.c
  static void build_runtime_defined_function_key(zval *result, const char *name, int name_length TSRMLS_DC) /* {{{ */
  {
  	char char_pos_buf[32];
-diff -urN php5-5.3.10.orig//Zend/zend_compile.h php5-5.3.10/Zend/zend_compile.h
---- php5-5.3.10.orig//Zend/zend_compile.h	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_compile.h	2012-02-02 22:11:23.000000000 +0000
-@@ -607,6 +607,11 @@
+Index: php-5.3.16/Zend/zend_compile.h
+===================================================================
+--- php-5.3.16.orig/Zend/zend_compile.h
++++ php-5.3.16/Zend/zend_compile.h
+@@ -607,6 +607,11 @@ ZEND_API zend_bool zend_is_auto_global(c
  ZEND_API int zend_auto_global_disable_jit(const char *varname, zend_uint varname_length TSRMLS_DC);
  ZEND_API size_t zend_dirname(char *path, size_t len);
  
@@ -5004,10 +5039,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_compile.h php5-5.3.10/Zend/zend_compile.h
  int zendlex(znode *zendlval TSRMLS_DC);
  
  /* BEGIN: OPCODES */
-diff -urN php5-5.3.10.orig//Zend/zend_constants.c php5-5.3.10/Zend/zend_constants.c
---- php5-5.3.10.orig//Zend/zend_constants.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_constants.c	2012-02-02 22:11:23.000000000 +0000
-@@ -113,6 +113,76 @@
+Index: php-5.3.16/Zend/zend_constants.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_constants.c
++++ php-5.3.16/Zend/zend_constants.c
+@@ -113,6 +113,76 @@ void zend_register_standard_constants(TS
  
  	REGISTER_MAIN_LONG_CONSTANT("E_ALL", E_ALL, CONST_PERSISTENT | CONST_CS);
  
@@ -5084,10 +5120,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_constants.c php5-5.3.10/Zend/zend_constant
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_PROVIDE_OBJECT", DEBUG_BACKTRACE_PROVIDE_OBJECT, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_IGNORE_ARGS", DEBUG_BACKTRACE_IGNORE_ARGS, CONST_PERSISTENT | CONST_CS);
  	/* true/false constants */
-diff -urN php5-5.3.10.orig//Zend/Zend.dsp php5-5.3.10/Zend/Zend.dsp
---- php5-5.3.10.orig//Zend/Zend.dsp	2009-03-18 10:18:10.000000000 +0000
-+++ php5-5.3.10/Zend/Zend.dsp	2012-02-02 22:11:23.000000000 +0000
-@@ -247,6 +247,14 @@
+Index: php-5.3.16/Zend/Zend.dsp
+===================================================================
+--- php-5.3.16.orig/Zend/Zend.dsp
++++ php-5.3.16/Zend/Zend.dsp
+@@ -247,6 +247,14 @@ SOURCE=.\zend_strtod.c
  # End Source File
  # Begin Source File
  
@@ -5102,9 +5139,10 @@ diff -urN php5-5.3.10.orig//Zend/Zend.dsp php5-5.3.10/Zend/Zend.dsp
  SOURCE=.\zend_ts_hash.c
  # End Source File
  # Begin Source File
-diff -urN php5-5.3.10.orig//Zend/zend_errors.h php5-5.3.10/Zend/zend_errors.h
---- php5-5.3.10.orig//Zend/zend_errors.h	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_errors.h	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_errors.h
+===================================================================
+--- php-5.3.16.orig/Zend/zend_errors.h
++++ php-5.3.16/Zend/zend_errors.h
 @@ -41,6 +41,20 @@
  #define E_ALL (E_ERROR | E_WARNING | E_PARSE | E_NOTICE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE | E_RECOVERABLE_ERROR | E_DEPRECATED | E_USER_DEPRECATED)
  #define E_CORE (E_CORE_ERROR | E_CORE_WARNING)
@@ -5126,10 +5164,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_errors.h php5-5.3.10/Zend/zend_errors.h
  #endif /* ZEND_ERRORS_H */
  
  /*
-diff -urN php5-5.3.10.orig//Zend/zend.h php5-5.3.10/Zend/zend.h
---- php5-5.3.10.orig//Zend/zend.h	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend.h	2012-02-02 22:11:23.000000000 +0000
-@@ -627,6 +627,9 @@
+Index: php-5.3.16/Zend/zend.h
+===================================================================
+--- php-5.3.16.orig/Zend/zend.h
++++ php-5.3.16/Zend/zend.h
+@@ -627,6 +627,9 @@ extern ZEND_API int (*zend_stream_open_f
  extern int (*zend_vspprintf)(char **pbuf, size_t max_len, const char *format, va_list ap);
  extern ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
  extern ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
@@ -5139,7 +5178,7 @@ diff -urN php5-5.3.10.orig//Zend/zend.h php5-5.3.10/Zend/zend.h
  
  ZEND_API void zend_error(int type, const char *format, ...) ZEND_ATTRIBUTE_FORMAT(printf, 2, 3);
  
-@@ -774,6 +777,16 @@
+@@ -774,6 +777,16 @@ ZEND_API void zend_restore_error_handlin
  #define DEBUG_BACKTRACE_PROVIDE_OBJECT (1<<0)
  #define DEBUG_BACKTRACE_IGNORE_ARGS    (1<<1)
  
@@ -5156,18 +5195,19 @@ diff -urN php5-5.3.10.orig//Zend/zend.h php5-5.3.10/Zend/zend.h
  #endif /* ZEND_H */
  
  /*
-diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
---- php5-5.3.10.orig//Zend/zend_hash.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_hash.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_hash.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_hash.c
++++ php-5.3.16/Zend/zend_hash.c
 @@ -20,6 +20,7 @@
- /* $Id: zend_hash.c 321634 2012-01-01 13:15:04Z felipe $ */
+ /* $Id$ */
  
  #include "zend.h"
 +#include "zend_compile.h"
  
  #define CONNECT_TO_BUCKET_DLLIST(element, list_head)		\
  	(element)->pNext = (list_head);							\
-@@ -136,6 +137,199 @@
+@@ -136,6 +137,199 @@ ZEND_API ulong zend_hash_func(const char
  	}
  
  
@@ -5367,7 +5407,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  
  ZEND_API int _zend_hash_init(HashTable *ht, uint nSize, hash_func_t pHashFunction, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)
  {
-@@ -156,6 +350,7 @@
+@@ -156,6 +350,7 @@ ZEND_API int _zend_hash_init(HashTable *
  
  	ht->nTableMask = ht->nTableSize - 1;
  	ht->pDestructor = pDestructor;
@@ -5375,7 +5415,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	ht->arBuckets = NULL;
  	ht->pListHead = NULL;
  	ht->pListTail = NULL;
-@@ -233,6 +428,7 @@
+@@ -233,6 +428,7 @@ ZEND_API int _zend_hash_add_or_update(Ha
  					return FAILURE;
  				}
  #endif
@@ -5383,7 +5423,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  				if (ht->pDestructor) {
  					ht->pDestructor(p->pData);
  				}
-@@ -298,6 +494,7 @@
+@@ -298,6 +494,7 @@ ZEND_API int _zend_hash_quick_add_or_upd
  					return FAILURE;
  				}
  #endif
@@ -5391,7 +5431,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  				if (ht->pDestructor) {
  					ht->pDestructor(p->pData);
  				}
-@@ -373,6 +570,7 @@
+@@ -373,6 +570,7 @@ ZEND_API int _zend_hash_index_update_or_
  				return FAILURE;
  			}
  #endif
@@ -5399,7 +5439,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  			if (ht->pDestructor) {
  				ht->pDestructor(p->pData);
  			}
-@@ -496,6 +694,7 @@
+@@ -496,6 +694,7 @@ ZEND_API int zend_hash_del_key_or_index(
  			if (ht->pInternalPointer == p) {
  				ht->pInternalPointer = p->pListNext;
  			}
@@ -5407,7 +5447,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  			if (ht->pDestructor) {
  				ht->pDestructor(p->pData);
  			}
-@@ -522,6 +721,7 @@
+@@ -522,6 +721,7 @@ ZEND_API void zend_hash_destroy(HashTabl
  	SET_INCONSISTENT(HT_IS_DESTROYING);
  
  	p = ht->pListHead;
@@ -5415,7 +5455,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	while (p != NULL) {
  		q = p;
  		p = p->pListNext;
-@@ -554,6 +754,7 @@
+@@ -554,6 +754,7 @@ ZEND_API void zend_hash_clean(HashTable 
  	ht->nNextFreeElement = 0;
  	ht->pInternalPointer = NULL;
  
@@ -5423,7 +5463,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	while (p != NULL) {
  		q = p;
  		p = p->pListNext;
-@@ -608,6 +809,7 @@
+@@ -608,6 +809,7 @@ static Bucket *zend_hash_apply_deleter(H
  	ht->nNumOfElements--;
  	HANDLE_UNBLOCK_INTERRUPTIONS();
  
@@ -5431,7 +5471,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	if (ht->pDestructor) {
  		ht->pDestructor(p->pData);
  	}
-@@ -628,6 +830,7 @@
+@@ -628,6 +830,7 @@ ZEND_API void zend_hash_graceful_destroy
  	IS_CONSISTENT(ht);
  
  	p = ht->pListHead;
@@ -5439,7 +5479,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	while (p != NULL) {
  		p = zend_hash_apply_deleter(ht, p);
  	}
-@@ -1180,6 +1383,7 @@
+@@ -1180,6 +1383,7 @@ ZEND_API int zend_hash_update_current_ke
  
  	IS_CONSISTENT(ht);
  
@@ -5447,9 +5487,10 @@ diff -urN php5-5.3.10.orig//Zend/zend_hash.c php5-5.3.10/Zend/zend_hash.c
  	if (p) {
  		if (key_type == HASH_KEY_IS_LONG) {
  			str_length = 0;
-diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
---- php5-5.3.10.orig//Zend/zend_llist.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_llist.c	2012-02-02 22:11:23.000000000 +0000
+Index: php-5.3.16/Zend/zend_llist.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_llist.c
++++ php-5.3.16/Zend/zend_llist.c
 @@ -23,6 +23,194 @@
  #include "zend_llist.h"
  #include "zend_qsort.h"
@@ -5645,7 +5686,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
  ZEND_API void zend_llist_init(zend_llist *l, size_t size, llist_dtor_func_t dtor, unsigned char persistent)
  {
  	l->head  = NULL;
-@@ -30,6 +218,7 @@
+@@ -30,6 +218,7 @@ ZEND_API void zend_llist_init(zend_llist
  	l->count = 0;
  	l->size  = size;
  	l->dtor  = dtor;
@@ -5653,7 +5694,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
  	l->persistent = persistent;
  }
  
-@@ -81,6 +270,7 @@
+@@ -81,6 +270,7 @@ ZEND_API void zend_llist_prepend_element
  			} else {\
  				(l)->tail = (current)->prev;\
  			}\
@@ -5661,7 +5702,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
  			if ((l)->dtor) {\
  				(l)->dtor((current)->data);\
  			}\
-@@ -108,6 +298,7 @@
+@@ -108,6 +298,7 @@ ZEND_API void zend_llist_destroy(zend_ll
  {
  	zend_llist_element *current=l->head, *next;
  	
@@ -5669,7 +5710,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
  	while (current) {
  		next = current->next;
  		if (l->dtor) {
-@@ -133,6 +324,7 @@
+@@ -133,6 +324,7 @@ ZEND_API void *zend_llist_remove_tail(ze
  	zend_llist_element *old_tail;
  	void *data;
  
@@ -5677,10 +5718,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_llist.c php5-5.3.10/Zend/zend_llist.c
  	if ((old_tail = l->tail)) {
  		if (old_tail->prev) {
  			old_tail->prev->next = NULL;
-diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operators.c
---- php5-5.3.10.orig//Zend/zend_operators.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_operators.c	2012-02-02 22:11:23.000000000 +0000
-@@ -153,9 +153,14 @@
+Index: php-5.3.16/Zend/zend_operators.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_operators.c
++++ php-5.3.16/Zend/zend_operators.c
+@@ -153,9 +153,14 @@ ZEND_API void convert_scalar_to_number(z
  		case IS_STRING:
  			{
  				char *strval;
@@ -5696,7 +5738,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  					ZVAL_LONG(op, 0);
  				}
  				STR_FREE(strval);
-@@ -187,7 +192,8 @@
+@@ -187,7 +192,8 @@ ZEND_API void convert_scalar_to_number(z
  	} else {														\
  		switch (Z_TYPE_P(op)) {										\
  			case IS_STRING:											\
@@ -5706,7 +5748,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  					if ((Z_TYPE(holder)=is_numeric_string(Z_STRVAL_P(op), Z_STRLEN_P(op), &Z_LVAL(holder), &Z_DVAL(holder), 1)) == 0) {	\
  						ZVAL_LONG(&(holder), 0);							\
  					}														\
-@@ -229,6 +235,7 @@
+@@ -229,6 +235,7 @@ ZEND_API void convert_scalar_to_number(z
  				Z_LVAL(holder) = zend_dval_to_lval(Z_DVAL_P(op));	\
  				break;												\
  			case IS_STRING:											\
@@ -5714,7 +5756,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  				Z_LVAL(holder) = strtol(Z_STRVAL_P(op), NULL, 10);	\
  				break;												\
  			case IS_ARRAY:											\
-@@ -271,6 +278,7 @@
+@@ -271,6 +278,7 @@ ZEND_API void convert_scalar_to_number(z
  				Z_LVAL(holder) = (Z_DVAL_P(op) ? 1 : 0);			\
  				break;												\
  			case IS_STRING:											\
@@ -5722,7 +5764,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  				if (Z_STRLEN_P(op) == 0								\
  					|| (Z_STRLEN_P(op)==1 && Z_STRVAL_P(op)[0]=='0')) {	\
  					Z_LVAL(holder) = 0;								\
-@@ -356,6 +364,9 @@
+@@ -356,6 +364,9 @@ ZEND_API void convert_to_long_base(zval 
  			{
  				char *strval = Z_STRVAL_P(op);
  
@@ -5732,7 +5774,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  				Z_LVAL_P(op) = strtol(strval, NULL, base);
  				STR_FREE(strval);
  			}
-@@ -416,6 +427,9 @@
+@@ -416,6 +427,9 @@ ZEND_API void convert_to_double(zval *op
  			{
  				char *strval = Z_STRVAL_P(op);
  
@@ -5742,7 +5784,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  				Z_DVAL_P(op) = zend_strtod(strval, NULL);
  				STR_FREE(strval);
  			}
-@@ -502,8 +516,14 @@
+@@ -502,8 +516,14 @@ ZEND_API void convert_to_boolean(zval *o
  
  				if (Z_STRLEN_P(op) == 0
  					|| (Z_STRLEN_P(op)==1 && Z_STRVAL_P(op)[0]=='0')) {
@@ -5757,7 +5799,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  					Z_LVAL_P(op) = 1;
  				}
  				STR_FREE(strval);
-@@ -617,6 +637,9 @@
+@@ -617,6 +637,9 @@ static void convert_scalar_to_array(zval
  	*entry = *op;
  	INIT_PZVAL(entry);
  
@@ -5767,10 +5809,11 @@ diff -urN php5-5.3.10.orig//Zend/zend_operators.c php5-5.3.10/Zend/zend_operator
  	switch (type) {
  		case IS_ARRAY:
  			ALLOC_HASHTABLE(Z_ARRVAL_P(op));
-diff -urN php5-5.3.10.orig//Zend/ZendTS.dsp php5-5.3.10/Zend/ZendTS.dsp
---- php5-5.3.10.orig//Zend/ZendTS.dsp	2008-07-14 09:49:03.000000000 +0000
-+++ php5-5.3.10/Zend/ZendTS.dsp	2012-02-02 22:11:23.000000000 +0000
-@@ -277,6 +277,14 @@
+Index: php-5.3.16/Zend/ZendTS.dsp
+===================================================================
+--- php-5.3.16.orig/Zend/ZendTS.dsp
++++ php-5.3.16/Zend/ZendTS.dsp
+@@ -277,6 +277,14 @@ SOURCE=.\zend_strtod.c
  # End Source File
  # Begin Source File
  
@@ -5785,10 +5828,11 @@ diff -urN php5-5.3.10.orig//Zend/ZendTS.dsp php5-5.3.10/Zend/ZendTS.dsp
  SOURCE=.\zend_ts_hash.c
  # End Source File
  # Begin Source File
-diff -urN php5-5.3.10.orig//Zend/zend_variables.c php5-5.3.10/Zend/zend_variables.c
---- php5-5.3.10.orig//Zend/zend_variables.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/Zend/zend_variables.c	2012-02-02 22:11:23.000000000 +0000
-@@ -34,6 +34,9 @@
+Index: php-5.3.16/Zend/zend_variables.c
+===================================================================
+--- php-5.3.16.orig/Zend/zend_variables.c
++++ php-5.3.16/Zend/zend_variables.c
+@@ -34,6 +34,9 @@ ZEND_API void _zval_dtor_func(zval *zval
  		case IS_CONSTANT:
  			CHECK_ZVAL_STRING_REL(zvalue);
  			STR_FREE_REL(zvalue->value.str.val);
@@ -5798,7 +5842,7 @@ diff -urN php5-5.3.10.orig//Zend/zend_variables.c php5-5.3.10/Zend/zend_variable
  			break;
  		case IS_ARRAY:
  		case IS_CONSTANT_ARRAY: {
-@@ -78,6 +81,9 @@
+@@ -78,6 +81,9 @@ ZEND_API void _zval_internal_dtor(zval *
  		case IS_CONSTANT:
  			CHECK_ZVAL_STRING_REL(zvalue);
  			free(zvalue->value.str.val);

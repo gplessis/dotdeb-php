@@ -1,8 +1,9 @@
-diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
---- php5-5.3.10.orig//configure.in	2012-02-02 22:15:58.000000000 +0000
-+++ php5-5.3.10/configure.in	2012-02-02 22:18:46.000000000 +0000
+Index: php-5.3.16/configure.in
+===================================================================
+--- php-5.3.16.orig/configure.in
++++ php-5.3.16/configure.in
 @@ -1,7 +1,7 @@
- ## $Id: configure.in 323027 2012-02-02 17:29:58Z johannes $ -*- autoconf -*-
+ ## $Id$ -*- autoconf -*-
  dnl ## Process this file with autoconf to produce a configure script.
  
 -divert(1)
@@ -10,7 +11,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  dnl ## Diversion 1 is the autoconf + automake setup phase. We also
  dnl ## set the PHP version, deal with platform-specific compile
-@@ -291,7 +291,7 @@
+@@ -291,7 +291,7 @@ sinclude(TSRM/tsrm.m4)
  
  sinclude(main/suhosin_patch.m4)
  
@@ -19,7 +20,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  dnl ## Diversion 2 is where we set PHP-specific options and come up
  dnl ## with reasonable default values for them. We check for pthreads here
-@@ -330,7 +330,7 @@
+@@ -330,7 +330,7 @@ if test "$enable_maintainer_zts" = "yes"
    PTHREADS_FLAGS
  fi
  
@@ -28,7 +29,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  dnl ## In diversion 3 we check for compile-time options to the PHP
  dnl ## core and how to deal with different system dependencies. 
-@@ -684,7 +684,7 @@
+@@ -684,7 +684,7 @@ if test "x$php_crypt_r" = "x1"; then
    PHP_CRYPT_R_STYLE
  fi
  
@@ -37,7 +38,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  dnl ## In diversion 4 we check user-configurable general settings.
  
-@@ -925,7 +925,7 @@
+@@ -925,7 +925,7 @@ else
    AC_MSG_RESULT([using system default])
  fi
  
@@ -46,18 +47,19 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  dnl ## In diversion 5 we check which extensions should be compiled.
  dnl ## All of these are normally in the extension directories.
-diff -urN php5-5.3.10.orig//ext/standard/config.m4 php5-5.3.10/ext/standard/config.m4
---- php5-5.3.10.orig//ext/standard/config.m4	2010-06-17 10:22:03.000000000 +0000
-+++ php5-5.3.10/ext/standard/config.m4	2012-02-02 22:18:46.000000000 +0000
+Index: php-5.3.16/ext/standard/config.m4
+===================================================================
+--- php-5.3.16.orig/ext/standard/config.m4
++++ php-5.3.16/ext/standard/config.m4
 @@ -1,6 +1,6 @@
- dnl $Id: config.m4 300511 2010-06-17 10:22:03Z pajoye $ -*- autoconf -*-
+ dnl $Id$ -*- autoconf -*-
  
 -divert(3)dnl
 +dnl divert(3)dnl
  
  dnl
  dnl Check if flush should be called explicitly after buffered io
-@@ -342,7 +342,7 @@
+@@ -342,7 +342,7 @@ dnl
  AC_CHECK_FUNCS(getcwd getwd asinh acosh atanh log1p hypot glob strfmon nice fpclass isinf isnan mempcpy strpncpy)
  AC_FUNC_FNMATCH	
  
@@ -66,9 +68,10 @@ diff -urN php5-5.3.10.orig//ext/standard/config.m4 php5-5.3.10/ext/standard/conf
  
  dnl
  dnl Check if there is a support means of creating a new process
-diff -urN php5-5.3.10.orig//scripts/phpize.m4 php5-5.3.10/scripts/phpize.m4
---- php5-5.3.10.orig//scripts/phpize.m4	2010-11-02 09:58:08.000000000 +0000
-+++ php5-5.3.10/scripts/phpize.m4	2012-02-02 22:18:46.000000000 +0000
+Index: php-5.3.16/scripts/phpize.m4
+===================================================================
+--- php-5.3.16.orig/scripts/phpize.m4
++++ php-5.3.16/scripts/phpize.m4
 @@ -1,6 +1,6 @@
  dnl This file becomes configure.in for self-contained extensions.
  

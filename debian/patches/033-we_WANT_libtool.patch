@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//build/build2.mk php5-5.3.10/build/build2.mk
---- php5-5.3.10.orig//build/build2.mk	2007-01-01 19:32:10.000000000 +0000
-+++ php5-5.3.10/build/build2.mk	2012-02-02 22:13:46.000000000 +0000
-@@ -52,7 +52,8 @@
+Index: php-5.3.16/build/build2.mk
+===================================================================
+--- php-5.3.16.orig/build/build2.mk
++++ php-5.3.16/build/build2.mk
+@@ -52,7 +52,8 @@ $(TOUCH_FILES):
  
  aclocal.m4: configure.in acinclude.m4
  	@echo rebuilding $@

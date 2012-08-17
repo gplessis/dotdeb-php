@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
---- php5-5.3.10.orig//configure.in	2012-02-02 22:06:17.000000000 +0000
-+++ php5-5.3.10/configure.in	2012-02-02 22:06:39.000000000 +0000
-@@ -1013,7 +1013,7 @@
+Index: php-5.3.16/configure.in
+===================================================================
+--- php-5.3.16.orig/configure.in
++++ php-5.3.16/configure.in
+@@ -1013,7 +1013,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
  PHP_ARG_WITH(pear, [whether to install PEAR],
@@ -10,7 +11,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
    --without-pear          Do not install PEAR], DEFAULT, yes)
  
  if test "$PHP_PEAR" != "no"; then
-@@ -1043,7 +1043,7 @@
+@@ -1043,7 +1043,7 @@ dnl
    if test "$PHP_PEAR" = "DEFAULT" || test "$PHP_PEAR" = "yes"; then
      case $PHP_LAYOUT in
        GNU) PEAR_INSTALLDIR=$datadir/pear;;
@@ -19,7 +20,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
      esac
    fi
  
-@@ -1098,12 +1098,12 @@
+@@ -1098,12 +1098,12 @@ test "$program_suffix" = "NONE" && progr
  
  case $libdir in
    '${exec_prefix}/lib')
@@ -34,7 +35,7 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
      ;;
  esac
  
-@@ -1170,7 +1170,7 @@
+@@ -1170,7 +1170,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
@@ -43,10 +44,11 @@ diff -urN php5-5.3.10.orig//configure.in php5-5.3.10/configure.in
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
-diff -urN php5-5.3.10.orig//ext/ext_skel php5-5.3.10/ext/ext_skel
---- php5-5.3.10.orig//ext/ext_skel	2010-08-06 22:19:47.000000000 +0000
-+++ php5-5.3.10/ext/ext_skel	2012-02-02 22:06:39.000000000 +0000
-@@ -70,7 +70,7 @@
+Index: php-5.3.16/ext/ext_skel
+===================================================================
+--- php-5.3.16.orig/ext/ext_skel
++++ php-5.3.16/ext/ext_skel
+@@ -70,7 +70,7 @@ if test -d "$extname" ; then
  fi
  
  if test -z "$skel_dir"; then
@@ -55,10 +57,11 @@ diff -urN php5-5.3.10.orig//ext/ext_skel php5-5.3.10/ext/ext_skel
  fi
  
  ## convert skel_dir to full path
-diff -urN php5-5.3.10.orig//ext/mysqlnd/mysqlnd.c php5-5.3.10/ext/mysqlnd/mysqlnd.c
---- php5-5.3.10.orig//ext/mysqlnd/mysqlnd.c	2012-01-01 13:15:04.000000000 +0000
-+++ php5-5.3.10/ext/mysqlnd/mysqlnd.c	2012-02-02 22:06:39.000000000 +0000
-@@ -620,7 +620,7 @@
+Index: php-5.3.16/ext/mysqlnd/mysqlnd.c
+===================================================================
+--- php-5.3.16.orig/ext/mysqlnd/mysqlnd.c
++++ php-5.3.16/ext/mysqlnd/mysqlnd.c
+@@ -620,7 +620,7 @@ MYSQLND_METHOD(mysqlnd_conn, connect)(MY
  		if (host_len == sizeof("localhost") - 1 && !strncasecmp(host, "localhost", host_len)) {
  			DBG_INF_FMT("socket=%s", socket_or_pipe? socket_or_pipe:"n/a");
  			if (!socket_or_pipe) {
@@ -67,10 +70,11 @@ diff -urN php5-5.3.10.orig//ext/mysqlnd/mysqlnd.c php5-5.3.10/ext/mysqlnd/mysqln
  			}
  			transport_len = spprintf(&transport, 0, "unix://%s", socket_or_pipe);
  			unix_socket = TRUE;
-diff -urN php5-5.3.10.orig//php.ini-development php5-5.3.10/php.ini-development
---- php5-5.3.10.orig//php.ini-development	2011-12-15 10:31:02.000000000 +0000
-+++ php5-5.3.10/php.ini-development	2012-02-02 22:06:39.000000000 +0000
-@@ -793,7 +793,7 @@
+Index: php-5.3.16/php.ini-development
+===================================================================
+--- php-5.3.16.orig/php.ini-development
++++ php-5.3.16/php.ini-development
+@@ -793,7 +793,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -79,10 +83,11 @@ diff -urN php5-5.3.10.orig//php.ini-development php5-5.3.10/php.ini-development
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
---- php5-5.3.10.orig//php.ini-production	2011-12-15 10:31:02.000000000 +0000
-+++ php5-5.3.10/php.ini-production	2012-02-02 22:06:39.000000000 +0000
-@@ -793,7 +793,7 @@
+Index: php-5.3.16/php.ini-production
+===================================================================
+--- php-5.3.16.orig/php.ini-production
++++ php-5.3.16/php.ini-production
+@@ -793,7 +793,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -91,7 +96,7 @@ diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -949,54 +949,6 @@
+@@ -949,54 +949,6 @@ default_socket_timeout = 60
  ;
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
@@ -146,10 +151,11 @@ diff -urN php5-5.3.10.orig//php.ini-production php5-5.3.10/php.ini-production
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
-diff -urN php5-5.3.10.orig//sapi/cli/php.1.in php5-5.3.10/sapi/cli/php.1.in
---- php5-5.3.10.orig//sapi/cli/php.1.in	2010-05-11 15:07:31.000000000 +0000
-+++ php5-5.3.10/sapi/cli/php.1.in	2012-02-02 22:06:39.000000000 +0000
-@@ -336,13 +336,14 @@
+Index: php-5.3.16/sapi/cli/php.1.in
+===================================================================
+--- php-5.3.16.orig/sapi/cli/php.1.in
++++ php-5.3.16/sapi/cli/php.1.in
+@@ -336,13 +336,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
  .TP 15
@@ -169,9 +175,10 @@ diff -urN php5-5.3.10.orig//sapi/cli/php.1.in php5-5.3.10/sapi/cli/php.1.in
  .SH EXAMPLES
  .TP 5
  \fIphp \-r 'echo "Hello World\\n";'\fP
-diff -urN php5-5.3.10.orig//scripts/Makefile.frag php5-5.3.10/scripts/Makefile.frag
---- php5-5.3.10.orig//scripts/Makefile.frag	2010-07-13 17:24:13.000000000 +0000
-+++ php5-5.3.10/scripts/Makefile.frag	2012-02-02 22:06:39.000000000 +0000
+Index: php-5.3.16/scripts/Makefile.frag
+===================================================================
+--- php-5.3.16.orig/scripts/Makefile.frag
++++ php-5.3.16/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -183,10 +190,11 @@ diff -urN php5-5.3.10.orig//scripts/Makefile.frag php5-5.3.10/scripts/Makefile.f
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
-diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config.in
---- php5-5.3.10.orig//scripts/php-config.in	2011-04-18 11:13:37.000000000 +0000
-+++ php5-5.3.10/scripts/php-config.in	2012-02-02 22:06:39.000000000 +0000
-@@ -5,8 +5,8 @@
+Index: php-5.3.16/scripts/php-config.in
+===================================================================
+--- php-5.3.16.orig/scripts/php-config.in
++++ php-5.3.16/scripts/php-config.in
+@@ -5,8 +5,8 @@ prefix="@prefix@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
  vernum="@PHP_VERSION_ID@"
@@ -197,9 +205,10 @@ diff -urN php5-5.3.10.orig//scripts/php-config.in php5-5.3.10/scripts/php-config
  ldflags="@PHP_LDFLAGS@"
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
-diff -urN php5-5.3.10.orig//scripts/phpize.in php5-5.3.10/scripts/phpize.in
---- php5-5.3.10.orig//scripts/phpize.in	2009-06-24 07:42:33.000000000 +0000
-+++ php5-5.3.10/scripts/phpize.in	2012-02-02 22:06:39.000000000 +0000
+Index: php-5.3.16/scripts/phpize.in
+===================================================================
+--- php-5.3.16.orig/scripts/phpize.in
++++ php-5.3.16/scripts/phpize.in
 @@ -3,8 +3,8 @@
  # Variable declaration
  prefix='@prefix@'
