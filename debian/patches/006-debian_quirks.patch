@@ -4,8 +4,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
---- a/configure.in
-+++ b/configure.in
+Index: php-5.4.6/configure.in
+===================================================================
+--- php-5.4.6.orig/configure.in
++++ php-5.4.6/configure.in
 @@ -1068,7 +1068,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
@@ -48,8 +50,10 @@ Last-Update: 2010-01-18
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
---- a/ext/ext_skel
-+++ b/ext/ext_skel
+Index: php-5.4.6/ext/ext_skel
+===================================================================
+--- php-5.4.6.orig/ext/ext_skel
++++ php-5.4.6/ext/ext_skel
 @@ -70,7 +70,7 @@ if test -d "$extname" ; then
  fi
  
@@ -59,8 +63,10 @@ Last-Update: 2010-01-18
  fi
  
  ## convert skel_dir to full path
---- a/php.ini-development
-+++ b/php.ini-development
+Index: php-5.4.6/php.ini-development
+===================================================================
+--- php-5.4.6.orig/php.ini-development
++++ php-5.4.6/php.ini-development
 @@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -70,8 +76,10 @@ Last-Update: 2010-01-18
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
---- a/php.ini-production
-+++ b/php.ini-production
+Index: php-5.4.6/php.ini-production
+===================================================================
+--- php-5.4.6.orig/php.ini-production
++++ php-5.4.6/php.ini-production
 @@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -133,8 +141,10 @@ Last-Update: 2010-01-18
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
---- a/sapi/caudium/config.m4
-+++ b/sapi/caudium/config.m4
+Index: php-5.4.6/sapi/caudium/config.m4
+===================================================================
+--- php-5.4.6.orig/sapi/caudium/config.m4
++++ php-5.4.6/sapi/caudium/config.m4
 @@ -26,8 +26,8 @@ if test "$PHP_CAUDIUM" != "no"; then
      AC_MSG_ERROR([Could not find a pike in $PHP_CAUDIUM/bin/])
    fi
@@ -157,8 +167,10 @@ Last-Update: 2010-01-18
    RESULT="  *** Pike binary used:         $PIKE
    *** Pike include dir(s) used: $PIKE_INCLUDE_DIR
    *** Pike version:             $PIKE_VERSION"
---- a/sapi/cli/php.1.in
-+++ b/sapi/cli/php.1.in
+Index: php-5.4.6/sapi/cli/php.1.in
+===================================================================
+--- php-5.4.6.orig/sapi/cli/php.1.in
++++ php-5.4.6/sapi/cli/php.1.in
 @@ -346,13 +346,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
@@ -179,8 +191,10 @@ Last-Update: 2010-01-18
  .SH EXAMPLES
  .TP 5
  \fIphp \-r 'echo "Hello World\\n";'\fP
---- a/scripts/Makefile.frag
-+++ b/scripts/Makefile.frag
+Index: php-5.4.6/scripts/Makefile.frag
+===================================================================
+--- php-5.4.6.orig/scripts/Makefile.frag
++++ php-5.4.6/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -192,8 +206,10 @@ Last-Update: 2010-01-18
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
---- a/scripts/php-config.in
-+++ b/scripts/php-config.in
+Index: php-5.4.6/scripts/php-config.in
+===================================================================
+--- php-5.4.6.orig/scripts/php-config.in
++++ php-5.4.6/scripts/php-config.in
 @@ -6,8 +6,8 @@ datarootdir="@datarootdir@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
@@ -205,8 +221,10 @@ Last-Update: 2010-01-18
  ldflags="@PHP_LDFLAGS@"
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
---- a/scripts/phpize.in
-+++ b/scripts/phpize.in
+Index: php-5.4.6/scripts/phpize.in
+===================================================================
+--- php-5.4.6.orig/scripts/phpize.in
++++ php-5.4.6/scripts/phpize.in
 @@ -4,8 +4,8 @@
  prefix='@prefix@'
  datarootdir='@datarootdir@'

@@ -1,7 +1,8 @@
-diff -urN php5-5.3.10.orig//ext/standard/info.c php5-5.3.10/ext/standard/info.c
---- php5-5.3.10.orig//ext/standard/info.c	2012-02-02 22:32:44.000000000 +0000
-+++ php5-5.3.10/ext/standard/info.c	2012-02-02 22:33:45.000000000 +0000
-@@ -924,6 +924,16 @@
+Index: php-5.4.6/ext/standard/info.c
+===================================================================
+--- php-5.4.6.orig/ext/standard/info.c
++++ php-5.4.6/ext/standard/info.c
+@@ -800,6 +800,16 @@ PHPAPI void php_print_info(int flag TSRM
  			zend_html_puts(zend_version, strlen(zend_version) TSRMLS_CC);
  		}
  		php_info_print_box_end();

@@ -4,8 +4,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-07-30
 
---- a/sapi/fpm/php-fpm.conf.in
-+++ b/sapi/fpm/php-fpm.conf.in
+Index: php-5.4.6/sapi/fpm/php-fpm.conf.in
+===================================================================
+--- php-5.4.6.orig/sapi/fpm/php-fpm.conf.in
++++ php-5.4.6/sapi/fpm/php-fpm.conf.in
 @@ -12,7 +12,7 @@
  ; Relative path can also be used. They will be prefixed by:
  ;  - the global prefix if it's been set (-p arguement)
@@ -32,7 +34,7 @@ Last-Update: 2010-07-30
  
  ; syslog_facility is used to specify what type of program is logging the
  ; message. This lets syslogd specify that messages from different facilities
-@@ -108,6 +108,10 @@
+@@ -116,6 +116,10 @@
  ; used in logs and stats. There is no limitation on the number of pools which
  ; FPM can handle. Your system will tell you anyway :)
  
@@ -43,7 +45,7 @@ Last-Update: 2010-07-30
  ; Start a new pool named 'www'.
  ; the variable $pool can we used in any directive and will be replaced by the
  ; pool name ('www' here)
-@@ -442,7 +446,7 @@ pm.max_spare_servers = 3
+@@ -458,7 +462,7 @@ pm.max_spare_servers = 3
  ; Chdir to this directory at the start.
  ; Note: relative path can be used.
  ; Default Value: current directory or / when chroot

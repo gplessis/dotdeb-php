@@ -1,6 +1,8 @@
---- a/sapi/fpm/fpm/fpm_conf.c
-+++ b/sapi/fpm/fpm/fpm_conf.c
-@@ -1562,7 +1562,7 @@ int fpm_conf_init_main(int test_conf) /*
+Index: php-5.4.6/sapi/fpm/fpm/fpm_conf.c
+===================================================================
+--- php-5.4.6.orig/sapi/fpm/fpm/fpm_conf.c
++++ php-5.4.6/sapi/fpm/fpm/fpm_conf.c
+@@ -1604,7 +1604,7 @@ int fpm_conf_init_main(int test_conf) /*
  		char *tmp;
  
  		if (fpm_globals.prefix == NULL) {

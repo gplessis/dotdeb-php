@@ -1,5 +1,7 @@
---- a/TSRM/configure.in
-+++ b/TSRM/configure.in
+Index: php-5.4.6/TSRM/configure.in
+===================================================================
+--- php-5.4.6.orig/TSRM/configure.in
++++ php-5.4.6/TSRM/configure.in
 @@ -17,9 +17,6 @@ TSRM_BASIC_CHECKS
  TSRM_THREADS_CHECKS
  	
@@ -10,8 +12,10 @@
  
  dnl TSRM_PTHREAD
  
---- a/configure.in
-+++ b/configure.in
+Index: php-5.4.6/configure.in
+===================================================================
+--- php-5.4.6.orig/configure.in
++++ php-5.4.6/configure.in
 @@ -1399,9 +1399,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
  ])
  AC_PROG_LIBTOOL

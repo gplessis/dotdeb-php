@@ -5,8 +5,10 @@ Origin: vendor
 Forwarded: http://bugs.php.net/52476
 Last-Update: 2010-07-29
 
---- a/sapi/fpm/php-fpm.8.in
-+++ b/sapi/fpm/php-fpm.8.in
+Index: php-5.4.6/sapi/fpm/php-fpm.8.in
+===================================================================
+--- php-5.4.6.orig/sapi/fpm/php-fpm.8.in
++++ php-5.4.6/sapi/fpm/php-fpm.8.in
 @@ -112,15 +112,8 @@ The configuration file for the php-fpm d
  .TP
  .B php.ini
@@ -25,7 +27,7 @@ Last-Update: 2010-07-29
  .P
  .PD 0
  .RS
-@@ -134,10 +127,6 @@ If your installation has no appropriate
+@@ -134,10 +127,6 @@ If your installation has no appropriate 
  .RE
  .PD 1
  .P
