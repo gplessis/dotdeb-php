@@ -1,0 +1,37 @@
+php5 (5.4.4-5) unstable; urgency=low
+
+ Please be aware that the mime-types package dropped non-standard
+ definitions for PHP that might affect any systems using PHP 5 running
+ as CGI or FastCGI.
+
+ The mime-types package has dropped the following non-standard
+ definitions:
+ 
+  application/x-httpd-php                        phtml pht php
+  application/x-httpd-php-source                 phps
+  application/x-httpd-php3                       php3
+  application/x-httpd-php3-preprocessed          php3p
+  application/x-httpd-php4                       php4
+  application/x-httpd-php5                       php5
+
+ Systems, especially webservers (including but possibly not limited to
+ the Apache HTTPD Server) may have used this to mark files as having
+ the PHP Internet Media Type (commonly known as MIME type).  They
+ may have used it further, to determine that such files are to be
+ interpreted by PHP rather than served as normal files.
+
+ If a webserver would not consider these files to be interpreted
+ anymore this would have at least the following effects:
+  - PHP web programs/sites no longer work as expected
+  - PHP files might be directly exposed, which may be a security
+    problem
+
+ In order to avoid any problems when not using Apache PHP 5 module, and
+ if you relied on MIME type definitions, read the README.Debian from
+ the php5-common package on how to correctly configure PHP 5 running
+ as a CGI or FastCGI (examples are provided for the Apache HTTPD
+ Server) and take care, that PHP files intended to be interpreted
+ are recognised as such (typically by adding MIME-Type or handler
+ definitions in the webserver configuration).
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 15 Aug 2012 10:31:31 +0200
