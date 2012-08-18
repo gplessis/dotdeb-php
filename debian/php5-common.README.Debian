@@ -78,6 +78,11 @@ PHP 5 CGI and Apache HTTP Server
   installed side-by-side and both were automatically enabled, the
   results would be a bit confusing, obviously.
 
+  You should also be aware, that a server deployed in CGI mode is open
+  to several possible vulnerabilities, see upstream CGI security page
+  to learn ow to defend yourself from such attacks:
+  http://www.php.net/manual/en/security.cgi-bin.php
+
   To use php5-cgi with Apache HTTP Server:
   1) activate CGI (it's on by default in default debian setups)
      a) If using the prefork MPM, use 'a2enmod cgi'
@@ -86,8 +91,10 @@ PHP 5 CGI and Apache HTTP Server
   3) Add the following to a config snippet in /etc/apache2/conf.d
      <IfModule mod_actions.c>
        ScriptAlias /cgi-bin/php5-cgi /usr/lib/cgi-bin/php5
-       Action php5-cgi /cgi-bin/php5-cgi
-       AddHandler php5-cgi .php
+       Action application/x-php /cgi-bin/php5-cgi
+       <FilesMatch \.php$>
+         AddType application/x-php php
+       </FilesMatch>
      </IfModule>
 
   Note: more modern way of doing this is to install php5-fpm package
@@ -140,4 +147,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Sun,  8 Apr 2012 22:00:59 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Mon,  6 Aug 2012 12:49:51 +0200

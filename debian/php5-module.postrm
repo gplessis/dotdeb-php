@@ -17,7 +17,7 @@ for dsoname in @modules@; do
     fi
 
     # Only work with the config file if it still belongs to us
-    if test "$ucf_package" = php5-@package@; then
+    if test "$ucfp" = php5-@package@; then
 	if [ "$1" = "purge" ]; then
 	    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
 		rm -f ${inidir}/${inifile}${ext}
