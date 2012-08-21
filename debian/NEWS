@@ -1,13 +1,13 @@
 php5 (5.4.4-5) unstable; urgency=low
 
   * As a security measure the default configuration for Apache 2 has been
-    changed to more strict model.  Only files which has the correct
-    extension at the most right place and has a filename (e.g. at least
-    one character before the extension) are now interpreted by PHP.  For a
-    full list of handled extensions please see Apache 2 configuration.  At
-    the time of writing this paragraph this includes following regular
-    expressions:
-  
+    changed to more strict model.  Only files which has the recognized PHP
+    extension at the rightmost place and has a filename (e.g. it's not
+    composed only from a dot and the extension) are now interpreted by
+    PHP.  For a full list of handled extensions please see Apache 2
+    configuration.  At the time of writing this paragraph this includes
+    following regular expressions:
+
       1. .+\.ph(p[345]?|t|tml)$ for PHP files (application/x-httpd-php)
       2. .+\.phps$ for PHP source files (application/x-httpd-php-source)
 
