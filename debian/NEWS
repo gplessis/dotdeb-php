@@ -1,3 +1,39 @@
+php5 (5.4.4-5) unstable; urgency=low
+
+  * As a security measure the default configuration for Apache 2 has been
+    changed to more strict model.  Only files which has the correct
+    extension at the most right place and has a filename (e.g. at least
+    one character before the extension) are now interpreted by PHP.  For a
+    full list of handled extensions please see Apache 2 configuration.  At
+    the time of writing this paragraph this includes following regular
+    expressions:
+  
+      1. .+\.ph(p[345]?|t|tml)$ for PHP files (application/x-httpd-php)
+      2. .+\.phps$ for PHP source files (application/x-httpd-php-source)
+
+    Previously the default configuration would allow to interpret files
+    with double extension where the second extension would be either
+    unknown or language or content encoding.  E.g. uploaded file named
+    blackhat.php.foobar or index.php.cs would be interpreted by PHP as a
+    side effect of system MIME-Type definitions.  These non-standard
+    definitions have been removed from the mime-types packages and all
+    configuration of PHP handlers is now defined in Apache 2 configuration
+    files.
+  
+    The standard configuration now also denies access to files which only
+    consist of extension and nothing more, e.g. accessing '/.php' would
+    now return Access Denied instead of output of PHP script.
+  
+    You can use following command to find whether there are any files on
+    your system which would be affected by this change (change <base> to
+    directory name where you store PHP files on your system):
+
+    # find <base> -name '*.ph[pt].*' -o -name '*.php[345s].*' -o \
+                  -name '*.phtml.*' -o -name '.ph[pt]' -o \
+                  -name '.php[345s]' -o -name '.phtml'
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 21 Aug 2012 09:14:47 +0200
+
 php5 (5.4.0~rc8-1) unstable; urgency=low
 
   php5-fpm default www spool now listens on unix socket located
