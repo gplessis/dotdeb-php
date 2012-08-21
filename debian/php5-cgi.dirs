@@ -1,3 +1,4 @@
+/etc/apache2/mods-available
 /etc/php5/cgi
 /usr/lib/cgi-bin
 /usr/bin

@@ -64,12 +64,19 @@ Other caveats
 PHP 5 CGI and Apache HTTP Server
 ----------------------------------------------------------------------
 
-  In 99% of cases, what you probably want isn't php5-cgi package at
+  In simple cases, what you probably want isn't php5-cgi package at
   all, but rather the libapache2-mod-php5 package, which will
   configure itself on installation and Just Work(tm). If, however, you
   have a need to use the CGI version of PHP 5 with Apache HTTP Server,
   the following should help get you going, though there are dozens of
   different ways to do this.
+
+  More recent way of doing this is to install php5-fpm package and use
+  FastCGI to interface of your webserver.  However you will have to
+  use libapache2-mod-fastcgi package (from non-free) or different
+  FastCGI capable webserver (f.e. nginx or lighttpd) since
+  libapache2-mod-fcgid available from main archive has no way how to
+  interact with external FastCGI servers.
 
   Please note that this process will never be made automatic, as
   php5-cgi is meant to be a webserver-agnostic package that can be
@@ -84,21 +91,15 @@ PHP 5 CGI and Apache HTTP Server
   http://www.php.net/manual/en/security.cgi-bin.php
 
   To use php5-cgi with Apache HTTP Server:
-  1) activate CGI (it's on by default in default debian setups)
-     a) If using the prefork MPM, use 'a2enmod cgi'
-     b) If using a threaded MPM, use 'a2enmod cgid'
-  2) activate mod_actions (a2enmod actions)
-  3) Add the following to a config snippet in /etc/apache2/conf.d
-     <IfModule mod_actions.c>
-       ScriptAlias /cgi-bin/php5-cgi /usr/lib/cgi-bin/php5
-       Action application/x-php /cgi-bin/php5-cgi
-       <FilesMatch \.php$>
-         AddType application/x-php php
-       </FilesMatch>
-     </IfModule>
-
-  Note: more modern way of doing this is to install php5-fpm package
-  and use FastCGI interface of your webserver.
+  1) activate php5_cgi module: run 'a2enmod php5_cgi'
+  2) this will also activate mod_actions module as a dependency
+  3) comment out last block of configuration in the
+     /etc/apache2/mods-enabled/php5_cgi.conf file to enable
+     server-wide PHP 5 CGI or add the mentioned configuration block to
+     one or more virtual sites.
+  4) It's advised to not mix&match mod_php and php5-cgi in the same
+     apache2 configuration as it is likely to create unpredictable
+     results.
 
 Configuration Layout
 ----------------------------------------------------------------------
@@ -147,4 +148,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Mon,  6 Aug 2012 12:49:51 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Mon, 20 Aug 2012 14:17:12 +0200

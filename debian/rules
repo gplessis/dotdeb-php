@@ -499,7 +499,11 @@ install: build
 
 	chmod 01733 debian/php5-common/var/lib/php5
 
-	# Add here commands to install the package into debian/php5.
+	cp debian/php5_cgi.conf \
+		debian/php5-cgi/etc/apache2/mods-available/php5_cgi.conf
+	cp debian/php5_cgi.load \
+	        debian/php5-cgi/etc/apache2/mods-available/php5_cgi.load
+
 	# install apache2 DSO module
 	cp apache2-build/.libs/libphp5.so \
 		debian/libapache2-mod-php5/`apxs2 -q LIBEXECDIR`/
