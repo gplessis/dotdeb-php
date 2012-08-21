@@ -1,8 +1,8 @@
 php5 (5.4.4-5) unstable; urgency=low
 
- Please be aware that the mime-types package dropped non-standard
+ Please be aware that the mime-types package has dropped non-standard
  definitions for PHP that might affect any systems using PHP 5 running
- as CGI or FastCGI.  Following definitions were dropped:
+ as CGI or FastCGI.  The following definitions were dropped:
  
   application/x-httpd-php                        phtml pht php
   application/x-httpd-php-source                 phps
@@ -15,8 +15,8 @@ php5 (5.4.4-5) unstable; urgency=low
  apache2 module php5_cgi with a configuration containing handlers for
  all previously defined extensions.  Even though we believe that this
  configuration should keep your PHP scripts interpreted, it might be a
- good idea to check your apache2 site-wide configuration and also any
- specific PHP configuration for websites running on your system.
+ good idea to check your apache2 site-wide configuration as well as
+ any specific PHP configuration for websites running on your system.
 
  As far as we know definitions from the mime-types packages are not
  used in any other webserver included in Debian, but it might affect
