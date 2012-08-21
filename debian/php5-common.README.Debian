@@ -96,10 +96,10 @@ PHP 5 CGI and Apache HTTP Server
   3) comment out last block of configuration in the
      /etc/apache2/mods-enabled/php5_cgi.conf file to enable
      server-wide PHP 5 CGI or add the mentioned configuration block to
-     one or more virtual sites.
-  4) It's advised to not mix&match mod_php and php5-cgi in the same
-     apache2 configuration as it is likely to create unpredictable
-     results.
+     one or more virtual hosts or directories.
+  4) It's advised to not mix&match multiple SAPIs (f.e. php5-cgi and
+     libapache2-mod-php5) in the same apache2 configuration as it is
+     likely to create unpredictable results.
 
 Configuration Layout
 ----------------------------------------------------------------------
@@ -148,4 +148,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Mon, 20 Aug 2012 14:17:12 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Tue, 21 Aug 2012 09:12:53 +0200
