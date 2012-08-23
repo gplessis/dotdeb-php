@@ -17,7 +17,7 @@ php5 (5.4.4-5) unstable; urgency=low
     or a language or content encoding to be interpreted; e.g. an uploaded
     file named blackhat.php.foobar or index.php.cs would be interpreted by
     PHP.  These non-standard definitions have been removed from the
-    mime-types packages and all configuration of PHP handlers is now
+    mime-support packages and all configuration of PHP handlers is now
     defined in the Apache 2 configuration files.
   
     The standard configuration now also denies access to files with names
