@@ -1,7 +1,7 @@
-Index: php-5.4.6/scripts/phpize.in
+Index: php-5.4.7/scripts/phpize.in
 ===================================================================
---- php-5.4.6.orig/scripts/phpize.in
-+++ php-5.4.6/scripts/phpize.in
+--- php-5.4.7.orig/scripts/phpize.in
++++ php-5.4.7/scripts/phpize.in
 @@ -6,10 +6,16 @@ datarootdir='@datarootdir@'
  exec_prefix="`eval echo @exec_prefix@`"
  phpdir="$prefix/lib/php5/build"
