@@ -84,7 +84,6 @@ Description: server-side, HTML-embedded scripting language (metapackage)
 Package: php5-common
 Architecture: any
 Depends: ${misc:Depends}, sed (>= 4.1.1-1), ${shlibs:Depends}
-Recommends: php5-suhosin
 Provides: php5-json, php5-mhash
 Conflicts: php5-json, php5-mhash
 Description: Common files for packages built from the php5 source

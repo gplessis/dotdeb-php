@@ -1,3 +1,10 @@
+php5 (5.3.17-1~dotdeb.0) stable; urgency=medium
+
+  * New upstream release
+  * php5-suhosin is not recommended anymore
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 14 Sep 2012 13:07:42 +0200
+
 php5 (5.3.16-1~dotdeb.0) stable; urgency=medium
 
   * New upstream release
