@@ -1,17 +1,46 @@
-php5 (5.4.6-1~dotdeb.0) stable; urgency=medium
+php5 (5.4.7-1~dotdeb.0) stable; urgency=medium
 
   * New upstream release
-  * Sync with Debian
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sat, 18 Aug 2012 11:14:42 +0200
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 14 Sep 2012 12:23:42 +0200
 
-php5 (5.4.5-1~dotdeb.0) stable; urgency=medium
+php5 (5.4.6-1) experimental; urgency=low
 
-  * Rebuilt for Dotdeb
+  * Imported Upstream version 5.4.6
+  * Apply another fix to compile --without-system-tzdata
+    (Courtesy of Michael Heimpold)
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sun, 22 Jul 2012 10:59:42 +0200
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 21 Aug 2012 12:37:12 +0200
 
-php5 (5.4.4-3) UNRELEASED; urgency=low
+php5 (5.4.5-1) experimental; urgency=low
+
+  * Imported Upstream version 5.4.5
+  * Update patches for PHP 5.4.5 release
+  * Compile with system libzip (upstream has added support for that)
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 23 Jul 2012 11:12:08 +0200
+
+php5 (5.4.4-5) unstable; urgency=low
+
+  * Get rid of empty examples directory (Closes: #684108)
+  * Provide sensible default configuration for PHP MIME-types inside
+    Apache 2 configuration (Closes: #685340)
+  * Add NEWS text about more strict extension configuration
+  * Update NEWS and README.Debian based on debian-l10n-english review
+    (Courtesy of Justing B Rye)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 21 Aug 2012 17:05:06 +0200
+  
+php5 (5.4.4-4) unstable; urgency=low
+
+  * Fix php5-fpm segfault (PHP#62205)
+  * CVE-2012-2688: potential overflow in _php_stream_scandir
+    (Closes: #683274)
+  * Improve security in CGI section in README.Debian (Closes: #674205)
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 06 Aug 2012 13:01:42 +0200
+
+php5 (5.4.4-3) unstable; urgency=low
 
   * Update ucf/ucfr scripts to not conflict between mysql and mysqlnd
     extension (Closes: #678371)
