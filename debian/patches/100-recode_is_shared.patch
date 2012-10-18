@@ -4,10 +4,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: php-5.4.7/ext/recode/config9.m4
+Index: php-5.4.8/ext/recode/config9.m4
 ===================================================================
---- php-5.4.7.orig/ext/recode/config9.m4
-+++ php-5.4.7/ext/recode/config9.m4
+--- php-5.4.8.orig/ext/recode/config9.m4
++++ php-5.4.8/ext/recode/config9.m4
 @@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
    fi
  
