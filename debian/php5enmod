@@ -97,10 +97,10 @@ dismod() {
     local FOUND=0
     for live_link in $(ls -1 /etc/php5/conf.d/*.ini); do
         # assert $modname is in /etc/php5/conf.d
-	[ -e "${live_link}" ] || continue
 	[ -h "${live_link}" ] || continue
         # assert $modname is a symlink to /etc/php5/mods-available
 	[ "$(readlink "${live_link}")" != "${live_link_content}" ] && continue
+	[ -e "${live_link}" ] || echo "removing dangling symlink ${live_link}"
 	# remove the symlink
 	rm -f "${live_link}"
 	FOUND=1
