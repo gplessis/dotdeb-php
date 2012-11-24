@@ -1,7 +1,7 @@
-Index: php-5.4.8/ext/mssql/php_mssql.c
+Index: php-5.4.9/ext/mssql/php_mssql.c
 ===================================================================
---- php-5.4.8.orig/ext/mssql/php_mssql.c
-+++ php-5.4.8/ext/mssql/php_mssql.c
+--- php-5.4.9.orig/ext/mssql/php_mssql.c
++++ php-5.4.9/ext/mssql/php_mssql.c
 @@ -178,6 +178,38 @@ const zend_function_entry mssql_function
   	PHP_FE(mssql_execute,				arginfo_mssql_execute)
  	PHP_FE(mssql_free_statement,		arginfo_mssql_free_statement)
