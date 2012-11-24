@@ -1,16 +1,11 @@
-# cat /etc/logrotate.d/php5-fpm
 /var/log/php5-fpm.log {
+	rotate 12
 	weekly
 	missingok
-	rotate 7
+	notifempty
 	compress
 	delaycompress
-	notifempty
 	postrotate
-	     if [ -x /usr/sbin/invoke-rc.d ]; then \
-		invoke-rc.d php5-fpm reopen-logs > /dev/null 2>&1; \
-	     else \
-		/etc/init.d/php5-fpm reopen-logs > /dev/null 2>&1; \
-	     fi; \
+		invoke-rc.d php5-fpm reopen-logs > /dev/null
 	endscript
 }

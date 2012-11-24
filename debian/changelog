@@ -1,14 +1,24 @@
-php5 (5.4.8-1~dotdeb.0) stable; urgency=medium
+php5 (5.4.8-1) experimental; urgency=low
 
-  * New upstream release
+  * Imported Upstream version 5.4.8
+    + Update patches for new release
+  * Remove IfModule to always interpret PHP if the module is enabled
+  * Fix extended DES crypt when salt != 9
+  * Fix libphp5-embed linking:
+    + Expose all installed (and not built time) SAPIs via php-config --php-sapis
+    + Add /usr/lib/php5 to php-config --ldflags output to allow linking with libphp5.so
+  * Add new lintian-overrides for libphp5-embed
+  * Add logrotate script for php5-fpm (Closes: #683415)
+  * Add more warning text about new php5_cgi apache2 module (Closes: #687307)
+  * Add Breaks: php5-suhosin so people don't try to use it with PHP 5.4
 
- -- Guillaume Plessis <gui@dotdeb.org>  Thu, 18 Oct 2012 22:32:42 +0200
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 25 Oct 2012 16:05:34 +0200
 
-php5 (5.4.7-1~dotdeb.0) stable; urgency=medium
+php5 (5.4.6-2) experimental; urgency=low
 
-  * New upstream release
+  * Merge 5.4.4-5, 5.4.4-6 and 5.4.4-7 changes
 
- -- Guillaume Plessis <gui@dotdeb.org>  Fri, 14 Sep 2012 12:23:42 +0200
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 30 Aug 2012 13:30:54 +0200
 
 php5 (5.4.6-1) experimental; urgency=low
 
@@ -25,6 +35,41 @@ php5 (5.4.5-1) experimental; urgency=low
   * Compile with system libzip (upstream has added support for that)
 
  -- Ondřej Surý <ondrej@debian.org>  Mon, 23 Jul 2012 11:12:08 +0200
+
+php5 (5.4.4-7) unstable; urgency=low
+
+  * Add explanatory text about MultiViews negotiation support to
+    README.Debian with additions from Christoph Anton Mitterer
+    (Closes: #670945)
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 29 Aug 2012 09:18:14 +0200
+
+php5 (5.4.4-6) unstable; urgency=low
+
+  * Merge a fix for zlib.output_compression from the upstream git
+    (Closes: #683432)
+  * Re-add logic to guess default timezone from system (Closes: #673763)
+    and remove the spurious warning about the selection.
+  * Fix invalid generated tar files from PEAR Archive/Tar package
+    (Closes: #680251)
+  * Merge a couple of upstream fixes from PHP 5.4.5 and 5.4.6:
+    + Fixed bug #62653: (unset($array[$float]) causes a crash).
+    + Fixed bug #62565 (Crashes due non-initialized internal
+      properties_table).
+    + Fixed bug #61964 (finfo_open with directory causes invalid free).
+    + Fixed bug #62564 (Extending MessageFormatter and adding property causes
+      crash).
+    + Fixed bug #62594 (segfault in mysqlnd_res_meta::set_mode).
+    + Fixed bug #62616 (ArrayIterator::count() from IteratorIterator instance
+      gives Segmentation fault).
+    + Fixed bug #62373 (serialize() generates wrong reference to the object).
+    + Fixed bug #61998 (Using traits with method aliases appears to result in
+      crash during execution).
+    + Fixed bug #55042 (Erealloc in iconv.c unsafe).
+    + Fixed bug #62266 (Custom extension segfaults during xmlParseFile with
+      FPM SAPI)
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 23 Aug 2012 13:59:49 +0200
 
 php5 (5.4.4-5) unstable; urgency=low
 

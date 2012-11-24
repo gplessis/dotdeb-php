@@ -1,3 +1,14 @@
+php5 (5.4.4-7) unstable; urgency=low
+
+  * As a side effect of the MIME-Type changes in the mime-support package,
+    the default Apache 2 configuration will no longer perform HTTP content
+    negotiation on the PHP file extensions, which was very questionable
+    anyway.  If you really want to re-enable this support then please read
+    /usr/share/doc/php5-common/README.Debian file for further
+    instructions.
+  
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 29 Aug 2012 09:18:41 +0200
+
 php5 (5.4.4-5) unstable; urgency=low
 
   * As a security measure the default configuration for Apache 2 has been

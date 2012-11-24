@@ -4,6 +4,7 @@ Table of Contents:
 * Problems starting Apache HTTP Server with PHP 5
 * Session storage
 * Other caveats
+* PHP 5 and Apache 2 Multiviews (HTTP Content Negotiation)
 * PHP 5 CGI and Apache HTTP Server
 * Configuration layout
 * Timezone data from system timezone database
@@ -60,6 +61,59 @@ Other caveats
   commented out, unless you need special settings for them so PHP will
   look in compiled-in paths. If you set them, you should also add
   appropriate PHP install directories there.
+
+PHP 5 and Apache 2 Multiviews (HTTP Content Negotiation)
+----------------------------------------------------------------------
+
+ Apache 2’s mod_negotiation needs files to have a MIME-Type (amongst
+ others) associated with them in order to be considered for HTTP
+ content negotiation.
+
+ Per default, the Debian PHP packages use Apache 2 handlers
+ (SetHandler directive) to enable PHP interpretation, while no
+ MIME-Type is being associated with the common PHP file extensions.
+
+ Thus, by default, the HTTP content negotiation is disabled for PHP
+ file extensions.
+
+ Possible use cases:
+
+ 1) You intend to use HTTP content negotiation in order to tidy up URLs:
+
+    For example, you wanted the file “http://example.org/foo.php”
+    being accessible as “http://example.org/foo”, too.  In that case
+    you really shouldn’t abuse mod_negotiation but use mod_rewrite.
+
+    An example of rewrite-rules, which allow any file ending in “.php”
+    to be accessed without this extension is:
+
+      RewriteCond "%{REQUEST_FILENAME}" !-f
+      RewriteCond "%{REQUEST_FILENAME}" !-d
+      RewriteRule "^(.*)$" "$1.php" [last]
+
+    Depending on your setup you may need to set other flags, too,
+    especially “passthrough” or “qsappend”.
+
+ 2) You really wanted to use HTTP content negotiation on PHP files
+    (be they interpreted or not).
+
+    An example for this might be, when you have the files
+
+      http://example.org/foo.php
+      http://example.org/foo.js
+
+    which both do the same job, but the former is executed as PHP on
+    the server-side, while the later is executed as JavaScript on the
+    client-side.
+
+    If you really want it, just add MIME type definitions for file
+    extensions you need to your Apache 2 configuration.  For example
+    to recognize php and phps extensions you would add:
+
+      AddType application/x-php         php
+      AddType application/x-php-source  phps
+
+    This scenario is really very rarely used (if at all)!
 
 PHP 5 CGI and Apache HTTP Server
 ----------------------------------------------------------------------
@@ -148,4 +202,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Tue, 21 Aug 2012 09:12:53 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Thu, 30 Aug 2012 09:56:01 +0200
