@@ -749,6 +749,7 @@ binary-arch: build install
 		rm -rf debian/$$package/usr/share/doc/$$package; \
 		ln -s php5-common debian/$$package/usr/share/doc/$$package; \
 	done
+	dh_installlogrotate -pphp5-fpm
 	dh_installcron -pphp5-common --name=php5
 	dh_installchangelogs -pphp5-common NEWS
 	dh_installinit
