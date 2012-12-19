@@ -20,10 +20,6 @@ PIDFILE=/var/run/php5-fpm.pid
 TIMEOUT=30
 SCRIPTNAME=/etc/init.d/$NAME
 
-# FPM does not seem to handle the modules unloading very well
-# Here is a temporary fix while I'm investigating
-export ZEND_DONT_UNLOAD_MODULES=1
-
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
 
