@@ -1,7 +1,7 @@
-Index: php-5.3.19/configure.in
+Index: php-5.3.20/configure.in
 ===================================================================
---- php-5.3.19.orig/configure.in
-+++ php-5.3.19/configure.in
+--- php-5.3.20.orig/configure.in
++++ php-5.3.20/configure.in
 @@ -1123,8 +1123,13 @@ dnl Build extension directory path
  
  ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
@@ -25,10 +25,10 @@ Index: php-5.3.19/configure.in
  PHP_SUBST_OLD(EXTENSION_DIR)
  PHP_SUBST_OLD(EXTRA_LDFLAGS)
  PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
-Index: php-5.3.19/scripts/php-config.in
+Index: php-5.3.20/scripts/php-config.in
 ===================================================================
---- php-5.3.19.orig/scripts/php-config.in
-+++ php-5.3.19/scripts/php-config.in
+--- php-5.3.20.orig/scripts/php-config.in
++++ php-5.3.20/scripts/php-config.in
 @@ -18,6 +18,7 @@ php_cli_binary=NONE
  php_cgi_binary=NONE
  configure_options="@CONFIGURE_OPTIONS@"

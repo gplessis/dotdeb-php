@@ -1,7 +1,7 @@
-Index: php-5.3.19/ext/sqlite/config.m4
+Index: php-5.3.20/ext/sqlite/config.m4
 ===================================================================
---- php-5.3.19.orig/ext/sqlite/config.m4
-+++ php-5.3.19/ext/sqlite/config.m4
+--- php-5.3.20.orig/ext/sqlite/config.m4
++++ php-5.3.20/ext/sqlite/config.m4
 @@ -84,7 +84,7 @@ if test "$PHP_SQLITE" != "no"; then
      ])
      SQLITE_MODULE_TYPE=external
