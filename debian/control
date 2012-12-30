@@ -85,7 +85,7 @@ Architecture: any
 Depends: ${misc:Depends}, sed (>= 4.1.1-1), psmisc (>= 22.11-1), ${shlibs:Depends}, ucf
 Pre-Depends: dpkg (>= 1.15.7.2~)
 Provides: php5-json, php5-mhash
-Conflicts: php5-json, php5-mhash
+Conflicts: php5-json, php5-mhash, php5-suhosin
 Description: Common files for packages built from the php5 source
  This package contains the documentation and example files relevant to all
  the other packages built from the php5 source.

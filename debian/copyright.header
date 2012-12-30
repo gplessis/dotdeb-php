@@ -13,12 +13,6 @@ The current maintainers can be contacted via the debian php packaging list:
 It was downloaded from www.php.net/version5/downloads
 Changes: removed ext/dbase dir (non-free)
 
-Noteworthy/non-trivial patches:
-	patch: suhosin.patch
-	contributor: http://www.hardened-php.net/
-	copyright © 2006-2007 Stefan Esser <sesser@hardened-php.net>
-	may be used/modified/redistributed under the terms of PHP itself
-
 Upstream Authors: The PHP group for PHP5, Andi Gutmans and Zeev Suraski
 for libzend
 

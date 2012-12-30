@@ -16,9 +16,6 @@ export DH_OPTIONS
 # compatibility to upstream
 PHP5_COMPAT=no
 
-# Set this flag to 'yes' if you want to compile PHP5 with suhosin patch
-PHP5_SUHOSIN=no
-
 DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_ARCH        ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
@@ -160,12 +157,6 @@ include /usr/share/quilt/quilt.make
 prepared: prepared-stamp
 prepared-stamp: $(QUILT_STAMPFN)
 	dh_testdir
-ifeq (yes,$(PHP5_SUHOSIN))
-	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
-		quilt --quiltrc /dev/null import debian/patches/suhosin.patch
-	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
-		quilt --quiltrc /dev/null push -a || test $$? = 2
-endif
 	sed -i -e 's/EXTRA_VERSION=""/EXTRA_VERSION="-$(PHP5_DEBIAN_REVISION)"/' configure.in
 	./buildconf --force
 	touch prepared-stamp
@@ -449,12 +440,6 @@ configure-fpm-stamp: prepared-stamp
 clean: unprepared unpatch
 	dh_testdir
 	dh_testroot
-
-ifeq (yes,$(PHP5_SUHOSIN))
-	QUILT_PATCHES=$(QUILT_PATCH_DIR) \
-		quilt --quiltrc /dev/null delete debian/patches/suhosin.patch \
-	        || return 0
-endif
 
 	rm -f configure-apache2-stamp build-apache2-stamp
 	rm -f configure-apache2filter-stamp build-apache2filter-stamp
