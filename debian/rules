@@ -151,11 +151,8 @@ BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
 			foreach($$e as $$i) { $$s .= " $$i"; } \
 			echo("php:Extensions=" . wordwrap($$s . ".\n", 75, "\$${Newline}"));
 
-# include the patch/unpatch rules from quilt
-include /usr/share/quilt/quilt.make
-
 prepared: prepared-stamp
-prepared-stamp: $(QUILT_STAMPFN)
+prepared-stamp:
 	dh_testdir
 	sed -i -e 's/EXTRA_VERSION=""/EXTRA_VERSION="-$(PHP5_DEBIAN_REVISION)"/' configure.in
 	./buildconf --force
@@ -437,7 +434,7 @@ configure-fpm-stamp: prepared-stamp
 	   Zend/
 	touch configure-fpm-stamp
 
-clean: unprepared unpatch
+clean: unprepared
 	dh_testdir
 	dh_testroot
 

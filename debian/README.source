@@ -7,14 +7,6 @@ dh_testdir && egrep '^Package' debian/control | cut '-d ' -f2 | \
 	egrep -v '(^php5|dbg|dev|common|pear)$' | tr "\n" "|" | sed 's/|$//' |\
 	sed -r 's/([^|]+)(\||$)/ \1 (= ${binary:Version}) \2/g'; echo
 
- == Used patch system ==
-
-This package uses quilt to manage all modifications to the upstream
-source.  Changes are stored in the source package as diffs in
-debian/patches and applied during the build.
- 
-See /usr/share/doc/quilt/README.source for a detailed explanation.
-
  == Making some sense out of the configure options  ==
 
 The COMMON_CONFIG variable contains the configure options that are to
@@ -50,4 +42,4 @@ mysql MySQL_PDO pdo_mysql"
 * The CLI SAPI is built on the build-cli-stamp AND build-cgi-stamp, with
   different configure options.
 
- -- Ondřej Surý <ondrej@debian.org>, Wed, 16 Feb 2011 15:24:44 +0100
+ -- Ondřej Surý <ondrej@debian.org>, Tue, 27 Nov 2012 17:01:53 +0100
