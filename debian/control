@@ -81,7 +81,7 @@ Description: server-side, HTML-embedded scripting language (metapackage)
 
 Package: php5-common
 Architecture: any
-Depends: ${misc:Depends}, sed (>= 4.1.1-1), psmisc (>= 22.11-1), ${shlibs:Depends}, ucf
+Depends: ${misc:Depends}, sed (>= 4.1.1-1), psmisc (>= 22.11-1), ${shlibs:Depends}, ucf, lsof
 Pre-Depends: dpkg (>= 1.15.7.2~)
 Provides: php5-json, php5-mhash
 Conflicts: php5-json, php5-mhash, php5-suhosin
