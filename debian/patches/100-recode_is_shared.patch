@@ -1,7 +1,7 @@
-Index: php-5.3.20/ext/recode/config9.m4
+Index: php-5.3.21/ext/recode/config9.m4
 ===================================================================
---- php-5.3.20.orig/ext/recode/config9.m4
-+++ php-5.3.20/ext/recode/config9.m4
+--- php-5.3.21.orig/ext/recode/config9.m4
++++ php-5.3.21/ext/recode/config9.m4
 @@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
    fi
  
