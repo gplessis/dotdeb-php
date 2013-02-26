@@ -1,8 +1,9 @@
-php5 (5.4.11-1~dotdeb.1) UNRELEASED; urgency=low
+php5 (5.4.12-1~dotdeb.1) stable; urgency=low
 
+  * New upstream release
   * missing dependency on lsof in php5-common
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sat, 26 Jan 2013 08:59:42 +0100
+ -- Guillaume Plessis <gui@dotdeb.org>  Tue, 26 Feb 2013 22:18:42 +0100
 
 php5 (5.4.11-1~dotdeb.0) stable; urgency=low
 
