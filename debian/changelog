@@ -1,3 +1,9 @@
+php5 (5.4.13-1~dotdeb.1) stable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 21 Mar 2013 08:59:42 +0100
+
 php5 (5.4.12-1~dotdeb.1) stable; urgency=low
 
   * New upstream release
