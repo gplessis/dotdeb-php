@@ -5,9 +5,13 @@ max=1440
 if which php5 >/dev/null 2>&1; then
     for sapi in apache2 apache2filter cgi fpm; do
 	if [ -e /etc/php5/${sapi}/php.ini ]; then
-	    cur=$(php5 -c /etc/php5/${sapi}/php.ini -d "error_reporting='~E_ALL'" -r 'print ini_get("session.gc_maxlifetime");')
-	    [ -z "$cur" ] && cur=0
-	    [ "$cur" -gt "$max" ] && max=$cur
+            set +o errexit
+	    cur=$(php5 -c /etc/php5/${sapi}/php.ini -d "error_reporting='~E_NONE'" -r 'print ini_get("session.gc_maxlifetime");')
+            if [ "$?" = "0" ]; then
+	      [ -z "$cur" ] && cur=0
+	      [ "$cur" -gt "$max" ] && max=$cur
+            fi
+            set -o errexit
 	fi
     done
 else
