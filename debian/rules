@@ -71,11 +71,8 @@ ifeq (alpha-linux-gnu,$(DEB_HOST_GNU_TYPE))
   CFLAGS += -mieee
 endif
 
-ifeq ($(DEB_HOST_GNU_TYPE),$(filter $(DEB_HOST_GNU_TYPE),ia64-linux-gnu powerpc64-linux-gnu avr32-linux-gnu))
-  CFLAGS += -g
-else
-  CFLAGS += -gstabs
-endif
+# Enable producing of debugging information
+CFLAGS += -g
 
 # some other helpful (for readability at least) shorthand variables
 PHPIZE_BUILDDIR = debian/php5-dev/usr/lib/php5/build
