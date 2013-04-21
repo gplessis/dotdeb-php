@@ -1,7 +1,7 @@
-Index: php-5.4.13/sapi/fpm/fpm/fpm_conf.c
+Index: php-5.4.14/sapi/fpm/fpm/fpm_conf.c
 ===================================================================
---- php-5.4.13.orig/sapi/fpm/fpm/fpm_conf.c
-+++ php-5.4.13/sapi/fpm/fpm/fpm_conf.c
+--- php-5.4.14.orig/sapi/fpm/fpm/fpm_conf.c
++++ php-5.4.14/sapi/fpm/fpm/fpm_conf.c
 @@ -1609,7 +1609,7 @@ int fpm_conf_init_main(int test_conf, in
  		char *tmp;
  
