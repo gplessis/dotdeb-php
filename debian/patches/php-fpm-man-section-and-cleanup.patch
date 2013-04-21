@@ -1,7 +1,7 @@
-Index: php-5.3.23/sapi/fpm/php-fpm.8.in
+Index: php-5.3.24/sapi/fpm/php-fpm.8.in
 ===================================================================
---- php-5.3.23.orig/sapi/fpm/php-fpm.8.in
-+++ php-5.3.23/sapi/fpm/php-fpm.8.in
+--- php-5.3.24.orig/sapi/fpm/php-fpm.8.in
++++ php-5.3.24/sapi/fpm/php-fpm.8.in
 @@ -126,22 +126,8 @@ The configuration file for the php-fpm d
  .TP
  .B php.ini

@@ -1,7 +1,7 @@
-Index: php-5.3.23/configure.in
+Index: php-5.3.24/configure.in
 ===================================================================
---- php-5.3.23.orig/configure.in
-+++ php-5.3.23/configure.in
+--- php-5.3.24.orig/configure.in
++++ php-5.3.24/configure.in
 @@ -1,7 +1,7 @@
  ## $Id$ -*- autoconf -*-
  dnl ## Process this file with autoconf to produce a configure script.
@@ -47,10 +47,10 @@ Index: php-5.3.23/configure.in
  
  dnl ## In diversion 5 we check which extensions should be compiled.
  dnl ## All of these are normally in the extension directories.
-Index: php-5.3.23/ext/standard/config.m4
+Index: php-5.3.24/ext/standard/config.m4
 ===================================================================
---- php-5.3.23.orig/ext/standard/config.m4
-+++ php-5.3.23/ext/standard/config.m4
+--- php-5.3.24.orig/ext/standard/config.m4
++++ php-5.3.24/ext/standard/config.m4
 @@ -1,6 +1,6 @@
  dnl $Id$ -*- autoconf -*-
  
@@ -68,10 +68,10 @@ Index: php-5.3.23/ext/standard/config.m4
  
  dnl
  dnl Check if there is a support means of creating a new process
-Index: php-5.3.23/scripts/phpize.m4
+Index: php-5.3.24/scripts/phpize.m4
 ===================================================================
---- php-5.3.23.orig/scripts/phpize.m4
-+++ php-5.3.23/scripts/phpize.m4
+--- php-5.3.24.orig/scripts/phpize.m4
++++ php-5.3.24/scripts/phpize.m4
 @@ -1,6 +1,6 @@
  dnl This file becomes configure.in for self-contained extensions.
  

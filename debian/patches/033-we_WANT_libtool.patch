@@ -1,7 +1,7 @@
-Index: php-5.3.23/build/build2.mk
+Index: php-5.3.24/build/build2.mk
 ===================================================================
---- php-5.3.23.orig/build/build2.mk
-+++ php-5.3.23/build/build2.mk
+--- php-5.3.24.orig/build/build2.mk
++++ php-5.3.24/build/build2.mk
 @@ -52,7 +52,8 @@ $(TOUCH_FILES):
  
  aclocal.m4: configure.in acinclude.m4
