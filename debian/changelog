@@ -1,3 +1,9 @@
+php5 (5.4.14-1~dotdeb.2) stable; urgency=low
+
+  * Rebuilt for Wheezy
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sun, 05 May 2013 03:44:42 +0200
+
 php5 (5.4.14-1~dotdeb.1) stable; urgency=low
 
   * New upstream release
