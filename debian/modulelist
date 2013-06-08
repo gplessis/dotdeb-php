@@ -13,6 +13,7 @@ mysqlnd MySQL mysqlnd 10
 odbc ODBC
 pgsql PostgreSQL
 pspell pspell
+readline readline
 recode recode
 snmp SNMP
 sqlite SQLite sqlite3
