@@ -1,7 +1,7 @@
-Index: php-5.3.25.orig/configure.in
+Index: php-5.3.26/configure.in
 ===================================================================
---- php-5.3.25.orig.orig/configure.in
-+++ php-5.3.25.orig/configure.in
+--- php-5.3.26.orig/configure.in
++++ php-5.3.26/configure.in
 @@ -1353,9 +1353,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
  ])
  AC_PROG_LIBTOOL
@@ -12,10 +12,10 @@ Index: php-5.3.25.orig/configure.in
  
  dnl libtool 1.4.3 needs this.
  PHP_SET_LIBTOOL_VARIABLE([--preserve-dup-deps])
-Index: php-5.3.25.orig/TSRM/configure.in
+Index: php-5.3.26/TSRM/configure.in
 ===================================================================
---- php-5.3.25.orig.orig/TSRM/configure.in
-+++ php-5.3.25.orig/TSRM/configure.in
+--- php-5.3.26.orig/TSRM/configure.in
++++ php-5.3.26/TSRM/configure.in
 @@ -13,9 +13,6 @@ TSRM_BASIC_CHECKS
  TSRM_THREADS_CHECKS
  	

@@ -1,7 +1,7 @@
-Index: php-5.3.25.orig/Zend/Makefile.am
+Index: php-5.3.26/Zend/Makefile.am
 ===================================================================
---- php-5.3.25.orig.orig/Zend/Makefile.am
-+++ php-5.3.25.orig/Zend/Makefile.am
+--- php-5.3.26.orig/Zend/Makefile.am
++++ php-5.3.26/Zend/Makefile.am
 @@ -17,7 +17,7 @@ libZend_la_SOURCES=\
  	zend_objects_API.c zend_ts_hash.c zend_stream.c \
  	zend_default_classes.c \
@@ -11,10 +11,48 @@ Index: php-5.3.25.orig/Zend/Makefile.am
  
  libZend_la_LDFLAGS =
  libZend_la_LIBADD = @ZEND_EXTRA_LIBS@
-Index: php-5.3.25.orig/Zend/zend.c
+Index: php-5.3.26/Zend/Zend.dsp
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend.c
-+++ php-5.3.25.orig/Zend/zend.c
+--- php-5.3.26.orig/Zend/Zend.dsp
++++ php-5.3.26/Zend/Zend.dsp
+@@ -247,6 +247,14 @@ SOURCE=.\zend_strtod.c
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File
+Index: php-5.3.26/Zend/ZendTS.dsp
+===================================================================
+--- php-5.3.26.orig/Zend/ZendTS.dsp
++++ php-5.3.26/Zend/ZendTS.dsp
+@@ -277,6 +277,14 @@ SOURCE=.\zend_strtod.c
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File
+Index: php-5.3.26/Zend/zend.c
+===================================================================
+--- php-5.3.26.orig/Zend/zend.c
++++ php-5.3.26/Zend/zend.c
 @@ -60,6 +60,10 @@ int (*zend_vspprintf)(char **pbuf, size_
  ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
  ZEND_API char *(*zend_resolve_path)(const char *filename, int filename_len TSRMLS_DC);
@@ -101,10 +139,10 @@ Index: php-5.3.25.orig/Zend/zend.c
  ZEND_INI_BEGIN()
  	ZEND_INI_ENTRY("error_reporting",				NULL,		ZEND_INI_ALL,		OnUpdateErrorReporting)
  	STD_ZEND_INI_BOOLEAN("zend.enable_gc",				"1",	ZEND_INI_ALL,		OnUpdateGCEnabled,      gc_enabled,     zend_gc_globals,        gc_globals)
-Index: php-5.3.25.orig/Zend/zend.h
+Index: php-5.3.26/Zend/zend.h
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend.h
-+++ php-5.3.25.orig/Zend/zend.h
+--- php-5.3.26.orig/Zend/zend.h
++++ php-5.3.26/Zend/zend.h
 @@ -627,6 +627,9 @@ extern ZEND_API int (*zend_stream_open_f
  extern int (*zend_vspprintf)(char **pbuf, size_t max_len, const char *format, va_list ap);
  extern ZEND_API char *(*zend_getenv)(char *name, size_t name_len TSRMLS_DC);
@@ -132,10 +170,10 @@ Index: php-5.3.25.orig/Zend/zend.h
  #endif /* ZEND_H */
  
  /*
-Index: php-5.3.25.orig/Zend/zend_alloc.c
+Index: php-5.3.26/Zend/zend_alloc.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_alloc.c
-+++ php-5.3.25.orig/Zend/zend_alloc.c
+--- php-5.3.26.orig/Zend/zend_alloc.c
++++ php-5.3.26/Zend/zend_alloc.c
 @@ -32,6 +32,10 @@
  # include <unistd.h>
  #endif
@@ -1109,10 +1147,10 @@ Index: php-5.3.25.orig/Zend/zend_alloc.c
  
  /*
   * Local variables:
-Index: php-5.3.25.orig/Zend/zend_alloc.h
+Index: php-5.3.26/Zend/zend_alloc.h
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_alloc.h
-+++ php-5.3.25.orig/Zend/zend_alloc.h
+--- php-5.3.26.orig/Zend/zend_alloc.h
++++ php-5.3.26/Zend/zend_alloc.h
 @@ -203,6 +203,8 @@ END_EXTERN_C()
  
  /* Heap functions */
@@ -1122,10 +1160,10 @@ Index: php-5.3.25.orig/Zend/zend_alloc.h
  
  ZEND_API zend_mm_heap *zend_mm_startup(void);
  ZEND_API void zend_mm_shutdown(zend_mm_heap *heap, int full_shutdown, int silent TSRMLS_DC);
-Index: php-5.3.25.orig/Zend/zend_alloc_canary.c
+Index: php-5.3.26/Zend/zend_alloc_canary.c
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/Zend/zend_alloc_canary.c
++++ php-5.3.26/Zend/zend_alloc_canary.c
 @@ -0,0 +1,2509 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -3636,10 +3674,10 @@ Index: php-5.3.25.orig/Zend/zend_alloc_canary.c
 + * End:
 + */
 +
-Index: php-5.3.25.orig/Zend/zend_canary.c
+Index: php-5.3.26/Zend/zend_canary.c
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/Zend/zend_canary.c
++++ php-5.3.26/Zend/zend_canary.c
 @@ -0,0 +1,66 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -3707,10 +3745,10 @@ Index: php-5.3.25.orig/Zend/zend_canary.c
 + * vim600: sw=4 ts=4 fdm=marker
 + * vim<600: sw=4 ts=4
 + */
-Index: php-5.3.25.orig/Zend/zend_compile.c
+Index: php-5.3.26/Zend/zend_compile.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_compile.c
-+++ php-5.3.25.orig/Zend/zend_compile.c
+--- php-5.3.26.orig/Zend/zend_compile.c
++++ php-5.3.26/Zend/zend_compile.c
 @@ -73,6 +73,11 @@ static void zend_destroy_property_info_i
  }
  /* }}} */
@@ -3723,10 +3761,10 @@ Index: php-5.3.25.orig/Zend/zend_compile.c
  static void build_runtime_defined_function_key(zval *result, const char *name, int name_length TSRMLS_DC) /* {{{ */
  {
  	char char_pos_buf[32];
-Index: php-5.3.25.orig/Zend/zend_compile.h
+Index: php-5.3.26/Zend/zend_compile.h
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_compile.h
-+++ php-5.3.25.orig/Zend/zend_compile.h
+--- php-5.3.26.orig/Zend/zend_compile.h
++++ php-5.3.26/Zend/zend_compile.h
 @@ -607,6 +607,11 @@ ZEND_API zend_bool zend_is_auto_global(c
  ZEND_API int zend_auto_global_disable_jit(const char *varname, zend_uint varname_length TSRMLS_DC);
  ZEND_API size_t zend_dirname(char *path, size_t len);
@@ -3739,10 +3777,10 @@ Index: php-5.3.25.orig/Zend/zend_compile.h
  int zendlex(znode *zendlval TSRMLS_DC);
  
  /* BEGIN: OPCODES */
-Index: php-5.3.25.orig/Zend/zend_constants.c
+Index: php-5.3.26/Zend/zend_constants.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_constants.c
-+++ php-5.3.25.orig/Zend/zend_constants.c
+--- php-5.3.26.orig/Zend/zend_constants.c
++++ php-5.3.26/Zend/zend_constants.c
 @@ -113,6 +113,76 @@ void zend_register_standard_constants(TS
  
  	REGISTER_MAIN_LONG_CONSTANT("E_ALL", E_ALL, CONST_PERSISTENT | CONST_CS);
@@ -3820,10 +3858,10 @@ Index: php-5.3.25.orig/Zend/zend_constants.c
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_PROVIDE_OBJECT", DEBUG_BACKTRACE_PROVIDE_OBJECT, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_LONG_CONSTANT("DEBUG_BACKTRACE_IGNORE_ARGS", DEBUG_BACKTRACE_IGNORE_ARGS, CONST_PERSISTENT | CONST_CS);
  	/* true/false constants */
-Index: php-5.3.25.orig/Zend/zend_errors.h
+Index: php-5.3.26/Zend/zend_errors.h
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_errors.h
-+++ php-5.3.25.orig/Zend/zend_errors.h
+--- php-5.3.26.orig/Zend/zend_errors.h
++++ php-5.3.26/Zend/zend_errors.h
 @@ -41,6 +41,20 @@
  #define E_ALL (E_ERROR | E_WARNING | E_PARSE | E_NOTICE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE | E_RECOVERABLE_ERROR | E_DEPRECATED | E_USER_DEPRECATED)
  #define E_CORE (E_CORE_ERROR | E_CORE_WARNING)
@@ -3845,10 +3883,10 @@ Index: php-5.3.25.orig/Zend/zend_errors.h
  #endif /* ZEND_ERRORS_H */
  
  /*
-Index: php-5.3.25.orig/Zend/zend_hash.c
+Index: php-5.3.26/Zend/zend_hash.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_hash.c
-+++ php-5.3.25.orig/Zend/zend_hash.c
+--- php-5.3.26.orig/Zend/zend_hash.c
++++ php-5.3.26/Zend/zend_hash.c
 @@ -20,6 +20,7 @@
  /* $Id$ */
  
@@ -4137,10 +4175,10 @@ Index: php-5.3.25.orig/Zend/zend_hash.c
  	if (p) {
  		if (key_type == HASH_KEY_IS_LONG) {
  			str_length = 0;
-Index: php-5.3.25.orig/Zend/zend_llist.c
+Index: php-5.3.26/Zend/zend_llist.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_llist.c
-+++ php-5.3.25.orig/Zend/zend_llist.c
+--- php-5.3.26.orig/Zend/zend_llist.c
++++ php-5.3.26/Zend/zend_llist.c
 @@ -23,6 +23,194 @@
  #include "zend_llist.h"
  #include "zend_qsort.h"
@@ -4368,10 +4406,10 @@ Index: php-5.3.25.orig/Zend/zend_llist.c
  	if ((old_tail = l->tail)) {
  		if (old_tail->prev) {
  			old_tail->prev->next = NULL;
-Index: php-5.3.25.orig/Zend/zend_operators.c
+Index: php-5.3.26/Zend/zend_operators.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_operators.c
-+++ php-5.3.25.orig/Zend/zend_operators.c
+--- php-5.3.26.orig/Zend/zend_operators.c
++++ php-5.3.26/Zend/zend_operators.c
 @@ -153,9 +153,14 @@ ZEND_API void convert_scalar_to_number(z
  		case IS_STRING:
  			{
@@ -4459,10 +4497,10 @@ Index: php-5.3.25.orig/Zend/zend_operators.c
  	switch (type) {
  		case IS_ARRAY:
  			ALLOC_HASHTABLE(Z_ARRVAL_P(op));
-Index: php-5.3.25.orig/Zend/zend_variables.c
+Index: php-5.3.26/Zend/zend_variables.c
 ===================================================================
---- php-5.3.25.orig.orig/Zend/zend_variables.c
-+++ php-5.3.25.orig/Zend/zend_variables.c
+--- php-5.3.26.orig/Zend/zend_variables.c
++++ php-5.3.26/Zend/zend_variables.c
 @@ -34,6 +34,9 @@ ZEND_API void _zval_dtor_func(zval *zval
  		case IS_CONSTANT:
  			CHECK_ZVAL_STRING_REL(zvalue);
@@ -4483,10 +4521,10 @@ Index: php-5.3.25.orig/Zend/zend_variables.c
  			break;
  		case IS_ARRAY:
  		case IS_CONSTANT_ARRAY:
-Index: php-5.3.25.orig/configure
+Index: php-5.3.26/configure
 ===================================================================
---- php-5.3.25.orig.orig/configure
-+++ php-5.3.25.orig/configure
+--- php-5.3.26.orig/configure
++++ php-5.3.26/configure
 @@ -28034,6 +28034,9 @@ EOF
    b_cxx_post=$php_cxx_post
    b_lo=$php_lo
@@ -4515,10 +4553,10 @@ Index: php-5.3.25.orig/configure
    
        IFS=.
        set $ac_src
-Index: php-5.3.25.orig/configure.in
+Index: php-5.3.26/configure.in
 ===================================================================
---- php-5.3.25.orig.orig/configure.in
-+++ php-5.3.25.orig/configure.in
+--- php-5.3.26.orig/configure.in
++++ php-5.3.26/configure.in
 @@ -289,6 +289,7 @@ sinclude(Zend/Zend.m4)
  sinclude(TSRM/threads.m4)
  sinclude(TSRM/tsrm.m4)
@@ -4545,10 +4583,10 @@ Index: php-5.3.25.orig/configure.in
  
  if test -r "$abs_srcdir/Zend/zend_objects.c"; then
    PHP_ADD_SOURCES(Zend, zend_objects.c zend_object_handlers.c zend_objects_API.c zend_default_classes.c)
-Index: php-5.3.25.orig/ext/standard/dl.c
+Index: php-5.3.26/ext/standard/dl.c
 ===================================================================
---- php-5.3.25.orig.orig/ext/standard/dl.c
-+++ php-5.3.25.orig/ext/standard/dl.c
+--- php-5.3.26.orig/ext/standard/dl.c
++++ php-5.3.26/ext/standard/dl.c
 @@ -254,6 +254,23 @@ PHPAPI int php_load_extension(char *file
  			return FAILURE;
  		}
@@ -4573,10 +4611,10 @@ Index: php-5.3.25.orig/ext/standard/dl.c
  	return SUCCESS;
  }
  /* }}} */
-Index: php-5.3.25.orig/ext/standard/info.c
+Index: php-5.3.26/ext/standard/info.c
 ===================================================================
---- php-5.3.25.orig.orig/ext/standard/info.c
-+++ php-5.3.25.orig/ext/standard/info.c
+--- php-5.3.26.orig/ext/standard/info.c
++++ php-5.3.26/ext/standard/info.c
 @@ -878,6 +878,33 @@ PHPAPI void php_print_info(int flag TSRM
  		
  		php_info_print_table_end();
@@ -4611,10 +4649,10 @@ Index: php-5.3.25.orig/ext/standard/info.c
  		/* Zend Engine */
  		php_info_print_box_start(0);
  		if (expose_php && !sapi_module.phpinfo_as_text) {
-Index: php-5.3.25.orig/ext/standard/syslog.c
+Index: php-5.3.26/ext/standard/syslog.c
 ===================================================================
---- php-5.3.25.orig.orig/ext/standard/syslog.c
-+++ php-5.3.25.orig/ext/standard/syslog.c
+--- php-5.3.26.orig/ext/standard/syslog.c
++++ php-5.3.26/ext/standard/syslog.c
 @@ -42,6 +42,7 @@ static void start_syslog(TSRMLS_D);
   */
  PHP_MINIT_FUNCTION(syslog)
@@ -4631,10 +4669,10 @@ Index: php-5.3.25.orig/ext/standard/syslog.c
  	BG(syslog_device)=NULL;
  
  	return SUCCESS;
-Index: php-5.3.25.orig/main/fopen_wrappers.c
+Index: php-5.3.26/main/fopen_wrappers.c
 ===================================================================
---- php-5.3.25.orig.orig/main/fopen_wrappers.c
-+++ php-5.3.25.orig/main/fopen_wrappers.c
+--- php-5.3.26.orig/main/fopen_wrappers.c
++++ php-5.3.26/main/fopen_wrappers.c
 @@ -85,13 +85,8 @@ or a tightening during activation/runtim
  PHPAPI ZEND_INI_MH(OnUpdateBaseDir)
  {
@@ -4650,10 +4688,10 @@ Index: php-5.3.25.orig/main/fopen_wrappers.c
  
  	if (stage == PHP_INI_STAGE_STARTUP || stage == PHP_INI_STAGE_SHUTDOWN || stage == PHP_INI_STAGE_ACTIVATE || stage == PHP_INI_STAGE_DEACTIVATE) {
  		/* We're in a PHP_INI_SYSTEM context, no restrictions */
-Index: php-5.3.25.orig/main/main.c
+Index: php-5.3.26/main/main.c
 ===================================================================
---- php-5.3.25.orig.orig/main/main.c
-+++ php-5.3.25.orig/main/main.c
+--- php-5.3.26.orig/main/main.c
++++ php-5.3.26/main/main.c
 @@ -91,6 +91,9 @@
  
  #include "SAPI.h"
@@ -4708,10 +4746,10 @@ Index: php-5.3.25.orig/main/main.c
  	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_MAX", LONG_MAX, CONST_PERSISTENT | CONST_CS);
  	REGISTER_MAIN_LONG_CONSTANT("PHP_INT_SIZE", sizeof(long), CONST_PERSISTENT | CONST_CS);
  #ifdef ZEND_MULTIBYTE
-Index: php-5.3.25.orig/main/php.h
+Index: php-5.3.26/main/php.h
 ===================================================================
---- php-5.3.25.orig.orig/main/php.h
-+++ php-5.3.25.orig/main/php.h
+--- php-5.3.26.orig/main/php.h
++++ php-5.3.26/main/php.h
 @@ -449,6 +449,10 @@ END_EXTERN_C()
  #endif
  #endif /* !XtOffsetOf */
@@ -4723,10 +4761,10 @@ Index: php-5.3.25.orig/main/php.h
  #endif
  
  /*
-Index: php-5.3.25.orig/main/php_config.h.in
+Index: php-5.3.26/main/php_config.h.in
 ===================================================================
---- php-5.3.25.orig.orig/main/php_config.h.in
-+++ php-5.3.25.orig/main/php_config.h.in
+--- php-5.3.26.orig/main/php_config.h.in
++++ php-5.3.26/main/php_config.h.in
 @@ -405,6 +405,9 @@
  /* Define to 1 if you have the `alphasort' function. */
  #undef HAVE_ALPHASORT
@@ -4737,10 +4775,10 @@ Index: php-5.3.25.orig/main/php_config.h.in
  /* Whether you have AOLserver */
  #undef HAVE_AOLSERVER
  
-Index: php-5.3.25.orig/main/php_logos.c
+Index: php-5.3.26/main/php_logos.c
 ===================================================================
---- php-5.3.25.orig.orig/main/php_logos.c
-+++ php-5.3.25.orig/main/php_logos.c
+--- php-5.3.26.orig/main/php_logos.c
++++ php-5.3.26/main/php_logos.c
 @@ -50,6 +50,10 @@ PHPAPI int php_unregister_info_logo(char
  	return zend_hash_del(&phpinfo_logo_hash, logo_string, strlen(logo_string));
  }
@@ -4763,10 +4801,10 @@ Index: php-5.3.25.orig/main/php_logos.c
  	return SUCCESS;
  }
  
-Index: php-5.3.25.orig/main/snprintf.c
+Index: php-5.3.26/main/snprintf.c
 ===================================================================
---- php-5.3.25.orig.orig/main/snprintf.c
-+++ php-5.3.25.orig/main/snprintf.c
+--- php-5.3.26.orig/main/snprintf.c
++++ php-5.3.26/main/snprintf.c
 @@ -782,6 +782,10 @@ static int format_converter(register buf
  			 */
  			switch (*fmt) {
@@ -4798,10 +4836,10 @@ Index: php-5.3.25.orig/main/snprintf.c
  					goto skip_output;
  
  					/*
-Index: php-5.3.25.orig/main/spprintf.c
+Index: php-5.3.26/main/spprintf.c
 ===================================================================
---- php-5.3.25.orig.orig/main/spprintf.c
-+++ php-5.3.25.orig/main/spprintf.c
+--- php-5.3.26.orig/main/spprintf.c
++++ php-5.3.26/main/spprintf.c
 @@ -390,6 +390,10 @@ static void xbuf_format_converter(smart_
  			 */
  			switch (*fmt) {
@@ -4833,10 +4871,10 @@ Index: php-5.3.25.orig/main/spprintf.c
  					goto skip_output;
  
  					/*
-Index: php-5.3.25.orig/main/suhosin_globals.h
+Index: php-5.3.26/main/suhosin_globals.h
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/main/suhosin_globals.h
++++ php-5.3.26/main/suhosin_globals.h
 @@ -0,0 +1,61 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -4899,10 +4937,10 @@ Index: php-5.3.25.orig/main/suhosin_globals.h
 + * c-basic-offset: 4
 + * End:
 + */
-Index: php-5.3.25.orig/main/suhosin_logo.h
+Index: php-5.3.26/main/suhosin_logo.h
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/main/suhosin_logo.h
++++ php-5.3.26/main/suhosin_logo.h
 @@ -0,0 +1,178 @@
 +static unsigned char suhosin_logo[] =
 +	"\xff\xd8\xff\xe0\x00\x10\x4a\x46\x49\x46\x00\x01\x01\x01\x00\x48"
@@ -5082,10 +5120,10 @@ Index: php-5.3.25.orig/main/suhosin_logo.h
 +	"\x21\xb6\x99\x69\xbc\x25\xb6\xdb\x6d\x18\xc2\x10\xda\x12\x94\xa1"
 +	"\x38\xc2\x53\x8c\x63\x18\xc7\x9d\xbe\x7f\xff\xd9"
 +	;
-Index: php-5.3.25.orig/main/suhosin_patch.c
+Index: php-5.3.26/main/suhosin_patch.c
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/main/suhosin_patch.c
++++ php-5.3.26/main/suhosin_patch.c
 @@ -0,0 +1,470 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -5557,10 +5595,10 @@ Index: php-5.3.25.orig/main/suhosin_patch.c
 + * vim600: sw=4 ts=4 fdm=marker
 + * vim<600: sw=4 ts=4
 + */
-Index: php-5.3.25.orig/main/suhosin_patch.h
+Index: php-5.3.26/main/suhosin_patch.h
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/main/suhosin_patch.h
++++ php-5.3.26/main/suhosin_patch.h
 @@ -0,0 +1,59 @@
 +/*
 +   +----------------------------------------------------------------------+
@@ -5621,10 +5659,10 @@ Index: php-5.3.25.orig/main/suhosin_patch.h
 + * c-basic-offset: 4
 + * End:
 + */
-Index: php-5.3.25.orig/main/suhosin_patch.m4
+Index: php-5.3.26/main/suhosin_patch.m4
 ===================================================================
 --- /dev/null
-+++ php-5.3.25.orig/main/suhosin_patch.m4
++++ php-5.3.26/main/suhosin_patch.m4
 @@ -0,0 +1,8 @@
 +dnl
 +dnl $Id: suhosin_patch.m4,v 1.1 2004/11/14 13:24:24 ionic Exp $
@@ -5634,10 +5672,10 @@ Index: php-5.3.25.orig/main/suhosin_patch.m4
 +
 +AC_DEFINE(SUHOSIN_PATCH, 1, [Suhosin Patch])
 +
-Index: php-5.3.25.orig/sapi/apache/mod_php5.c
+Index: php-5.3.26/sapi/apache/mod_php5.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/apache/mod_php5.c
-+++ php-5.3.25.orig/sapi/apache/mod_php5.c
+--- php-5.3.26.orig/sapi/apache/mod_php5.c
++++ php-5.3.26/sapi/apache/mod_php5.c
 @@ -969,7 +969,11 @@ static void php_init_handler(server_rec 
  	{
  		TSRMLS_FETCH();
@@ -5650,10 +5688,10 @@ Index: php-5.3.25.orig/sapi/apache/mod_php5.c
  		}
  	}
  #endif
-Index: php-5.3.25.orig/sapi/apache2filter/sapi_apache2.c
+Index: php-5.3.26/sapi/apache2filter/sapi_apache2.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/apache2filter/sapi_apache2.c
-+++ php-5.3.25.orig/sapi/apache2filter/sapi_apache2.c
+--- php-5.3.26.orig/sapi/apache2filter/sapi_apache2.c
++++ php-5.3.26/sapi/apache2filter/sapi_apache2.c
 @@ -583,7 +583,11 @@ static void php_apache_add_version(apr_p
  {
  	TSRMLS_FETCH();
@@ -5666,10 +5704,10 @@ Index: php-5.3.25.orig/sapi/apache2filter/sapi_apache2.c
  	}
  }
  
-Index: php-5.3.25.orig/sapi/apache2handler/sapi_apache2.c
+Index: php-5.3.26/sapi/apache2handler/sapi_apache2.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/apache2handler/sapi_apache2.c
-+++ php-5.3.25.orig/sapi/apache2handler/sapi_apache2.c
+--- php-5.3.26.orig/sapi/apache2handler/sapi_apache2.c
++++ php-5.3.26/sapi/apache2handler/sapi_apache2.c
 @@ -407,7 +407,11 @@ static void php_apache_add_version(apr_p
  {
  	TSRMLS_FETCH();
@@ -5682,10 +5720,10 @@ Index: php-5.3.25.orig/sapi/apache2handler/sapi_apache2.c
  	}
  }
  
-Index: php-5.3.25.orig/sapi/apache_hooks/mod_php5.c
+Index: php-5.3.26/sapi/apache_hooks/mod_php5.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/apache_hooks/mod_php5.c
-+++ php-5.3.25.orig/sapi/apache_hooks/mod_php5.c
+--- php-5.3.26.orig/sapi/apache_hooks/mod_php5.c
++++ php-5.3.26/sapi/apache_hooks/mod_php5.c
 @@ -1256,7 +1256,11 @@ static void php_init_handler(server_rec 
  	{
  		TSRMLS_FETCH();
@@ -5698,10 +5736,10 @@ Index: php-5.3.25.orig/sapi/apache_hooks/mod_php5.c
  		}
  	}
  #endif
-Index: php-5.3.25.orig/sapi/cgi/cgi_main.c
+Index: php-5.3.26/sapi/cgi/cgi_main.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/cgi/cgi_main.c
-+++ php-5.3.25.orig/sapi/cgi/cgi_main.c
+--- php-5.3.26.orig/sapi/cgi/cgi_main.c
++++ php-5.3.26/sapi/cgi/cgi_main.c
 @@ -1955,11 +1955,19 @@ consult the installation file that came 
  								SG(headers_sent) = 1;
  								SG(request_info).no_headers = 1;
@@ -5722,10 +5760,10 @@ Index: php-5.3.25.orig/sapi/cgi/cgi_main.c
  							php_request_shutdown((void *) 0);
  							fcgi_shutdown();
  							exit_status = 0;
-Index: php-5.3.25.orig/sapi/cli/php_cli.c
+Index: php-5.3.26/sapi/cli/php_cli.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/cli/php_cli.c
-+++ php-5.3.25.orig/sapi/cli/php_cli.c
+--- php-5.3.26.orig/sapi/cli/php_cli.c
++++ php-5.3.26/sapi/cli/php_cli.c
 @@ -826,7 +826,11 @@ int main(int argc, char *argv[])
  				}
  
@@ -5739,10 +5777,10 @@ Index: php-5.3.25.orig/sapi/cli/php_cli.c
  					PHP_VERSION, sapi_module.name, __DATE__, __TIME__,
  #if ZEND_DEBUG && defined(HAVE_GCOV)
  					"(DEBUG GCOV)",
-Index: php-5.3.25.orig/sapi/litespeed/lsapi_main.c
+Index: php-5.3.26/sapi/litespeed/lsapi_main.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/litespeed/lsapi_main.c
-+++ php-5.3.25.orig/sapi/litespeed/lsapi_main.c
+--- php-5.3.26.orig/sapi/litespeed/lsapi_main.c
++++ php-5.3.26/sapi/litespeed/lsapi_main.c
 @@ -718,11 +718,19 @@ static int cli_main( int argc, char * ar
                  break;
              case 'v':
@@ -5763,10 +5801,10 @@ Index: php-5.3.25.orig/sapi/litespeed/lsapi_main.c
  #ifdef PHP_OUTPUT_NEWAPI
                      php_output_end_all(TSRMLS_C);
  #else
-Index: php-5.3.25.orig/sapi/milter/php_milter.c
+Index: php-5.3.26/sapi/milter/php_milter.c
 ===================================================================
---- php-5.3.25.orig.orig/sapi/milter/php_milter.c
-+++ php-5.3.25.orig/sapi/milter/php_milter.c
+--- php-5.3.26.orig/sapi/milter/php_milter.c
++++ php-5.3.26/sapi/milter/php_milter.c
 @@ -1111,7 +1111,11 @@ int main(int argc, char *argv[])
  				}
  				SG(headers_sent) = 1;
@@ -5779,10 +5817,10 @@ Index: php-5.3.25.orig/sapi/milter/php_milter.c
  				php_end_ob_buffers(1 TSRMLS_CC);
  				exit(1);
  				break;
-Index: php-5.3.25.orig/win32/build/config.w32
+Index: php-5.3.26/win32/build/config.w32
 ===================================================================
---- php-5.3.25.orig.orig/win32/build/config.w32
-+++ php-5.3.25.orig/win32/build/config.w32
+--- php-5.3.26.orig/win32/build/config.w32
++++ php-5.3.26/win32/build/config.w32
 @@ -328,7 +328,7 @@ ADD_SOURCES("Zend", "zend_language_parse
  	zend_stream.c zend_iterators.c zend_interfaces.c zend_objects.c \
  	zend_object_handlers.c zend_objects_API.c \
@@ -5800,10 +5838,10 @@ Index: php-5.3.25.orig/win32/build/config.w32
  
  /* For snapshot builders, where can we find the additional
   * files that make up the snapshot template? */
-Index: php-5.3.25.orig/win32/build/config.w32.h.in
+Index: php-5.3.26/win32/build/config.w32.h.in
 ===================================================================
---- php-5.3.25.orig.orig/win32/build/config.w32.h.in
-+++ php-5.3.25.orig/win32/build/config.w32.h.in
+--- php-5.3.26.orig/win32/build/config.w32.h.in
++++ php-5.3.26/win32/build/config.w32.h.in
 @@ -152,6 +152,9 @@
  /* Win32 supports strcoll */
  #define HAVE_STRCOLL 1
@@ -5814,41 +5852,3 @@ Index: php-5.3.25.orig/win32/build/config.w32.h.in
  /* Win32 supports socketpair by the emulation in win32/sockets.c */
  #define HAVE_SOCKETPAIR 1
  #define HAVE_SOCKLEN_T 1
-Index: php-5.3.25.orig/Zend/Zend.dsp
-===================================================================
---- php-5.3.25.orig.orig/Zend/Zend.dsp
-+++ php-5.3.25.orig/Zend/Zend.dsp
-@@ -247,6 +247,14 @@ SOURCE=.\zend_strtod.c
- # End Source File
- # Begin Source File
- 
-+SOURCE=.\zend_canary.c
-+# End Source File
-+# Begin Source File
-+
-+SOURCE=.\zend_alloc_canary.c
-+# End Source File
-+# Begin Source File
-+
- SOURCE=.\zend_ts_hash.c
- # End Source File
- # Begin Source File
-Index: php-5.3.25.orig/Zend/ZendTS.dsp
-===================================================================
---- php-5.3.25.orig.orig/Zend/ZendTS.dsp
-+++ php-5.3.25.orig/Zend/ZendTS.dsp
-@@ -277,6 +277,14 @@ SOURCE=.\zend_strtod.c
- # End Source File
- # Begin Source File
- 
-+SOURCE=.\zend_canary.c
-+# End Source File
-+# Begin Source File
-+
-+SOURCE=.\zend_alloc_canary.c
-+# End Source File
-+# Begin Source File
-+
- SOURCE=.\zend_ts_hash.c
- # End Source File
- # Begin Source File
