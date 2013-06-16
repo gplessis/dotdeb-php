@@ -3,10 +3,9 @@
 set -e
 
 #EXTRA#
-#DEBHELPER#
 
-inidir=/etc/php5/mods-available
 if [ "$1" = "configure" ]; then
+    inidir=/etc/php5/mods-available
     for dsoname in @modules@; do
 	inifile=${dsoname}.ini
 	priority=$(sed -ne "s/^; priority=\([0-9]\+\)$/\\1/p" /usr/share/php5/@package@/${inifile})
@@ -30,5 +29,7 @@ if [ "$1" = "configure" ]; then
 	php5enmod ${dsoname}/${priority:-20}
     done
 fi
+
+#DEBHELPER#
 
 exit 0

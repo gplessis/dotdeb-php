@@ -145,7 +145,7 @@ PHP 5 CGI and Apache HTTP Server
   http://www.php.net/manual/en/security.cgi-bin.php
 
   To use php5-cgi with Apache HTTP Server:
-  1) activate php5_cgi module: run 'a2enmod php5_cgi'
+  1) activate php5_cgi module: run 'a2enconf php5-cgi'
   2) this will also activate the mod_actions module as a dependency
   3) comment out the last block of configuration in the
      /etc/apache2/mods-enabled/php5_cgi.conf file to enable
@@ -202,4 +202,4 @@ Further documentation, errata, misc.
   If after reading the documentation in this file you still have
   unanswered questions, that's a good next place to go.
 
- -- Ondřej Surý <ondrej@debian.org>, Thu, 30 Aug 2012 09:56:01 +0200
+ -- Ondřej Surý <ondrej@debian.org>, Sun,  5 May 2013 22:00:06 +0200

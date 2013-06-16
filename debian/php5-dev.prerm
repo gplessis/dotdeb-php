@@ -2,14 +2,12 @@
 
 set -e
 
-#DEBHELPER#
-
-if [ "$1" != "remove" -a "$1" != "purge" ]; then
-        exit 0
+if [ "$1" = "remove" -o "$1" = "purge" ]; then
+    for i in php-config phpize; do
+	update-alternatives --remove $i /usr/bin/"$i"5
+    done
 fi
 
-for i in php-config phpize; do
-	update-alternatives --remove $i /usr/bin/"$i"5
-done
+#DEBHELPER#
 
 exit 0

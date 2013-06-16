@@ -3,12 +3,13 @@
 set -e
 
 #EXTRA#
-#DEBHELPER#
 
 if [ "$1" = "remove" ]; then
     for dsoname in @modules@; do
 	php5dismod ${dsoname}
     done
 fi
+
+#DEBHELPER#
 
 exit 0

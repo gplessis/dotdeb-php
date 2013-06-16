@@ -4,10 +4,8 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
-Index: php-5.4.16/configure.in
-===================================================================
---- php-5.4.16.orig/configure.in
-+++ php-5.4.16/configure.in
+--- php5.orig/configure.in
++++ php5/configure.in
 @@ -1068,7 +1068,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
@@ -50,10 +48,8 @@ Index: php-5.4.16/configure.in
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
-Index: php-5.4.16/ext/ext_skel
-===================================================================
---- php-5.4.16.orig/ext/ext_skel
-+++ php-5.4.16/ext/ext_skel
+--- php5.orig/ext/ext_skel
++++ php5/ext/ext_skel
 @@ -70,7 +70,7 @@ if test -d "$extname" ; then
  fi
  
@@ -63,10 +59,8 @@ Index: php-5.4.16/ext/ext_skel
  fi
  
  ## convert skel_dir to full path
-Index: php-5.4.16/php.ini-development
-===================================================================
---- php-5.4.16.orig/php.ini-development
-+++ php-5.4.16/php.ini-development
+--- php5.orig/php.ini-development
++++ php5/php.ini-development
 @@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -76,10 +70,8 @@ Index: php-5.4.16/php.ini-development
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-Index: php-5.4.16/php.ini-production
-===================================================================
---- php-5.4.16.orig/php.ini-production
-+++ php-5.4.16/php.ini-production
+--- php5.orig/php.ini-production
++++ php5/php.ini-production
 @@ -702,7 +702,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -89,7 +81,7 @@ Index: php-5.4.16/php.ini-production
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -859,51 +859,6 @@ default_socket_timeout = 60
+@@ -863,51 +863,6 @@ default_socket_timeout = 60
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
  ;
@@ -141,10 +133,8 @@ Index: php-5.4.16/php.ini-production
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
-Index: php-5.4.16/sapi/cli/php.1.in
-===================================================================
---- php-5.4.16.orig/sapi/cli/php.1.in
-+++ php-5.4.16/sapi/cli/php.1.in
+--- php5.orig/sapi/cli/php.1.in
++++ php5/sapi/cli/php.1.in
 @@ -372,13 +372,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
@@ -165,10 +155,8 @@ Index: php-5.4.16/sapi/cli/php.1.in
  .SH EXAMPLES
  .TP 5
  \fIphp \-r 'echo "Hello World\\n";'\fP
-Index: php-5.4.16/scripts/Makefile.frag
-===================================================================
---- php-5.4.16.orig/scripts/Makefile.frag
-+++ php-5.4.16/scripts/Makefile.frag
+--- php5.orig/scripts/Makefile.frag
++++ php5/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -180,25 +168,23 @@ Index: php-5.4.16/scripts/Makefile.frag
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
-Index: php-5.4.16/scripts/php-config.in
-===================================================================
---- php-5.4.16.orig/scripts/php-config.in
-+++ php-5.4.16/scripts/php-config.in
-@@ -6,8 +6,8 @@ datarootdir="@datarootdir@"
+--- php5.orig/scripts/php-config.in
++++ php5/scripts/php-config.in
+@@ -6,9 +6,9 @@ datarootdir="@datarootdir@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
  vernum="@PHP_VERSION_ID@"
 -include_dir="@includedir@/php"
 -includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib"
+-ldflags="@PHP_LDFLAGS@"
 +include_dir="@includedir@/php5"
 +includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib $(getconf LFS_CFLAGS)"
- ldflags="@PHP_LDFLAGS@"
++ldflags="-L$prefix/lib/php5 @PHP_LDFLAGS@"
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
-Index: php-5.4.16/scripts/phpize.in
-===================================================================
---- php-5.4.16.orig/scripts/phpize.in
-+++ php-5.4.16/scripts/phpize.in
+ man_dir=`eval echo @mandir@`
+--- php5.orig/scripts/phpize.in
++++ php5/scripts/phpize.in
 @@ -4,8 +4,8 @@
  prefix='@prefix@'
  datarootdir='@datarootdir@'

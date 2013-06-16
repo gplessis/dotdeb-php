@@ -8,10 +8,10 @@ Build-Depends: apache2-prefork-dev,
 	       bison,
 	       chrpath,
 	       debhelper (>= 5),
+	       dpkg-dev (>= 1.16.1~),
 	       firebird-dev [!hurd-any !m68k !hppa !ppc64] | firebird2.5-dev [!hurd-any !m68k !hppa !ppc64] | firebird2.1-dev [!hurd-any !m68k !hppa !ppc64],
 	       flex,
 	       freetds-dev,
-	       hardening-wrapper,
 	       libapr1-dev (>= 1.2.7-8),
 	       libbz2-dev,
 	       libc-client-dev,
@@ -48,6 +48,7 @@ Build-Depends: apache2-prefork-dev,
 	       libt1-dev,
 	       libtidy-dev,
 	       libtool (>= 2.2),
+	       libvpx-dev,
 	       libwrap0-dev,
 	       libxmltok1-dev,
 	       libxml2-dev,
@@ -61,9 +62,9 @@ Build-Depends: apache2-prefork-dev,
 	       zlib1g-dev,
 	       tzdata
 Build-Conflicts: bind-dev
-Standards-Version: 3.9.3
-Vcs-Git: git://git.debian.org/pkg-php/php.git
-Vcs-Browser: http://git.debian.org/?p=pkg-php/php.git
+Standards-Version: 3.9.4
+Vcs-Git: git://anonscm.debian.org/pkg-php/php.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-php/php.git
 Homepage: http://www.php.net/
 
 Package: php5
@@ -85,7 +86,7 @@ Depends: ${misc:Depends},
 	 ${shlibs:Depends},
 	 sed (>= 4.1.1-1),
 	 psmisc (>= 22.15-1~),
-	 lsof,
+	 lsof [!kfreebsd-any !hurd-any],
 	 ucf
 Pre-Depends: dpkg (>= 1.15.7.2~)
 Provides: php5-json, php5-mhash
@@ -101,7 +102,8 @@ Description: Common files for packages built from the php5 source
 Package: libapache2-mod-php5
 Section: httpd
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, ${apache2:Depends}, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Pre-Depends: apache2
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
 Conflicts: libapache2-mod-php4, libapache2-mod-php5filter
 Provides: ${php:Provides}
 Recommends: php5-cli
@@ -121,7 +123,8 @@ Package: libapache2-mod-php5filter
 Section: httpd
 Priority: extra
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, ${apache2:Depends}, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Pre-Depends: apache2
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
 Conflicts: libapache2-mod-php4, libapache2-mod-php5
 Provides: ${php:Provides}
 Suggests: php-pear
@@ -358,7 +361,8 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}, php5-common (= ${binary:Version}), php5-cli (= ${binary:Version}), ucf
 Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: Readline module for php5
- This package provides a module for readline functions (based on libedit) in PHP scripts.
+ This package provides a module for readline functions (based on libedit)
+ in PHP scripts.
  .
  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
  open source general-purpose scripting language that is especially suited

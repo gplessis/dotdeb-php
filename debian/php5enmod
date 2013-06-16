@@ -42,11 +42,8 @@ usage() {
     exit 1
 }
 
-error() {
-    echo "ERROR: ${1}" >&2
-    shift
-    local ecode=${1:-1}
-    exit ${ecode}
+warning() {
+    echo "WARNING: ${@}" >&2
 }
 
 enmods() {
@@ -71,8 +68,15 @@ enmod() {
     [ "${modname}" = "${priority}" ] && priority=20
     # assert $modname is in /etc/php5/mods-available
     local source_ini="/etc/php5/mods-available/${modname}.ini"
-    [ -e "${source_ini}" ] || error "${source_ini} does not exist" 2
     [ -z "${priority}" ] && priority=20
+
+    if [ ! -e "${source_ini}" ]; then
+	warning "${source_ini} does not exist."
+	warning "You might have removed it manually, not touching the module."
+	warning "If you want to re-enable the module ${modname},"
+	warning "you will have to reinstall the ${modname}.ini from /usr/share/php5"
+	return
+    fi
         
     # assert $modname is not present in /etc/php5/conf.d, or already symlink to /etc/php5/mods-available
     local live_link="/etc/php5/conf.d/$priority-$modname.ini"
@@ -84,7 +88,9 @@ enmod() {
                 return
             fi
         fi
-        error "${modname} module symlink already exists in /etc/php5/conf.d with different content"
+        warning "Not enabling the modules ${modname} since module symlink already exists"
+	warning "in /etc/php5/conf.d with different content."
+	return
     fi
     ln -s "${live_link_content}" "${live_link}"
     ENABLED=$((${ENABLED}+1))
@@ -100,7 +106,7 @@ dismod() {
 	[ -h "${live_link}" ] || continue
         # assert $modname is a symlink to /etc/php5/mods-available
 	[ "$(readlink "${live_link}")" != "${live_link_content}" ] && continue
-	[ -e "${live_link}" ] || echo "removing dangling symlink ${live_link}"
+	[ -e "${live_link}" ] || warning "removing dangling symlink ${live_link}"
 	# remove the symlink
 	rm -f "${live_link}"
 	FOUND=1
@@ -109,9 +115,9 @@ dismod() {
 	DISABLED=$(($DISABLED+1))
     else
 	if [ -e /etc/php5/mods-available/${modname}.ini ]; then
-		echo "$modname module already disabled"
+		warning "$modname module already disabled"
 	else
-		echo "$modname module does not exist!"
+		warning "$modname module does not exist!"
 	fi
     fi
 }

@@ -2,17 +2,14 @@
 
 set -e
 
-#DEBHELPER#
+if [ "$1" = "configure" ]; then
+    ldconfig
 
-[ "$1" = "configure" ] && ldconfig
-
-if [ "$1" != "configure" ]; then
-    exit 0
+    phpini="/etc/php5/embed/php.ini"
+    ucf /usr/share/php5/php.ini-production $phpini
+    ucfr libphp5-embed $phpini
 fi
 
-phpini="/etc/php5/embed/php.ini"
-
-ucf /usr/share/php5/php.ini-production $phpini
-ucfr libphp5-embed $phpini
+#DEBHELPER#
 
 exit 0

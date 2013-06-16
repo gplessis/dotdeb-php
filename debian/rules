@@ -29,8 +29,8 @@ ifeq (nocheck,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
   $(warning Disabling checks due DEB_BUILD_OPTIONS)
   RUN_TESTS = no
 endif
-ifeq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),hurd-i386))
-  $(warning Disabling checks on hurd-i386)
+ifeq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),hurd-i386 mips mipsel))
+  $(warning Disabling checks on $(DEB_HOST_ARCH))
   RUN_TESTS = no
 endif
 
@@ -95,11 +95,9 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
     MAKEFLAGS += -j$(NUMJOBS)
 endif
 
-# enable the hardening wrapper
-DEB_BUILD_HARDENING = 1
-# but disable PIE
-DEB_BUILD_HARDENING_PIE = 0
-export DEB_BUILD_HARDENING DEB_BUILD_HARDENING_PIE
+# enable dpkg build flags
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
 
 COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--host=$(DEB_HOST_GNU_TYPE) \
@@ -180,6 +178,7 @@ ifeq (yes,$(RUN_TESTS))
 	    test "$$ext" != "pdo_odbc.so" || continue; \
 	    test "$$ext" != "pdo_pgsql.so" || continue; \
 	    test "$$ext" != "snmp.so" || continue; \
+	    test "$$ext" != "opcache.so" || continue; \
 	    extensions="$$extensions -d extension=$$ext"; \
 	done; \
 	[ "$$extensions" ] || { echo "extensions list is empty"; exit 1; }; \
@@ -284,6 +283,7 @@ configure-apache2-stamp: prepared-stamp
 		--with-xpm-dir=shared,/usr/X11R6 \
 		--with-png-dir=shared,/usr \
 		--with-freetype-dir=shared,/usr \
+	        --with-vpx-dir=shared,/usr \
 		--with-imap=shared,/usr \
 		--with-imap-ssl \
 		--enable-intl=shared \
@@ -451,7 +451,6 @@ clean: unprepared
 	rm -rf embed-build
 	rm -rf fpm-build
 	rm -rf pear-build pear-build-download
-	rm -f debian/copyright
 	rm -rf test-results.txt $(MYSQL_DATA_DIR)
 	dh_clean -Xorig
 
@@ -479,32 +478,32 @@ install: build
 
 	chmod 01733 debian/php5-common/var/lib/php5
 
-	cp debian/php5_cgi.conf \
-		debian/php5-cgi/etc/apache2/mods-available/php5_cgi.conf
-	cp debian/php5_cgi.load \
-	        debian/php5-cgi/etc/apache2/mods-available/php5_cgi.load
+	cp debian/php5-cgi.conf \
+		debian/php5-cgi/etc/apache2/mods-available/php5-cgi.conf
+	cp debian/php5-cgi.load \
+	        debian/php5-cgi/etc/apache2/mods-available/php5-cgi.load
 
 	# install apache2 DSO module
 	cp apache2-build/.libs/libphp5.so \
 		debian/libapache2-mod-php5/`apxs2 -q LIBEXECDIR`/
-	cp debian/libapache2-mod-php5.load \
+	cp debian/php5.load \
 		debian/libapache2-mod-php5/etc/apache2/mods-available/php5.load
-	cp debian/libapache2-mod-php5.conf \
+	cp debian/php5.conf \
 		debian/libapache2-mod-php5/etc/apache2/mods-available/php5.conf
 
 	# Add here commands to install the package into debian/php5.
 	# install apache2 DSO filter module
 	cp apache2filter-build/.libs/libphp5.so \
 		debian/libapache2-mod-php5filter/`apxs2 -q LIBEXECDIR`/libphp5filter.so
-	cp debian/libapache2-mod-php5filter.load \
+	cp debian/php5filter.load \
 		debian/libapache2-mod-php5filter/etc/apache2/mods-available/php5filter.load
-	cp debian/libapache2-mod-php5filter.conf \
+	cp debian/php5filter.conf \
 		debian/libapache2-mod-php5filter/etc/apache2/mods-available/php5filter.conf
 
 	# sanitize php.ini file
-	cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-production
-	cat php.ini-production | tr "\t" " " | sed -e'/memory_limit =/ s/128M/-1/g;/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g' > debian/php5-common/usr/share/php5/php.ini-production.cli
-	cat php.ini-development | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-development
+	cat php.ini-production | tr "\t" " " | sed -e'/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-production
+	cat php.ini-production | tr "\t" " " | sed -e'/memory_limit =/ s/128M/-1/g;/session.gc_probability =/ s/1/0/g' > debian/php5-common/usr/share/php5/php.ini-production.cli
+	cat php.ini-development | tr "\t" " " | sed -e'/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-development
 	cp test-results.txt debian/php5-common/usr/share/doc/php5-common/
 
 	# install embed SAPI
@@ -655,7 +654,6 @@ binary-indep: build install
 	# Need this version of debhelper for DH_OPTIONS to work.
 	dh_testdir
 	dh_testroot
-	cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
 
 	dh_installdocs
 
@@ -681,12 +679,14 @@ binary-arch: build install
 	#
 	# generate the config snippets for various php
 	# modules from the templates.
-	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
+	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority extension; do \
 		if [ -z "$${dsoname}" ]; then dsoname=$$package; fi; \
 		if [ -z "$${priority}" ]; then priority=20; fi; \
+		if [ -z "$${extension}" ]; then extension=extension; fi; \
 		mkdir -p debian/php5-$$package/usr/share/php5/$$package; \
 		sed -e"s|@extname@|$${extname}|g; \
 		       s/@dsoname@/$${dsoname}/g; \
+		       s/@extension@/$${extension}/g; \
 		       s/@priority@/$${priority}/g" \
 		  < debian/php5-module.ini \
 		  > debian/php5-$$package/usr/share/php5/$$package/$${dsoname}.ini; \
@@ -737,7 +737,6 @@ binary-arch: build install
 	        done; \
 	done
 
-	cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
 	dh_installdocs -s
 
 	cat debian/modulelist | grep -v common | while read package extname dsoname priority; do \
@@ -784,9 +783,6 @@ binary-arch: build install
 		"$$i"filter-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
 			>> debian/lib"$$i"-mod-php5filter.substvars; \
 	done
-
-	echo "apache2:Depends=apache2-mpm-prefork (>> 2.0.52) | apache2-mpm-itk, apache2.2-common" >>debian/libapache2-mod-php5.substvars
-	echo "apache2:Depends=apache2-mpm-prefork (>> 2.0.52) | apache2-mpm-itk, apache2.2-common" >>debian/libapache2-mod-php5filter.substvars
 
 	echo "libtool:Conflicts=$(LIBTOOL_CONFLICTS)" >>debian/php5-dev.substvars
 	dh_gencontrol -s

@@ -1,61 +1,250 @@
-php5 (5.4.16-1~dotdeb.1) stable; urgency=low
+php5 (5.5.0~rc3-2.dotdeb.1) stable; urgency=low
 
-  * New upstream release
+  * Rebuilt for Dotdeb
+  
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 15 Jun 2013 14:10:42 -0700
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sat, 08 Jun 2013 13:39:42 -0700
+php5 (5.5.0~rc3+dfsg-2) unstable; urgency=low
 
-php5 (5.4.15-1~dotdeb.2) stable; urgency=low
+  [Ondřej Surý]
+  * Make the php5{en,dis}mod less picky on removed files or changed
+    symlinks to prevent breakages on upgrades where users have mangled
+    with the files and symlinks in /etc/php5/{mods-available,conf.d}.
 
-  * New upstream release
+  [Thijs Kinkhorst]
+  * Override license-problem-json-evil for README.REDIST.BINS.
+  * Put all licences statically in debian/copyright.
+  
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 11 Jun 2013 10:02:33 +0200
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sat, 11 May 2013 12:41:42 -0700
+php5 (5.5.0~rc3+dfsg-1) unstable; urgency=low
 
-php5 (5.4.14-1~dotdeb.2) stable; urgency=low
+  * New upstream version 5.5.0~rc3+dfsg
+  * Pre-Depend on apache2 (>= 2.4) to workaround #711454
+  * php5-common now suggests php5-user-cache virtual package which is
+    provided by php5-apcu, php5-yac and php5-xcache.
+  * Make the Breaks on php5-suhosin versioned to allow suhosin backports
+    when there's a new upstream version (Acked by suhosin maintainer)
+  * Disable running tests on mipsen until #710937 is fixed
 
-  * Rebuilt for Wheezy
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 06 Jun 2013 20:53:09 +0200
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sun, 05 May 2013 03:44:42 +0200
+php5 (5.5.0~rc2+dfsg-2) unstable; urgency=low
 
-php5 (5.4.14-1~dotdeb.1) stable; urgency=low
+  * Don't depend on lsof on hurd-any and kfreebsd-any and make the call in
+    sessionclean optional (Closes: #710684)
+  * Add initial support to php5-fpm for systemd service and upstart job in
+    addition to sysvinit script
+  * Update systzdata patch to v10
+  * Add php5-json to Recommends to declare strong dependency at least in
+    jessie
 
-  * New upstream release
+ -- Ondřej Surý <ondrej@debian.org>  Sat, 01 Jun 2013 17:58:09 +0200
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sat, 20 Apr 2013 21:55:42 -0700
+php5 (5.5.0~rc2+dfsg-1) unstable; urgency=low
 
-php5 (5.4.13-1~dotdeb.1) stable; urgency=low
+  * Imported Upstream version 5.5.0~rc2+dfsg
+  * Update patches for 5.5.0~rc2 release
 
-  * New upstream release
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 27 May 2013 21:39:36 +0200
 
- -- Guillaume Plessis <gui@dotdeb.org>  Thu, 21 Mar 2013 08:59:42 +0100
+php5 (5.5.0~rc1+dfsg-2) unstable; urgency=low
 
-php5 (5.4.12-1~dotdeb.1) stable; urgency=low
+  [ Thijs Kinkhorst ]
+  * Wrap long line in php5-readline extended description.
+  * Switch from hardening-wrapper to dpkg-buildflags.
+  * Canonicalise Vcs-* fields as suggested by Lintian.
+  * Checked for policy 3.9.4, no changes necessary.
 
-  * New upstream release
-  * missing dependency on lsof in php5-common
+  [ Ondřej Surý ]
+  * Install Zend Opcache into php5-common (Closes: #709314)
+  * Add support for handling zend_extension(s) in addition to extensions
+    (Thanks to Yaacov Akiba Slama for catching that)
+  * Upload to unstable
 
- -- Guillaume Plessis <gui@dotdeb.org>  Tue, 26 Feb 2013 22:18:42 +0100
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 23 May 2013 09:07:41 +0200
 
-php5 (5.4.11-1~dotdeb.0) stable; urgency=low
+php5 (5.5.0~rc1+dfsg-1) experimental; urgency=low
 
-  * New upstream release
-  * Sync with Debian
-  * mysqlnd.h is now included in php5-dev
+  * Imported Upstream version 5.5.0~rc1+dfsg
+  * Enable VPX (WEBP) support in GD extension
+  * Add dfsg-repack.sh script to remove non-free JSON module
+    (Closes: #692613)
+  * Remove php5-json from Provides, since that's no longer true
 
- -- Guillaume Plessis <gui@dotdeb.org>  Thu, 17 Jan 2013 19:41:42 +0100
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 17 May 2013 14:41:41 +0200
 
-php5 (5.4.10-1~dotdeb.0) stable; urgency=low
+php5 (5.5.0~rc1-3) experimental; urgency=low
 
-  * New upstream release
-  * Sync with Debian
+  * Add dependency on lsof (Closes: #708087)
+  * Add versioned conflicts with php-apc (<< 4.0.0) that is in fact
+    php5-apcu, and php5-xdebug (<< 2.2.2) that added support for PHP 5.5
+  * Enable VPX (WEBP) support in GD extension
+  * Prepare for libgd2-dev to libgd-dev rename
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sun, 30 Dec 2012 12:58:42 +0100
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 15 May 2013 10:13:02 +0200
 
-php5 (5.4.9-1~dotdeb.0) stable; urgency=low
+php5 (5.5.0~rc1-2) experimental; urgency=low
 
-  * New upstream release
-  * Sync with Debian
+  * Load Apache 2.4 maintainer script helper and conditionally define the
+    conditional function php5_enable if that succeeds (Closes: #707659)
 
- -- Guillaume Plessis <gui@dotdeb.org>  Sun, 25 Nov 2012 19:32:42 -0800
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 10 May 2013 08:21:48 +0200
+
+php5 (5.5.0~rc1-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~rc1
+  * Remove php5-5.5.0~rc1~0~78c79a2d5b.patch since PHP 5.5.0RC1 is out
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 09 May 2013 19:21:03 +0200
+
+php5 (5.5.0~beta4-4) experimental; urgency=low
+
+  * Use #DEBHELPER# capability of dh_apache2 to install/remove modules
+  * Rewrite and unify dpkg maintfiles and fix php5-cgi postinst script
+    (Closes: #707131)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 07 May 2013 11:04:25 +0200
+
+php5 (5.5.0~beta4-3) experimental; urgency=low
+
+  [Thijs Kinkhorst]
+  * debian/control: Remove ${apache2:Depends} substvar to allow installing
+    the modules with Apache 2.4.
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 06 May 2013 19:35:44 +0200
+
+php5 (5.5.0~beta4-2) experimental; urgency=low
+
+  * Pull upstream git fixes to have the latest ext/gd tree
+  * Update patches on top of current php.git
+  * Update package to use Apache 2.4 (Closes: #666820)
+  * Update Build-Depends to apache2-dev (>= 2.4)
+  * short_open_tag now defaults to Off (Closes: #142178)
+  * Add opcache.so to list of forbidden extensions in test run
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 06 May 2013 19:35:25 +0200
+
+php5 (5.5.0~beta4-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~beta4
+  * Hardcode MAXPATHLEN to 4096 if undefined to fix GNU Hurd build
+  * Update gd-2.1.0 patch to not include antialias functions not provided
+    by GD 2.1.0 library
+  * Require libgd2-dev (>= 2.1.0~alpha~4) to have compatible version
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 25 Apr 2013 13:07:28 +0200
+
+php5 (5.5.0~beta3-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~beta3
+  * Update patches to 5.5.0~beta3 release
+  * Fix GNU Hurd check in also in ext/opcache/config.m4 and configure
+  * Add support for GD >= 2.1.0, possibly (Closes: #704457)
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 11 Apr 2013 17:25:42 +0200
+
+php5 (5.5.0~beta2-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~beta2
+  * Fix compilation on GNU Hurd (Courtesy of Svante Signell)
+  * Refresh and delete merged patches in php 5.5.0beta2
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 29 Mar 2013 01:38:38 +0100
+
+php5 (5.5.0~beta1-2) experimental; urgency=low
+
+  * Add php5-readline based on libedit (Courtesy of Andreas Pour)
+  * Add -n to run-tests.php for php to not pick-up any local php.ini.
+    It's not a problem on sbuilds, but it might break when building
+    locally. (Courtesy of Andreas Pour)
+  * XCache will support PHP 5.5 from version 3.1
+  * Disable -gstabs usage, which was breaking clang builds and is not needed.
+  * Remove .gitignore from git
+  * Pull upstream fix for kFreeBSD builds
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 26 Mar 2013 21:26:33 +0100
+
+php5 (5.5.0~beta1-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~beta1
+   + Includes Zend OPCache (Closes: #700577)
+  * Refresh patches for release 5.5.0~beta1
+  * Add Breaks for other low-level Zend OpCache and debug packages
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 22 Mar 2013 08:39:49 +0100
+
+php5 (5.5.0~alpha5-2) experimental; urgency=low
+
+  * Enable interactive mode in php5-cli (Closes: #341868)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 05 Mar 2013 16:39:21 +0100
+
+php5 (5.5.0~alpha5-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~alpha5
+  * Update patches for 5.5.0~alpha5 release
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 25 Feb 2013 16:38:27 +0100
+
+php5 (5.5.0~alpha4-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~alpha4
+  * Update patches for 5.5.0~alpha4 release
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 19 Feb 2013 13:44:13 +0100
+
+php5 (5.5.0~alpha3-1) experimental; urgency=low
+
+  * Merged changes from wheezy/sid
+   + Fix typo in path to session clean script in cron file
+   + Install logrotate script in php5-fpm package
+  * Imported Upstream version 5.5.0~alpha3
+  * Update patches for new release
+   + Patch debian/patches/libxml-reset-the-handler.patch has been merged
+     upstream
+  * Make the sessionclean script compatible with awk != gawk
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 16 Jan 2013 09:17:30 +0100
+
+php5 (5.5.0~alpha1-1) experimental; urgency=low
+
+  * Imported Upstream version 5.5.0~alpha1
+  * Return to PHP versions of crypt() functions, it's to big burden to
+    carry on the patch
+  * fix_crash_in__php_mssql_get_column_content_without_type.patch: remove
+    patch, it has been merged upstream
+  * Update&refresh patches to PHP 5.5 branch
+  * Slim down the 006-debian_quirks.patch by removing PIKE related patch
+  * Remove number of old possibly unneeded patches
+  * Remove broken MultiArch patch from upstream and replace it with new Debian's version
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 16 Nov 2012 15:22:45 +0100
+
+php5 (5.4.9-2) experimental; urgency=low
+
+  * Introduce new (hopefully slightly smarter) way of not deleting still
+    used session files
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 29 Nov 2012 08:48:24 +0100
+
+php5 (5.4.9-1) experimental; urgency=low
+
+  [ Lior Kaplan ]
+  * Support removing dangling symlinks, users are allowed to remove
+    configuration files
+  * Exit with code 0 even if module symlink doesn't exist (Closes: #692013)
+
+  [ Ondřej Surý ]
+  * Imported Upstream version 5.4.9
+  * Remove all traces of suhosin patch from debian sources
+  * Convert to 3.0 (quilt) debian source format (Closes: #694543)
+  * Remove broken MultiArch patch from upstream and replace it with new
+    Debian's version
+  * Replace Breaks with Conflict for php5-suhosin
+  * Remove useless .la file from libphp5-embed
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 27 Nov 2012 16:54:48 +0100
 
 php5 (5.4.8-1) experimental; urgency=low
 

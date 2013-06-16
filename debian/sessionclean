@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # first find all used files and touch them (hope it's not massive amount of files)
-lsof -w -l +d "${1}" | awk -- '{ if (NR > 1) { print $9; } }' | xargs -i touch -c {}
+[ -x /usr/bin/lsof ] && /usr/bin/lsof -w -l +d "${1}" | awk -- '{ if (NR > 1) { print $9; } }' | xargs -i touch -c {}
 
 # find all files older then maxlifetime
 find "${1}" -ignore_readdir_race -depth -mindepth 1 -maxdepth 1 -type f -cmin +${2} -delete

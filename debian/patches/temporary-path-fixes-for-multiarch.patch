@@ -7,10 +7,8 @@ Bug-Ubuntu: https://bugs.launchpad.net/bugs/739977
 Forwarded: not-needed
 Reviewed-by: Steve Langasek <steve.langasek@ubuntu.com>
 
-Index: php-5.4.16/ext/dba/config.m4
-===================================================================
---- php-5.4.16.orig/ext/dba/config.m4
-+++ php-5.4.16/ext/dba/config.m4
+--- php5.orig/ext/dba/config.m4
++++ php5/ext/dba/config.m4
 @@ -239,7 +239,7 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
      AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
    fi
@@ -20,32 +18,8 @@ Index: php-5.4.16/ext/dba/config.m4
        lib_found="";
        PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
          AC_TRY_LINK([
-Index: php-5.4.16/ext/gd/config.m4
-===================================================================
---- php-5.4.16.orig/ext/gd/config.m4
-+++ php-5.4.16/ext/gd/config.m4
-@@ -159,7 +159,7 @@ AC_DEFUN([PHP_GD_XPM],[
-   if test "$PHP_XPM_DIR" != "no"; then
- 
-     for i in $PHP_XPM_DIR /usr/local /usr/X11R6 /usr; do
--      test -f $i/$PHP_LIBDIR/libXpm.$SHLIB_SUFFIX_NAME || test -f $i/$PHP_LIBDIR/libXpm.a && GD_XPM_DIR=$i && break
-+      test -f $i/$PHP_LIBDIR/libXpm.$SHLIB_SUFFIX_NAME || test -f $i/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/libXpm.$SHLIB_SUFFIX_NAME || test -f $i/$PHP_LIBDIR/libXpm.a && GD_XPM_DIR=$i && break
-     done
- 
-     if test -z "$GD_XPM_DIR"; then
-@@ -398,7 +398,7 @@ dnl Header path
- 
- dnl Library path
-   for i in $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
--    test -f "$PHP_GD/$i/libgd.$SHLIB_SUFFIX_NAME" || test -f "$PHP_GD/$i/libgd.a" && GD_LIB="$PHP_GD/$i"
-+    test -f "$PHP_GD/$i/libgd.$SHLIB_SUFFIX_NAME" || test -f "$PHP_GD/$i/$DEB_HOST_MULTIARCH/libgd.$SHLIB_SUFFIX_NAME" || test -f "$PHP_GD/$i/libgd.a" && GD_LIB="$PHP_GD/$i"
-   done
- 
-   if test -n "$GD_INCLUDE" && test -n "$GD_LIB"; then
-Index: php-5.4.16/ext/pcre/config0.m4
-===================================================================
---- php-5.4.16.orig/ext/pcre/config0.m4
-+++ php-5.4.16/ext/pcre/config0.m4
+--- php5.orig/ext/pcre/config0.m4
++++ php5/ext/pcre/config0.m4
 @@ -21,7 +21,7 @@ PHP_ARG_WITH(pcre-regex,,
      AC_MSG_RESULT([$PCRE_INCDIR])
  
@@ -55,10 +29,8 @@ Index: php-5.4.16/ext/pcre/config0.m4
        test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
      done
      
-Index: php-5.4.16/acinclude.m4
-===================================================================
---- php-5.4.16.orig/acinclude.m4
-+++ php-5.4.16/acinclude.m4
+--- php5.orig/acinclude.m4
++++ php5/acinclude.m4
 @@ -2282,7 +2282,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
      fi
  
@@ -77,10 +49,8 @@ Index: php-5.4.16/acinclude.m4
          OPENSSL_LIBDIR=$i/$PHP_LIBDIR
        fi
        test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
-Index: php-5.4.16/ext/ldap/config.m4
-===================================================================
---- php-5.4.16.orig/ext/ldap/config.m4
-+++ php-5.4.16/ext/ldap/config.m4
+--- php5.orig/ext/ldap/config.m4
++++ php5/ext/ldap/config.m4
 @@ -95,7 +95,7 @@ if test "$PHP_LDAP" != "no"; then
      LDAP_PTHREAD=
    fi
@@ -90,10 +60,8 @@ Index: php-5.4.16/ext/ldap/config.m4
      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
  
-Index: php-5.4.16/ext/mssql/config.m4
-===================================================================
---- php-5.4.16.orig/ext/mssql/config.m4
-+++ php-5.4.16/ext/mssql/config.m4
+--- php5.orig/ext/mssql/config.m4
++++ php5/ext/mssql/config.m4
 @@ -38,7 +38,7 @@ if test "$PHP_MSSQL" != "no"; then
      fi
    fi  
@@ -103,10 +71,8 @@ Index: php-5.4.16/ext/mssql/config.m4
       AC_MSG_ERROR(Could not find $FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
    fi
  
-Index: php-5.4.16/ext/pdo_dblib/config.m4
-===================================================================
---- php-5.4.16.orig/ext/pdo_dblib/config.m4
-+++ php-5.4.16/ext/pdo_dblib/config.m4
+--- php5.orig/ext/pdo_dblib/config.m4
++++ php5/ext/pdo_dblib/config.m4
 @@ -46,7 +46,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
      PHP_LIBDIR=lib
    fi
@@ -116,10 +82,8 @@ Index: php-5.4.16/ext/pdo_dblib/config.m4
       AC_MSG_ERROR(Could not find $PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
    fi
  
-Index: php-5.4.16/ext/mysql/config.m4
-===================================================================
---- php-5.4.16.orig/ext/mysql/config.m4
-+++ php-5.4.16/ext/mysql/config.m4
+--- php5.orig/ext/mysql/config.m4
++++ php5/ext/mysql/config.m4
 @@ -93,17 +93,15 @@ Note that the MySQL client library is no
    fi
  

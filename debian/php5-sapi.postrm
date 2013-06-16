@@ -1,29 +1,28 @@
-#! /bin/sh
+#!/bin/sh
 
 set -e
 
-phpini=/etc/php5/@sapi@/php.ini
-
-case "$1" in
-purge)
-	# remove the flag to remember the original state
-	if [ -e /etc/php5/@sapi@/.start ]; then
-	    rm -f /etc/php5/@sapi@/.start
-	fi
-	for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
-	    rm -f $phpini$ext
-	done
-	rm -f $phpini
-	if which ucf >/dev/null; then
-	    ucf --purge $phpini
-	fi
-	if which ucfr >/dev/null; then
-	    ucfr --purge @package@ $phpini
-	fi
-	;;
-esac
-
 #EXTRA#
+
+php5_enable() { return 0; }
+
+if [ "$1" = "purge" ]; then
+    phpini=/etc/php5/@sapi@/php.ini
+    # remove the flag to remember the original state
+    if [ -e /etc/php5/@sapi@/.start ]; then
+	rm -f /etc/php5/@sapi@/.start
+    fi
+    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+	rm -f $phpini$ext
+    done
+    rm -f $phpini
+    if which ucf >/dev/null; then
+	ucf --purge $phpini
+    fi
+    if which ucfr >/dev/null; then
+	ucfr --purge @package@ $phpini
+    fi
+fi
 
 #DEBHELPER#
 

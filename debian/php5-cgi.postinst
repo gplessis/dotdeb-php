@@ -2,40 +2,37 @@
 
 set -e
 
-#DEBHELPER#
+VERSION=$2
 
-reload_apache()
-{
-	if apache2ctl configtest 2>/dev/null; then
-		invoke-rc.d apache2 $1 || true
-	else
-		echo "Your apache2 configuration is broken, so we're not restarting it for you."
-	fi
+php5_enable() {
+    # Enable php5-cgi only if upgrading from older versions of php5-cgi
+    if [ -n "$VERSION" ] && dpkg --compare-versions "$VERSION" lt 5.4.4-5; then
+	return 0
+    else
+	return 1
+    fi
 }
 
-if [ "$1" != "configure" ]; then
-    exit 0
+dpkg-maintscript-helper mv_conffile /etc/apache2/mods-available/php5_cgi.conf \
+    /etc/apache2/conf-available/php5-cgi.conf 5.5.0~beta4-1 -- "$@"
+
+dpkg-maintscript-helper rm_conffile /etc/apache2/mods-available/php5_cgi.load 5.5.0~beta4-1 -- "$@"
+
+if [ "$1" = "configure" ]; then
+    phpini="/etc/php5/cgi/php.ini"
+
+    ucf /usr/share/php5/php.ini-production $phpini
+    ucfr php5-cgi $phpini
+
+    update-alternatives \
+	--install /usr/bin/php-cgi php-cgi /usr/bin/php5-cgi 50 \
+	--slave /usr/share/man/man1/php-cgi.1.gz php-cgi.1.gz \
+	/usr/share/man/man1/php5-cgi.1.gz
+
+    update-alternatives \
+	--install /usr/lib/cgi-bin/php php-cgi-bin /usr/lib/cgi-bin/php5 50
 fi
 
-phpini="/etc/php5/cgi/php.ini"
-
-ucf /usr/share/php5/php.ini-production $phpini
-ucfr php5-cgi $phpini
-
-# Enable php5_cgi if upgrading from older versions of php5-cgi
-if [ -n "$2" ] && dpkg --compare-versions "$2" lt 5.4.4-5; then
-    # Only enable php5_cgi if apache2 is installed
-    if [ -x "/usr/sbin/a2enmod" ]; then
-	a2enmod php5_cgi >/dev/null || true
-	reload_apache force-reload
-    fi
-fi
-
-update-alternatives \
-        --install /usr/bin/php-cgi php-cgi /usr/bin/php5-cgi 50 \
-        --slave /usr/share/man/man1/php-cgi.1.gz php-cgi.1.gz /usr/share/man/man1/php5-cgi.1.gz
-
-update-alternatives \
-        --install /usr/lib/cgi-bin/php php-cgi-bin /usr/lib/cgi-bin/php5 50
+#DEBHELPER#
 
 exit 0

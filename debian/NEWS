@@ -1,3 +1,12 @@
+php5 (5.5.0~beta4-2) experimental; urgency=low
+
+  * short_open_tag configuration option now defaults to Off.  This means
+    that your PHP applications have to use '<?php' instead of just '<?'.
+    Please check and fix your applications (this is preferred solution) or
+    you can re-enable short_open_tag in /etc/php5/<sapi>/php.ini again.
+
+ -- Ondřej Surý <ondrej@debian.org>  Sun, 05 May 2013 23:37:54 +0200
+
 php5 (5.4.4-7) unstable; urgency=low
 
   * As a side effect of the MIME-Type changes in the mime-support package,

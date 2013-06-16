@@ -3,7 +3,6 @@
 set -e
 
 #EXTRA#
-#DEBHELPER#
 
 inidir=/etc/php5/mods-available
 for dsoname in @modules@; do
@@ -11,14 +10,14 @@ for dsoname in @modules@; do
 
     dpkg-maintscript-helper mv_conffile /etc/php5/conf.d/${inifile} ${inidir}/${inifile} 5.4.0~rc6-1 -- "$@";
 
-    # Query which package has this conffile registered
-    if which ucfq >/dev/null; then
-	ucfp=$(ucfq -w ${inidir}/${inifile} | cut -f 2 -d:)
-    fi
+    if [ "$1" = "purge" ]; then
+        # Query which package has this conffile registered
+	if which ucfq >/dev/null; then
+	    ucfp=$(ucfq -w ${inidir}/${inifile} | cut -f 2 -d:)
+	fi
 
-    # Only work with the config file if it still belongs to us
-    if test "$ucfp" = php5-@package@; then
-	if [ "$1" = "purge" ]; then
+        # Only work with the config file if it still belongs to us
+	if test "$ucfp" = php5-@package@; then
 	    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
 		rm -f ${inidir}/${inifile}${ext}
 	    done
@@ -32,5 +31,7 @@ for dsoname in @modules@; do
 	fi
     fi
 done
+
+#DEBHELPER#
 
 exit 0

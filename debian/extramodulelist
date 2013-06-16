@@ -1,3 +1,4 @@
+common ZendOpcache opcache 05 zend_extension
 mysql MySQL mysqli
 mysql MySQL pdo_mysql
 mysqlnd MySQL mysql

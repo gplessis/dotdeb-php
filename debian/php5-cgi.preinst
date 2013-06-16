@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+#DEBHELPER#
+
+dpkg-maintscript-helper mv_conffile /etc/apache2/mods-available/php5_cgi.conf \
+    /etc/apache2/conf-available/php5-cgi.conf 5.5.0~beta4-1 -- "$@"
+
+dpkg-maintscript-helper rm_conffile /etc/apache2/mods-available/php5_cgi.load 5.5.0~beta4-1 -- "$@"
+
+exit 0

@@ -1,0 +1,19 @@
+# php5-fpm - The PHP FastCGI Process Manager
+
+description "The PHP FastCGI Process Manager"
+author "Ondřej Surý <ondrej@debian.org>"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+pre-start script
+  errors=$(/usr/sbin/php5-fpm --fpm-config /etc/php5/fpm/php-fpm.conf -t 2>&1 | grep "\[ERROR\]")
+  if [ -n "$errors" ]; then
+    echo "Please fix your configuration file..."
+    echo $errors
+    stop
+  fi
+end script
+
+respawn
+exec /usr/sbin/php5-fpm --fpm-config /etc/php5/fpm/php-fpm.conf
