@@ -1,0 +1,39 @@
+From 7549beb1022c6821a279df03e0dfcbf0df5eef97 Mon Sep 17 00:00:00 2001
+From: Felipe Pena <felipensp@gmail.com>
+Date: Wed, 3 Jul 2013 15:02:03 -0300
+Subject: [PATCH] - Fixed build on FreeTDS 0.82
+
+---
+ ext/pdo_dblib/dblib_driver.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+Index: php-5.4.17/ext/pdo_dblib/dblib_driver.c
+===================================================================
+--- php-5.4.17.orig/ext/pdo_dblib/dblib_driver.c
++++ php-5.4.17/ext/pdo_dblib/dblib_driver.c
+@@ -274,9 +274,13 @@ static int pdo_dblib_handle_factory(pdo_
+ 		,{"5.0",DBVERSION_70} /* FIXME: This does not work with Sybase, but environ will */
+ 		,{"6.0",DBVERSION_70}
+ 		,{"7.0",DBVERSION_70}
++#ifdef DBVERSION_71
+ 		,{"7.1",DBVERSION_71}
++#endif
++#ifdef DBVERSION_72
+ 		,{"7.2",DBVERSION_72}
+ 		,{"8.0",DBVERSION_72}
++#endif
+ 		,{"10.0",DBVERSION_100}
+ 		,{"auto",0} /* Only works with FreeTDS. Other drivers will bork */
+ 		
+@@ -361,9 +365,11 @@ static int pdo_dblib_handle_factory(pdo_
+ 	/* allow double quoted indentifiers */
+ 	DBSETOPT(H->link, DBQUOTEDIDENT, "1");
+ 
++#ifdef DBSETLDBNAME
+ 	if (vars[3].optval) {
+ 		DBSETLDBNAME(H->login, vars[3].optval);
+ 	}
++#endif
+ 
+ 	ret = 1;
+ 	dbh->max_escaped_char_length = 2;
