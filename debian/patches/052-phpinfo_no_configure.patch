@@ -1,7 +1,7 @@
-Index: php-5.3.26/ext/standard/info.c
+Index: php-5.3.27/ext/standard/info.c
 ===================================================================
---- php-5.3.26.orig/ext/standard/info.c
-+++ php-5.3.26/ext/standard/info.c
+--- php-5.3.27.orig/ext/standard/info.c
++++ php-5.3.27/ext/standard/info.c
 @@ -704,7 +704,7 @@ PHPAPI void php_print_info(int flag TSRM
  #ifdef ARCHITECTURE
  		php_info_print_table_row(2, "Architecture", ARCHITECTURE);
@@ -11,10 +11,10 @@ Index: php-5.3.26/ext/standard/info.c
  		php_info_print_table_row(2, "Configure Command", CONFIGURE_COMMAND );
  #endif
  
-Index: php-5.3.26/ext/standard/tests/general_functions/phpinfo.phpt
+Index: php-5.3.27/ext/standard/tests/general_functions/phpinfo.phpt
 ===================================================================
---- php-5.3.26.orig/ext/standard/tests/general_functions/phpinfo.phpt
-+++ php-5.3.26/ext/standard/tests/general_functions/phpinfo.phpt
+--- php-5.3.27.orig/ext/standard/tests/general_functions/phpinfo.phpt
++++ php-5.3.27/ext/standard/tests/general_functions/phpinfo.phpt
 @@ -20,7 +20,6 @@ PHP Version => %s
  
  System => %s

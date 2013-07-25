@@ -1,7 +1,7 @@
-Index: php-5.3.26/ext/dba/config.m4
+Index: php-5.3.27/ext/dba/config.m4
 ===================================================================
---- php-5.3.26.orig/ext/dba/config.m4
-+++ php-5.3.26/ext/dba/config.m4
+--- php-5.3.27.orig/ext/dba/config.m4
++++ php-5.3.27/ext/dba/config.m4
 @@ -109,6 +109,10 @@ if test "$PHP_QDBM" != "no"; then
        THIS_PREFIX=$i
        THIS_INCLUDE=$i/include/depot.h
