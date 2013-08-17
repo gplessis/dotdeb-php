@@ -43,12 +43,12 @@ fi
 #
 do_check()
 {
-    [ "$1" != "no" ] && $DAEMON $DAEMON_ARGS -t 2>&1 | grep -v "\[ERROR\]"
-    FPM_ERROR=$($DAEMON $DAEMON_ARGS -t 2>&1 | grep "\[ERROR\]")
+    [ "$1" != "no" ] && $DAEMON $DAEMON_ARGS -t 2>&1 | grep -v " ERROR:"
+    FPM_ERROR=$($DAEMON $DAEMON_ARGS -t 2>&1 | grep " ERROR:")
 
     if [ -n "${FPM_ERROR}" ]; then
 	echo "Please fix your configuration file..."
-	$DAEMON $DAEMON_ARGS -t 2>&1 | grep "\[ERROR\]"
+	$DAEMON $DAEMON_ARGS -t 2>&1 | grep " ERROR:"
 	return 1
     fi
     return 0
