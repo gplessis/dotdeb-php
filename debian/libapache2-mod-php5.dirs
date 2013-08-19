@@ -1,3 +1,4 @@
 /etc/apache2/mods-available
 /etc/php5/apache2
+/etc/php5/apache2/conf.d
 /usr/lib/apache2/modules

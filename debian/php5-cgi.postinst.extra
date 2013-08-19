@@ -1,6 +1,7 @@
-#!/bin/sh
+dpkg-maintscript-helper mv_conffile /etc/apache2/mods-available/php5_cgi.conf \
+    /etc/apache2/conf-available/php5-cgi.conf 5.5.0~beta4-1 -- "$@"
 
-set -e
+dpkg-maintscript-helper rm_conffile /etc/apache2/mods-available/php5_cgi.load 5.5.0~beta4-1 -- "$@"
 
 VERSION=$2
 
@@ -13,17 +14,7 @@ php5_enable() {
     fi
 }
 
-dpkg-maintscript-helper mv_conffile /etc/apache2/mods-available/php5_cgi.conf \
-    /etc/apache2/conf-available/php5-cgi.conf 5.5.0~beta4-1 -- "$@"
-
-dpkg-maintscript-helper rm_conffile /etc/apache2/mods-available/php5_cgi.load 5.5.0~beta4-1 -- "$@"
-
 if [ "$1" = "configure" ]; then
-    phpini="/etc/php5/cgi/php.ini"
-
-    ucf /usr/share/php5/php.ini-production $phpini
-    ucfr php5-cgi $phpini
-
     update-alternatives \
 	--install /usr/bin/php-cgi php-cgi /usr/bin/php5-cgi 50 \
 	--slave /usr/share/man/man1/php-cgi.1.gz php-cgi.1.gz \
@@ -32,7 +23,3 @@ if [ "$1" = "configure" ]; then
     update-alternatives \
 	--install /usr/lib/cgi-bin/php php-cgi-bin /usr/lib/cgi-bin/php5 50
 fi
-
-#DEBHELPER#
-
-exit 0

@@ -6,28 +6,31 @@ set -e
 
 if [ "$1" = "configure" ]; then
     inidir=/etc/php5/mods-available
-    for dsoname in @modules@; do
-	inifile=${dsoname}.ini
-	priority=$(sed -ne "s/^; priority=\([0-9]\+\)$/\\1/p" /usr/share/php5/@package@/${inifile})
 
-	# Register new conffile with UCF
-	ucf /usr/share/php5/@package@/${inifile} ${inidir}/${inifile}
-	ucfr --force php5-@package@ ${inidir}/${inifile}
+    if [ -e /usr/share/php5/php5-maintscript-helper ] ; then
+	. /usr/share/php5/php5-maintscript-helper
 
-	# Move pre-extension manager conffile
-	dpkg-maintscript-helper mv_conffile /etc/php5/conf.d/${inifile} ${inidir}/${inifile} 5.4.0~rc6-1 -- "$@";
+	for dsoname in @modules@; do
+	    inifile=${dsoname}.ini
 
-	if [ -f "${inidir}/${inifile}.dpkg-new" ]; then
-	    md5sum="$(md5sum ${inidir}/${inifile}.dpkg-new | sed -e 's/ .*//')"
-	    old_md5sum="$(md5sum ${inidir}/${inifile} | sed -e 's/ .*//')"
-	    if [ "$md5sum" = "$old_md5sum" ]; then
-		mv "${inidir}/${inifile}.dpkg-new" "${inidir}/${inifile}"
+	    # Register new conffile with UCF
+	    ucf /usr/share/php5/@package@/${inifile} ${inidir}/${inifile}
+	    ucfr --force php5-@package@ ${inidir}/${inifile}
+
+	    # Move pre-extension manager conffile
+	    dpkg-maintscript-helper mv_conffile /etc/php5/conf.d/${inifile} ${inidir}/${inifile} 5.4.0~rc6-1 -- "$@";
+
+	    if [ -f "${inidir}/${inifile}.dpkg-new" ]; then
+		md5sum="$(md5sum ${inidir}/${inifile}.dpkg-new | sed -e 's/ .*//')"
+		old_md5sum="$(md5sum ${inidir}/${inifile} | sed -e 's/ .*//')"
+		if [ "$md5sum" = "$old_md5sum" ]; then
+		    mv "${inidir}/${inifile}.dpkg-new" "${inidir}/${inifile}"
+		fi
 	    fi
-	fi
-
-	# Enable the module
-	php5enmod ${dsoname}/${priority:-20}
-    done
+	
+	    php5_invoke enmod ALL ${dsoname}
+	done
+    fi
 fi
 
 #DEBHELPER#

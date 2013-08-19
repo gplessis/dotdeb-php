@@ -24,4 +24,4 @@ xzcat "$tarball" | \
     > "$tdir/${fname/.xz}"
 xz "$tdir/${fname/.xz}"
 
-mv "$tdir/$fname" "${tarball/orig.tar.xz}.dfsg.orig.tar.xz"
+mv "$tdir/$fname" "${tarball/.tar.xz}+dfsg.tar.xz"

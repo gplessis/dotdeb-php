@@ -1,3 +1,10 @@
+php5 (5.5.2-1~dotdeb.1) stable; urgency=low
+
+  * New upstream release
+  * Sync with Debian
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 17 Aug 2013 11:54:42 -0700
+
 php5 (5.5.1-1~dotdeb.1) stable; urgency=low
 
   * New upstream release

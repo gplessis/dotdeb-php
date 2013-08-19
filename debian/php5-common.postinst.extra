@@ -1,0 +1,8 @@
+for sapi in apache2 apache2filter cli cgi embed fpm; do
+    CONFDIR=/etc/php5/$sapi/conf.d
+
+    if [ -L $CONFDIR ]; then
+	rm $CONFDIR
+	mkdir $CONFDIR
+    fi
+done

@@ -19,12 +19,13 @@ PHP5_COMPAT=no
 DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_ARCH        ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_ARCH_OS     ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 
 PHP5_SOURCE_VERSION   = $(shell dpkg-parsechangelog | grep ^Version | sed "s/Version: //")
 PHP5_UPSTREAM_VERSION = $(shell echo $(PHP5_SOURCE_VERSION) | sed -e "s/-.*//" -e "s/.*://")
 PHP5_DEBIAN_REVISION  = $(shell echo $(PHP5_SOURCE_VERSION) | sed "s/.*-//")
 
-RUN_TESTS = yes
+RUN_TESTS = no
 ifeq (nocheck,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
   $(warning Disabling checks due DEB_BUILD_OPTIONS)
   RUN_TESTS = no
@@ -163,14 +164,13 @@ ifeq (yes,$(RUN_TESTS))
 	mkdir -p temp_session_store
 	# start our own mysql server for the tests
 	$(SHELL) -x debian/setup-mysql.sh $(MYSQL_PORT) $(MYSQL_DATA_DIR)
-	extensions=" -d extension=mysqlnd.so"; \
+	extensions=""; \
 	for f in $(CURDIR)/apache2-build/modules/*.so; do \
 	    ext=`basename "$$f"`; \
 	    test -d "$(CURDIR)/ext/$${ext%.so}/tests" || continue; \
 	    test "$$ext" != "imap.so" || continue; \
 	    test "$$ext" != "interbase.so" || continue; \
 	    test "$$ext" != "ldap.so" || continue; \
-	    test "$$ext" != "mysqlnd.so" || continue; \
 	    test "$$ext" != "odbc.so" || continue; \
 	    test "$$ext" != "pgsql.so" || continue; \
 	    test "$$ext" != "pdo_dblib.so" || continue; \
@@ -291,9 +291,8 @@ configure-apache2-stamp: prepared-stamp
 		--with-ldap=shared,/usr \
 		--with-ldap-sasl=/usr \
 		--with-mcrypt=shared,/usr \
-		--enable-mysqlnd=shared \
-		--with-mysql=shared,mysqlnd \
-		--with-mysqli=shared,mysqlnd \
+		--with-mysql=shared,/usr \
+		--with-mysqli=shared,/usr/bin/mysql_config \
 		--with-pspell=shared,/usr \
 		--with-unixODBC=shared,/usr \
 		--with-recode=shared,/usr \
@@ -306,7 +305,7 @@ configure-apache2-stamp: prepared-stamp
 		--with-pgsql=shared,/usr PGSQL_INCLUDE=`pg_config --includedir` \
 		--enable-pdo=shared \
 		--without-pdo-dblib \
-		--with-pdo-mysql=shared,mysqlnd \
+		--with-pdo-mysql=shared,/usr \
 		--with-pdo-odbc=shared,unixODBC,/usr \
 		--with-pdo-pgsql=shared,/usr/bin/pg_config \
 		--with-pdo-sqlite=shared,/usr \
@@ -352,9 +351,10 @@ configure-cgi-stamp: prepared-stamp
 		$(COMMON_CONFIG) \
 		--without-mm \
 		--enable-pdo=shared \
-		--with-mysql=shared,/usr \
-		--with-mysqli=shared,/usr/bin/mysql_config \
-		--with-pdo-mysql=shared,/usr \
+		--enable-mysqlnd=shared \
+		--with-mysql=shared,mysqlnd \
+		--with-mysqli=shared,mysqlnd \
+		--with-pdo-mysql=shared,mysqlnd \
 		--without-pdo-sqlite \
 		--without-sybase-ct --without-mssql \
 		--without-sqlite3 \
@@ -506,11 +506,24 @@ install: build
 	cat php.ini-development | tr "\t" " " | sed -e'/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$$/ $(PCNTL_FUNCTIONS)/g;' > debian/php5-common/usr/share/php5/php.ini-development
 	cp test-results.txt debian/php5-common/usr/share/doc/php5-common/
 
+	# Install reportbug for php5 package
+	mkdir -p debian/php5/usr/share/reportbug/php5
+	install -m644 debian/php5.bug.control debian/php5/usr/share/reportbug/php5/control
+	ln -s ../php5-common/script debian/php5/usr/share/reportbug/php5/script
+
+	# Install helper shell fragment
+	install -m644 debian/php5-helper $(CURDIR)/debian/php5-common/usr/share/php5/
+	install -m644 debian/debhelper/php5-maintscript-helper $(CURDIR)/debian/php5-common/usr/share/php5/
+
 	# install embed SAPI
 	cd embed-build && make install-headers install-build install-sapi install-programs INSTALL_ROOT=$(CURDIR)/debian/libphp5-embed
 
 	# install the apache modules' files
 	cd apache2-build && $(MAKE) install-headers install-build install-modules install-programs INSTALL_ROOT=$(CURDIR)/debian/libapache2-mod-php5
+
+	# install the headers from cgi-build
+	cd cgi-build && $(MAKE) install-headers INSTALL_ROOT=$(CURDIR)/debian/php5-dev
+
 	# remove netware and win32 headers that we don't want
 	cd debian/libapache2-mod-php5/usr/include/php5/ && \
 		  $(RM) TSRM/readdir.h \
@@ -553,7 +566,7 @@ install: build
 		mkdir -p debian/$$i/$${ext}; \
 	done; \
 	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
-		if [ "$$package" = "mysql" ]; then \
+		if [ "$$package" = "mysqlnd" ]; then \
 			modulepath=cgi-build/modules; \
 		elif [ "$$package" = "readline" ]; then \
 			modulepath=cli-build/modules; \
@@ -587,6 +600,8 @@ install: build
 	# extract the first pool, called "www," from the config file:
 	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf \
 	    > debian/php5-fpm/etc/php5/fpm/pool.d/www.conf
+	# install a helper script for checking PHP FPM configuration
+	install -m 755 debian/php5-fpm-checkconf debian/php5-fpm/usr/lib/php5/
 
 	# move and install -dev files
 	dh_movefiles --sourcedir=debian/libphp5-embed
@@ -620,11 +635,18 @@ install: build
 	# remove windows devel file
 	rm $(CURDIR)/debian/php5-dev/usr/share/php5/skeleton/skeleton.dsp
 
+	install -m755 debian/debhelper/dh_* $(CURDIR)/debian/php5-dev/usr/bin
+	install -d -m755 $(CURDIR)/debian/php5-dev/usr/share/debhelper/autoscripts/
+	install -m644 debian/debhelper/*-php5 $(CURDIR)/debian/php5-dev/usr/share/debhelper/autoscripts/
+	install -d -m755 $(CURDIR)/debian/php5-dev/usr/share/perl5/Debian/Debhelper/Sequence
+	install -m644 debian/debhelper/php5.pm $(CURDIR)/debian/php5-dev/usr/share/perl5/Debian/Debhelper/Sequence
+
 	# install common files
 	install -m755 debian/maxlifetime debian/php5-common/usr/lib/php5
 	install -m755 debian/sessionclean debian/php5-common/usr/lib/php5
 	install -m755 debian/php5enmod debian/php5-common/usr/sbin/php5enmod
 	ln -s php5enmod debian/php5-common/usr/sbin/php5dismod
+	install -m755 debian/php5query $(CURDIR)/debian/php5-common/usr/sbin/php5query
 
 	# install lintian overrides
 	cp debian/php5.lintian-overrides $(CURDIR)/debian/php5-common/usr/share/lintian/overrides/php5-common
@@ -707,10 +729,17 @@ binary-arch: build install
 	    done; \
 	    cp debian/php5-module.triggers debian/php5-$${package}.triggers; \
 	    rm debian/php5-$$package.modules; \
+	    mkdir -p debian/php5-$$package/usr/share/bug/php5-$$package; \
+	    sed -e"s/@package@/$${package}/g; \
+	           s/@modules@/$${modules}/g;" \
+	      < debian/php5-module.bug.script \
+	      > debian/php5-$$package/usr/share/bug/php5-$$package/script; \
+	    chmod 755 debian/php5-$$package/usr/share/bug/php5-$$package/script; \
+	    cp debian/php5-module.bug.control debian/php5-$$package/usr/share/bug/php5-$$package/control; \
 	done
 
 	# likewise, for the different sapi implementations
-	for tmpl in postrm links; do \
+	for tmpl in postrm prerm postinst; do \
 		for sapi in cgi cli fpm; do \
 			sed -e "s/@sapi@/$${sapi}/g; \
 	                        s/@package@/php5-$${sapi}/g; \
@@ -718,6 +747,15 @@ binary-arch: build install
 		  	< debian/php5-sapi.$${tmpl} \
 	                | sed -e'/#EXTRA#/ d' \
 		  	> debian/php5-$${sapi}.$${tmpl}; \
+			mkdir -p "$(CURDIR)/debian/php5-$$sapi/usr/share/php5/sapi/"; \
+			touch "$(CURDIR)/debian/php5-$$sapi/usr/share/php5/sapi/$$sapi"; \
+			mkdir -p debian/php5-$$sapi/usr/share/bug/php5-$$sapi; \
+			sed -e "s/@sapi@/$${sapi}/g; \
+	                        s/@package@/php5-$${sapi}/g;" \
+			  < debian/php5-sapi.bug.script \
+			  > debian/php5-$$sapi/usr/share/bug/php5-$$sapi/script; \
+			chmod 755 debian/php5-$$sapi/usr/share/bug/php5-$$sapi/script; \
+			cp debian/php5-sapi.bug.control debian/php5-$$sapi/usr/share/bug/php5-$$sapi/control; \
 		done; \
 		for sapi in embed; do \
 			sed -e "s/@sapi@/$${sapi}/g; \
@@ -726,6 +764,15 @@ binary-arch: build install
 		  	< debian/php5-sapi.$${tmpl} \
 	                | sed -e'/#EXTRA#/ d' \
 		  	> debian/libphp5-$${sapi}.$${tmpl}; \
+			mkdir -p "$(CURDIR)/debian/libphp5-$$sapi/usr/share/php5/sapi/"; \
+			touch "$(CURDIR)/debian/libphp5-$$sapi/usr/share/php5/sapi/$$sapi"; \
+			mkdir -p debian/libphp5-$$sapi/usr/share/bug/libphp5-$$sapi; \
+			sed -e "s/@sapi@/$${sapi}/g; \
+	                        s/@package@/libphp5-$${sapi}/g;" \
+			  < debian/php5-sapi.bug.script \
+			  > debian/libphp5-$$sapi/usr/share/bug/libphp5-$$sapi/script; \
+			chmod 755 debian/libphp5-$$sapi/usr/share/bug/libphp5-$$sapi/script; \
+			cp debian/php5-sapi.bug.control debian/libphp5-$$sapi/usr/share/bug/libphp5-$$sapi/control; \
 		done; \
 	        for sapi in "" "filter"; do \
 		        sed -e "s/@sapi@/apache2$${sapi}/g; \
@@ -734,6 +781,15 @@ binary-arch: build install
 		        < debian/php5-sapi.$${tmpl} \
 	                | sed -e'/#EXTRA#/ d' \
 		        > debian/libapache2-mod-php5$${sapi}.$${tmpl}; \
+			mkdir -p "$(CURDIR)/debian/libapache2-mod-php5$$sapi/usr/share/php5/sapi/"; \
+			touch "$(CURDIR)/debian/libapache2-mod-php5$$sapi/usr/share/php5/sapi/apache2$$sapi"; \
+			mkdir -p debian/libapache2-mod-php5$$sapi/usr/share/bug/libapache2-mod-php5$$sapi; \
+		        sed -e "s/@sapi@/apache2$${sapi}/g; \
+	                        s/@package@/libapache2-mod-php5$${sapi}/g;" \
+			  < debian/php5-sapi.bug.script \
+			  > debian/libapache2-mod-php5$$sapi/usr/share/bug/libapache2-mod-php5$$sapi/script; \
+			chmod 755 debian/libapache2-mod-php5$$sapi/usr/share/bug/libapache2-mod-php5$$sapi/script; \
+			cp debian/php5-sapi.bug.control debian/libapache2-mod-php5$$sapi/usr/share/bug/libapache2-mod-php5$$sapi/control; \
 	        done; \
 	done
 
@@ -748,21 +804,23 @@ binary-arch: build install
 		rm -rf debian/$$package/usr/share/doc/$$package; \
 		ln -s php5-common debian/$$package/usr/share/doc/$$package; \
 	done
+	dh_perl
 	dh_installlogrotate -pphp5-fpm
 	dh_installcron -pphp5-common --name=php5
 	dh_installchangelogs -pphp5-common NEWS
 	dh_installinit
-	dh_strip -s --dbg-package=php5-dbg
 	dh_link -s
 	dh_compress -s -Xphp.ini
-	dh_fixperms -s -X /var/lib/php5
-	dh_installdeb -s
+	dh_fixperms -s -X/var/lib/php5
+	dh_strip -s --dbg-package=php5-dbg
+	dh_makeshlibs -s -plibphp5-embed -V 'libphp5-embed (>= 5.5.0)'
 	dh_shlibdeps -s
+	dh_installdeb -s
 
 	phpapi=`./debian/php5-dev/usr/bin/php-config5 --phpapi`; \
 	stored=`cat debian/phpapi`; \
-	[ "$${phpapi%+lfs}" = "$${stored}" ] || echo "PHPAPI has changed, please modify debian/phpapi"; \
-	for i in libapache2-mod-php5 libapache2-mod-php5filter php5-cgi php5-cli libphp5-embed php5-fpm; do \
+	if [ "$${phpapi%+lfs}" != "$${stored}" ]; then echo "PHPAPI has changed, please modify debian/phpapi"; exit 1; fi; \
+	for i in php5-common; do \
 		echo "php:Provides=phpapi-$${phpapi}" >> debian/$$i.substvars; \
 	done; \
 	cat debian/modulelist | while read package extname dsoname priority; do \

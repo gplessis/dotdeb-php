@@ -1,3 +1,4 @@
 /etc/php5/cli
+/etc/php5/cli/conf.d
 /usr/bin
 /usr/share/man/man1

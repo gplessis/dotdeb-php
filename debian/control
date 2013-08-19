@@ -88,8 +88,7 @@ Depends: ${misc:Depends},
 	 psmisc (>= 22.15-1~),
 	 lsof [!kfreebsd-any !hurd-any],
 	 ucf
-Pre-Depends: dpkg (>= 1.15.7.2~)
-Provides: php5-json, php5-mhash
+Provides: php5-json, php5-mhash, ${php:Provides}
 Conflicts: php5-json, php5-mhash, php5-suhosin
 Description: Common files for packages built from the php5 source
  This package contains the documentation and example files relevant to all
@@ -103,8 +102,15 @@ Package: libapache2-mod-php5
 Section: httpd
 Architecture: any
 Pre-Depends: apache2
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
-Conflicts: libapache2-mod-php4, libapache2-mod-php5filter
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 libmagic1,
+	 ucf,
+	 tzdata
+Conflicts: libapache2-mod-php4,
+	   libapache2-mod-php5filter
 Provides: ${php:Provides}
 Recommends: php5-cli
 Suggests: php-pear
@@ -124,7 +130,13 @@ Section: httpd
 Priority: extra
 Architecture: any
 Pre-Depends: apache2
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 libmagic1,
+	 ucf,
+	 tzdata
 Conflicts: libapache2-mod-php4, libapache2-mod-php5
 Provides: ${php:Provides}
 Suggests: php-pear
@@ -163,6 +175,7 @@ Package: php5-cli
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata, libedit2 (>= 2.11-20080614-4)
 Provides: ${php:Provides}
+Recommends: php5-readline
 Suggests: php-pear
 Description: command-line interpreter for the php5 scripting language
  This package provides the /usr/bin/php5 command interpreter, useful for
@@ -196,6 +209,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
 Provides: ${php:Provides}
 Suggests: php-pear
+Priority: extra
 Description: HTML-embedded scripting language (Embedded SAPI library)
  This package provides the library /usr/lib/libphp5.so which can
  be used by application developers to embed PHP scripting functionality.
@@ -205,11 +219,17 @@ Description: HTML-embedded scripting language (Embedded SAPI library)
  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
  open source general-purpose scripting language that is especially suited
  for web development and can be embedded into HTML.
+ .
+ WARNING: The embed SAPI is experimental and there's no guarantee that
+ the API/ABI will be kept compatible even between minor releases.  You
+ have been warned.
 
 Package: php5-dev
-Depends: ${misc:Depends}, autoconf (>= 2.63), automake (>= 1.11), libssl-dev, libtool (>= 2.2), shtool, php5-common (>= ${binary:Version})
+Depends: ${misc:Depends}, autoconf (>= 2.63), automake (>= 1.11), libssl-dev, libtool (>= 2.2), shtool, php5-common (>= ${binary:Version}), ${perl:Depends}
 Conflicts: ${libtool:Conflicts}
 Architecture: any
+Provides: dh-php5
+Recommends: pkg-php-tools
 Description: Files for PHP5 module development
  This package provides the files from the PHP5 source needed for compiling
  additional modules.

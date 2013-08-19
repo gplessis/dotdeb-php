@@ -1,0 +1,23 @@
+#!/bin/sh
+
+MATCH="^[[:space:]]*($|;)"
+
+echo "==== Additional PHP 5 information ====" >&3
+echo "" >&3
+echo "++++ PHP 5 SAPI (php5query -S): ++++" >&3
+/usr/sbin/php5query -S >&3
+echo "" >&3
+echo "++++ PHP 5 Extensions (php5query -M -v): ++++" >&3
+/usr/sbin/php5query -M -v >&3
+echo "" >&3
+
+echo "++++ Configuration files: ++++" >&3
+"**** /etc/php5/@sapi@/php.ini ****" >&3
+grep -Ev "$MATCH" /etc/php5/@sapi@/php.ini >&3
+echo "" >&3
+find /etc/php5/@sapi@/conf.d/ -name '*.ini' | \
+while read CONF; do
+    echo "**** $CONF ****" >&3
+    grep -Ev "$MATCH" "$CONF" >&3
+    echo "" >&3
+done

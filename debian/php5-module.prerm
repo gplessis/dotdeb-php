@@ -4,10 +4,14 @@ set -e
 
 #EXTRA#
 
-if [ "$1" = "remove" ]; then
-    for dsoname in @modules@; do
-	php5dismod ${dsoname}
-    done
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ]; then
+    if [ -e /usr/share/php5/php5-maintscript-helper ] ; then
+	. /usr/share/php5/php5-maintscript-helper
+
+	for dsoname in @modules@; do
+	    php5_invoke dismod ALL ${dsoname}
+	done
+    fi
 fi
 
 #DEBHELPER#

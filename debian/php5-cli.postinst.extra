@@ -1,18 +1,5 @@
-#!/bin/sh
-
-set -e
-
 if [ "$1" = "configure" ]; then
-    phpini="/etc/php5/cli/php.ini"
-
-    ucf /usr/share/php5/php.ini-production.cli $phpini
-    ucfr php5-cli $phpini
-
     update-alternatives \
 	--install /usr/bin/php php /usr/bin/php5 50 \
 	--slave /usr/share/man/man1/php.1.gz php.1.gz /usr/share/man/man1/php5.1.gz
 fi
-
-#DEBHELPER#
-
-exit 0

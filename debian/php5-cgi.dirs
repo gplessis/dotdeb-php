@@ -1,5 +1,6 @@
 /etc/apache2/mods-available
 /etc/php5/cgi
+/etc/php5/cgi/conf.d
 /usr/lib/cgi-bin
 /usr/bin
 /usr/share/man/man1

@@ -1,12 +1,12 @@
 [Unit]
 Description=The PHP FastCGI Process Manager
-After=network.target
+After=syslog.target network.target
 
 [Service] 
-Type=forking
+Type=notify
 PIDFile=/var/run/php5-fpm.pid
-ExecStartPre=sh -c 'errors=$(/usr/sbin/php5-fpm --fpm-config /etc/php5/fpm/php-fpm.conf -t 2>&1 | grep "\[ERROR\]"); if [ -n "$errors" ]; then echo "Please fix your configuration file..."; echo $errors; exit 1; fi'
-ExecStart=/usr/sbin/php5-fpm
+ExecStartPre=/usr/lib/php5/php5-fpm-checkconf
+ExecStart=/usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.conf
 ExecReload=/bin/kill -USR2 $MAINPID
 
 [Install]

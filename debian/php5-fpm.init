@@ -15,7 +15,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="PHP5 FastCGI Process Manager"
 NAME=php5-fpm
 DAEMON=/usr/sbin/$NAME
-DAEMON_ARGS="--fpm-config /etc/php5/fpm/php-fpm.conf"
+DAEMON_ARGS="--daemonize --fpm-config /etc/php5/fpm/php-fpm.conf"
 PIDFILE=/var/run/php5-fpm.pid
 TIMEOUT=30
 SCRIPTNAME=/etc/init.d/$NAME
@@ -43,14 +43,7 @@ fi
 #
 do_check()
 {
-    [ "$1" != "no" ] && $DAEMON $DAEMON_ARGS -t 2>&1 | grep -v " ERROR:"
-    FPM_ERROR=$($DAEMON $DAEMON_ARGS -t 2>&1 | grep " ERROR:")
-
-    if [ -n "${FPM_ERROR}" ]; then
-	echo "Please fix your configuration file..."
-	$DAEMON $DAEMON_ARGS -t 2>&1 | grep " ERROR:"
-	return 1
-    fi
+    /usr/lib/php5/php5-fpm-checkconf || return 1
     return 0
 }
 

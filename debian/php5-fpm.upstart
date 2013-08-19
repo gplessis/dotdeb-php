@@ -6,20 +6,7 @@ author "Ondřej Surý <ondrej@debian.org>"
 start on runlevel [2345]
 stop on runlevel [016]
 
-env DAEMON=/usr/sbin/php5-fpm
-env CONF=/etc/php5/fpm/php-fpm.conf
+pre-start exec /usr/lib/php5/php5-fpm-checkconf
 
-expect fork
 respawn
-respawn limit 10 5
-
-pre-start script
-  errors=$($DAEMON --fpm-config $CONF -t 2>&1 | grep " ERROR:" || true)
-  if [ -n "$errors" ]; then
-    echo "Please fix your configuration file..."
-    echo "$errors"
-    stop ; exit 0
-  fi
-end script
-
-exec $DAEMON --fpm-config $CONF
+exec /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.conf

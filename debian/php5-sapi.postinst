@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+CONFDIR=/etc/php5/@sapi@/conf.d
+
+if [ -L $CONFDIR ]; then
+    rm $CONFDIR
+    mkdir $CONFDIR
+fi
+
+if [ "$1" = "configure" ]; then
+    phpini="/etc/php5/@sapi@/php.ini"
+
+    ucf /usr/share/php5/php.ini-production $phpini
+    ucfr @package@ $phpini
+
+    if [ -e /usr/share/php5/php5-maintscript-helper ]; then
+	. /usr/share/php5/php5-maintscript-helper
+	
+	mods=$(php5query -M)
+	for mod in $mods; do
+	    php5_invoke enmod @sapi@ $mod
+	done
+    fi
+
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,1 +1,1 @@
-interest /etc/php5/conf.d
+interest /etc/php5/fpm/conf.d

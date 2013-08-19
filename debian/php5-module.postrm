@@ -29,6 +29,14 @@ for dsoname in @modules@; do
 		ucfr --purge php5-@package@ ${inidir}/${inifile}
 	    fi
 	fi
+	
+	if [ -e /usr/share/php5/php5-maintscript-helper ] ; then
+	    . /usr/share/php5/php5-maintscript-helper
+
+	    for dsoname in @modules@; do
+		php5_invoke dismod ALL ${dsoname}
+	    done
+	fi
     fi
 done
 
