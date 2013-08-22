@@ -480,8 +480,6 @@ install: build
 
 	cp debian/php5-cgi.conf \
 		debian/php5-cgi/etc/apache2/mods-available/php5-cgi.conf
-	cp debian/php5-cgi.load \
-	        debian/php5-cgi/etc/apache2/mods-available/php5-cgi.load
 
 	# install apache2 DSO module
 	cp apache2-build/.libs/libphp5.so \
