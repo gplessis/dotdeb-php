@@ -3,11 +3,11 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
-Index: php-5.5.3/php.ini-development
+Index: php-5.5.4/php.ini-development
 ===================================================================
---- php-5.5.3.orig/php.ini-development
-+++ php-5.5.3/php.ini-development
-@@ -305,6 +305,12 @@ serialize_precision = 17
+--- php-5.5.4.orig/php.ini-development
++++ php-5.5.4/php.ini-development
+@@ -304,6 +304,12 @@ serialize_precision = 17
  ; or per-virtualhost web server configuration file. This directive is
  ; *NOT* affected by whether Safe Mode is turned On or Off.
  ; http://php.net/open-basedir
