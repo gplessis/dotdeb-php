@@ -3,10 +3,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
-Index: php-5.4.19/php.ini-development
+Index: php-5.4.20/php.ini-development
 ===================================================================
---- php-5.4.19.orig/php.ini-development
-+++ php-5.4.19/php.ini-development
+--- php-5.4.20.orig/php.ini-development
++++ php-5.4.20/php.ini-development
 @@ -305,6 +305,12 @@ serialize_precision = 17
  ; or per-virtualhost web server configuration file. This directive is
  ; *NOT* affected by whether Safe Mode is turned On or Off.
