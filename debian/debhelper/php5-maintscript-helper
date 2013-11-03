@@ -143,8 +143,6 @@ php5_msg()
 {
 	local PRIORITY="$1"
 	local MSG="$2"
-	[ -z "$PHP5_MAINTSCRIPT_HELPER_QUIET" ] && echo "$MSG" >&2
-	[ -x /usr/bin/logger ] || return 0
 	case "$PRIORITY" in
 		debug|info|notice|warning|err|crit|alert|emerg)
 		;;
@@ -152,6 +150,8 @@ php5_msg()
 			PRIORITY="warning"
 		;;
 	esac
+	[ -z "$PHP5_MAINTSCRIPT_HELPER_QUIET" ] && ( [ -n "${PHP5_MAINTSCRIPT_DEBUG:-}" ] || [ "$PRIORITY" != "debug" ] ) && echo "$MSG" >&2
+	[ -x /usr/bin/logger ] || return 0
 	local LOGGER="/usr/bin/logger -p daemon.$PRIORITY -t $PHP5_MAINTSCRIPT_PACKAGE "
 	$LOGGER "$MSG" || return 0
 }
@@ -260,10 +260,10 @@ php5_invoke()
 			# this will return RC=1
 			( php5$CMD -p -f -s "$SAPI" -q "$MOD" > /dev/null 2>&1 )
 		    else
-			php5_msg "info" "php5_invoke $MOD $PHP5_MAINTSCRIPT_NAME: No action required for $SAPI SAPI"
+			php5_msg "debug" "php5_invoke $MOD $PHP5_MAINTSCRIPT_NAME: No action required for $SAPI SAPI"
 		    fi
 		else
-		    php5_msg "info" "php5_invoke $MOD $PHP5_MAINTSCRIPT_NAME: No action required for $SAPI SAPI"
+		    php5_msg "debug" "php5_invoke $MOD $PHP5_MAINTSCRIPT_NAME: No action required for $SAPI SAPI"
 		fi
 		;;
 	    *)

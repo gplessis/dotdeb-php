@@ -1,6 +1,6 @@
 [Unit]
 Description=The PHP FastCGI Process Manager
-After=syslog.target network.target
+After=network.target
 
 [Service] 
 Type=notify

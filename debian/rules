@@ -20,6 +20,7 @@ DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_ARCH        ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 DEB_HOST_ARCH_OS     ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+DEB_HOST_MULTIARCH   ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 PHP5_SOURCE_VERSION   = $(shell dpkg-parsechangelog | grep ^Version | sed "s/Version: //")
 PHP5_UPSTREAM_VERSION = $(shell echo $(PHP5_SOURCE_VERSION) | sed -e "s/-.*//" -e "s/.*://")
@@ -48,6 +49,12 @@ ifeq (yes,$(RUN_TESTS))
       $(error Could not find available port for mysql server)
   endif
   MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
+endif
+
+ifeq (linux,$(DEB_HOST_ARCH_OS))
+  CONFIGURE_SYSTEMD = --with-fpm-systemd
+else
+  CONFIGURE_SYSTEMD = --without-fpm-systemd
 endif
 
 # specify some options to our patch system

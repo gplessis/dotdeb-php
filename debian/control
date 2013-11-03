@@ -209,7 +209,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
 Provides: ${php:Provides}
 Suggests: php-pear
-Priority: extra
+Priority: optional
 Description: HTML-embedded scripting language (Embedded SAPI library)
  This package provides the library /usr/lib/libphp5.so which can
  be used by application developers to embed PHP scripting functionality.
