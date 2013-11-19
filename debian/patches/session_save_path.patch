@@ -5,10 +5,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-05-01
 
-Index: php-5.4.21/ext/session/session.c
+Index: php-5.4.22/ext/session/session.c
 ===================================================================
---- php-5.4.21.orig/ext/session/session.c
-+++ php-5.4.21/ext/session/session.c
+--- php-5.4.22.orig/ext/session/session.c
++++ php-5.4.22/ext/session/session.c
 @@ -730,7 +730,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
  /* {{{ PHP_INI
   */
@@ -18,10 +18,10 @@ Index: php-5.4.21/ext/session/session.c
  	STD_PHP_INI_ENTRY("session.name",               "PHPSESSID", PHP_INI_ALL, OnUpdateName, session_name,       php_ps_globals,    ps_globals)
  	PHP_INI_ENTRY("session.save_handler",           "files",     PHP_INI_ALL, OnUpdateSaveHandler)
  	STD_PHP_INI_BOOLEAN("session.auto_start",       "0",         PHP_INI_PERDIR, OnUpdateBool,   auto_start,         php_ps_globals,    ps_globals)
-Index: php-5.4.21/php.ini-development
+Index: php-5.4.22/php.ini-development
 ===================================================================
---- php-5.4.21.orig/php.ini-development
-+++ php-5.4.21/php.ini-development
+--- php-5.4.22.orig/php.ini-development
++++ php-5.4.22/php.ini-development
 @@ -1399,7 +1399,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
@@ -31,10 +31,10 @@ Index: php-5.4.21/php.ini-development
  
  ; Whether to use cookies.
  ; http://php.net/session.use-cookies
-Index: php-5.4.21/php.ini-production
+Index: php-5.4.22/php.ini-production
 ===================================================================
---- php-5.4.21.orig/php.ini-production
-+++ php-5.4.21/php.ini-production
+--- php-5.4.22.orig/php.ini-production
++++ php-5.4.22/php.ini-production
 @@ -1349,7 +1349,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
