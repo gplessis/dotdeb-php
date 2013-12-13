@@ -1,7 +1,7 @@
-Index: php-5.3.27/scripts/phpize.in
+Index: php-5.3.28/scripts/phpize.in
 ===================================================================
---- php-5.3.27.orig/scripts/phpize.in
-+++ php-5.3.27/scripts/phpize.in
+--- php-5.3.28.orig/scripts/phpize.in
++++ php-5.3.28/scripts/phpize.in
 @@ -5,10 +5,16 @@ prefix='@prefix@'
  exec_prefix="`eval echo @exec_prefix@`"
  phpdir="$prefix/lib/php5/build"

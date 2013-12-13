@@ -1,0 +1,38 @@
+Index: php-5.3.28/Zend/Zend.dsp
+===================================================================
+--- php-5.3.28.orig/Zend/Zend.dsp
++++ php-5.3.28/Zend/Zend.dsp
+@@ -247,6 +247,14 @@ SOURCE=.\zend_strtod.c
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File
+Index: php-5.3.28/Zend/ZendTS.dsp
+===================================================================
+--- php-5.3.28.orig/Zend/ZendTS.dsp
++++ php-5.3.28/Zend/ZendTS.dsp
+@@ -277,6 +277,14 @@ SOURCE=.\zend_strtod.c
+ # End Source File
+ # Begin Source File
+ 
++SOURCE=.\zend_canary.c
++# End Source File
++# Begin Source File
++
++SOURCE=.\zend_alloc_canary.c
++# End Source File
++# Begin Source File
++
+ SOURCE=.\zend_ts_hash.c
+ # End Source File
+ # Begin Source File

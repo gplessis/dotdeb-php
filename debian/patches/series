@@ -2,6 +2,7 @@
 006-debian_quirks.patch
 libtool2.2.patch
 011-suhosin.patch
+012-suhosin_dsp.patch
 019-z_off_t_as_long.patch
 033-we_WANT_libtool.patch
 052-phpinfo_no_configure.patch

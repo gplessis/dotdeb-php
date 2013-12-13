@@ -1,7 +1,7 @@
-Index: php-5.3.27/ext/zlib/zconf.h
+Index: php-5.3.28/ext/zlib/zconf.h
 ===================================================================
 --- /dev/null
-+++ php-5.3.27/ext/zlib/zconf.h
++++ php-5.3.28/ext/zlib/zconf.h
 @@ -0,0 +1,326 @@
 +/* zconf.h -- configuration of the zlib compression library
 + * Copyright (C) 1995-2003 Jean-loup Gailly.
@@ -329,10 +329,10 @@ Index: php-5.3.27/ext/zlib/zconf.h
 +#endif
 +
 +#endif /* ZCONF_H */
-Index: php-5.3.27/ext/zlib/zlib.h
+Index: php-5.3.28/ext/zlib/zlib.h
 ===================================================================
 --- /dev/null
-+++ php-5.3.27/ext/zlib/zlib.h
++++ php-5.3.28/ext/zlib/zlib.h
 @@ -0,0 +1,1200 @@
 +/* zlib.h -- interface of the 'zlib' general purpose compression library
 +  version 1.2.1.1, January 9th, 2004
