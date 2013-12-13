@@ -4,10 +4,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-07-30
 
-Index: php-5.4.22/sapi/fpm/php-fpm.conf.in
+Index: php-5.4.23/sapi/fpm/php-fpm.conf.in
 ===================================================================
---- php-5.4.22.orig/sapi/fpm/php-fpm.conf.in
-+++ php-5.4.22/sapi/fpm/php-fpm.conf.in
+--- php-5.4.23.orig/sapi/fpm/php-fpm.conf.in
++++ php-5.4.23/sapi/fpm/php-fpm.conf.in
 @@ -12,7 +12,7 @@
  ; Relative path can also be used. They will be prefixed by:
  ;  - the global prefix if it's been set (-p argument)
