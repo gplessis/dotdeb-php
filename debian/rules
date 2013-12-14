@@ -147,7 +147,8 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--enable-zip \
 		--with-mhash=yes \
 		--with-system-tzdata \
-		--with-mysql-sock=/var/run/mysqld/mysqld.sock
+		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
+		--enable-dtrace
 
 BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
 			$$s="The following extensions are built in:"; \
