@@ -1,3 +1,9 @@
+php5 (5.5.8-1~dotdeb.1) stable; urgency=high
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 10 Jan 2014 07:10:42 -0700
+
 php5 (5.5.7-1~dotdeb.1) stable; urgency=high
 
   * Rebuilt for Dotdeb
