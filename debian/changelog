@@ -1,3 +1,9 @@
+php5 (5.4.24-1~dotdeb.0) oldstable; urgency=low
+
+  * New upstream release
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 10 Jan 2014 07:14:42 -0700
+
 php5 (5.4.23-1~dotdeb.0) oldstable; urgency=low
 
   * New upstream release
