@@ -14,7 +14,11 @@ fi
 if [ "$1" = "configure" ]; then
     phpini="/etc/php5/@sapi@/php.ini"
 
-    ucf /usr/share/php5/php.ini-production $phpini
+    if [ "@sapi@" = "cli" ]; then
+	ucf /usr/share/php5/php.ini-production.@sapi@ $phpini
+    else
+	ucf /usr/share/php5/php.ini-production $phpini
+    fi
     ucfr @package@ $phpini
 
     if [ -e /usr/share/php5/php5-maintscript-helper ]; then
