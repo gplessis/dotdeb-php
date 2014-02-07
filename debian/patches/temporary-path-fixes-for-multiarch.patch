@@ -7,10 +7,10 @@ Bug-Ubuntu: https://bugs.launchpad.net/bugs/739977
 Forwarded: not-needed
 Reviewed-by: Steve Langasek <steve.langasek@ubuntu.com>
 
-Index: php-5.4.24/ext/dba/config.m4
+Index: php-5.4.25/ext/dba/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/dba/config.m4
-+++ php-5.4.24/ext/dba/config.m4
+--- php-5.4.25.orig/ext/dba/config.m4
++++ php-5.4.25/ext/dba/config.m4
 @@ -239,7 +239,7 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
      AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
    fi
@@ -20,10 +20,10 @@ Index: php-5.4.24/ext/dba/config.m4
        lib_found="";
        PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
          AC_TRY_LINK([
-Index: php-5.4.24/ext/gd/config.m4
+Index: php-5.4.25/ext/gd/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/gd/config.m4
-+++ php-5.4.24/ext/gd/config.m4
+--- php-5.4.25.orig/ext/gd/config.m4
++++ php-5.4.25/ext/gd/config.m4
 @@ -159,7 +159,7 @@ AC_DEFUN([PHP_GD_XPM],[
    if test "$PHP_XPM_DIR" != "no"; then
  
@@ -42,10 +42,10 @@ Index: php-5.4.24/ext/gd/config.m4
    done
  
    if test -n "$GD_INCLUDE" && test -n "$GD_LIB"; then
-Index: php-5.4.24/ext/pcre/config0.m4
+Index: php-5.4.25/ext/pcre/config0.m4
 ===================================================================
---- php-5.4.24.orig/ext/pcre/config0.m4
-+++ php-5.4.24/ext/pcre/config0.m4
+--- php-5.4.25.orig/ext/pcre/config0.m4
++++ php-5.4.25/ext/pcre/config0.m4
 @@ -21,7 +21,7 @@ PHP_ARG_WITH(pcre-regex,,
      AC_MSG_RESULT([$PCRE_INCDIR])
  
@@ -55,10 +55,10 @@ Index: php-5.4.24/ext/pcre/config0.m4
        test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
      done
      
-Index: php-5.4.24/acinclude.m4
+Index: php-5.4.25/acinclude.m4
 ===================================================================
---- php-5.4.24.orig/acinclude.m4
-+++ php-5.4.24/acinclude.m4
+--- php-5.4.25.orig/acinclude.m4
++++ php-5.4.25/acinclude.m4
 @@ -2282,7 +2282,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
      fi
  
@@ -77,10 +77,10 @@ Index: php-5.4.24/acinclude.m4
          OPENSSL_LIBDIR=$i/$PHP_LIBDIR
        fi
        test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
-Index: php-5.4.24/ext/ldap/config.m4
+Index: php-5.4.25/ext/ldap/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/ldap/config.m4
-+++ php-5.4.24/ext/ldap/config.m4
+--- php-5.4.25.orig/ext/ldap/config.m4
++++ php-5.4.25/ext/ldap/config.m4
 @@ -95,7 +95,7 @@ if test "$PHP_LDAP" != "no"; then
      LDAP_PTHREAD=
    fi
@@ -90,10 +90,10 @@ Index: php-5.4.24/ext/ldap/config.m4
      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
  
-Index: php-5.4.24/ext/mssql/config.m4
+Index: php-5.4.25/ext/mssql/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/mssql/config.m4
-+++ php-5.4.24/ext/mssql/config.m4
+--- php-5.4.25.orig/ext/mssql/config.m4
++++ php-5.4.25/ext/mssql/config.m4
 @@ -38,7 +38,7 @@ if test "$PHP_MSSQL" != "no"; then
      fi
    fi  
@@ -103,10 +103,10 @@ Index: php-5.4.24/ext/mssql/config.m4
       AC_MSG_ERROR(Could not find $FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
    fi
  
-Index: php-5.4.24/ext/pdo_dblib/config.m4
+Index: php-5.4.25/ext/pdo_dblib/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/pdo_dblib/config.m4
-+++ php-5.4.24/ext/pdo_dblib/config.m4
+--- php-5.4.25.orig/ext/pdo_dblib/config.m4
++++ php-5.4.25/ext/pdo_dblib/config.m4
 @@ -46,7 +46,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
      PHP_LIBDIR=lib
    fi
@@ -116,10 +116,10 @@ Index: php-5.4.24/ext/pdo_dblib/config.m4
       AC_MSG_ERROR(Could not find $PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
    fi
  
-Index: php-5.4.24/ext/mysql/config.m4
+Index: php-5.4.25/ext/mysql/config.m4
 ===================================================================
---- php-5.4.24.orig/ext/mysql/config.m4
-+++ php-5.4.24/ext/mysql/config.m4
+--- php-5.4.25.orig/ext/mysql/config.m4
++++ php-5.4.25/ext/mysql/config.m4
 @@ -93,17 +93,15 @@ Note that the MySQL client library is no
    fi
  
