@@ -57,6 +57,12 @@ else
   CONFIGURE_SYSTEMD = --without-fpm-systemd
 endif
 
+ifeq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),amd64 armel armhf i386 ia64 powerpc))
+  CONFIGURE_DTRACE_ARGS = --enable-dtrace
+else
+  CONFIGURE_DTRACE_ARGS = --disable-dtrace
+endif
+
 # specify some options to our patch system
 QUILT_DIFF_OPTS=-p
 QUILT_NO_DIFF_TIMESTAMPS=1 
@@ -148,7 +154,7 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-mhash=yes \
 		--with-system-tzdata \
 		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
-		--enable-dtrace
+		$(CONFIGURE_DTRACE_ARGS)
 
 BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
 			$$s="The following extensions are built in:"; \
@@ -604,10 +610,13 @@ install: build
 	sed -r '/('"'"'|\[)www('"'"'|\])/Q' < fpm-build/sapi/fpm/php-fpm.conf > \
 	    debian/php5-fpm/etc/php5/fpm/php-fpm.conf
 	# extract the first pool, called "www," from the config file:
-	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf \
+	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf | \
+	sed -e's{^;listen\.owner{listen.owner{;' \
+            -e's{^;listen\.group{listen.group{;' \
 	    > debian/php5-fpm/etc/php5/fpm/pool.d/www.conf
 	# install a helper script for checking PHP FPM configuration
 	install -m 755 debian/php5-fpm-checkconf debian/php5-fpm/usr/lib/php5/
+	install -m 755 debian/php5-fpm-reopenlogs debian/php5-fpm/usr/lib/php5/
 
 	# move and install -dev files
 	dh_movefiles --sourcedir=debian/libphp5-embed
@@ -640,12 +649,6 @@ install: build
 	done
 	# remove windows devel file
 	rm $(CURDIR)/debian/php5-dev/usr/share/php5/skeleton/skeleton.dsp
-
-	install -m755 debian/debhelper/dh_* $(CURDIR)/debian/php5-dev/usr/bin
-	install -d -m755 $(CURDIR)/debian/php5-dev/usr/share/debhelper/autoscripts/
-	install -m644 debian/debhelper/*-php5 $(CURDIR)/debian/php5-dev/usr/share/debhelper/autoscripts/
-	install -d -m755 $(CURDIR)/debian/php5-dev/usr/share/perl5/Debian/Debhelper/Sequence
-	install -m644 debian/debhelper/php5.pm $(CURDIR)/debian/php5-dev/usr/share/perl5/Debian/Debhelper/Sequence
 
 	# install common files
 	install -m755 debian/maxlifetime debian/php5-common/usr/lib/php5

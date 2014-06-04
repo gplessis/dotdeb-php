@@ -53,9 +53,9 @@ Build-Depends: apache2-prefork-dev,
 	       libxmltok1-dev,
 	       libxml2-dev,
 	       libxslt1-dev (>= 1.0.18),
-	       systemtap-sdt-dev,
+	       systemtap-sdt-dev [amd64 i386 powerpc armel armhf ia64],
 	       locales-all | language-pack-de,
-	       mysql-server,
+	       mysql-server | virtual-mysql-server,
 	       netbase,
 	       netcat-traditional,
 	       re2c,
@@ -63,14 +63,14 @@ Build-Depends: apache2-prefork-dev,
 	       zlib1g-dev,
 	       tzdata
 Build-Conflicts: bind-dev
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Vcs-Git: git://anonscm.debian.org/pkg-php/php.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-php/php.git
 Homepage: http://www.php.net/
 
 Package: php5
 Architecture: all
-Depends: ${misc:Depends}, libapache2-mod-php5 (>= ${source:Version}) | libapache2-mod-php5filter (>= ${source:Version}) | php5-cgi (>= ${source:Version}) | php5-fpm (>= ${source:Version}), php5-common (>= ${source:Version})
+Depends: ${misc:Depends}, libapache2-mod-php5 (>= ${source:Version}~) | libapache2-mod-php5filter (>= ${source:Version}~) | php5-cgi (>= ${source:Version}~) | php5-fpm (>= ${source:Version}~), php5-common (>= ${source:Version}~)
 Description: server-side, HTML-embedded scripting language (metapackage)
  This package is a metapackage that, when installed, guarantees that you
  have at least one of the four server-side versions of the PHP5 interpreter
@@ -91,6 +91,7 @@ Depends: ${misc:Depends},
 	 ucf
 Provides: php5-json, php5-mhash, ${php:Provides}
 Conflicts: php5-json, php5-mhash, php5-suhosin
+Suggests: php5-user-cache
 Description: Common files for packages built from the php5 source
  This package contains the documentation and example files relevant to all
  the other packages built from the php5 source.
@@ -102,11 +103,12 @@ Description: Common files for packages built from the php5 source
 Package: libapache2-mod-php5
 Section: httpd
 Architecture: any
-Pre-Depends: apache2
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
+	 apache2-mpm-prefork,
 	 mime-support,
 	 php5-common (= ${binary:Version}),
+	 php5-json,
 	 libmagic1,
 	 ucf,
 	 tzdata
@@ -130,11 +132,12 @@ Package: libapache2-mod-php5filter
 Section: httpd
 Priority: extra
 Architecture: any
-Pre-Depends: apache2
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
+	 apache2-mpm-prefork,
 	 mime-support,
 	 php5-common (= ${binary:Version}),
+	 php5-json,
 	 libmagic1,
 	 ucf,
 	 tzdata
@@ -157,7 +160,14 @@ Description: server-side, HTML-embedded scripting language (apache 2 filter modu
 
 Package: php5-cgi
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 php5-json,
+	libmagic1,
+	ucf,
+	tzdata
 Provides: ${php:Provides}
 Suggests: php-pear
 Description: server-side, HTML-embedded scripting language (CGI binary)
@@ -174,7 +184,15 @@ Description: server-side, HTML-embedded scripting language (CGI binary)
 
 Package: php5-cli
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata, libedit2 (>= 2.11-20080614-4)
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 php5-json,
+	 libmagic1,
+	 ucf,
+	 tzdata,
+	 libedit2 (>= 2.11-20080614-4)
 Provides: ${php:Provides}
 Recommends: php5-readline
 Suggests: php-pear
@@ -190,7 +208,14 @@ Description: command-line interpreter for the php5 scripting language
 
 Package: php5-fpm
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 php5-json,
+	 libmagic1,
+	 ucf,
+	 tzdata
 Provides: ${php:Provides}
 Suggests: php-pear
 Pre-Depends: dpkg (>= 1.15.7.2~)
@@ -207,7 +232,13 @@ Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
 
 Package: libphp5-embed
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php5-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 mime-support,
+	 php5-common (= ${binary:Version}),
+	 libmagic1,
+	 ucf,
+	 tzdata
 Provides: ${php:Provides}
 Suggests: php-pear
 Priority: optional
@@ -226,11 +257,17 @@ Description: HTML-embedded scripting language (Embedded SAPI library)
  have been warned.
 
 Package: php5-dev
-Depends: ${misc:Depends}, autoconf (>= 2.63), automake (>= 1.11), libssl-dev, libtool (>= 2.2), shtool, php5-common (>= ${binary:Version}), ${perl:Depends}
+Depends: ${misc:Depends},
+	 autoconf (>= 2.63),
+	 automake (>= 1.11),
+	 libssl-dev,
+	 libtool (>= 2.2),
+	 shtool,
+	 php5-common (>= ${binary:Version}),
+	 ${perl:Depends}
 Conflicts: ${libtool:Conflicts}
 Architecture: any
-Provides: dh-php5
-Recommends: pkg-php-tools
+Recommends: pkg-php-tools, dh-php5
 Description: Files for PHP5 module development
  This package provides the files from the PHP5 source needed for compiling
  additional modules.
@@ -255,7 +292,7 @@ Description: Debug symbols for PHP5
 
 Package: php-pear
 Architecture: all
-Depends: ${misc:Depends}, php5-common (>= ${source:Version}), php5-cli
+Depends: ${misc:Depends}, php5-common (>= ${source:Version}~), php5-cli
 Recommends: gnupg
 Conflicts: php-xml-util
 Suggests: php5-dev

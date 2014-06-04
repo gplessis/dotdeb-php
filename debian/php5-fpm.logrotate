@@ -6,6 +6,6 @@
 	compress
 	delaycompress
 	postrotate
-		invoke-rc.d php5-fpm reopen-logs > /dev/null
+		/usr/lib/php5/php5-fpm-reopenlogs
 	endscript
 }
