@@ -586,7 +586,9 @@ install: build
 	sed -r '/('"'"'|\[)www('"'"'|\])/Q' < fpm-build/sapi/fpm/php-fpm.conf > \
 	    debian/php5-fpm/etc/php5/fpm/php-fpm.conf
 	# extract the first pool, called "www," from the config file:
-	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf \
+	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf | \
+	    sed -e's{^;listen\.owner{listen.owner{;' \
+	    	-e's{^;listen\.group{listen.group{;' \
 	    > debian/php5-fpm/etc/php5/fpm/pool.d/www.conf
 	# install a helper script for checking PHP FPM configuration
 	install -m 755 debian/php5-fpm-checkconf debian/php5-fpm/usr/lib/php5/
