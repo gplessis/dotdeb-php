@@ -448,7 +448,7 @@ Architecture: any
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php5-common (= ${binary:Version}), ucf
 Conflicts: php5-mysqli, php5-mysql
-Replaces: php5-mysqli, php5-mysql
+Provides: php5-mysqli, php5-mysql
 Pre-Depends: dpkg (>= 1.15.7.2~)
 Description: MySQL module for php5 (Native Driver)
  This package provides modules for MySQL database connections directly from
