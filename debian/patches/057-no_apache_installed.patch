@@ -3,10 +3,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: php-5.5.14/sapi/apache2handler/config.m4
+Index: php-5.5.15/sapi/apache2handler/config.m4
 ===================================================================
---- php-5.5.14.orig/sapi/apache2handler/config.m4
-+++ php-5.5.14/sapi/apache2handler/config.m4
+--- php-5.5.15.orig/sapi/apache2handler/config.m4
++++ php-5.5.15/sapi/apache2handler/config.m4
 @@ -58,13 +58,13 @@ if test "$PHP_APXS2" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
@@ -28,10 +28,10 @@ Index: php-5.5.14/sapi/apache2handler/config.m4
  
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
-Index: php-5.5.14/sapi/apache/config.m4
+Index: php-5.5.15/sapi/apache/config.m4
 ===================================================================
---- php-5.5.14.orig/sapi/apache/config.m4
-+++ php-5.5.14/sapi/apache/config.m4
+--- php-5.5.15.orig/sapi/apache/config.m4
++++ php-5.5.15/sapi/apache/config.m4
 @@ -56,11 +56,11 @@ if test "$PHP_APXS" != "no"; then
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
@@ -49,10 +49,10 @@ Index: php-5.5.14/sapi/apache/config.m4
  
    for flag in $APXS_CFLAGS; do
      case $flag in
-Index: php-5.5.14/sapi/apache2filter/config.m4
+Index: php-5.5.15/sapi/apache2filter/config.m4
 ===================================================================
---- php-5.5.14.orig/sapi/apache2filter/config.m4
-+++ php-5.5.14/sapi/apache2filter/config.m4
+--- php-5.5.15.orig/sapi/apache2filter/config.m4
++++ php-5.5.15/sapi/apache2filter/config.m4
 @@ -59,13 +59,13 @@ if test "$PHP_APXS2FILTER" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
@@ -74,10 +74,10 @@ Index: php-5.5.14/sapi/apache2filter/config.m4
  
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
-Index: php-5.5.14/sapi/apache_hooks/config.m4
+Index: php-5.5.15/sapi/apache_hooks/config.m4
 ===================================================================
---- php-5.5.14.orig/sapi/apache_hooks/config.m4
-+++ php-5.5.14/sapi/apache_hooks/config.m4
+--- php-5.5.15.orig/sapi/apache_hooks/config.m4
++++ php-5.5.15/sapi/apache_hooks/config.m4
 @@ -57,11 +57,11 @@ if test "$PHP_APACHE_HOOKS" != "no"; the
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
