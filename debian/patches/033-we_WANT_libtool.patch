@@ -11,10 +11,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: php-5.4.30/build/build2.mk
+Index: php-5.4.31/build/build2.mk
 ===================================================================
---- php-5.4.30.orig/build/build2.mk
-+++ php-5.4.30/build/build2.mk
+--- php-5.4.31.orig/build/build2.mk
++++ php-5.4.31/build/build2.mk
 @@ -46,7 +46,8 @@ $(TOUCH_FILES):
  
  aclocal.m4: configure.in acinclude.m4
