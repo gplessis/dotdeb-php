@@ -1,8 +1,8 @@
-Index: php-5.4.31/ext/standard/info.c
+Index: php-5.4.32/ext/standard/info.c
 ===================================================================
---- php-5.4.31.orig/ext/standard/info.c
-+++ php-5.4.31/ext/standard/info.c
-@@ -836,6 +836,16 @@ PHPAPI void php_print_info(int flag TSRM
+--- php-5.4.32.orig/ext/standard/info.c
++++ php-5.4.32/ext/standard/info.c
+@@ -844,6 +844,16 @@ PHPAPI void php_print_info(int flag TSRM
  			zend_html_puts(zend_version, strlen(zend_version) TSRMLS_CC);
  		}
  		php_info_print_box_end();
