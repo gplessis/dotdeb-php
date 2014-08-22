@@ -5,11 +5,11 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-05-01
 
-Index: php-5.5.15/ext/session/session.c
+Index: php-5.5.16/ext/session/session.c
 ===================================================================
---- php-5.5.15.orig/ext/session/session.c
-+++ php-5.5.15/ext/session/session.c
-@@ -780,7 +780,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
+--- php-5.5.16.orig/ext/session/session.c
++++ php-5.5.16/ext/session/session.c
+@@ -781,7 +781,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
  /* {{{ PHP_INI
   */
  PHP_INI_BEGIN()
@@ -18,10 +18,10 @@ Index: php-5.5.15/ext/session/session.c
  	STD_PHP_INI_ENTRY("session.name",               "PHPSESSID", PHP_INI_ALL, OnUpdateName, session_name,       php_ps_globals,    ps_globals)
  	PHP_INI_ENTRY("session.save_handler",           "files",     PHP_INI_ALL, OnUpdateSaveHandler)
  	STD_PHP_INI_BOOLEAN("session.auto_start",       "0",         PHP_INI_PERDIR, OnUpdateBool,   auto_start,         php_ps_globals,    ps_globals)
-Index: php-5.5.15/php.ini-development
+Index: php-5.5.16/php.ini-development
 ===================================================================
---- php-5.5.15.orig/php.ini-development
-+++ php-5.5.15/php.ini-development
+--- php-5.5.16.orig/php.ini-development
++++ php-5.5.16/php.ini-development
 @@ -1393,7 +1393,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
@@ -31,10 +31,10 @@ Index: php-5.5.15/php.ini-development
  
  ; Whether to use strict session mode.
  ; Strict session mode does not accept uninitialized session ID and regenerate
-Index: php-5.5.15/php.ini-production
+Index: php-5.5.16/php.ini-production
 ===================================================================
---- php-5.5.15.orig/php.ini-production
-+++ php-5.5.15/php.ini-production
+--- php-5.5.16.orig/php.ini-production
++++ php-5.5.16/php.ini-production
 @@ -1343,7 +1343,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
