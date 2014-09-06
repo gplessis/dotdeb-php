@@ -1,0 +1,27 @@
+Description:
+ upstream ships an out of date version of libtool.  this ensures that
+ we build against an up-to-date version of libtool by running libtoolize
+ as part of our build process (this is called indirectly via ./buildconf.sh
+ from debian/rules)
+ .
+ note that we don't touch the libtool.m4 that they ship here, and this file
+ gets included in the build process as part of the phpize stuff.  however,
+ this is solved in ./debian/rules where it's overwritten with a symlink.
+Origin: vendor
+Forwarded: no
+Last-Update: 2010-01-18
+
+Index: dotdeb-php5/build/build2.mk
+===================================================================
+--- dotdeb-php5.orig/build/build2.mk
++++ dotdeb-php5/build/build2.mk
+@@ -46,7 +46,8 @@ $(TOUCH_FILES):
+ 
+ aclocal.m4: configure.in acinclude.m4
+ 	@echo rebuilding $@
+-	cat acinclude.m4 ./build/libtool.m4 > $@
++	libtoolize --copy --install --automake --force
++	aclocal
+ 
+ configure: aclocal.m4 configure.in $(config_m4_files)
+ 	@echo rebuilding $@

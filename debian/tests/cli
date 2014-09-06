@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+# Author: Robie Basak <robie.basak@ubuntu.com>
+
+cd "$ADTTMP"
+cat > hello.php <<EOT
+<?php echo "Hello, world!\n"; ?>
+EOT
+
+result=`php5 hello.php`
+test "$result" = "Hello, world!"

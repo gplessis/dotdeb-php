@@ -1,0 +1,46 @@
+Description: Set the default session.save_path dir to /var/lib/php5.
+ This is the directory that has been used in Debian to store the
+ session files and is partially protected by dir permissions.
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-05-01
+
+Index: dotdeb-php5/ext/session/session.c
+===================================================================
+--- dotdeb-php5.orig/ext/session/session.c
++++ dotdeb-php5/ext/session/session.c
+@@ -803,7 +803,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
+ /* {{{ PHP_INI
+  */
+ PHP_INI_BEGIN()
+-	STD_PHP_INI_ENTRY("session.save_path",          "",          PHP_INI_ALL, OnUpdateSaveDir,save_path,          php_ps_globals,    ps_globals)
++	STD_PHP_INI_ENTRY("session.save_path",          "/var/lib/php5/sessions",          PHP_INI_ALL, OnUpdateSaveDir,save_path,          php_ps_globals,    ps_globals)
+ 	STD_PHP_INI_ENTRY("session.name",               "PHPSESSID", PHP_INI_ALL, OnUpdateName, session_name,       php_ps_globals,    ps_globals)
+ 	PHP_INI_ENTRY("session.save_handler",           "files",     PHP_INI_ALL, OnUpdateSaveHandler)
+ 	STD_PHP_INI_BOOLEAN("session.auto_start",       "0",         PHP_INI_PERDIR, OnUpdateBool,   auto_start,         php_ps_globals,    ps_globals)
+Index: dotdeb-php5/php.ini-development
+===================================================================
+--- dotdeb-php5.orig/php.ini-development
++++ dotdeb-php5/php.ini-development
+@@ -1423,7 +1423,7 @@ session.save_handler = files
+ ; where MODE is the octal representation of the mode. Note that this
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+-;session.save_path = "/tmp"
++;session.save_path = "/var/lib/php5/sessions"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept uninitialized session ID and regenerate
+Index: dotdeb-php5/php.ini-production
+===================================================================
+--- dotdeb-php5.orig/php.ini-production
++++ dotdeb-php5/php.ini-production
+@@ -1372,7 +1372,7 @@ session.save_handler = files
+ ; where MODE is the octal representation of the mode. Note that this
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+-;session.save_path = "/tmp"
++;session.save_path = "/var/lib/php5/sessions"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept uninitialized session ID and regenerate

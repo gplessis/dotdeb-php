@@ -1,0 +1,16 @@
+php5 (5.5.12+dfsg-2) unstable; urgency=medium
+
+  * The default PHP FPM socket permission has been changed from 0666
+    to 0660 to mitigate security vulnerability (CVE-2014-0185) in PHP
+    FPM that allowed any local user to run a PHP code under the active
+    user of FPM process via crafted FastCGI client.
+
+    The default Debian setup now correctly sets the listen.owner and
+    listen.group to www-data:www-data in default php-fpm.conf.  If you
+    have more FPM instances or a webserver not running under www-data
+    user you need to adjust the configuration of FPM pools in
+    /etc/php5/fpm/pool.d/ so the accessing process has rights to
+    access the socket.
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 12 May 2014 14:23:05 +0200
+

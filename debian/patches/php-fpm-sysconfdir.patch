@@ -1,0 +1,13 @@
+Index: dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/fpm/fpm_conf.c
++++ dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
+@@ -1650,7 +1650,7 @@ int fpm_conf_init_main(int test_conf, in
+ 		char *tmp;
+ 
+ 		if (fpm_globals.prefix == NULL) {
+-			spprintf(&tmp, 0, "%s/php-fpm.conf", PHP_SYSCONFDIR);
++			spprintf(&tmp, 0, "%s/php5/fpm/php-fpm.conf", PHP_SYSCONFDIR);
+ 		} else {
+ 			spprintf(&tmp, 0, "%s/etc/php-fpm.conf", fpm_globals.prefix);
+ 		}

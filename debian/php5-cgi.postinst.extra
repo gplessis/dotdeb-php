@@ -1,0 +1,25 @@
+dpkg-maintscript-helper mv_conffile /etc/apache2/mods-available/php5_cgi.conf \
+    /etc/apache2/conf-available/php5-cgi.conf 5.5.0~beta4-1 -- "$@"
+
+dpkg-maintscript-helper rm_conffile /etc/apache2/mods-available/php5_cgi.load 5.5.0~beta4-1 -- "$@"
+
+VERSION=$2
+
+php5_enable() {
+    # Enable php5-cgi only if upgrading from older versions of php5-cgi
+    if [ -n "$VERSION" ] && dpkg --compare-versions "$VERSION" lt 5.4.4-5; then
+	return 0
+    else
+	return 1
+    fi
+}
+
+if [ "$1" = "configure" ]; then
+    update-alternatives \
+	--install /usr/bin/php-cgi php-cgi /usr/bin/php5-cgi 50 \
+	--slave /usr/share/man/man1/php-cgi.1.gz php-cgi.1.gz \
+	/usr/share/man/man1/php5-cgi.1.gz
+
+    update-alternatives \
+	--install /usr/lib/cgi-bin/php php-cgi-bin /usr/lib/cgi-bin/php5 50
+fi

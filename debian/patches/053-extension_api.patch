@@ -1,0 +1,60 @@
+Description: Adds --phpapi argument to php-config(1)
+ .
+ TODO: make it more generic and add it to the man page.
+Origin: vendor
+Forwarded: no
+Last-Update: 2010-01-18
+
+Index: dotdeb-php5/configure.in
+===================================================================
+--- dotdeb-php5.orig/configure.in
++++ dotdeb-php5/configure.in
+@@ -1180,8 +1180,10 @@ dnl Build extension directory path
+ 
+ ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
+ 
++DEBIAN_PHP_API=$ZEND_MODULE_API_NO
++
+ if test -z "$EXTENSION_DIR"; then
+-  extbasedir=$ZEND_MODULE_API_NO
++  extbasedir=$DEBIAN_PHP_API
+   if test "$oldstyleextdir" = "yes"; then
+     if test "$PHP_DEBUG" = "1"; then
+       part1=debug
+@@ -1324,6 +1326,7 @@ PHP_SUBST(CXX)
+ PHP_SUBST(CXXFLAGS)
+ PHP_SUBST(CXXFLAGS_CLEAN)
+ PHP_SUBST_OLD(DEBUG_CFLAGS)
++PHP_SUBST_OLD(DEBIAN_PHP_API)
+ PHP_SUBST_OLD(EXTENSION_DIR)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
+Index: dotdeb-php5/scripts/php-config.in
+===================================================================
+--- dotdeb-php5.orig/scripts/php-config.in
++++ dotdeb-php5/scripts/php-config.in
+@@ -19,6 +19,7 @@ php_cli_binary=NONE
+ php_cgi_binary=NONE
+ configure_options="@CONFIGURE_OPTIONS@"
+ php_sapis="@PHP_INSTALLED_SAPIS@"
++phpapi="@DEBIAN_PHP_API@"
+ 
+ # Set php_cli_binary and php_cgi_binary if available
+ for sapi in $php_sapis; do
+@@ -57,6 +58,8 @@ case "$1" in
+   echo $include_dir;;
+ --php-binary)
+   echo $php_binary;;
++--phpapi)
++  echo $phpapi;;
+ --php-sapis)
+   echo $php_sapis;;
+ --configure-options)
+@@ -80,6 +83,7 @@ Options:
+   --man-dir           [$man_dir]
+   --php-binary        [$php_binary]
+   --php-sapis         [$php_sapis]
++  --phpapi            [$phpapi]
+   --configure-options [$configure_options]
+   --version           [$version]
+   --vernum            [$vernum]

@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+# Author: Robie Basak <robie.basak@ubuntu.com>
+
+cat > /var/www/html/hello.php <<EOT
+<?php echo "Hello, world!\n"; ?>
+EOT
+
+# Make sure that any CGI mechanism is disabled, since we want to test mod_php
+# mode here.
+a2dismod actions 2>/dev/null || true
+a2dismod cgi 2>/dev/null || true
+a2disconf php5-cgi 2>/dev/null || true
+
+a2enmod php5 2>/dev/null
+service apache2 restart 2>/dev/null
+result=`wget -O- http://localhost/hello.php 2>/dev/null`
+test "$result" = "Hello, world!"

@@ -1,0 +1,144 @@
+Description: transitional workaround for multiarch
+ As a stopgap for natty, patch the various config.m4 files for modules whose
+ libraries have moved to the multiarch dir; we can't use --with-libdir yet
+ because that requires all the build-deps to have moved.
+Author: Jonathan Marsden
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/739977
+Forwarded: not-needed
+Reviewed-by: Steve Langasek <steve.langasek@ubuntu.com>
+
+Index: dotdeb-php5/ext/dba/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/dba/config.m4
++++ dotdeb-php5/ext/dba/config.m4
+@@ -239,7 +239,7 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
+     AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
+   fi
+   for LIB in $2; do
+-    if test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.a || test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.$SHLIB_SUFFIX_NAME; then
++    if test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.a || test -f $THIS_PREFIX/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/lib$LIB.$SHLIB_SUFFIX_NAME || test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.$SHLIB_SUFFIX_NAME; then
+       lib_found="";
+       PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
+         AC_TRY_LINK([
+Index: dotdeb-php5/ext/pcre/config0.m4
+===================================================================
+--- dotdeb-php5.orig/ext/pcre/config0.m4
++++ dotdeb-php5/ext/pcre/config0.m4
+@@ -21,7 +21,7 @@ PHP_ARG_WITH(pcre-regex,,
+     AC_MSG_RESULT([$PCRE_INCDIR])
+ 
+     AC_MSG_CHECKING([for PCRE library location])
+-    for j in $PHP_PCRE_REGEX $PHP_PCRE_REGEX/$PHP_LIBDIR; do
++    for j in $PHP_PCRE_REGEX $PHP_PCRE_REGEX/$PHP_LIBDIR/$DEB_HOST_MULTIARCH $PHP_PCRE_REGEX/$PHP_LIBDIR; do
+       test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
+     done
+     
+Index: dotdeb-php5/acinclude.m4
+===================================================================
+--- dotdeb-php5.orig/acinclude.m4
++++ dotdeb-php5/acinclude.m4
+@@ -2282,7 +2282,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
+     fi
+ 
+     for i in $PHP_KERBEROS; do
+-      if test -f $i/$PHP_LIBDIR/libkrb5.a || test -f $i/$PHP_LIBDIR/libkrb5.$SHLIB_SUFFIX_NAME; then
++      if test -f $i/$PHP_LIBDIR/libkrb5.$SHLIB_SUFFIX_NAME || test -f $i/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/libkrb5.$SHLIB_SUFFIX_NAME || test -f $i/$PHP_LIBDIR/libkrb5.a; then
+         PHP_KERBEROS_DIR=$i
+         break
+       fi
+@@ -2361,7 +2361,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+       if test -r $i/include/openssl/evp.h; then
+         OPENSSL_INCDIR=$i/include
+       fi
+-      if test -r $i/$PHP_LIBDIR/libssl.a -o -r $i/$PHP_LIBDIR/libssl.$SHLIB_SUFFIX_NAME; then
++      if test -r $i/$PHP_LIBDIR/libssl.a -o -r $i/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/libssl.$SHLIB_SUFFIX_NAME -o -r $i/$PHP_LIBDIR/libssl.$SHLIB_SUFFIX_NAME; then
+         OPENSSL_LIBDIR=$i/$PHP_LIBDIR
+       fi
+       test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
+Index: dotdeb-php5/ext/ldap/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/ldap/config.m4
++++ dotdeb-php5/ext/ldap/config.m4
+@@ -117,7 +117,7 @@ if test "$PHP_LDAP" != "no"; then
+     LDAP_PTHREAD=
+   fi
+ 
+-  if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME; then
++  if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/$DEB_HOST_MULTIARCH/liblber.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME; then
+     PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+     PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+ 
+Index: dotdeb-php5/ext/mssql/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/mssql/config.m4
++++ dotdeb-php5/ext/mssql/config.m4
+@@ -38,7 +38,7 @@ if test "$PHP_MSSQL" != "no"; then
+     fi
+   fi  
+ 
+-  if test ! -r "$FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.a" && test ! -r "$FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.so"; then
++  if test ! -r "$FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.a" && test ! -r "$FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/libsybdb.so" && test ! -r "$FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.so"; then
+      AC_MSG_ERROR(Could not find $FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
+   fi
+ 
+Index: dotdeb-php5/ext/pdo_dblib/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/pdo_dblib/config.m4
++++ dotdeb-php5/ext/pdo_dblib/config.m4
+@@ -46,7 +46,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
+     PHP_LIBDIR=lib
+   fi
+ 
+-  if test ! -r "$PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.a" && test ! -r "$PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.so"; then
++  if test ! -r "$PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.a" && test ! -r "$PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/$DEB_HOST_MULTIARCH/libsybdb.so" && test ! -r "$PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.so"; then
+      AC_MSG_ERROR(Could not find $PDO_FREETDS_INSTALLATION_DIR/$PHP_LIBDIR/libsybdb.[a|so])
+   fi
+ 
+Index: dotdeb-php5/ext/mysql/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/mysql/config.m4
++++ dotdeb-php5/ext/mysql/config.m4
+@@ -94,17 +94,15 @@ Note that the MySQL client library is no
+   fi
+ 
+   for i in $PHP_LIBDIR $PHP_LIBDIR/mysql; do
+-    MYSQL_LIB_CHK($i)
++    MYSQL_LIB_CHK($i/$DEB_HOST_MULTIARCH)
++    if test -z "$MYSQL_LIB_DIR"; then
++      MYSQL_LIB_CHK($i)
++    else
++      MYSQL_LIB_DIR=$MYSQL_DIR/$i
++    fi
+   done
+ 
+   if test -z "$MYSQL_LIB_DIR"; then
+-    MYSQL_LIB_CHK(lib/x86_64-linux-gnu)
+-  fi
+-  if test -z "$MYSQL_LIB_DIR"; then
+-    MYSQL_LIB_CHK(lib/i386-linux-gnu)
+-  fi
+-
+-  if test -z "$MYSQL_LIB_DIR"; then
+     AC_MSG_ERROR([Cannot find lib$MYSQL_LIBNAME under $MYSQL_DIR.
+ Note that the MySQL client library is not bundled anymore!])
+   fi
+Index: dotdeb-php5/ext/gmp/config.m4
+===================================================================
+--- dotdeb-php5.orig/ext/gmp/config.m4
++++ dotdeb-php5/ext/gmp/config.m4
+@@ -9,6 +9,7 @@ if test "$PHP_GMP" != "no"; then
+ 
+   for i in $PHP_GMP /usr/local /usr; do
+     test -f $i/include/gmp.h && GMP_DIR=$i && break
++    test -f $i/include/$DEB_HOST_MULTIARCH/gmp.h && GMP_DIR=$i && break
+   done
+ 
+   if test -z "$GMP_DIR"; then
+@@ -29,6 +30,7 @@ if test "$PHP_GMP" != "no"; then
+ 
+   PHP_ADD_LIBRARY_WITH_PATH(gmp, $GMP_DIR/$PHP_LIBDIR, GMP_SHARED_LIBADD)
+   PHP_ADD_INCLUDE($GMP_DIR/include)
++  PHP_ADD_INCLUDE($GMP_DIR/include/$DEB_HOST_MULTIARCH)
+ 
+   PHP_NEW_EXTENSION(gmp, gmp.c, $ext_shared)
+   PHP_SUBST(GMP_SHARED_LIBADD)

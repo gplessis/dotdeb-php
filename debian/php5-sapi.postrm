@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+php5_enable() { return 0; }
+
+if [ "$1" = "purge" ]; then
+    phpini=/etc/php5/@sapi@/php.ini
+    # remove the flag to remember the original state
+    if [ -e /etc/php5/@sapi@/.start ]; then
+	rm -f /etc/php5/@sapi@/.start
+    fi
+    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+	rm -f $phpini$ext
+    done
+    rm -f $phpini
+    if which ucf >/dev/null; then
+	ucf --purge $phpini
+    fi
+    if which ucfr >/dev/null; then
+	ucfr --purge @package@ $phpini
+    fi
+fi
+
+if [ -e /usr/share/php5/php5-maintscript-helper ]; then
+    . /usr/share/php5/php5-maintscript-helper
+
+    mods=$(php5query -M)
+    for mod in $mods; do
+	php5_invoke dismod @sapi@ $mod
+    done
+fi
+
+#DEBHELPER#
+
+exit 0

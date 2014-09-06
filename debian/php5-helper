@@ -1,0 +1,208 @@
+#!/bin/sh
+#
+#  php5enmod - a php5 module manager for Debian
+#
+#  Copyright 2013 Ondřej Surý <ondrej@sury.org>
+#
+# This program is licensed at your choice under the terms of the GNU General
+# Public License version 2+ or under the terms of the PHP License 3.01.
+#
+# For GPL-2+:
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# For PHP 3.01:
+# This source file is subject to version 3.01 of the PHP license,
+# that is bundled with this package in the file LICENSE, and is
+# available through the world-wide-web at the following url:
+# http://www.php.net/license/3_01.txt
+# If you did not receive a copy of the PHP license and are unable to
+# obtain it through the world-wide-web, please send a note to
+# license@php.net so we can mail you a copy immediately.
+#
+
+warning() {
+    echo "WARNING: ${@}" >&2
+}
+
+remove_state() {
+    local action=$1
+    local sapi=$2
+    local modname=$3
+
+    local state_dir="$(get_state_dir $sapi)"
+    rm -f "${state_dir}/${action}_by_admin/$modname"
+    rm -f "${state_dir}/${action}_by_maint/$modname"
+
+    return 0
+}
+
+mod_registry() {
+    local action=$1
+    local modname=$2
+    local registry_dir="$(get_registry_dir)"
+    local registry_file="$registry_dir/$modname"
+
+    case $action in
+	register)
+	    if [ ! -d "$registry_dir" ]; then
+		mkdir -p "$registry_dir"
+	    fi
+	    touch "$registry_file"
+	    ;;
+	unregister)
+	    rm -f "$registry_file"
+	    ;;
+	status)
+	    if [ -e "$registry_file" ]; then
+		return 0
+	    else
+		return 1
+	    fi
+	    ;;
+	*)
+	    return 1
+	    ;;
+    esac
+
+    return 0
+}
+
+record_state() {
+    local action=$1
+    local sapi=$2
+    local modname=$3
+
+    local state_dir="/var/lib/php5/modules/${sapi}"
+    local admin_state="${state_dir}/${action}_by_admin/$modname"
+    local maint_state="${state_dir}/${action}_by_maint/$modname"
+
+    if [ -e "$admin_state" ]; then
+	return
+    fi
+
+    if [ -e "$maint_state" ]; then
+	if [ "$MAINT_MODE" = "yes" ]; then
+	    return
+	else
+	    rm "$maint_state"
+	fi
+    fi
+
+    # cleanup previous state
+    remove_state disabled $sapi $modname
+    remove_state enabled $sapi $modname
+
+    if [ "$MAINT_MODE" = "yes" ]; then
+	mkdir -p "$(dirname $maint_state)"
+	touch "$maint_state"
+    else
+	mkdir -p "$(dirname $admin_state)"
+	touch "$admin_state"
+    fi
+
+    return 0
+}
+
+output() {
+    if [ "$QUIET" != "yes" ]; then
+	echo "$@"
+    fi
+}
+
+get_priority() {
+    local sapi=$1
+    local modname=$2
+
+    local source_ini="/etc/php5/mods-available/${modname}.ini"
+
+    module_ret=0
+    module_exists $modname || module_ret=$?
+
+    if [ "$module_ret" -eq 0 ]; then
+	priority=$(sed -ne "s/^; priority=\([0-9]\+\)$/\\1/p" $source_ini)
+	[ -z "$priority" ] && priority=20
+	echo $priority
+	return 0
+    fi
+
+    return $module_ret
+}
+
+get_live_link() {
+    local sapi=$1
+    local modname=$2
+    local priority=$3
+    echo "/etc/php5/$sapi/conf.d/$priority-$modname.ini"
+}
+
+get_live_link_content() {
+    local sapi=$1
+    local modname=$2
+    local priority=$3
+    echo "../../mods-available/$modname.ini"
+}
+
+module_exists() {
+    local modname=$1
+    local source_ini="/etc/php5/mods-available/${modname}.ini"
+
+    if [ ! -r "${source_ini}" ]; then
+	return 1
+    fi
+    return 0
+}
+
+module_cleanup() {
+    local sapi=$1
+    local modname=$2
+    local priority=$3
+
+    if [ -L "/etc/php5/conf.d/$priority-$modname.ini" ]; then
+	rm "/etc/php5/conf.d/$priority-$modname.ini";
+    fi
+}
+
+get_state_dir() {
+    local sapi=$1
+    echo "/var/lib/php5/modules/$sapi"
+    return 0
+}
+
+get_registry_dir() {
+    echo "/var/lib/php5/modules/registry"
+    return 0
+}
+
+get_sapi_dir() {
+    echo "/usr/share/php5/sapi"
+    return 0
+}
+
+list_parts() {
+    local dir=$1
+    local regex=${2:-}
+    local args="! ( -name '*.dpkg-old' -name '*.dpkg-new' -name '*.dpkg-dist' -name '*~' -name '*.bak' -name '*.ucf-old' -name '*.ucf-new' -name '*.ucf-dist' -name '*%' )"
+
+    if [ -d "$dir" ]; then
+	if [ -n "$regex" ]; then
+	    args="${args} -regex '$regex'"
+	fi
+	find "$dir" -mindepth 1 -maxdepth 1 -printf '%f\n' $args
+	return $?
+    else
+	return 1
+    fi    
+}

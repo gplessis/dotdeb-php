@@ -1,0 +1,5 @@
+if [ "$1" = "triggered" ] && [ "$2" = "/etc/php5/fpm/conf.d" ]; then
+    invoke-rc.d php5-fpm restart
+fi
+
+dpkg-maintscript-helper mv_conffile /etc/php5/fpm/main.conf /etc/php5/fpm/php-fpm.conf 5.3.5-1 -- "$@"

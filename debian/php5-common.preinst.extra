@@ -1,0 +1,4 @@
+if [ -d /var/lib/php5/module/ ]; then
+   cp -a /var/lib/php5/module/ /var/lib/php5/modules/
+   rm -rf /var/lib/php5/module/
+fi

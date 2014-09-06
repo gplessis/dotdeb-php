@@ -1,0 +1,10 @@
+Tests: cli
+Depends: php5-cli
+
+Tests: cgi
+Depends: apache2, php5-cgi
+Restrictions: needs-root
+
+Tests: mod-php
+Depends: libapache2-mod-php5
+Restrictions: needs-root

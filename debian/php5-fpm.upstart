@@ -1,0 +1,14 @@
+# php5-fpm - The PHP FastCGI Process Manager
+
+description "The PHP FastCGI Process Manager"
+author "Ondřej Surý <ondrej@debian.org>"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+reload signal USR2
+
+pre-start exec /usr/lib/php5/php5-fpm-checkconf
+
+respawn
+exec /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.conf

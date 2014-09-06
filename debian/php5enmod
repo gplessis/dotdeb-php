@@ -1,0 +1,263 @@
+#!/bin/sh
+#
+#  php5enmod - a php5 module manager for Debian
+#
+#  Copyright 2013 Ondřej Surý <ondrej@sury.org>
+#
+# This program is licensed at your choice under the terms of the GNU General
+# Public License version 2+ or under the terms of the PHP License 3.01.
+#
+# For GPL-2+:
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# For PHP 3.01:
+# This source file is subject to version 3.01 of the PHP license,
+# that is bundled with this package in the file LICENSE, and is
+# available through the world-wide-web at the following url:
+# http://www.php.net/license/3_01.txt
+# If you did not receive a copy of the PHP license and are unable to
+# obtain it through the world-wide-web, please send a note to
+# license@php.net so we can mail you a copy immediately.
+#
+
+set -ue
+
+SCRIPT_NAME=${0##*/}
+QUIET=no
+NEED_RESTART=no
+MAINT_MODE=no
+
+. /usr/share/php5/php5-helper
+
+usage() {
+    [ -n "$@" ] && warning $@
+    echo "usage: ${SCRIPT_NAME} [ -s ALL|sapi_name ] module_name [ module_name_2 ]"
+    exit 1
+}
+
+enmods() {
+    local sapis="$1"
+    local mods="$2"
+    local register="$3"
+    local sapi
+    local mod
+
+    for mod in $mods; do
+	for sapi in $sapis; do
+	    enmod_ret=0
+            enmod $sapi $mod || enmod_ret=$?
+	    case $enmod_ret in
+		0)
+		    NEED_RESTART=yes
+		    record_state enabled $sapi $mod
+		    ;;
+	    esac
+	done
+	if [ "$register" = "yes" ]; then
+	    mod_registry register $mod
+	fi
+    done
+}
+
+dismods() {
+    local sapis="$1"
+    local mods="$2"
+    local register="$3"
+    local purge="$4"
+    local sapi
+    local mod
+
+    for mod in $mods; do
+	for sapi in $sapis; do
+	    local dismod_ret=0
+            dismod $sapi $mod $purge || dismod_ret=$?
+	    case $dismod_ret in
+		0)
+		    NEED_RESTART=yes
+		    record_state disabled $sapi $mod
+		    ;;
+	    esac
+	done
+	if [ "$purge" = "yes" ]; then
+	    remove_state enabled $sapi $mod
+	    remove_state disabled $sapi $mod
+	    mod_registry unregister $mod
+	elif [ "$register" = "yes" ]; then
+	    mod_registry unregister $mod
+	fi
+    done
+}
+
+enmod() {
+    local sapi=$1
+    local modname=$2
+
+    if ! module_exists $modname; then
+	warning "Module $modname ini file doesn't exist under /etc/php5/mods-available"
+	return 1
+    fi
+
+    local priority=$(get_priority $sapi $modname)
+    local live_link=$(get_live_link $sapi $modname $priority)
+    local live_link_content=$(get_live_link_content $sapi $modname $priority)
+
+    module_cleanup $sapi $modname $priority
+
+    local module_state=0
+    php5query -q -s $sapi -m $modname || module_state=$?
+
+    case $module_state in
+	# module enabled, but re-enable the conf.d link just in case
+	0)
+	    ;;
+	# module not yet enabled
+	1)
+	    ;;
+	# module disabled by maintainer script
+	33)
+	    ;;
+	# module disabled by site administrator
+	# enable module only if not running in maintainer mode
+	32)
+	    if [ "$MAINT_MODE" = "yes" ]; then
+		warning "Not enabling the ${modname} module for ${sapi} SAPI since the module"
+		warning "was disabled by local administrator."
+		return 1
+	    fi
+	    ;;
+	34)
+            warning "Not enabling the ${modname} module for ${sapi} SAPI since module symlink"
+	    warning "already exists in /etc/php5/${sapi}/conf.d with different content."
+	    return 1
+	    ;;
+	# fail if we get any different result
+	*)
+	    warning "Unable to get module state, run php5query -s $sapi -m $modname manually"
+	    warning "and fix the module state."
+	    return 1
+    esac
+
+    if [ -d "/etc/php5/$sapi/conf.d" ]; then
+	if [ ! -h "${live_link}" ]; then
+	    ln -s "${live_link_content}" "${live_link}"
+	fi
+    else
+	warning "Directory /etc/php5/$sapi/conf.d doesn't exist, not enabling the module"
+	return 1
+    fi
+
+    return 0
+}
+
+dismod() {
+    local sapi=$1
+    local modname=$2
+    local purge=$3
+
+    if ! module_exists $modname; then
+	if [ "$purge" = "no" ]; then
+	    warning "Module $modname ini file doesn't exist under /etc/php5/mods-available"
+	    return 1
+	fi
+    fi
+
+    local priority=$(get_priority $sapi $modname)
+    local live_link=$(get_live_link $sapi $modname $priority)
+    local live_link_content=$(get_live_link_content $sapi $modname $priority)
+
+    module_cleanup $sapi $modname $priority
+
+    local module_state=0
+    php5query -q -s $sapi -m $modname || module_state=$?
+
+    case $module_state in
+	# module enabled
+	0)
+	    ;;
+	# module not enabled, but re-remove the link just in case
+	1|32|33)
+	    ;;
+	34)
+	    warning "Not disabling module $modname for $sapi SAPI.  The configuration was"
+	    warning "modified by local administrator."
+	    return 1
+	    ;;
+	# fail if we get any different result
+	*)
+	    warning "Unable to get module state, run php5query -s $sapi -m $modname manually"
+	    warning "and fix the module state."
+	    return 1
+    esac
+
+    if [ -d "/etc/php5/$sapi/conf.d" ]; then
+	if [ -h "$live_link" ]; then
+	    rm -f "$live_link"
+	fi
+    fi
+
+    return 0
+}
+
+sapis=
+register=no
+purge=no
+while getopts pfs:mqr opt; do
+    case $opt in
+	r) register=yes;;
+	s)
+	    if [ "$sapis" = "ALL" -o \( "$OPTARG" = "ALL" -a -n "$sapis" \) ]; then
+		warning "You cannot specify ALL and individual sapis"
+		usage
+	    fi
+	    sapis="${sapis}${sapis:+ }$OPTARG"
+	    ;;
+	m) MAINT_MODE=yes;;
+	p) purge=yes;;
+	q) QUIET=yes;;
+	\?) usage;;
+    esac
+done
+shift $(expr $OPTIND - 1)
+mods=""
+for mod in $@; do
+    mods="${mods}${mods:+ }${mod%%/*}"
+done
+if [ "$register" = "no" ]; then
+    sapis="${sapis:-ALL}"
+
+    if [ "$sapis" = "ALL" ]; then
+	register=yes
+    fi
+fi
+
+if [ "$sapis" = "ALL" ]; then
+    sapis=$(php5query -S)
+fi
+
+[ -z "$mods" ] && usage
+
+case "${SCRIPT_NAME}" in
+    php5enmod)
+	enmods "$sapis" "$mods" "$register"
+	;;
+    php5dismod)
+	dismods "$sapis" "$mods" "$register" "$purge"
+	;;
+    *)
+	usage
+	;;
+esac
+exit 0

@@ -1,0 +1,56 @@
+Description: Add major version number to paths and allow process pools
+ to be configured in individual files in /etc/php5/fpm/pool.d/
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-07-30
+
+Index: dotdeb-php5/sapi/fpm/php-fpm.conf.in
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/php-fpm.conf.in
++++ dotdeb-php5/sapi/fpm/php-fpm.conf.in
+@@ -12,7 +12,7 @@
+ ; Relative path can also be used. They will be prefixed by:
+ ;  - the global prefix if it's been set (-p argument)
+ ;  - @prefix@ otherwise
+-;include=etc/fpm.d/*.conf
++;include=@EXPANDED_SYSCONFDIR@/php5/fpm/*.conf
+ 
+ ;;;;;;;;;;;;;;;;;;
+ ; Global Options ;
+@@ -22,14 +22,14 @@
+ ; Pid file
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: none
+-;pid = run/php-fpm.pid
++pid = @EXPANDED_LOCALSTATEDIR@/run/php5-fpm.pid
+ 
+ ; Error log file
+ ; If it's set to "syslog", log is sent to syslogd instead of being written
+ ; in a local file.
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: log/php-fpm.log
+-;error_log = log/php-fpm.log
++error_log = @EXPANDED_LOCALSTATEDIR@/log/php5-fpm.log
+ 
+ ; syslog_facility is used to specify what type of program is logging the
+ ; message. This lets syslogd specify that messages from different facilities
+@@ -124,6 +124,10 @@
+ ; used in logs and stats. There is no limitation on the number of pools which
+ ; FPM can handle. Your system will tell you anyway :)
+ 
++; To configure the pools it is recommended to have one .conf file per
++; pool in the following directory:
++include=@EXPANDED_SYSCONFDIR@/php5/fpm/pool.d/*.conf
++
+ ; Start a new pool named 'www'.
+ ; the variable $pool can we used in any directive and will be replaced by the
+ ; pool name ('www' here)
+@@ -466,7 +470,7 @@ pm.max_spare_servers = 3
+ ; Chdir to this directory at the start.
+ ; Note: relative path can be used.
+ ; Default Value: current directory or / when chroot
+-;chdir = /var/www
++chdir = /
+  
+ ; Redirect worker stdout and stderr into main error log. If not set, stdout and
+ ; stderr will be redirected to /dev/null according to FastCGI specs.

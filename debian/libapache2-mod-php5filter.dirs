@@ -1,0 +1,4 @@
+/etc/apache2/mods-available
+/etc/php5/apache2filter
+/etc/php5/apache2filter/conf.d
+/usr/lib/apache2/modules
