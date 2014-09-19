@@ -4,10 +4,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
-Index: php-5.5.16/configure.in
+Index: dotdeb-php5/configure.in
 ===================================================================
---- php-5.5.16.orig/configure.in
-+++ php-5.5.16/configure.in
+--- dotdeb-php5.orig/configure.in
++++ dotdeb-php5/configure.in
 @@ -1068,7 +1068,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
@@ -50,10 +50,10 @@ Index: php-5.5.16/configure.in
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
-Index: php-5.5.16/ext/ext_skel
+Index: dotdeb-php5/ext/ext_skel
 ===================================================================
---- php-5.5.16.orig/ext/ext_skel
-+++ php-5.5.16/ext/ext_skel
+--- dotdeb-php5.orig/ext/ext_skel
++++ dotdeb-php5/ext/ext_skel
 @@ -70,7 +70,7 @@ if test -d "$extname" ; then
  fi
  
@@ -63,10 +63,10 @@ Index: php-5.5.16/ext/ext_skel
  fi
  
  ## convert skel_dir to full path
-Index: php-5.5.16/php.ini-development
+Index: dotdeb-php5/php.ini-development
 ===================================================================
---- php-5.5.16.orig/php.ini-development
-+++ php-5.5.16/php.ini-development
+--- dotdeb-php5.orig/php.ini-development
++++ dotdeb-php5/php.ini-development
 @@ -693,7 +693,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -76,10 +76,10 @@ Index: php-5.5.16/php.ini-development
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-Index: php-5.5.16/php.ini-production
+Index: dotdeb-php5/php.ini-production
 ===================================================================
---- php-5.5.16.orig/php.ini-production
-+++ php-5.5.16/php.ini-production
+--- dotdeb-php5.orig/php.ini-production
++++ dotdeb-php5/php.ini-production
 @@ -693,7 +693,7 @@ default_mimetype = "text/html"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -140,10 +140,10 @@ Index: php-5.5.16/php.ini-production
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
-Index: php-5.5.16/sapi/cli/php.1.in
+Index: dotdeb-php5/sapi/cli/php.1.in
 ===================================================================
---- php-5.5.16.orig/sapi/cli/php.1.in
-+++ php-5.5.16/sapi/cli/php.1.in
+--- dotdeb-php5.orig/sapi/cli/php.1.in
++++ dotdeb-php5/sapi/cli/php.1.in
 @@ -365,13 +365,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
@@ -163,11 +163,11 @@ Index: php-5.5.16/sapi/cli/php.1.in
 +The configuration file for the version of PHP that apache2 uses.
  .SH EXAMPLES
  .TP 5
- \fIphp \-r 'echo "Hello World\\n";'\fP
-Index: php-5.5.16/scripts/Makefile.frag
+ \fI@program_prefix@php \-r 'echo "Hello World\\n";'\fP
+Index: dotdeb-php5/scripts/Makefile.frag
 ===================================================================
---- php-5.5.16.orig/scripts/Makefile.frag
-+++ php-5.5.16/scripts/Makefile.frag
+--- dotdeb-php5.orig/scripts/Makefile.frag
++++ dotdeb-php5/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -179,10 +179,10 @@ Index: php-5.5.16/scripts/Makefile.frag
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
-Index: php-5.5.16/scripts/php-config.in
+Index: dotdeb-php5/scripts/php-config.in
 ===================================================================
---- php-5.5.16.orig/scripts/php-config.in
-+++ php-5.5.16/scripts/php-config.in
+--- dotdeb-php5.orig/scripts/php-config.in
++++ dotdeb-php5/scripts/php-config.in
 @@ -6,9 +6,9 @@ datarootdir="@datarootdir@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
@@ -196,10 +196,10 @@ Index: php-5.5.16/scripts/php-config.in
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
  man_dir=`eval echo @mandir@`
-Index: php-5.5.16/scripts/phpize.in
+Index: dotdeb-php5/scripts/phpize.in
 ===================================================================
---- php-5.5.16.orig/scripts/phpize.in
-+++ php-5.5.16/scripts/phpize.in
+--- dotdeb-php5.orig/scripts/phpize.in
++++ dotdeb-php5/scripts/phpize.in
 @@ -4,8 +4,8 @@
  prefix='@prefix@'
  datarootdir='@datarootdir@'
