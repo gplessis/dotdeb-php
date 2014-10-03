@@ -8,7 +8,7 @@ Index: dotdeb-php5/configure.in
 ===================================================================
 --- dotdeb-php5.orig/configure.in
 +++ dotdeb-php5/configure.in
-@@ -1071,7 +1071,7 @@ if test "$PHP_CLI" = "no"; then
+@@ -1085,7 +1085,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
  PHP_ARG_WITH(pear, [whether to install PEAR],
@@ -17,7 +17,7 @@ Index: dotdeb-php5/configure.in
    --without-pear          Do not install PEAR], DEFAULT, yes)
  
  if test "$PHP_PEAR" != "no"; then
-@@ -1101,7 +1101,7 @@ dnl
+@@ -1115,7 +1115,7 @@ dnl
    if test "$PHP_PEAR" = "DEFAULT" || test "$PHP_PEAR" = "yes"; then
      case $PHP_LAYOUT in
        GNU) PEAR_INSTALLDIR=$datadir/pear;;
@@ -26,7 +26,7 @@ Index: dotdeb-php5/configure.in
      esac
    fi
  
-@@ -1156,12 +1156,12 @@ test "$program_suffix" = "NONE" && progr
+@@ -1170,12 +1170,12 @@ test "$program_suffix" = "NONE" && progr
  
  case $libdir in
    '${exec_prefix}/lib')
@@ -41,7 +41,7 @@ Index: dotdeb-php5/configure.in
      ;;
  esac
  
-@@ -1228,7 +1228,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
+@@ -1242,7 +1242,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
@@ -162,7 +162,7 @@ Index: dotdeb-php5/sapi/cli/php.1.in
 +The configuration file for the version of PHP that apache2 uses.
  .SH EXAMPLES
  .TP 5
- \fIphp \-r 'echo "Hello World\\n";'\fP
+ \fI@program_prefix@php \-r 'echo "Hello World\\n";'\fP
 Index: dotdeb-php5/scripts/Makefile.frag
 ===================================================================
 --- dotdeb-php5.orig/scripts/Makefile.frag

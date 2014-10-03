@@ -1,3 +1,9 @@
+php5 (5.6.1-1~dotdeb.1) stable; urgency=medium
+
+  * Imported Upstream version 5.6.1
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 02 Oct 2014 20:50:45 -0700
+
 php5 (5.6.0-1~dotdeb.1) stable; urgency=medium
 
   * Rebuilt for Dotdeb
