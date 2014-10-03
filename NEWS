@@ -1,5 +1,57 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+02 Oct 2014, PHP 5.6.1
+
+- Core:
+  . Implemented FR #38409 (parse_ini_file() looses the type of booleans). (Tjerk)
+  . Fixed bug #65463 (SIGSEGV during zend_shutdown()). (Keyur Govande)
+  . Fixed bug #66036 (Crash on SIGTERM in apache process). (Keyur Govande)
+  . Fixed bug #67878 (program_prefix not honoured in man pages). (Remi)
+  . Fixed bug #67938 (Segfault when extending interface method with variadic).
+    (Nikita)
+  . Fixed bug #67985 (Incorrect last used array index copied to new array after
+    unset). (Tjerk)
+  . Fixed bug #68088 (New Posthandler Potential Illegal efree() vulnerability).
+    (Mike) (CVE-2014-3622)
+
+- DOM:
+  . Made DOMNode::textContent writeable. (Tjerk)
+
+- Fileinfo:
+  . Fixed bug #67731 (finfo::file() returns invalid mime type
+    for binary files). (Anatol)
+
+- GD:
+  . Made fontFetch's path parser thread-safe. (Sara)
+
+- GMP:
+  . Fixed bug #67917 (Using GMP objects with overloaded operators can cause
+    memory exhaustion). (Nikita)
+  . Fixed bug #50175 (gmp_init() results 0 on given base and number starting
+    with 0x or 0b). (Nikita)
+  . Implemented gmp_import() and gmp_export(). (Leigh, Nikita)
+
+- MySQLi:
+  . Fixed bug #67839 (mysqli does not handle 4-byte floats correctly). (Keyur)
+
+- OpenSSL:
+  . Fixed bug #67850 (extension won't build if openssl compiled without SSLv3).
+    (Daniel Lowrey)
+
+- phpdbg:
+  . Fixed issue krakjoe/phpdbg#111 (compile error without ZEND_SIGNALS). (Bob)
+
+- SOAP:
+  . Fixed bug #67955 (SoapClient prepends 0-byte to cookie names). (Philip Hofstetter)
+
+- Session:
+  . Fixed bug #67972 (SessionHandler Invalid memory read create_sid()). (Adam)
+
+- Sysvsem:
+  . Implemented FR #67990 (Add optional nowait argument to sem_acquire).
+    (Matteo)
+
 28 Aug 2014, PHP 5.6.0
 
 - Apache2 Handler SAPI:
@@ -25,6 +77,7 @@ PHP                                                                        NEWS
   . Fixed bug #66431 (Special Character via COM Interface (CP_UTF8)). (Anatol)
 
 - Core:
+  . Improved phpinfo() stylesheets. (Colin Viebrock)
   . Fixed bug #67693 (incorrect push to the empty array). (Tjerk)
   . Removed inconsistency regarding behaviour of array in constants at
     run-time. (Bob)
@@ -133,6 +186,8 @@ PHP                                                                        NEWS
     (Freek Lijten)
 
 - Date:
+  . Fixed bug #66060 (Heap buffer over-read in DateInterval). (CVE-2013-6712)
+    (Remi)
   . Fixed bug #66091 (memory leaks in DateTime constructor) (Tjerk).
   . Fixed bug #67308 (Serialize of DateTime truncates fractions of second).
     (Adam)
@@ -158,24 +213,26 @@ PHP                                                                        NEWS
   . Fixed bug #67705 (extensive backtracking in rule regular expression).
     (CVE-2014-3538) (Remi)
   . Fixed bug #67327 (fileinfo: CDF infinite loop in nelements DoS).
+   (CVE-2014-0238)
   . Fixed bug #67328 (fileinfo: fileinfo: numerous file_printf calls resulting in
-    performance degradation).
+    performance degradation). (CVE-2014-0237)
   . Fixed bug #67326 (fileinfo: cdf_read_short_sector insufficient boundary check).
+    (CVE-2014-0207)
   . Fixed bug #67329 (fileinfo: NULL pointer deference flaw by processing certain
-    CDF files).
+    CDF files). (CVE-2014-0236)
   . Fixed bug #67410 (fileinfo: mconvert incorrect handling of truncated pascal
-    string size). (Francisco Alonso, Jan Kaluza, Remi)
+    string size). (CVE-2014-3478) (Francisco Alonso, Jan Kaluza, Remi)
   . Fixed bug #67411 (fileinfo: cdf_check_stream_offset insufficient boundary
-    check). (Francisco Alonso, Jan Kaluza, Remi)
+    check). (CVE-2014-3479) (Francisco Alonso, Jan Kaluza, Remi)
   . Fixed bug #67412 (fileinfo: cdf_count_chain insufficient boundary check).
-    (Francisco Alonso, Jan Kaluza, Remi)
+    (CVE-2014-3480) (Francisco Alonso, Jan Kaluza, Remi)
   . Fixed bug #67413 (fileinfo: cdf_read_property_info insufficient boundary
-    check). (Francisco Alonso, Jan Kaluza, Remi)
+    check). (CVE-2014-3487) (Francisco Alonso, Jan Kaluza, Remi)
   . Upgraded to libmagic-5.17 (Anatol)
   . Fixed bug #66731 (file: infinite recursion). (CVE-2014-1943) (Remi)
-  . Fixed bug #66820 (out-of-bounds memory access in fileinfo)
+  . Fixed bug #66820 (out-of-bounds memory access in fileinfo).
     (CVE-2014-2270). (Remi)
-  . Fixed bug #66946i (fileinfo: extensive backtracking in awk rule regular
+  . Fixed bug #66946 (fileinfo: extensive backtracking in awk rule regular
     expression). (CVE-2013-7345) (Remi)
   . Fixed bug #66987 (Memory corruption in fileinfo ext / bigendian).
     (Remi)
@@ -184,12 +241,12 @@ PHP                                                                        NEWS
   . Fixed bug #66307 (Fileinfo crashes with powerpoint files). (Anatol)
 
 - FPM:
-  . Fix bug #67606 (revised fix 67541, broke mod_fastcgi BC). (David Zuelke)
+  . Fixed bug #67606 (revised fix 67541, broke mod_fastcgi BC). (David Zuelke)
   . Fixed bug #67530 (error_log=syslog ignored). (Remi)
   . Fixed bug #67635 (php links to systemd libraries without using pkg-config).
     (pacho@gentoo.org, Remi)
-  . Fix bug #67531 (syslog cannot be set in pool configuration). (Remi)
-  . Fix bug #67541 (Fix Apache 2.4.10+ SetHandler proxy:fcgi://
+  . Fixed bug #67531 (syslog cannot be set in pool configuration). (Remi)
+  . Fixed bug #67541 (Fix Apache 2.4.10+ SetHandler proxy:fcgi://
     incompatibilities). (David Zuelke)
   . Included apparmor support in fpm
     (RFC: https://wiki.php.net/rfc/fpm_change_hat). (Gernot Vormayr)
@@ -209,10 +266,11 @@ PHP                                                                        NEWS
   . Fixed bug #67248 (imageaffinematrixget missing check of parameters). (Stas)
   . Fixed imagettftext to load the correct character map rather than the last one.
     (Scott)
-  . Fixed bug #66714 ( imageconvolution breakage). (Brad Daily)
-  . Fixed bug #66815 (imagecrop(): insufficient fix for NULL defer
-    CVE-2013-7327). (Tomas Hoger, Remi).
-  . Fixed #66869 (Invalid 2nd argument crashes imageaffinematrixget) (Pierre)
+  . Fixed bug #66356 (Heap Overflow Vulnerability in imagecrop()).
+    (CVE-2013-7226)
+  . Fixed bug #66815 (imagecrop(): insufficient fix for NULL defer).
+    (CVE-2013-7327). (Tomas Hoger, Remi).
+  . Fixed bug #66869 (Invalid 2nd argument crashes imageaffinematrixget) (Pierre)
   . Fixed bug #66887 (imagescale - poor quality of scaled image). (Remi)
   . Fixed bug #66890 (imagescale segfault). (Remi)
   . Fixed bug #66893 (imagescale ignore method argument). (Remi)
@@ -305,6 +363,8 @@ PHP                                                                        NEWS
     fields). (Keyur Govande)
 
 - OpenSSL:
+  . Fixed bug #41631 (socket timeouts not honored in blocking SSL reads)
+    (Daniel Lowrey).
   . Fixed missing type checks in OpenSSL options (Yussuf Khalil, Stas).
   . Fixed bug #67609 (TLS connections fail behind HTTP proxy). (Daniel Lowrey)
   . Fixed broken build against OpenSSL older than 0.9.8 where ECDH unavailable.
@@ -385,9 +445,9 @@ PHP                                                                        NEWS
   . Encrypted TLS servers now support the server name indication TLS extension
     via the new  "SNI_server_certs" SSL context option. (Daniel Lowrey)
   . Fixed bug #66833 (Default disgest algo is still MD5, switch to SHA1). (Remi)
-  . Fix bug #66942 (memory leak in openssl_seal()). (Chuan Ma)
-  . Fix bug #66952 (memory leak in openssl_open()). (Chuan Ma)
-  . Fix bug #66840 (Fix broken build when extension built separately).
+  . Fixed bug #66942 (memory leak in openssl_seal()). (Chuan Ma)
+  . Fixed bug #66952 (memory leak in openssl_open()). (Chuan Ma)
+  . Fixed bug #66840 (Fix broken build when extension built separately).
     (Daniel Lowrey)
 
 - OPcache:
@@ -410,7 +470,7 @@ PHP                                                                        NEWS
   . Added support for (*MARK) backtracking verbs. (Nikita)
 
 - pgsql:
-  . Fix bug #67550 (Error in code "form" instead of "from", pgsql.c, line 756),
+  . Fixed bug #67550 (Error in code "form" instead of "from", pgsql.c, line 756),
     which affected builds against libpq < 7.3. (Adam)
   . pg_insert()/pg_select()/pg_update()/pg_delete() are no longer EXPERIMENTAL.
     (Yasuo)
@@ -438,7 +498,7 @@ PHP                                                                        NEWS
 - phpdbg
   . Fixed bug #67575 (Compilation fails for phpdbg when the
     build directory != src directory). (Andy Thompson)
-  . Fix Bug #67499 (readline feature not enabled when build with libedit). (Remi)
+  . Fixed Bug #67499 (readline feature not enabled when build with libedit). (Remi)
   . Fix issue krakjoe/phpdbg#94 (List behavior is inconsistent). (Bob)
   . Fix issue krakjoe/phpdbg#97 (The prompt should always ensure it is on a
     newline). (Bob)
@@ -482,7 +542,7 @@ PHP                                                                        NEWS
   . Fixed Bug #66071 (memory corruption in error handling) (Popa)
 
 - Phar:
-  . Fix bug #64498 ($phar->buildFromDirectory can't compress file with an accent
+  . Fixed bug #64498 ($phar->buildFromDirectory can't compress file with an accent
     in its name). (PR #588)
   . Fixed bug #67587 (Redirection loop on nginx with FPM). (Christian Weiske)
 
