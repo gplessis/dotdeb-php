@@ -256,12 +256,19 @@ PHP 5.6 UPGRADE NOTES
   Manipulated serialization strings for objects implementing Serializable by
   replacing "C:" with "O:" at the start will now produce an error.
 
+- parse_ini_file():
+- parse_ini_string():
+  Added scanner mode INI_SCANNER_TYPED to yield typed .ini values. 
+  For PHP >= 5.6.1
+
 ========================================
 6. New Functions
 ========================================
 
 - GMP:
   Added gmp_root($a, $nth) and gmp_rootrem($a, $nth) for calculating nth roots.
+  Added gmp_import($data, $word_size = 1, $options = GMP_MSW_FIRST | GMP_NATIVE_ENDIAN) in PHP 5.6.1.
+  Added gmp_export($gmpnumber, $word_size = 1, $options = GMP_MSW_FIRST | GMP_NATIVE_ENDIAN) in PHP 5.6.1.
 
 - Hash
   Added hash_equals($known_string, $user_string)
@@ -368,6 +375,9 @@ PHP 5.6 UPGRADE NOTES
     the command text using PQexecParams.
   - Added LISTEN/NOTIFY support via PDO::pgsqlGetNotify / PDO::pgsqlGetPid()
     as described in https://bugs.php.net/bug.php?id=42614.
+
+- DOM:
+  - DOMNode::textContent is now a writeable property. (>= 5.6.1)
 
 ========================================
 10. New Global Constants
