@@ -16,4 +16,5 @@ php-fpm-sysconfdir.patch
 temporary-path-fixes-for-multiarch.patch
 php-5.3.9-mysqlnd.patch
 php-fpm-listen-on-unix-socket.patch
+zlib-largefile-function-renaming.patch
 hack-phpdbg-to-explicitly-link-with-libedit.patch
