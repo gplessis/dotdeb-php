@@ -8,7 +8,7 @@ Index: dotdeb-php5/configure.in
 ===================================================================
 --- dotdeb-php5.orig/configure.in
 +++ dotdeb-php5/configure.in
-@@ -1068,7 +1068,7 @@ if test "$PHP_CLI" = "no"; then
+@@ -1082,7 +1082,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
  PHP_ARG_WITH(pear, [whether to install PEAR],
@@ -17,7 +17,7 @@ Index: dotdeb-php5/configure.in
    --without-pear          Do not install PEAR], DEFAULT, yes)
  
  if test "$PHP_PEAR" != "no"; then
-@@ -1098,7 +1098,7 @@ dnl
+@@ -1112,7 +1112,7 @@ dnl
    if test "$PHP_PEAR" = "DEFAULT" || test "$PHP_PEAR" = "yes"; then
      case $PHP_LAYOUT in
        GNU) PEAR_INSTALLDIR=$datadir/pear;;
@@ -26,7 +26,7 @@ Index: dotdeb-php5/configure.in
      esac
    fi
  
-@@ -1153,12 +1153,12 @@ test "$program_suffix" = "NONE" && progr
+@@ -1167,12 +1167,12 @@ test "$program_suffix" = "NONE" && progr
  
  case $libdir in
    '${exec_prefix}/lib')
@@ -41,7 +41,7 @@ Index: dotdeb-php5/configure.in
      ;;
  esac
  
-@@ -1225,7 +1225,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
+@@ -1239,7 +1239,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`

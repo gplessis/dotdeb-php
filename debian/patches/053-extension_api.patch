@@ -9,7 +9,7 @@ Index: dotdeb-php5/configure.in
 ===================================================================
 --- dotdeb-php5.orig/configure.in
 +++ dotdeb-php5/configure.in
-@@ -1177,8 +1177,13 @@ dnl Build extension directory path
+@@ -1191,8 +1191,13 @@ dnl Build extension directory path
  
  ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
  
@@ -24,7 +24,7 @@ Index: dotdeb-php5/configure.in
    if test "$oldstyleextdir" = "yes"; then
      if test "$PHP_DEBUG" = "1"; then
        part1=debug
-@@ -1321,6 +1326,7 @@ PHP_SUBST(CXX)
+@@ -1335,6 +1340,7 @@ PHP_SUBST(CXX)
  PHP_SUBST(CXXFLAGS)
  PHP_SUBST(CXXFLAGS_CLEAN)
  PHP_SUBST_OLD(DEBUG_CFLAGS)
