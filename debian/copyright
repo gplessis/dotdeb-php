@@ -11,7 +11,6 @@ The current maintainers can be contacted via the debian php packaging list:
 	pkg-php-maint@lists.alioth.debian.org
 
 It was downloaded from www.php.net/version5/downloads
-Changes: removed ext/dbase dir (non-free)
 
 Upstream Authors: The PHP group for PHP5, Andi Gutmans and Zeev Suraski
 for libzend
