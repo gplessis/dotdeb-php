@@ -3688,7 +3688,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=5
-PHP_RELEASE_VERSION=17
+PHP_RELEASE_VERSION=18
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -20326,7 +20326,8 @@ if test "$PHP_GCOV" = "yes"; then
     as_fn_error $? "ccache must be disabled when --enable-gcov option is used. You can disable ccache by setting environment variable CCACHE_DISABLE=1." "$LINENO" 5
   fi
 
-  ltp_version_list="1.5 1.6 1.7 1.9 1.10"
+    ltp_version_min="105"
+        ltp_version_exclude="1.8"
 
   # Extract the first word of "lcov", so it can be a program name with args.
 set dummy lcov; ac_word=$2
@@ -20417,24 +20418,33 @@ if ${php_cv_ltp_version+:} false; then :
 else
 
       php_cv_ltp_version=invalid
-      ltp_version=`$LTP -v 2>/dev/null | $SED -e 's/^.* //'`
-      for ltp_check_version in $ltp_version_list; do
-        if test "$ltp_version" = "$ltp_check_version"; then
-          php_cv_ltp_version="$ltp_check_version (ok)"
+      ltp_version_vars=`$LTP -v 2>/dev/null | $SED -e 's/^.* //' -e 's/\./ /g' | tr -d a-z`
+      if test -n "$ltp_version_vars"; then
+        set $ltp_version_vars
+        ltp_version="${1}.${2}"
+        ltp_version_num="`expr ${1} \* 100 + ${2}`"
+        if test $ltp_version_num -ge $ltp_version_min; then
+          php_cv_ltp_version="$ltp_version (ok)"
+          for ltp_check_version in $ltp_version_exclude; do
+            if test "$ltp_version" = "$ltp_check_version"; then
+              php_cv_ltp_version=invalid
+              break
+            fi
+          done
         fi
-      done
+      fi
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $php_cv_ltp_version" >&5
 $as_echo "$php_cv_ltp_version" >&6; }
   else
-    ltp_msg="To enable code coverage reporting you must have one of the following LTP versions installed: $ltp_version_list"
+    ltp_msg="To enable code coverage reporting you must have LTP installed"
     as_fn_error $? "$ltp_msg" "$LINENO" 5
   fi
 
   case $php_cv_ltp_version in
     ""|invalid)
-      ltp_msg="You must have one of the following versions of LTP: $ltp_version_list (found: $ltp_version)."
+      ltp_msg="This LTP version is not supported (found: $ltp_version, min: $ltp_version_min, excluded: $ltp_version_exclude)."
       as_fn_error $? "$ltp_msg" "$LINENO" 5
       LTP="exit 0;"
       ;;
@@ -103412,7 +103422,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 103415 "configure"
+#line 103425 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -105324,7 +105334,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 105327 "configure"' > conftest.$ac_ext
+  echo '#line 105337 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -106722,7 +106732,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 106725 "configure"
+#line 106735 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -106880,11 +106890,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:106883: $lt_compile\"" >&5)
+   (eval echo "\"configure:106893: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:106887: \$? = $ac_status" >&5
+   echo "configure:106897: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -107178,11 +107188,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:107181: $lt_compile\"" >&5)
+   (eval echo "\"configure:107191: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:107185: \$? = $ac_status" >&5
+   echo "configure:107195: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -107282,11 +107292,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:107285: $lt_compile\"" >&5)
+   (eval echo "\"configure:107295: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:107289: \$? = $ac_status" >&5
+   echo "configure:107299: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -107746,7 +107756,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 107749 "configure"
+#line 107759 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -107788,7 +107798,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 107791 "configure"
+#line 107801 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109305,7 +109315,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 109308 "configure"
+#line 109318 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -109405,7 +109415,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 109408 "configure"
+#line 109418 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -110470,7 +110480,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 110473 "configure"
+#line 110483 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -110513,7 +110523,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 110516 "configure"
+#line 110526 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -111765,11 +111775,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:111768: $lt_compile\"" >&5)
+   (eval echo "\"configure:111778: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:111772: \$? = $ac_status" >&5
+   echo "configure:111782: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -111869,11 +111879,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:111872: $lt_compile\"" >&5)
+   (eval echo "\"configure:111882: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:111876: \$? = $ac_status" >&5
+   echo "configure:111886: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
