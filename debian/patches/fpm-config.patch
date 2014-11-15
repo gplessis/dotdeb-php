@@ -45,7 +45,7 @@ Index: dotdeb-php5/sapi/fpm/php-fpm.conf.in
  ; Start a new pool named 'www'.
  ; the variable $pool can we used in any directive and will be replaced by the
  ; pool name ('www' here)
-@@ -466,7 +470,7 @@ pm.max_spare_servers = 3
+@@ -468,7 +472,7 @@ pm.max_spare_servers = 3
  ; Chdir to this directory at the start.
  ; Note: relative path can be used.
  ; Default Value: current directory or / when chroot
