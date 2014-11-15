@@ -1,0 +1,129 @@
+Index: dotdeb-php5/sapi/fpm/fpm/fastcgi.c
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/fpm/fastcgi.c
++++ dotdeb-php5/sapi/fpm/fpm/fastcgi.c
+@@ -137,6 +137,7 @@ typedef union _sa_t {
+ 	struct sockaddr     sa;
+ 	struct sockaddr_un  sa_unix;
+ 	struct sockaddr_in  sa_inet;
++	struct sockaddr_in6 sa_inet6;
+ } sa_t;
+ 
+ static HashTable fcgi_mgmt_vars;
+@@ -1094,12 +1095,17 @@ void fcgi_free_mgmt_var_cb(void * ptr)
+ 	pefree(*var, 1);
+ }
+ 
+-char *fcgi_get_last_client_ip() /* {{{ */
++const char *fcgi_get_last_client_ip() /* {{{ */
+ {
++	static char str[INET6_ADDRSTRLEN];
++
+ 	if (client_sa.sa.sa_family == AF_UNIX) {
+ 		return NULL;
+ 	}
+-	return inet_ntoa(client_sa.sa_inet.sin_addr);
++	if (client_sa.sa.sa_family == AF_INET) {
++		return inet_ntop(client_sa.sa.sa_family, &client_sa.sa_inet.sin_addr, str, INET6_ADDRSTRLEN);
++	}
++	return inet_ntop(client_sa.sa.sa_family, &client_sa.sa_inet6.sin6_addr, str, INET6_ADDRSTRLEN);
+ }
+ /* }}} */
+ /*
+Index: dotdeb-php5/sapi/fpm/fpm/fastcgi.h
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/fpm/fastcgi.h
++++ dotdeb-php5/sapi/fpm/fpm/fastcgi.h
+@@ -133,7 +133,7 @@ int fcgi_flush(fcgi_request *req, int cl
+ void fcgi_set_mgmt_var(const char * name, size_t name_len, const char * value, size_t value_len);
+ void fcgi_free_mgmt_var_cb(void * ptr);
+ 
+-char *fcgi_get_last_client_ip();
++const char *fcgi_get_last_client_ip();
+ 
+ /*
+  * Local variables:
+Index: dotdeb-php5/sapi/fpm/fpm/fpm_log.c
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/fpm/fpm_log.c
++++ dotdeb-php5/sapi/fpm/fpm/fpm_log.c
+@@ -367,7 +367,7 @@ int fpm_log_write(char *log_format TSRML
+ 
+ 				case 'R': /* remote IP address */
+ 					if (!test) {
+-						char *tmp = fcgi_get_last_client_ip();
++						const char *tmp = fcgi_get_last_client_ip();
+ 						len2 = snprintf(b, FPM_LOG_BUFFER - len, "%s", tmp ? tmp : "-");
+ 					}
+ 					break;
+Index: dotdeb-php5/sapi/fpm/fpm/fpm_sockets.c
+===================================================================
+--- dotdeb-php5.orig/sapi/fpm/fpm/fpm_sockets.c
++++ dotdeb-php5/sapi/fpm/fpm/fpm_sockets.c
+@@ -85,13 +85,24 @@ static void *fpm_get_in_addr(struct sock
+ }
+ /* }}} */
+ 
++static int fpm_get_in_port(struct sockaddr *sa) /* {{{ */
++{
++    if (sa->sa_family == AF_INET) {
++        return ntohs(((struct sockaddr_in*)sa)->sin_port);
++    }
++
++    return ntohs(((struct sockaddr_in6*)sa)->sin6_port);
++}
++/* }}} */
++
+ static int fpm_sockets_hash_op(int sock, struct sockaddr *sa, char *key, int type, int op) /* {{{ */
+ {
+ 	if (key == NULL) {
+ 		switch (type) {
+ 			case FPM_AF_INET : {
+-				key = alloca(INET6_ADDRSTRLEN);
+-				inet_ntop(sa->sa_family, fpm_get_in_addr(sa), key, sizeof key);
++				key = alloca(INET6_ADDRSTRLEN+10);
++				inet_ntop(sa->sa_family, fpm_get_in_addr(sa), key, INET6_ADDRSTRLEN);
++				sprintf(key+strlen(key), ":%d", fpm_get_in_port(sa));
+ 				break;
+ 			}
+ 
+@@ -246,7 +257,7 @@ static int fpm_socket_af_inet_listening_
+ 	char *addr = NULL;
+ 	int addr_len;
+ 	int port = 0;
+-	int sock;
++	int sock = -1;
+ 	int status;
+ 
+ 	if (port_str) { /* this is host:port pair */
+@@ -263,13 +274,23 @@ static int fpm_socket_af_inet_listening_
+ 		return -1;
+ 	}
+ 
+-	// strip brackets from address for getaddrinfo
+-	if (addr != NULL) {
+-		addr_len = strlen(addr);
+-		if (addr[0] == '[' && addr[addr_len - 1] == ']') {
+-			addr[addr_len - 1] = '\0';
+-			addr++;
+-		}
++	if (!addr) {
++		/* no address: default documented behavior, all IPv4 addresses */
++		struct sockaddr_in sa_in;
++
++		memset(&sa_in, 0, sizeof(sa_in));
++		sa_in.sin_family = AF_INET;
++		sa_in.sin_port = htons(port);
++		sa_in.sin_addr.s_addr = htonl(INADDR_ANY);
++		free(dup_address);
++		return fpm_sockets_get_listening_socket(wp, (struct sockaddr *) &sa_in, sizeof(struct sockaddr_in));
++	}
++
++	/* strip brackets from address for getaddrinfo */
++	addr_len = strlen(addr);
++	if (addr[0] == '[' && addr[addr_len - 1] == ']') {
++		addr[addr_len - 1] = '\0';
++		addr++;
+ 	}
+ 
+ 	memset(&hints, 0, sizeof hints);
