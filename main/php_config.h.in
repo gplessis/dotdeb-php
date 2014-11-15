@@ -2399,6 +2399,9 @@
 /* Define if cross-process locking is required by accept() */
 #undef USE_LOCKING
 
+/* Use system default cipher list instead of hardcoded value */
+#undef USE_OPENSSL_SYSTEM_CIPHERS
+
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
 # undef _ALL_SOURCE
