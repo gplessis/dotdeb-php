@@ -59,7 +59,13 @@ static inline void var_push(php_unserialize_data_t *var_hashx, zval **rval)
 
 PHPAPI void var_push_dtor(php_unserialize_data_t *var_hashx, zval **rval)
 {
-	var_entries *var_hash = (*var_hashx)->last_dtor;
+	var_entries *var_hash;
+
+	if (!var_hashx || !*var_hashx) {
+		return;
+	}
+
+	var_hash = (*var_hashx)->last_dtor;
 #if VAR_ENTRIES_DBG
 	fprintf(stderr, "var_push_dtor(%ld): %d\n", var_hash?var_hash->used_slots:-1L, Z_TYPE_PP(rval));
 #endif
@@ -341,6 +347,9 @@ static inline int process_nested_data(UNSERIALIZE_PARAMETER, HashTable *ht, long
 		} else {
 			/* object properties should include no integers */
 			convert_to_string(key);
+			if (zend_symtable_find(ht, Z_STRVAL_P(key), Z_STRLEN_P(key) + 1, (void **)&old_data)==SUCCESS) {
+				var_push_dtor(var_hash, old_data);
+			}
 			zend_hash_update(ht, Z_STRVAL_P(key), Z_STRLEN_P(key) + 1, &data,
 					sizeof data, NULL);
 		}
