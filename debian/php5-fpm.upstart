@@ -6,7 +6,8 @@ author "Ondřej Surý <ondrej@debian.org>"
 start on runlevel [2345]
 stop on runlevel [016]
 
-reload signal USR2
+# reload signal has been added in upstart 1.10 (not mainstream - yet)
+# reload signal USR2
 
 pre-start exec /usr/lib/php5/php5-fpm-checkconf
 
