@@ -18,4 +18,3 @@ php-fpm-sysconfdir.patch
 temporary-path-fixes-for-multiarch.patch
 php-5.3.9-mysqlnd.patch
 php-fpm-listen-on-unix-socket.patch
-fpm_regression.patch
