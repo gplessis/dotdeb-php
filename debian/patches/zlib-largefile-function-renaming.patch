@@ -2,9 +2,9 @@ Index: dotdeb-php5/ext/zlib/zlib.c
 ===================================================================
 --- dotdeb-php5.orig/ext/zlib/zlib.c
 +++ dotdeb-php5/ext/zlib/zlib.c
-@@ -34,6 +34,18 @@
- #include "ext/standard/php_string.h"
- #include "php_zlib.h"
+@@ -46,6 +46,18 @@
+ #undef gzseek
+ #undef gztell
  
 +/*
 + * zlib include files can define the following preprocessor defines which rename

@@ -67,7 +67,7 @@ Index: dotdeb-php5/php.ini-development
 ===================================================================
 --- dotdeb-php5.orig/php.ini-development
 +++ dotdeb-php5/php.ini-development
-@@ -711,7 +711,7 @@ default_charset = "UTF-8"
+@@ -708,7 +708,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -80,7 +80,7 @@ Index: dotdeb-php5/php.ini-production
 ===================================================================
 --- dotdeb-php5.orig/php.ini-production
 +++ dotdeb-php5/php.ini-production
-@@ -709,7 +709,7 @@ default_charset = "UTF-8"
+@@ -708,7 +708,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -89,7 +89,7 @@ Index: dotdeb-php5/php.ini-production
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -870,49 +870,6 @@ default_socket_timeout = 60
+@@ -869,49 +869,6 @@ default_socket_timeout = 60
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
  ;
