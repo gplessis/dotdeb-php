@@ -1931,8 +1931,11 @@ void zend_do_receive_param(zend_uchar op, znode *varname, const znode *initializ
 			if (class_type->u.constant.type == IS_ARRAY) {
 				cur_arg_info->type_hint = IS_ARRAY;
 				if (op == ZEND_RECV_INIT) {
-					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL")) || Z_TYPE(initialization->u.constant) == IS_CONSTANT_AST) {
+					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL"))) {
 						cur_arg_info->allow_null = 1;
+					} else if (IS_CONSTANT_TYPE(Z_TYPE(initialization->u.constant))) {
+						/* delay constant resolution and check to run-time */
+						cur_arg_info->allow_null = 0;
 					} else if (Z_TYPE(initialization->u.constant) != IS_ARRAY) {
 						zend_error_noreturn(E_COMPILE_ERROR, "Default value for parameters with array type hint can only be an array or NULL");
 					}
@@ -1940,8 +1943,11 @@ void zend_do_receive_param(zend_uchar op, znode *varname, const znode *initializ
 			} else if (class_type->u.constant.type == IS_CALLABLE) {
 				cur_arg_info->type_hint = IS_CALLABLE;
 				if (op == ZEND_RECV_INIT) {
-					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL")) || Z_TYPE(initialization->u.constant) == IS_CONSTANT_AST) {
+					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL"))) {
 						cur_arg_info->allow_null = 1;
+					} else if (IS_CONSTANT_TYPE(Z_TYPE(initialization->u.constant))) {
+						/* delay constant resolution and check to run-time */
+						cur_arg_info->allow_null = 0;
 					} else {
 						zend_error_noreturn(E_COMPILE_ERROR, "Default value for parameters with callable type hint can only be NULL");
 					}
@@ -1955,8 +1961,11 @@ void zend_do_receive_param(zend_uchar op, znode *varname, const znode *initializ
 				cur_arg_info->class_name = Z_STRVAL(class_type->u.constant);
 				cur_arg_info->class_name_len = Z_STRLEN(class_type->u.constant);
 				if (op == ZEND_RECV_INIT) {
-					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL")) || Z_TYPE(initialization->u.constant) == IS_CONSTANT_AST) {
+					if (Z_TYPE(initialization->u.constant) == IS_NULL || (Z_TYPE(initialization->u.constant) == IS_CONSTANT && !strcasecmp(Z_STRVAL(initialization->u.constant), "NULL"))) {
 						cur_arg_info->allow_null = 1;
+					} else if (IS_CONSTANT_TYPE(Z_TYPE(initialization->u.constant))) {
+						/* delay constant resolution and check to run-time */
+						cur_arg_info->allow_null = 0;
 					} else {
 						zend_error_noreturn(E_COMPILE_ERROR, "Default value for parameters with a class type hint can only be NULL");
 					}
@@ -4246,8 +4255,8 @@ static void zend_traits_init_trait_structures(zend_class_entry *ce TSRMLS_DC) /*
 
 					/* make sure that the trait method is not from a class mentioned in
 					 exclude_from_classes, for consistency */
-					if (cur_precedence->trait_method->ce == cur_precedence->exclude_from_classes[i]) {
-						zend_error_noreturn(E_COMPILE_ERROR,
+					if (cur_precedence->trait_method->ce == cur_precedence->exclude_from_classes[j]) {
+						zend_error(E_COMPILE_ERROR,
 								   "Inconsistent insteadof definition. "
 								   "The method %s is to be used from %s, but %s is also on the exclude list",
 								   cur_method_ref->method_name,
