@@ -3688,7 +3688,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=5
-PHP_RELEASE_VERSION=20
+PHP_RELEASE_VERSION=21
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -35635,7 +35635,7 @@ if test "$PHP_FILEINFO" != "no"; then
     libmagic/cdf.c libmagic/cdf_time.c libmagic/compress.c \
     libmagic/encoding.c libmagic/fsmagic.c libmagic/funcs.c \
     libmagic/is_tar.c libmagic/magic.c libmagic/print.c \
-    libmagic/readcdf.c libmagic/readelf.c libmagic/softmagic.c"
+    libmagic/readcdf.c libmagic/softmagic.c"
 
 
   ext_builddir=ext/fileinfo
@@ -104361,7 +104361,7 @@ case $libdir in
     libdir=$libdir/php
     ;;
 esac
-case $datadir in
+case `eval echo $datadir` in
   '${prefix}/share')
     datadir=$datadir/php
     ;;
@@ -104376,7 +104376,7 @@ old_libdir=$libdir
 old_datadir=$datadir
 exec_prefix=`eval echo $exec_prefix`
 libdir=`eval echo $libdir`
-datadir=`eval echo $datadir`
+datadir=`eval eval echo $datadir`
 
 
 ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
