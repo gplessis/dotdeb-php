@@ -34,7 +34,7 @@ Index: dotdeb-php5/configure.in
 +    libdir=$libdir/php5
      ;;
  esac
- case $datadir in
+ case `eval echo $datadir` in
    '${prefix}/share')
 -    datadir=$datadir/php
 +    datadir=$datadir/php5
