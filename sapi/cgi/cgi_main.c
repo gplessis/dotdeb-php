@@ -1664,13 +1664,15 @@ PHP_FUNCTION(apache_request_headers) /* {{{ */
 static void add_response_header(sapi_header_struct *h, zval *return_value TSRMLS_DC) /* {{{ */
 {
 	char *s, *p;
-	int  len;
+	int  len = 0;
 	ALLOCA_FLAG(use_heap)
 
 	if (h->header_len > 0) {
 		p = strchr(h->header, ':');
-		len = p - h->header;
-		if (p && (len > 0)) {
+		if (NULL != p) {
+			len = p - h->header;
+		}
+		if (len > 0) {
 			while (len > 0 && (h->header[len-1] == ' ' || h->header[len-1] == '\t')) {
 				len--;
 			}
@@ -2435,13 +2437,16 @@ consult the installation file that came with this distribution, or visit \n\
 						    int i = 1;
 
 						    c = file_handle.handle.stream.mmap.buf[i++];
-							while (c != '\n' && c != '\r' && c != EOF) {
+							while (c != '\n' && c != '\r' && i < file_handle.handle.stream.mmap.len) {
 								c = file_handle.handle.stream.mmap.buf[i++];
 							}
 							if (c == '\r') {
-								if (file_handle.handle.stream.mmap.buf[i] == '\n') {
+								if (i < file_handle.handle.stream.mmap.len && file_handle.handle.stream.mmap.buf[i] == '\n') {
 									i++;
 								}
+							}
+							if(i > file_handle.handle.stream.mmap.len) {
+								i = file_handle.handle.stream.mmap.len;
 							}
 							file_handle.handle.stream.mmap.buf += i;
 							file_handle.handle.stream.mmap.len -= i;

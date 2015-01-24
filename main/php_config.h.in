@@ -695,6 +695,9 @@
 /* Define to 1 if you have the `fpclass' function. */
 #undef HAVE_FPCLASS
 
+/* POSIX Access Control List */
+#undef HAVE_FPM_ACL
+
 /* whether fpsetprec is present and usable */
 #undef HAVE_FPSETPREC
 
@@ -736,6 +739,9 @@
 
 /* */
 #undef HAVE_GD_JPG
+
+/* */
+#undef HAVE_GD_LIBVERSION
 
 /* */
 #undef HAVE_GD_PNG
@@ -1831,6 +1837,9 @@
 
 /* */
 #undef HAVE_SYSVSHM
+
+/* Define to 1 if you have the <sys/acl.h> header file. */
+#undef HAVE_SYS_ACL_H
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */

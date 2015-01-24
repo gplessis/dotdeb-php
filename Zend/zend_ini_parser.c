@@ -106,6 +106,10 @@
 #include "zend_ini_scanner.h"
 #include "zend_extensions.h"
 
+#ifdef PHP_WIN32
+#include "win32/syslog.h"
+#endif
+
 #define YYERROR_VERBOSE
 #define YYSTYPE zval
 
@@ -256,10 +260,9 @@ static void ini_error(char *msg)
 
 	if (CG(ini_parser_unbuffered_errors)) {
 #ifdef PHP_WIN32
-		MessageBox(NULL, error_buf, "PHP Error", MB_OK|MB_TOPMOST|0x00200000L);
-#else
-		fprintf(stderr, "PHP:  %s", error_buf);
+		syslog(LOG_ALERT, "PHP: %s (%s)", error_buf, GetCommandLine());
 #endif
+		fprintf(stderr, "PHP:  %s", error_buf);
 	} else {
 		zend_error(E_WARNING, "%s", error_buf);
 	}
@@ -700,12 +703,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   277,   277,   278,   282,   289,   297,   306,   307,   311,
-     312,   316,   317,   318,   319,   320,   324,   325,   329,   330,
-     331,   335,   336,   337,   338,   339,   340,   344,   345,   346,
-     347,   348,   349,   353,   354,   355,   356,   357,   358,   359,
-     363,   367,   368,   369,   370,   371,   375,   376,   377,   378,
-     379
+       0,   280,   280,   281,   285,   292,   300,   309,   310,   314,
+     315,   319,   320,   321,   322,   323,   327,   328,   332,   333,
+     334,   338,   339,   340,   341,   342,   343,   347,   348,   349,
+     350,   351,   352,   356,   357,   358,   359,   360,   361,   362,
+     366,   370,   371,   372,   373,   374,   378,   379,   380,   381,
+     382
 };
 #endif
 

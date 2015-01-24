@@ -458,6 +458,7 @@ static int pdo_mysql_get_attribute(pdo_dbh_t *dbh, long attr, zval *return_value
 			ZVAL_LONG(return_value, H->buffered);
 			break;
 
+		case PDO_ATTR_EMULATE_PREPARES:
 		case PDO_MYSQL_ATTR_DIRECT_QUERY:
 			ZVAL_LONG(return_value, H->emulate_prepare);
 			break;
@@ -551,15 +552,20 @@ static int pdo_mysql_handle_factory(pdo_dbh_t *dbh, zval *driver_options TSRMLS_
 #ifdef CLIENT_MULTI_RESULTS
 		|CLIENT_MULTI_RESULTS
 #endif
-#ifdef CLIENT_MULTI_STATEMENTS
-		|CLIENT_MULTI_STATEMENTS
-#endif
 		;
-
 #if defined(PDO_USE_MYSQLND)
 	int dbname_len = 0;
 	int password_len = 0;
 #endif
+
+#ifdef CLIENT_MULTI_STATEMENTS
+	if (!driver_options) {
+		connect_opts |= CLIENT_MULTI_STATEMENTS;
+	} else if (pdo_attr_lval(driver_options, PDO_MYSQL_ATTR_MULTI_STATEMENTS, 1 TSRMLS_CC)) {
+		connect_opts |= CLIENT_MULTI_STATEMENTS;
+	}
+#endif
+
 	PDO_DBG_ENTER("pdo_mysql_handle_factory");
 	PDO_DBG_INF_FMT("dbh=%p", dbh);
 #ifdef CLIENT_MULTI_RESULTS
