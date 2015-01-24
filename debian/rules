@@ -154,7 +154,6 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-mhash=yes \
 		--with-system-tzdata \
 		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
-		--enable-maintainer-zts \
 		$(CONFIGURE_DTRACE_ARGS)
 
 BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
