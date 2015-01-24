@@ -1,5 +1,27 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+22 Jan 2015 PHP 5.4.37
+- Core:
+  . Fixed bug #68710 (Use After Free Vulnerability in PHP's unserialize()).
+    (CVE-2015-0231) (Stefan Esser)
+
+- CGI:
+  . Fixed bug #68618 (out of bounds read crashes php-cgi). (CVE-2014-9427)
+    (Stas)
+
+- EXIF:
+  . Fixed bug #68799: Free called on unitialized pointer. (CVE-2015-0232) (Stas)
+
+- Fileinfo:
+  . Removed readelf.c and related code from libmagic sources
+    (Remi, Anatol)
+  . Fixed bug #68735 (fileinfo out-of-bounds memory access).
+    (Anatol)
+
+- OpenSSL:
+  . Fixed bug #55618 (use case-insensitive cert name matching).
+    (Daniel Lowrey)
+
 18 Dec 2014 PHP 5.4.36
 
 - Core:
@@ -7,6 +29,9 @@ PHP                                                                        NEWS
   . Fixed bug #68545 (NULL pointer dereference in unserialize.c). (Anatol)
   . Fixed bug #68594 (Use after free vulnerability in unserialize()).
     (CVE-2014-8142) (Stefan Esser)
+
+- Mcrypt:
+  . Fixed possible read after end of buffer and use after free. (Dmitry)
 
 13 Nov 2014 PHP 5.4.35
 
