@@ -3686,7 +3686,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=4
-PHP_RELEASE_VERSION=37
+PHP_RELEASE_VERSION=38
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -87963,13 +87963,13 @@ $as_echo "$ac_cv_crypt_blowfish" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SHA512 crypt" >&5
 $as_echo_n "checking for SHA512 crypt... " >&6; }
-if ${ac_cv_crypt_SHA512+:} false; then :
+if ${ac_cv_crypt_sha512+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
 if test "$cross_compiling" = yes; then :
 
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -87998,11 +87998,11 @@ main() {
 _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
 
-  ac_cv_crypt_SHA512=yes
+  ac_cv_crypt_sha512=yes
 
 else
 
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
@@ -88010,18 +88010,18 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_SHA512" >&5
-$as_echo "$ac_cv_crypt_SHA512" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_sha512" >&5
+$as_echo "$ac_cv_crypt_sha512" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SHA256 crypt" >&5
 $as_echo_n "checking for SHA256 crypt... " >&6; }
-if ${ac_cv_crypt_SHA256+:} false; then :
+if ${ac_cv_crypt_sha256+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
 if test "$cross_compiling" = yes; then :
 
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -88050,11 +88050,11 @@ main() {
 _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
 
-  ac_cv_crypt_SHA256=yes
+  ac_cv_crypt_sha256=yes
 
 else
 
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
@@ -88062,8 +88062,8 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_SHA256" >&5
-$as_echo "$ac_cv_crypt_SHA256" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_sha256" >&5
+$as_echo "$ac_cv_crypt_sha256" >&6; }
 
 
 if test "$ac_cv_crypt_blowfish" = "no" || test "$ac_cv_crypt_des" = "no" || test "$ac_cv_crypt_ext_des" = "no" || test "x$php_crypt_r" = "x0"; then
