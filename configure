@@ -3669,7 +3669,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=6
-PHP_RELEASE_VERSION=5
+PHP_RELEASE_VERSION=6
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -22172,7 +22172,7 @@ done
 
 
 
-PHP_DATE_CFLAGS="-I@ext_builddir@/lib"
+PHP_DATE_CFLAGS="-I@ext_builddir@/lib -D HAVE_TIMELIB_CONFIG_H=1"
 timelib_sources="lib/astro.c lib/dow.c lib/parse_date.c lib/parse_tz.c
                  lib/timelib.c lib/tm2unixtime.c lib/unixtime2tm.c lib/parse_iso_intervals.c lib/interval.c"
 
@@ -22559,6 +22559,9 @@ EOF
 
 
 
+$as_echo "#define HAVE_TIMELIB_CONFIG_H 1" >>confdefs.h
+
+
 cat > $ext_builddir/lib/timelib_config.h <<EOF
 #ifdef PHP_WIN32
 # include "config.w32.h"
@@ -22566,6 +22569,7 @@ cat > $ext_builddir/lib/timelib_config.h <<EOF
 # include <php_config.h>
 #endif
 #include <php_stdint.h>
+#define TIMELIB_OMIT_STDINT 1
 EOF
 
 
@@ -104290,57 +104294,6 @@ if test "$PHP_MYSQLND" != "no" || test "$PHP_MYSQLND_ENABLED" = "yes" || test "$
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether whether compiler supports Decimal32/64/128 types" >&5
-$as_echo_n "checking whether whether compiler supports Decimal32/64/128 types... " >&6; }
-if test "${ac_cv_decimal_fp_supported+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-
-if test "$cross_compiling" = yes; then :
-
-  ac_cv_decimal_fp_supported=no
-
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <stdio.h>
-#include <string.h>
-
-int main(int argc, char **argv) {
-	typedef float dec32 __attribute__((mode(SD)));
-	dec32 k = 99.49f;
-	double d2 = (double)k;
-	const char *check_str = "99.49";
-	char print_str[32];
-
-	snprintf(print_str, 32, "%f", d2);
-	return memcmp(print_str, check_str, 5);
-}
-
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-
-  ac_cv_decimal_fp_supported=yes
-
-else
-
-  ac_cv_decimal_fp_supported=no
-
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_decimal_fp_supported" >&5
-$as_echo "$ac_cv_decimal_fp_supported" >&6; }
-if test "$ac_cv_decimal_fp_supported" = "yes"; then
-
-$as_echo "#define HAVE_DECIMAL_FP_SUPPORT 1" >>confdefs.h
-
-fi
-
 
 if test "$PHP_RECODE" != "no"; then
   test "$PHP_IMAP"  != "no" && recode_conflict="$recode_conflict imap"
@@ -105582,7 +105535,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 105585 "configure"
+#line 105538 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -107494,7 +107447,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 107497 "configure"' > conftest.$ac_ext
+  echo '#line 107450 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -108892,7 +108845,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 108895 "configure"
+#line 108848 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109050,11 +109003,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109053: $lt_compile\"" >&5)
+   (eval echo "\"configure:109006: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:109057: \$? = $ac_status" >&5
+   echo "configure:109010: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -109348,11 +109301,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109351: $lt_compile\"" >&5)
+   (eval echo "\"configure:109304: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:109355: \$? = $ac_status" >&5
+   echo "configure:109308: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -109452,11 +109405,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109455: $lt_compile\"" >&5)
+   (eval echo "\"configure:109408: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:109459: \$? = $ac_status" >&5
+   echo "configure:109412: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -109916,7 +109869,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 109919 "configure"
+#line 109872 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109958,7 +109911,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 109961 "configure"
+#line 109914 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -111475,7 +111428,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 111478 "configure"
+#line 111431 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -111575,7 +111528,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 111578 "configure"
+#line 111531 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -112640,7 +112593,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 112643 "configure"
+#line 112596 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -112683,7 +112636,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 112686 "configure"
+#line 112639 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -113935,11 +113888,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:113938: $lt_compile\"" >&5)
+   (eval echo "\"configure:113891: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:113942: \$? = $ac_status" >&5
+   echo "configure:113895: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -114039,11 +113992,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:114042: $lt_compile\"" >&5)
+   (eval echo "\"configure:113995: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:114046: \$? = $ac_status" >&5
+   echo "configure:113999: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

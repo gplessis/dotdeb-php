@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 5                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2014 The PHP Group                                |
+   | Copyright (c) 1997-2015 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -733,13 +733,16 @@ static void sapi_cgi_log_message(char *message TSRMLS_DC)
 
 		request = (fcgi_request*) SG(server_context);
 		if (request) {
-			int len = strlen(message);
+			int ret, len = strlen(message);
 			char *buf = malloc(len+2);
 
 			memcpy(buf, message, len);
 			memcpy(buf + len, "\n", sizeof("\n"));
-			fcgi_write(request, FCGI_STDERR, buf, len+1);
+			ret = fcgi_write(request, FCGI_STDERR, buf, len + 1);
 			free(buf);
+			if (ret < 0) {
+				php_handle_aborted_connection();
+			}
 		} else {
 			fprintf(stderr, "%s\n", message);
 		}
@@ -2228,9 +2231,9 @@ consult the installation file that came with this distribution, or visit \n\
 								SG(request_info).no_headers = 1;
 							}
 #if ZEND_DEBUG
-							php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2014 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+							php_printf("PHP %s (%s) (built: %s %s) (DEBUG)\nCopyright (c) 1997-2015 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
 #else
-							php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2014 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
+							php_printf("PHP %s (%s) (built: %s %s)\nCopyright (c) 1997-2015 The PHP Group\n%s", PHP_VERSION, sapi_module.name, __DATE__, __TIME__, get_zend_version());
 #endif
 							php_request_shutdown((void *) 0);
 							fcgi_shutdown();
