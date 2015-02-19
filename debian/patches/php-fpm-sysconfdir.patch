@@ -2,7 +2,7 @@ Index: dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
 ===================================================================
 --- dotdeb-php5.orig/sapi/fpm/fpm/fpm_conf.c
 +++ dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
-@@ -1659,7 +1659,7 @@ int fpm_conf_init_main(int test_conf, in
+@@ -1661,7 +1661,7 @@ int fpm_conf_init_main(int test_conf, in
  		char *tmp;
  
  		if (fpm_globals.prefix == NULL) {
