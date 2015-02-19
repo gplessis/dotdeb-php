@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 5                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2014 The PHP Group                                |
+   | Copyright (c) 1997-2015 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -356,7 +356,11 @@ PHP_FUNCTION(flock)
 	/* flock_values contains all possible actions if (operation & 4) we won't block on the lock */
 	act = flock_values[act - 1] | (operation & PHP_LOCK_NB ? LOCK_NB : 0);
 	if (php_stream_lock(stream, act)) {
+#ifdef PHP_WIN32
+		if (operation && errno == ERROR_INVALID_BLOCK && arg3 && PZVAL_IS_REF(arg3)) {
+#else
 		if (operation && errno == EWOULDBLOCK && arg3 && PZVAL_IS_REF(arg3)) {
+#endif
 			Z_LVAL_P(arg3) = 1;
 		}
 		RETURN_FALSE;

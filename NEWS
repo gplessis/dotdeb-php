@@ -1,6 +1,79 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-22 Jan 2014, PHP 5.5.21
+19 Feb 2015, PHP 5.5.22
+
+- Core:
+  . Fixed bug #67068 (getClosure returns somethings that's not a closure). 
+    (Danack at basereality dot com)
+  . Fixed bug #68925 (Mitigation for CVE-2015-0235 – GHOST: glibc gethostbyname
+    buffer overflow). (Stas)
+  . Fixed bug #68942 (Use after free vulnerability in unserialize() with
+    DateTimeZone). (CVE-2015-0273) (Stas)
+  . Added NULL byte protection to exec, system and passthru. (Yasuo)
+  . Removed support for multi-line headers, as the are deprecated by RFC 7230.
+    (Stas)
+
+- Date:
+  . Fixed bug #45081 (strtotime incorrectly interprets SGT time zone). (Derick)
+
+- Dba:
+  . Fixed bug #68711 (useless comparisons). (bugreports at internot dot info)
+
+- Enchant: 
+  . Fixed bug #6855 (heap buffer overflow in enchant_broker_request_dict()).
+    (Antony)
+
+- Fileinfo:
+  . Fixed bug #68827 (Double free with disabled ZMM). (Joshua Rogers)
+
+- FPM:
+  . Fixed bug #66479 (Wrong response to FCGI_GET_VALUES). (Frank Stolle)
+  . Fixed bug #68571 (core dump when webserver close the socket).
+    (redfoxli069 at gmail dot com, Laruence)
+
+- Libxml:
+  . Fixed bug #64938 (libxml_disable_entity_loader setting is shared
+    between threads). (Martin Jansen)
+
+- OpenSSL:
+  . Fixed bug #55618 (use case-insensitive cert name matching).
+    (Daniel Lowrey)
+
+- PDO_mysql:
+  . Fixed bug #68750 (PDOMysql with mysqlnd does not allow the usage of
+    named pipes). (steffenb198@aol.com)
+
+- Phar:
+  . Fixed bug #68901 (use after free). (bugreports at internot dot info)
+
+- Pgsql:
+  . Fixed Bug #65199 'pg_copy_from() modifies input array variable). (Yasuo)
+
+- Sqlite3:
+  . Fixed bug #68260 (SQLite3Result::fetchArray declares wrong 
+    required_num_args). (Julien)
+
+- Mysqli:
+  . Fixed bug #68114 (linker error on some OS X machines with fixed
+    width decimal support) (Keyur Govande)
+  . Fixed bug #68657 (Reading 4 byte floats with Mysqli and libmysqlclient
+    has rounding errors) (Keyur Govande)
+
+- Session:
+  . Fixed bug #68941 (mod_files.sh is a bash-script) (bugzilla at ii.nl, Yasuo)
+  . Fixed Bug #66623 (no EINTR check on flock) (Yasuo)
+  . Fixed bug #68063 (Empty session IDs do still start sessions) (Yasuo)
+
+- Standard:
+  . Fixed bug #65272 (flock() out parameter not set correctly in windows).
+    (Daniel Lowrey)
+  . Fixed bug #69033 (Request may get env. variables from previous requests
+    if PHP works as FastCGI)
+
+- Streams:
+  . Fixed bug which caused call after final close on streams filter. (Bob)
+
+22 Jan 2015, PHP 5.5.21
 
 - Core:
   . Upgraded crypt_blowfish to version 1.3. (Leigh)
@@ -16,14 +89,12 @@ PHP                                                                        NEWS
   . Fixed bug #66764 (configure doesn't define EXPANDED_DATADIR / PHP_DATADIR
     correctly). (Ferenc)
   . Fixed bug #68583 (Crash in timeout thread). (Anatol)
-  . Fixed bug #68594 (Use after free vulnerability in unserialize()).
-    (CVE-2014-8142) (Stefan Esser)
   . Fixed bug #68676 (Explicit Double Free). (Kalle)
   . Fixed bug #68710 (Use After Free Vulnerability in PHP's unserialize()).
     (CVE-2015-0231) (Stefan Esser)
 
 - CGI:
-  . Fixed bug #68618 (out of bounds read crashes php-cgi).(CVE-2014-9427)
+  . Fixed bug #68618 (out of bounds read crashes php-cgi). (CVE-2014-9427)
     (Stas)
 
 - CLI server:
@@ -34,8 +105,7 @@ PHP                                                                        NEWS
     CURLOPT_RETURNTRANSFER isn't set). (Jille Timmermans)
 
 - EXIF:
-  . Fixed bug #68799: Free called on unitialized pointer. (CVE-2015-0232)
-    (Stas)
+  . Fixed bug #68799: Free called on unitialized pointer. (CVE-2015-0232) (Stas)
 
 - Fileinfo:
   . Fixed bug #68671 (incorrect expression in libmagic).
@@ -61,9 +131,6 @@ PHP                                                                        NEWS
 - Opcache:
   . Fixed bug #67111 (Memory leak when using "continue 2" inside two foreach
     loops). (Nikita)
-
-- OpenSSL:
-  . Fixed bug #55618 (use case-insensitive cert name matching). (Daniel Lowrey)
 
 - Pcntl:
   . Fixed bug #60509 (pcntl_signal doesn't decrease ref-count of old handler
@@ -106,6 +173,8 @@ PHP                                                                        NEWS
     triggered). (Julien)
   . Fixed bug #68370 ("unset($this)" can make the program crash). (Laruence)
   . Fixed bug #68545 (NULL pointer dereference in unserialize.c). (Anatol)
+  . Fixed bug #68594 (Use after free vulnerability in unserialize()).
+    (CVE-2014-8142) (Stefan Esser)
 
 - Date:
   . Fixed day_of_week function as it could sometimes return negative values
