@@ -1,5 +1,24 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+19 Mar 2015 PHP 5.4.39
+
+- Core:
+  . Fixed bug #68976 (Use After Free Vulnerability in unserialize()). (Stas)
+  . Fixed bug #69134 (Per Directory Values overrides PHP_INI_SYSTEM
+    configuration options). (Anatol Belski)
+  . Fixed bug #69207 (move_uploaded_file allows nulls in path). (Stas)
+
+- Ereg:
+  . Fixed bug #69248 (heap overflow vulnerability in regcomp.c). (Stas)
+
+- SOAP:
+  . Fixed bug #69085 (SoapClient's __call() type confusion through
+    unserialize()). (Dmitry)
+
+- ZIP:
+  . Fixed bug #69253 (ZIP Integer Overflow leads to writing past heap
+    boundary). (Stas)
+
 19 Feb 2015 PHP 5.4.38
 
 - Core:
@@ -11,10 +30,10 @@ PHP                                                                        NEWS
   . Fixed bug #67827 (broken detection of system crypt sha256/sha512 support).
     (ncopa at alpinelinux dot org)  
   . Fixed bug #68942 (Use after free vulnerability in unserialize() with
-    DateTimeZone). (Stas)
+    DateTimeZone). (CVE-2015-0273) (Stas)
   
 - Enchant: 
-  . Fixed bug #6855 (heap buffer overflow in enchant_broker_request_dict()).
+  . Fixed bug #68552 (heap buffer overflow in enchant_broker_request_dict()).
     (Antony)
 
 - SOAP:
