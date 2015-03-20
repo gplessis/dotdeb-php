@@ -1015,6 +1015,7 @@ with_mysql_sock
 with_mysqli
 enable_embedded_mysqli
 with_oci8
+with_odbcver
 with_adabas
 with_sapdb
 with_solid
@@ -1899,6 +1900,8 @@ Extensions:
   --with-oci8=DIR         Include Oracle Database OCI8 support. DIR defaults to $ORACLE_HOME.
                           Use --with-oci8=instantclient,/path/to/instant/client/lib
                           to use an Oracle Instant Client installation
+  --with-odbcver=HEX      Force support for the passed ODBC version. A hex number is expected, default 0x0300.
+                             Use the special value of 0 to prevent an explicit ODBCVER to be defined.
   --with-adabas=DIR       Include Adabas D support /usr/local
   --with-sapdb=DIR        Include SAP DB support /usr/local
   --with-solid=DIR        Include Solid support /usr/local/solid
@@ -3669,7 +3672,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=6
-PHP_RELEASE_VERSION=6
+PHP_RELEASE_VERSION=7
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -63871,6 +63874,50 @@ fi
 
 
 
+
+
+php_with_odbcver=0x0300
+
+
+
+# Check whether --with-odbcver was given.
+if test "${with_odbcver+set}" = set; then :
+  withval=$with_odbcver; PHP_ODBCVER=$withval
+else
+
+  PHP_ODBCVER=0x0300
+  test "$PHP_ENABLE_ALL" && PHP_ODBCVER=$PHP_ENABLE_ALL
+
+fi
+
+
+
+ext_output="yes, shared"
+ext_shared=yes
+case $PHP_ODBCVER in
+shared,*)
+  PHP_ODBCVER=`echo "$PHP_ODBCVER"|$SED 's/^shared,//'`
+  ;;
+shared)
+  PHP_ODBCVER=yes
+  ;;
+no)
+  ext_output=no
+  ext_shared=no
+  ;;
+*)
+  ext_output=yes
+  ext_shared=no
+  ;;
+esac
+
+
+
+
+
+
+
+
 if test -z "$ODBC_TYPE"; then
 
 php_with_adabas=no
@@ -65466,6 +65513,21 @@ $as_echo "yes (static)" >&6; }
     fi
   fi
 fi
+
+if test "no" != "$PHP_ODBCVER"; then
+  if test "$PHP_ODBCVER" != "0"; then
+
+cat >>confdefs.h <<_ACEOF
+#define ODBCVER $PHP_ODBCVER
+_ACEOF
+
+  fi
+else
+
+$as_echo "#define ODBCVER 0x300" >>confdefs.h
+
+fi
+
 
 if test -n "$ODBC_TYPE"; then
   if test "$ODBC_TYPE" != "dbmaker"; then
@@ -87447,13 +87509,13 @@ $as_echo "$ac_cv_crypt_blowfish" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SHA512 crypt" >&5
 $as_echo_n "checking for SHA512 crypt... " >&6; }
-if test "${ac_cv_crypt_SHA512+set}" = set; then :
+if test "${ac_cv_crypt_sha512+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
 
 if test "$cross_compiling" = yes; then :
 
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -87482,11 +87544,11 @@ main() {
 _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
 
-  ac_cv_crypt_SHA512=yes
+  ac_cv_crypt_sha512=yes
 
 else
 
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
@@ -87494,18 +87556,18 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_SHA512" >&5
-$as_echo "$ac_cv_crypt_SHA512" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_sha512" >&5
+$as_echo "$ac_cv_crypt_sha512" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SHA256 crypt" >&5
 $as_echo_n "checking for SHA256 crypt... " >&6; }
-if test "${ac_cv_crypt_SHA256+set}" = set; then :
+if test "${ac_cv_crypt_sha256+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
 
 if test "$cross_compiling" = yes; then :
 
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -87535,11 +87597,11 @@ main() {
 _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
 
-  ac_cv_crypt_SHA256=yes
+  ac_cv_crypt_sha256=yes
 
 else
 
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
@@ -87547,8 +87609,8 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_SHA256" >&5
-$as_echo "$ac_cv_crypt_SHA256" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_crypt_sha256" >&5
+$as_echo "$ac_cv_crypt_sha256" >&6; }
 
 
 if test "$ac_cv_crypt_blowfish" = "no" || test "$ac_cv_crypt_des" = "no" || test "$ac_cv_crypt_ext_des" = "no" || test "x$php_crypt_r" = "x0"; then
@@ -90435,7 +90497,7 @@ int
 main ()
 {
 
-int __tmp__() { mbstate_t a; }
+mbstate_t a;
 
   ;
   return 0;
@@ -105535,7 +105597,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 105538 "configure"
+#line 105600 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -107447,7 +107509,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 107450 "configure"' > conftest.$ac_ext
+  echo '#line 107512 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -108845,7 +108907,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 108848 "configure"
+#line 108910 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109003,11 +109065,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109006: $lt_compile\"" >&5)
+   (eval echo "\"configure:109068: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:109010: \$? = $ac_status" >&5
+   echo "configure:109072: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -109301,11 +109363,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109304: $lt_compile\"" >&5)
+   (eval echo "\"configure:109366: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:109308: \$? = $ac_status" >&5
+   echo "configure:109370: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -109405,11 +109467,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:109408: $lt_compile\"" >&5)
+   (eval echo "\"configure:109470: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:109412: \$? = $ac_status" >&5
+   echo "configure:109474: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -109869,7 +109931,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 109872 "configure"
+#line 109934 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109911,7 +109973,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 109914 "configure"
+#line 109976 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -111428,7 +111490,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 111431 "configure"
+#line 111493 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -111528,7 +111590,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 111531 "configure"
+#line 111593 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -112593,7 +112655,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 112596 "configure"
+#line 112658 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -112636,7 +112698,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 112639 "configure"
+#line 112701 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -113888,11 +113950,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:113891: $lt_compile\"" >&5)
+   (eval echo "\"configure:113953: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:113895: \$? = $ac_status" >&5
+   echo "configure:113957: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -113992,11 +114054,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:113995: $lt_compile\"" >&5)
+   (eval echo "\"configure:114057: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:113999: \$? = $ac_status" >&5
+   echo "configure:114061: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
