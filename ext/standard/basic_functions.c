@@ -1435,6 +1435,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_setcookie, 0, 0, 1)
 	ZEND_ARG_INFO(0, path)
 	ZEND_ARG_INFO(0, domain)
 	ZEND_ARG_INFO(0, secure)
+	ZEND_ARG_INFO(0, httponly)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_setrawcookie, 0, 0, 1)
@@ -1444,6 +1445,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_setrawcookie, 0, 0, 1)
 	ZEND_ARG_INFO(0, path)
 	ZEND_ARG_INFO(0, domain)
 	ZEND_ARG_INFO(0, secure)
+	ZEND_ARG_INFO(0, httponly)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_headers_sent, 0, 0, 0)
@@ -1549,12 +1551,14 @@ ZEND_BEGIN_ARG_INFO(arginfo_iptcparse, 0)
 	ZEND_ARG_INFO(0, iptcdata)
 ZEND_END_ARG_INFO()
 /* }}} */
+
 /* {{{ lcg.c */
 ZEND_BEGIN_ARG_INFO(arginfo_lcg_value, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
+
 /* {{{ levenshtein.c */
-ZEND_BEGIN_ARG_INFO(arginfo_levenshtein, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_levenshtein, 0, 0, 2)
 	ZEND_ARG_INFO(0, str1)
 	ZEND_ARG_INFO(0, str2)
 	ZEND_ARG_INFO(0, cost_ins)
@@ -4230,8 +4234,8 @@ PHP_FUNCTION(getopt)
 	/* Get argv from the global symbol table. We calculate argc ourselves
 	 * in order to be on the safe side, even though it is also available
 	 * from the symbol table. */
-	if (PG(http_globals)[TRACK_VARS_SERVER] &&
-		(zend_hash_find(HASH_OF(PG(http_globals)[TRACK_VARS_SERVER]), "argv", sizeof("argv"), (void **) &args) != FAILURE ||
+	if ((PG(http_globals)[TRACK_VARS_SERVER] || zend_is_auto_global(ZEND_STRL("_SERVER") TSRMLS_CC)) &&
+		(zend_hash_find(Z_ARRVAL_P((PG(http_globals))[TRACK_VARS_SERVER]), "argv", sizeof("argv"), (void **) &args) != FAILURE ||
 		zend_hash_find(&EG(symbol_table), "argv", sizeof("argv"), (void **) &args) != FAILURE) && Z_TYPE_PP(args) == IS_ARRAY
 	) {
 		int pos = 0;
@@ -5801,7 +5805,7 @@ PHP_FUNCTION(move_uploaded_file)
 		RETURN_FALSE;
 	}
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &path, &path_len, &new_path, &new_path_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sp", &path, &path_len, &new_path, &new_path_len) == FAILURE) {
 		return;
 	}
 
