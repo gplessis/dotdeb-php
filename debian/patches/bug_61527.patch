@@ -1,0 +1,24 @@
+From 76c1ec5e96640e3076c105bde2cccfceb7557690 Mon Sep 17 00:00:00 2001
+From: Xinchen Hui <laruence@php.net>
+Date: Wed, 25 Mar 2015 12:07:25 +0800
+Subject: [PATCH] Bug #69293	NEW segfault when using
+ SoapClient::__setSoapHeader (bisected, regression)
+
+This was a typo introduced in c8eaca013a3922e8383def6158ece2b63f6ec483
+---
+ ext/soap/php_encoding.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: dotdeb-php5/ext/soap/php_encoding.c
+===================================================================
+--- dotdeb-php5.orig/ext/soap/php_encoding.c
++++ dotdeb-php5/ext/soap/php_encoding.c
+@@ -464,7 +464,7 @@ static xmlNodePtr master_to_xml_int(enco
+ 			xmlNodeSetName(node, BAD_CAST(Z_STRVAL_PP(zname)));
+ 		}
+ 		if (zend_hash_find(ht, "enc_namens", sizeof("enc_namens"), (void **)&znamens) == SUCCESS &&
+-		    Z_TYPE_PP(zname) == IS_STRING) {
++		    Z_TYPE_PP(znamens) == IS_STRING) {
+ 			xmlNsPtr nsp = encode_add_ns(node, Z_STRVAL_PP(znamens));
+ 			xmlSetNs(node, nsp);
+ 		}
