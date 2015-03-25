@@ -1,3 +1,9 @@
+php5 (5.4.39-1~dotdeb.1) oldstable; urgency=medium
+
+  * Fixes bug #61527
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Wed, 25 Mar 2015 11:21:34 -0700
+
 php5 (5.4.39-1~dotdeb.0) oldstable; urgency=medium
 
   * Imported Upstream version 5.4.39
