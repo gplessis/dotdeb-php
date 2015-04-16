@@ -930,6 +930,12 @@ PHP_METHOD(SoapFault, __toString)
 
 	zend_call_function(&fci, NULL TSRMLS_CC);
 
+	convert_to_string(faultcode);
+	convert_to_string(faultstring);
+	convert_to_string(file);
+	convert_to_long(line);
+	convert_to_string(trace);
+
 	len = spprintf(&str, 0, "SoapFault exception: [%s] %s in %s:%ld\nStack trace:\n%s",
 	               Z_STRVAL_P(faultcode), Z_STRVAL_P(faultstring), Z_STRVAL_P(file), Z_LVAL_P(line),
 	               Z_STRLEN_P(trace) ? Z_STRVAL_P(trace) : "#0 {main}\n");
@@ -2564,7 +2570,7 @@ static int do_request(zval *this_ptr, xmlDoc *request, char *location, char *act
 	}
 
 	if (zend_hash_find(Z_OBJPROP_P(this_ptr), "trace", sizeof("trace"), (void **) &trace) == SUCCESS &&
-	    (Z_LVAL_PP(trace) == IS_BOOL || Z_LVAL_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
+	    (Z_TYPE_PP(trace) == IS_BOOL || Z_TYPE_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
 		add_property_stringl(this_ptr, "__last_request", buf, buf_size, 1);
 	}
 
@@ -2599,7 +2605,7 @@ static int do_request(zval *this_ptr, xmlDoc *request, char *location, char *act
 		}
 		ret = FALSE;
 	} else if (zend_hash_find(Z_OBJPROP_P(this_ptr), "trace", sizeof("trace"), (void **) &trace) == SUCCESS &&
-	           (Z_LVAL_PP(trace) == IS_BOOL || Z_LVAL_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
+	           (Z_TYPE_PP(trace) == IS_BOOL || Z_TYPE_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
 		add_property_stringl(this_ptr, "__last_response", Z_STRVAL_P(response), Z_STRLEN_P(response), 1);
 	}
 	zval_ptr_dtor(&params[4]);
@@ -2644,7 +2650,7 @@ static void do_soap_call(zval* this_ptr,
 	SOAP_CLIENT_BEGIN_CODE();
 
 	if (zend_hash_find(Z_OBJPROP_P(this_ptr), "trace", sizeof("trace"), (void **) &trace) == SUCCESS &&
-	    (Z_LVAL_PP(trace) == IS_BOOL || Z_LVAL_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
+	    (Z_TYPE_PP(trace) == IS_BOOL || Z_TYPE_PP(trace) == IS_LONG) && Z_LVAL_PP(trace) != 0) {
 		zend_hash_del(Z_OBJPROP_P(this_ptr), "__last_request", sizeof("__last_request"));
 		zend_hash_del(Z_OBJPROP_P(this_ptr), "__last_response", sizeof("__last_response"));
 	}
