@@ -1,3 +1,11 @@
+php5 (5.4.40-1~dotdeb+squeeze.1) oldstable; urgency=medium
+
+  * generic Dockerfile to ease Debian packaging
+  * Imported Upstream version 5.4.40
+  * Patches refresh
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 16 Apr 2015 16:32:21 -0700
+
 php5 (5.4.39-1~dotdeb.1) oldstable; urgency=medium
 
   * Fixes bug #61527
