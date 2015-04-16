@@ -906,16 +906,21 @@ static int php_sqlite3_callback_compare(void *coll, int a_len, const void *a, in
 	efree(zargs[1]);
 	efree(zargs);
 
-	//retval ought to contain a ZVAL_LONG by now
-	// (the result of a comparison, i.e. most likely -1, 0, or 1)
-	//I suppose we could accept any scalar return type, though.
-	if (Z_TYPE_P(retval) != IS_LONG){
+	if (!retval) {
+		//Exception was thrown by callback, default to 0 for compare
+		ret = 0;
+	} else if (Z_TYPE_P(retval) != IS_LONG) {
+		//retval ought to contain a ZVAL_LONG by now
+    	// (the result of a comparison, i.e. most likely -1, 0, or 1)
+    	//I suppose we could accept any scalar return type, though.
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the compare callback (invalid return type).  Collation behaviour is undefined.");
-	}else{
+	} else {
 		ret = Z_LVAL_P(retval);
 	}
 
-	zval_ptr_dtor(&retval);
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
 
 	return ret;
 }
@@ -1282,6 +1287,8 @@ PHP_METHOD(sqlite3stmt, paramCount)
 	php_sqlite3_stmt *stmt_obj;
 	zval *object = getThis();
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -1300,6 +1307,8 @@ PHP_METHOD(sqlite3stmt, close)
 	php_sqlite3_stmt *stmt_obj;
 	zval *object = getThis();
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -1320,6 +1329,8 @@ PHP_METHOD(sqlite3stmt, reset)
 	php_sqlite3_stmt *stmt_obj;
 	zval *object = getThis();
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -1342,6 +1353,8 @@ PHP_METHOD(sqlite3stmt, clear)
 	php_sqlite3_stmt *stmt_obj;
 	zval *object = getThis();
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -1365,6 +1378,8 @@ PHP_METHOD(sqlite3stmt, readOnly)
 	php_sqlite3_stmt *stmt_obj;
 	zval *object = getThis();
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -1434,6 +1449,8 @@ PHP_METHOD(sqlite3stmt, bindParam)
 	zval *object = getThis();
 	struct php_sqlite3_bound_param param = {0};
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	param.param_number = -1;
 	param.type = SQLITE3_TEXT;
@@ -1467,6 +1484,8 @@ PHP_METHOD(sqlite3stmt, bindValue)
 	zval *object = getThis();
 	struct php_sqlite3_bound_param param = {0};
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+	
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	param.param_number = -1;
 	param.type = SQLITE3_TEXT;
@@ -1503,6 +1522,8 @@ PHP_METHOD(sqlite3stmt, execute)
 	struct php_sqlite3_bound_param *param;
 
 	stmt_obj = (php_sqlite3_stmt *)zend_object_store_get_object(object TSRMLS_CC);
+
+	SQLITE3_CHECK_INITIALIZED(stmt_obj->db_obj, stmt_obj->initialised, SQLite3)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
