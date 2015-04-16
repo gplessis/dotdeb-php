@@ -817,16 +817,26 @@ static int enable_peer_verification(SSL_CTX *ctx, php_stream *stream TSRMLS_DC) 
 	zval **val = NULL;
 	char *cafile = NULL;
 	char *capath = NULL;
+	php_openssl_netstream_data_t *sslsock = (php_openssl_netstream_data_t*)stream->abstract;
 
 	GET_VER_OPT_STRING("cafile", cafile);
 	GET_VER_OPT_STRING("capath", capath);
 
-	if (!cafile) {
+	if (cafile == NULL) {
 		cafile = zend_ini_string("openssl.cafile", sizeof("openssl.cafile"), 0);
 		cafile = strlen(cafile) ? cafile : NULL;
+	} else if (!sslsock->is_client) {
+		/* Servers need to load and assign CA names from the cafile */
+		STACK_OF(X509_NAME) *cert_names = SSL_load_client_CA_file(cafile);
+		if (cert_names != NULL) {
+			SSL_CTX_set_client_CA_list(ctx, cert_names);
+		} else {
+			php_error(E_WARNING, "SSL: failed loading CA names from cafile");
+			return FAILURE;
+		}
 	}
 
-	if (!capath) {
+	if (capath == NULL) {
 		capath = zend_ini_string("openssl.capath", sizeof("openssl.capath"), 0);
 		capath = strlen(capath) ? capath : NULL;
 	}
@@ -842,9 +852,6 @@ static int enable_peer_verification(SSL_CTX *ctx, php_stream *stream TSRMLS_DC) 
 		SSL_CTX_set_cert_verify_callback(ctx, win_cert_verify_callback, (void *)stream);
 		SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
 #else
-		php_openssl_netstream_data_t *sslsock;
-		sslsock = (php_openssl_netstream_data_t*)stream->abstract;
-
 		if (sslsock->is_client && !SSL_CTX_set_default_verify_paths(ctx)) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING,
 				"Unable to set default verify locations and no CA settings specified");
@@ -1824,21 +1831,22 @@ static size_t php_openssl_sockop_io(int read, php_stream *stream, char *buf, siz
 	if (sslsock->ssl_active) {
 		int retry = 1;
 		struct timeval start_time;
-		struct timeval *timeout;
-		int blocked = sslsock->s.is_blocked;
+		struct timeval *timeout = NULL;
+		int began_blocked = sslsock->s.is_blocked;
 		int has_timeout = 0;
 
-		/* Begin by making the socket non-blocking. This allows us to check the timeout. */
-		if (SUCCESS == php_set_sock_blocking(sslsock->s.socket, 0 TSRMLS_CC)) {
+		/* never use a timeout with non-blocking sockets */
+		if (began_blocked && &sslsock->s.timeout) {
+			timeout = &sslsock->s.timeout;
+		}
+
+		if (timeout && php_set_sock_blocking(sslsock->s.socket, 0 TSRMLS_CC) == SUCCESS) {
 			sslsock->s.is_blocked = 0;
 		}
 
-		/* Get the timeout value (and make sure we are to check it. */
-		timeout = sslsock->is_client ? &sslsock->connect_timeout : &sslsock->s.timeout;
-		has_timeout = !sslsock->s.is_blocked && (timeout->tv_sec || timeout->tv_usec);
-
-		/* gettimeofday is not monotonic; using it here is not strictly correct */
-		if (has_timeout) {
+		if (!sslsock->s.is_blocked && timeout && (timeout->tv_sec || timeout->tv_usec)) {
+			has_timeout = 1;
+			/* gettimeofday is not monotonic; using it here is not strictly correct */
 			gettimeofday(&start_time, NULL);
 		}
 
@@ -1851,15 +1859,16 @@ static size_t php_openssl_sockop_io(int read, php_stream *stream, char *buf, siz
 				gettimeofday(&cur_time, NULL);
 
 				/* Determine how much time we've taken so far. */
-				elapsed_time = subtract_timeval( cur_time, start_time );
+				elapsed_time = subtract_timeval(cur_time, start_time);
 
 				/* and return an error if we've taken too long. */
-				if (compare_timeval( elapsed_time, *timeout) > 0 ) {
+				if (compare_timeval(elapsed_time, *timeout) > 0 ) {
 					/* If the socket was originally blocking, set it back. */
-					if (blocked) {
+					if (began_blocked) {
 						php_set_sock_blocking(sslsock->s.socket, 1 TSRMLS_CC);
 						sslsock->s.is_blocked = 1;
 					}
+					sslsock->s.timeout_event = 1;
 					return -1;
 				}
 			}
@@ -1907,7 +1916,7 @@ static size_t php_openssl_sockop_io(int read, php_stream *stream, char *buf, siz
 				/* Now, if we have to wait some time, and we're supposed to be blocking, wait for the socket to become
 				 * available. Now, php_pollfd_for uses select to wait up to our time_left value only...
 				 */
-				if (retry && blocked) {
+				if (retry && began_blocked) {
 					if (read) {
 						php_pollfd_for(sslsock->s.socket, (err == SSL_ERROR_WANT_WRITE) ?
 							(POLLOUT|POLLPRI) : (POLLIN|POLLPRI), has_timeout ? &left_time : NULL);
@@ -1918,14 +1927,14 @@ static size_t php_openssl_sockop_io(int read, php_stream *stream, char *buf, siz
 				}
 			} else {
 				/* Else, if we got bytes back, check for possible errors. */
-				int err = SSL_get_error(sslsock->ssl_handle, nr_bytes );
+				int err = SSL_get_error(sslsock->ssl_handle, nr_bytes);
 
 				/* If we didn't get any error, then let's return it to PHP. */
 				if (err == SSL_ERROR_NONE)
 				break;
 
 				/* Otherwise, we need to wait again (up to time_left or we get an error) */
-				if (blocked) {
+				if (began_blocked) {
 					if (read) {
 						php_pollfd_for(sslsock->s.socket, (err == SSL_ERROR_WANT_WRITE) ?
 							(POLLOUT|POLLPRI) : (POLLIN|POLLPRI), has_timeout ? &left_time : NULL);
@@ -1944,8 +1953,7 @@ static size_t php_openssl_sockop_io(int read, php_stream *stream, char *buf, siz
 		}
 
 		/* And if we were originally supposed to be blocking, let's reset the socket to that. */
-		if (blocked) {
-			php_set_sock_blocking(sslsock->s.socket, 1 TSRMLS_CC);
+		if (began_blocked && php_set_sock_blocking(sslsock->s.socket, 1 TSRMLS_CC) == SUCCESS) {
 			sslsock->s.is_blocked = 1;
 		}
 	} else {
@@ -2276,7 +2284,16 @@ static int php_openssl_sockop_cast(php_stream *stream, int castas, void **ret TS
 
 		case PHP_STREAM_AS_FD_FOR_SELECT:
 			if (ret) {
-				*(php_socket_t *)ret = sslsock->s.socket;
+				size_t pending;
+				if (stream->writepos == stream->readpos
+					&& sslsock->ssl_active
+					&& (pending = (size_t)SSL_pending(sslsock->ssl_handle)) > 0) {
+						php_stream_fill_read_buffer(stream, pending < stream->chunk_size
+							? pending
+							: stream->chunk_size);
+				}
+
+				*(int *)ret = sslsock->s.socket;
 			}
 			return SUCCESS;
 
