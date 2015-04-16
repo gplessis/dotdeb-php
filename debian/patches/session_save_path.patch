@@ -9,7 +9,7 @@ Index: dotdeb-php5/ext/session/session.c
 ===================================================================
 --- dotdeb-php5.orig/ext/session/session.c
 +++ dotdeb-php5/ext/session/session.c
-@@ -781,7 +781,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
+@@ -782,7 +782,7 @@ static ZEND_INI_MH(OnUpdateSmartStr) /* 
  /* {{{ PHP_INI
   */
  PHP_INI_BEGIN()
