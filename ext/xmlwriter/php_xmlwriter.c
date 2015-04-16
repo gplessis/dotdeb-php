@@ -113,7 +113,7 @@ static void xmlwriter_free_resource_ptr(xmlwriter_object *intern TSRMLS_DC)
 		ze_xmlwriter_object *obj = (ze_xmlwriter_object*) zend_object_store_get_object(object TSRMLS_CC); \
 		intern = obj->xmlwriter_ptr; \
 		if (!intern) { \
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid or unitialized XMLWriter object"); \
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid or uninitialized XMLWriter object"); \
 			RETURN_FALSE; \
 		} \
 	}
@@ -1738,7 +1738,7 @@ static PHP_FUNCTION(xmlwriter_write_dtd_entity)
 /* }}} */
 #endif
 
-/* {{{ proto resource xmlwriter_open_uri(resource xmlwriter, string source)
+/* {{{ proto resource xmlwriter_open_uri(string source)
 Create new xmlwriter using source uri for output */
 static PHP_FUNCTION(xmlwriter_open_uri)
 {
@@ -1759,7 +1759,7 @@ static PHP_FUNCTION(xmlwriter_open_uri)
 	void *ioctx;
 #endif
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &source, &source_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p", &source, &source_len) == FAILURE) {
 		return;
 	}
 	

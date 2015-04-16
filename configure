@@ -3691,7 +3691,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=5
-PHP_RELEASE_VERSION=23
+PHP_RELEASE_VERSION=24
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -23577,6 +23577,17 @@ if test "x$ac_cv_lib_crypto_X509_free" = xyes; then :
 $as_echo "#define HAVE_DSA_DEFAULT_METHOD 1" >>confdefs.h
 
 fi
+
+  for ac_func in RAND_egd
+do :
+  ac_fn_c_check_func "$LINENO" "RAND_egd" "ac_cv_func_RAND_egd"
+if test "x$ac_cv_func_RAND_egd" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_RAND_EGD 1
+_ACEOF
+
+fi
+done
 
 
 
@@ -62891,9 +62902,9 @@ esac
 
 
 
-  if test "$PHP_ADABAS" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Adabas support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Adabas support" >&5
 $as_echo_n "checking for Adabas support... " >&6; }
+  if test "$PHP_ADABAS" != "no"; then
     if test "$PHP_ADABAS" = "yes"; then
       PHP_ADABAS=/usr/local
     fi
@@ -63047,6 +63058,9 @@ $as_echo "#define HAVE_ADABAS 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63094,9 +63108,9 @@ esac
 
 
 
-  if test "$PHP_SAPDB" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SAP DB support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SAP DB support" >&5
 $as_echo_n "checking for SAP DB support... " >&6; }
+  if test "$PHP_SAPDB" != "no"; then
     if test "$PHP_SAPDB" = "yes"; then
       PHP_SAPDB=/usr/local
     fi
@@ -63180,6 +63194,9 @@ $as_echo "#define HAVE_SAPDB 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63227,9 +63244,9 @@ esac
 
 
 
-  if test "$PHP_SOLID" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Solid support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Solid support" >&5
 $as_echo_n "checking for Solid support... " >&6; }
+  if test "$PHP_SOLID" != "no"; then
     if test "$PHP_SOLID" = "yes"; then
       PHP_SOLID=/usr/local/solid
     fi
@@ -63323,6 +63340,9 @@ fi
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: \`echo $ODBC_LIBS | sed -e 's!.*/!!'\`" >&5
 $as_echo "\`echo $ODBC_LIBS | sed -e 's!.*/!!'\`" >&6; }
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63370,9 +63390,9 @@ esac
 
 
 
-  if test "$PHP_IBM_DB2" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for IBM DB2 support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for IBM DB2 support" >&5
 $as_echo_n "checking for IBM DB2 support... " >&6; }
+  if test "$PHP_IBM_DB2" != "no"; then
     if test "$PHP_IBM_DB2" = "yes"; then
       ODBC_INCDIR=/home/db2inst1/sqllib/include
       ODBC_LIBDIR=/home/db2inst1/sqllib/lib
@@ -63443,6 +63463,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63490,9 +63513,9 @@ esac
 
 
 
-  if test "$PHP_ODBCROUTER" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ODBCRouter.com support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ODBCRouter.com support" >&5
 $as_echo_n "checking for ODBCRouter.com support... " >&6; }
+  if test "$PHP_ODBCROUTER" != "no"; then
     if test "$PHP_ODBCROUTER" = "yes"; then
       PHP_ODBCROUTER=/usr
     fi
@@ -63507,6 +63530,9 @@ $as_echo "#define HAVE_ODBC_ROUTER 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63554,9 +63580,9 @@ esac
 
 
 
-  if test "$PHP_EMPRESS" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Empress support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Empress support" >&5
 $as_echo_n "checking for Empress support... " >&6; }
+  if test "$PHP_EMPRESS" != "no"; then
     if test "$PHP_EMPRESS" = "yes"; then
       ODBC_INCDIR=$EMPRESSPATH/include/odbc
       ODBC_LIBDIR=$EMPRESSPATH/shlib
@@ -63582,6 +63608,9 @@ $as_echo_n "checking Empress library file... " >&6; }
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: \`echo $ODBC_LIBS | sed -e 's!.*/!!'\`" >&5
 $as_echo "\`echo $ODBC_LIBS | sed -e 's!.*/!!'\`" >&6; }
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63629,9 +63658,9 @@ esac
 
 
 
-  if test "$PHP_EMPRESS_BCS" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Empress local access support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Empress local access support" >&5
 $as_echo_n "checking for Empress local access support... " >&6; }
+  if test "$PHP_EMPRESS_BCS" != "no"; then
     if test "$PHP_EMPRESS_BCS" = "yes"; then
       ODBC_INCDIR=$EMPRESSPATH/include/odbc
       ODBC_LIBDIR=$EMPRESSPATH/shlib
@@ -63673,6 +63702,9 @@ $as_echo_n "checking Empress local access library file... " >&6; }
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: \`echo $ODBCBCS_LIBS | sed -e 's!.*/!!'\`" >&5
 $as_echo "\`echo $ODBCBCS_LIBS | sed -e 's!.*/!!'\`" >&6; }
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63720,9 +63752,9 @@ esac
 
 
 
-  if test "$PHP_BIRDSTEP" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Birdstep support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Birdstep support" >&5
 $as_echo_n "checking for Birdstep support... " >&6; }
+  if test "$PHP_BIRDSTEP" != "no"; then
     if test "$PHP_BIRDSTEP" = "yes"; then
         ODBC_INCDIR=/usr/local/birdstep/include
         ODBC_LIBDIR=/usr/local/birdstep/lib
@@ -63778,6 +63810,9 @@ $as_echo "#define HAVE_BIRDSTEP 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63825,9 +63860,9 @@ esac
 
 
 
-  if test "$PHP_CUSTOM_ODBC" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a custom ODBC support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a custom ODBC support" >&5
 $as_echo_n "checking for a custom ODBC support... " >&6; }
+  if test "$PHP_CUSTOM_ODBC" != "no"; then
     if test "$PHP_CUSTOM_ODBC" = "yes"; then
       PHP_CUSTOM_ODBC=/usr/local
     fi
@@ -63842,6 +63877,9 @@ $as_echo "#define HAVE_CODBC 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -63889,9 +63927,9 @@ esac
 
 
 
-  if test "$PHP_IODBC" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iODBC support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iODBC support" >&5
 $as_echo_n "checking for iODBC support... " >&6; }
+  if test "$PHP_IODBC" != "no"; then
     if test -z "$PKG_CONFIG"; then
       # Extract the first word of "pkg-config", so it can be a program name with args.
 set dummy pkg-config; ac_word=$2
@@ -64134,6 +64172,9 @@ $as_echo "#define HAVE_ODBC2 1" >>confdefs.h
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
     fi
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -64181,9 +64222,9 @@ esac
 
 
 
-  if test "$PHP_ESOOB" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Easysoft ODBC-ODBC Bridge support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Easysoft ODBC-ODBC Bridge support" >&5
 $as_echo_n "checking for Easysoft ODBC-ODBC Bridge support... " >&6; }
+  if test "$PHP_ESOOB" != "no"; then
     if test "$PHP_ESOOB" = "yes"; then
       PHP_ESOOB=/usr/local/easysoft/oob/client
     fi
@@ -64198,6 +64239,9 @@ $as_echo "#define HAVE_ESOOB 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -64245,9 +64289,9 @@ esac
 
 
 
-  if test "$PHP_UNIXODBC" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for unixODBC support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for unixODBC support" >&5
 $as_echo_n "checking for unixODBC support... " >&6; }
+  if test "$PHP_UNIXODBC" != "no"; then
     if test "$PHP_UNIXODBC" = "yes"; then
       PHP_UNIXODBC=/usr/local
     fi
@@ -64267,6 +64311,9 @@ $as_echo "#define HAVE_UNIXODBC 1" >>confdefs.h
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -64314,9 +64361,9 @@ esac
 
 
 
-  if test "$PHP_DBMAKER" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for DBMaker support" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for DBMaker support" >&5
 $as_echo_n "checking for DBMaker support... " >&6; }
+  if test "$PHP_DBMAKER" != "no"; then
     if test "$PHP_DBMAKER" = "yes"; then
       # find dbmaker's home directory
       DBMAKER_HOME=`grep "^dbmaker:" /etc/passwd | $AWK -F: '{print $6}'`
@@ -64440,6 +64487,9 @@ $as_echo "yes (static)" >&6; }
 
       ODBC_STATIC="libphpext_odbc.la"
     fi
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
   fi
 fi
 
@@ -64453,7 +64503,7 @@ _ACEOF
   fi
 else
 
-$as_echo "#define ODBCVER 0x300" >>confdefs.h
+$as_echo "#define ODBCVER 0x0300" >>confdefs.h
 
 fi
 
@@ -64886,6 +64936,11 @@ EOF
 
   fi
 
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for any ODBC driver support" >&5
+$as_echo_n "checking for any ODBC driver support... " >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
@@ -103438,7 +103493,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 103441 "configure"
+#line 103496 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -105350,7 +105405,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 105353 "configure"' > conftest.$ac_ext
+  echo '#line 105408 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -106748,7 +106803,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 106751 "configure"
+#line 106806 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -106906,11 +106961,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:106909: $lt_compile\"" >&5)
+   (eval echo "\"configure:106964: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:106913: \$? = $ac_status" >&5
+   echo "configure:106968: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -107204,11 +107259,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:107207: $lt_compile\"" >&5)
+   (eval echo "\"configure:107262: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:107211: \$? = $ac_status" >&5
+   echo "configure:107266: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -107308,11 +107363,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:107311: $lt_compile\"" >&5)
+   (eval echo "\"configure:107366: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:107315: \$? = $ac_status" >&5
+   echo "configure:107370: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -107772,7 +107827,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 107775 "configure"
+#line 107830 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -107814,7 +107869,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 107817 "configure"
+#line 107872 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -109331,7 +109386,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 109334 "configure"
+#line 109389 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -109431,7 +109486,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 109434 "configure"
+#line 109489 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -110496,7 +110551,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 110499 "configure"
+#line 110554 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -110539,7 +110594,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 110542 "configure"
+#line 110597 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -111791,11 +111846,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:111794: $lt_compile\"" >&5)
+   (eval echo "\"configure:111849: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:111798: \$? = $ac_status" >&5
+   echo "configure:111853: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -111895,11 +111950,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:111898: $lt_compile\"" >&5)
+   (eval echo "\"configure:111953: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:111902: \$? = $ac_status" >&5
+   echo "configure:111957: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
