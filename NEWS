@@ -1,15 +1,61 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+16 Apr 2015 PHP 5.4.40
+
+- Apache2handler:
+  . Fixed bug #69218 (potential remote code execution with apache 2.4
+    apache2handler). (Gerrit Venema)
+
+- Core:
+  . Additional fix for bug #69152 (Type confusion vulnerability in
+    exception::getTraceAsString). (Stas)
+  . Fixed bug #69337 (php_stream_url_wrap_http_ex() type-confusion
+    vulnerability). (Stas)
+  . Fixed bug #69353 (Missing null byte checks for paths in various PHP
+    extensions). (Stas)
+
+- cURL:
+  . Fixed bug #69316 (Use-after-free in php_curl related to
+    CURLOPT_FILE/_INFILE/_WRITEHEADER). (Laruence)
+
+- Ereg:
+  . Fixed bug #68740 (NULL Pointer Dereference). (Laruence)
+
+- Fileinfo:
+  . Fixed bug #68819 (Fileinfo on specific file causes spurious OOM and/or
+    segfault). (Anatol Belski)
+
+- GD:
+  . Fixed bug #68601 (buffer read overflow in gd_gif_in.c). (Remi)
+
+- Phar:
+  . Fixed bug #68901 (use after free). (bugreports at internot dot info)
+  . Fixed bug #69324 (Buffer Over-read in unserialize when parsing Phar). (Stas)
+  . Fixed bug #69441 (Buffer Overflow when parsing tar/zip/phar in
+    phar_set_inode). (Stas)
+
+- Postgres:
+  . Fixed bug #68741 (Null pointer deference) (CVE-2015-1352). (Xinchen Hui)
+
+- SOAP:
+  . Fixed bug #69152 (Type Confusion Infoleak Vulnerability in unserialize()
+    with SoapFault). (Dmitry)
+
+- Sqlite3:
+  . Fixed bug #66550 (SQLite prepared statement use-after-free). (Sean Heelan)
+
 19 Mar 2015 PHP 5.4.39
 
 - Core:
-  . Fixed bug #68976 (Use After Free Vulnerability in unserialize()). (Stas)
+  . Fixed bug #68976 (Use After Free Vulnerability in unserialize())
+    (CVE-2015-2787). (Stas)
   . Fixed bug #69134 (Per Directory Values overrides PHP_INI_SYSTEM
     configuration options). (Anatol Belski)
   . Fixed bug #69207 (move_uploaded_file allows nulls in path). (Stas)
 
 - Ereg:
-  . Fixed bug #69248 (heap overflow vulnerability in regcomp.c). (Stas)
+  . Fixed bug #69248 (heap overflow vulnerability in regcomp.c) (CVE-2015-2305).
+    (Stas)
 
 - SOAP:
   . Fixed bug #69085 (SoapClient's __call() type confusion through
@@ -17,7 +63,7 @@ PHP                                                                        NEWS
 
 - ZIP:
   . Fixed bug #69253 (ZIP Integer Overflow leads to writing past heap
-    boundary). (Stas)
+    boundary) (CVE-2015-2331). (Stas)
 
 19 Feb 2015 PHP 5.4.38
 
