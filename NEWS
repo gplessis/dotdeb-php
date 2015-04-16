@@ -1,5 +1,101 @@
-﻿PHP                                                                        NEWS
+PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+16 Apr 2015, PHP 5.6.8
+
+- Core:
+  . Fixed bug #66609 (php crashes with __get() and ++ operator in some cases).
+    (Dmitry, Laruence)
+  . Fixed bug #68021 (get_browser() browser_name_regex returns non-utf-8
+    characters). (Tjerk)
+  . Fixed bug #68917 (parse_url fails on some partial urls). (Wei Dai)
+  . Fixed bug #69134 (Per Directory Values overrides PHP_INI_SYSTEM
+    configuration options). (Anatol Belski)
+  . Additional fix for bug #69152 (Type confusion vulnerability in
+    exception::getTraceAsString). (Stas)
+  . Fixed bug #69210 (serialize function return corrupted data when sleep has
+    non-string values). (Juan Basso)
+  . Fixed bug #69212 (Leaking VIA_HANDLER func when exception thrown in
+    __call/... arg passing). (Nikita)
+  . Fixed bug #69221 (Segmentation fault when using a generator in combination
+    with an Iterator). (Nikita)
+  . Fixed bug #69337 (php_stream_url_wrap_http_ex() type-confusion
+    vulnerability). (Stas)
+  . Fixed bug #69353 (Missing null byte checks for paths in various PHP
+    extensions). (Stas)
+
+- Apache2handler:
+  . Fixed bug #69218 (potential remote code execution with apache 2.4
+    apache2handler). (Gerrit Venema)
+
+- cURL:
+  . Implemented FR#69278 (HTTP2 support). (Masaki Kagaya)
+  . Fixed bug #68739 (Missing break / control flow). (Laruence)
+  . Fixed bug #69316 (Use-after-free in php_curl related to
+    CURLOPT_FILE/_INFILE/_WRITEHEADER). (Laruence)
+
+- Date:
+  . Fixed bug #69336 (Issues with "last day of <monthname>"). (Derick Rethans)
+
+- Enchant:
+  . Fixed bug #65406 (Enchant broker plugins are in the wrong place in windows
+    builds). (Anatol)
+
+- Ereg:
+  . Fixed bug #68740 (NULL Pointer Dereference). (Laruence)
+
+- Fileinfo:
+  . Fixed bug #68819 (Fileinfo on specific file causes spurious OOM and/or
+    segfault). (Anatol Belski)
+
+- Filter:
+  . Fixed bug #69202: (FILTER_FLAG_STRIP_BACKTICK ignored unless other
+    flags are used). (Jeff Welch)
+  . Fixed bug #69203 (FILTER_FLAG_STRIP_HIGH doesn't strip ASCII 127). (Jeff
+    Welch)
+
+- OPCache:
+  . Fixed bug #69297 (function_exists strange behavior with OPCache on
+    disabled function). (Laruence)
+  . Fixed bug #69281 (opcache_is_script_cached no longer works). (danack)
+  . Fixed bug #68677 (Use After Free). (CVE-2015-1351) (Laruence)
+
+- OpenSSL
+  . Fixed bugs #68853, #65137 (Buffered crypto stream data breaks IO polling
+    in stream_select() contexts) (Chris Wright)
+  . Fixed bug #69197 (openssl_pkcs7_sign handles default value incorrectly)
+    (Daniel Lowrey)
+  . Fixed bug #69215 (Crypto servers should send client CA list)
+    (Daniel Lowrey)
+  . Add a check for RAND_egd to allow compiling against LibreSSL (Leigh)
+
+- Phar:
+  . Fixed bug #64343 (PharData::extractTo fails for tarball created by BSD tar).
+    (Mike)
+  . Fixed bug #64931 (phar_add_file is too restrictive on filename). (Mike)
+  . Fixed bug #65467 (Call to undefined method cli_arg_typ_string). (Mike)
+  . Fixed bug #67761 (Phar::mapPhar fails for Phars inside a path containing 
+    ".tar"). (Mike)
+  . Fixed bug #69324 (Buffer Over-read in unserialize when parsing Phar). (Stas)
+  . Fixed bug #69441 (Buffer Overflow when parsing tar/zip/phar in
+    phar_set_inode). (Stas)
+
+- Postgres:
+  . Fixed bug #68741 (Null pointer dereference). (CVE-2015-1352) (Laruence)
+
+- SPL:
+  . Fixed bug #69227 (Use after free in zval_scan caused by
+     spl_object_storage_get_gc). (adam dot scarr at 99designs dot com)
+
+- SOAP:
+  . Fixed bug #69293 (NEW segfault when using SoapClient::__setSoapHeader 
+     (bisected, regression)). (Laruence)
+
+- Sqlite3:
+  . Fixed bug #68760 (SQLITE segfaults if custom collator throws an exception).
+     (Dan Ackroyd)
+  . Fixed bug #69287 (Upgrade bundled libsqlite to 3.8.8.3). (Anatol)
+  . Fixed bug #66550 (SQLite prepared statement use-after-free). (Sean Heelan)
+
 19 Mar 2015, PHP 5.6.7
 
 - Core:
@@ -16,10 +112,12 @@
   . Fixed bug #68166 (Exception with invalid character causes segv). (Rasmus)
   . Fixed bug #69141 (Missing arguments in reflection info for some builtin
     functions). (kostyantyn dot lysyy at oracle dot com)
-  . Fixed bug #68976 (Use After Free Vulnerability in unserialize()). (Stas)
+  . Fixed bug #68976 (Use After Free Vulnerability in unserialize()).
+    (CVE-2015-2787) (Stas)
   . Fixed bug #69134 (Per Directory Values overrides PHP_INI_SYSTEM
     configuration options). (Anatol Belski)
-  . Fixed bug #69207 (move_uploaded_file allows nulls in path). (Stas)
+  . Fixed bug #69207 (move_uploaded_file allows nulls in path). (CVE-2015-2348)
+    (Stas)
 
 - CGI:
   . Fixed bug #69015 (php-cgi's getopt does not see $argv). (Laruence)
@@ -34,7 +132,7 @@
     by libcurl. (Linus Unneback)
 
 - Ereg:
-  . Fixed bug #69248 (heap overflow vulnerability in regcomp.c) (CVE-2015-2305).
+  . Fixed bug #69248 (heap overflow vulnerability in regcomp.c). (CVE-2015-2305)
     (Stas)
 
 - FPM:
@@ -82,7 +180,7 @@
 
 - ZIP:
   . Fixed bug #69253 (ZIP Integer Overflow leads to writing past heap
-    boundary) (CVE-2015-2331). (Stas)
+    boundary). (CVE-2015-2331) (Stas)
 
 19 Feb 2015, PHP 5.6.6
 
@@ -103,8 +201,8 @@
   . Fixed bug #68711 (useless comparisons). (bugreports at internot dot info)
 
 - Enchant:
-  . Fixed bug #68552 (heap buffer overflow in enchant_broker_request_dict())
-    (CVE-2014-9705). (Antony)
+  . Fixed bug #68552 (heap buffer overflow in enchant_broker_request_dict()).
+    (CVE-2014-9705) (Antony)
 
 - Fileinfo:
   . Fixed bug #68827 (Double free with disabled ZMM). (Joshua Rogers)
@@ -141,7 +239,7 @@
     named pipes). (steffenb198 at aol dot com)
 
 - Phar:
-  . Fixed bug #68901 (use after free) (CVE-2015-2301).
+  . Fixed bug #68901 (use after free). (CVE-2015-2301)
     (bugreports at internot dot info)
 
 - Pgsql:
@@ -202,7 +300,7 @@
     interval). (Marc Bennewitz)
 
 - EXIF:
-  . Fixed bug #68799: Free called on unitialized pointer. (CVE-2015-0232)
+  . Fixed bug #68799: Free called on uninitialized pointer. (CVE-2015-0232)
     (Stas)
 
 - Fileinfo:
@@ -212,7 +310,7 @@
     (Joshua Rogers, Anatol Belski)
   . Removed readelf.c and related code from libmagic sources
     (Remi, Anatol)
-  . Fixed bug #68735 (fileinfo out-of-bounds memory access).
+  . Fixed bug #68735 (fileinfo out-of-bounds memory access). (CVE-2014-9652)
     (Anatol)
 
 - FPM:
@@ -220,7 +318,8 @@
   . Fixed bug #68751 (listen.allowed_clients is broken). (Remi)
 
 - GD:
-  . Fixed bug #68601 (buffer read overflow in gd_gif_in.c). (Jan Bee, Remi)
+  . Fixed bug #68601 (buffer read overflow in gd_gif_in.c). (CVE-2014-9709)
+    (Jan Bee, Remi)
   . Fixed request #68656 (Report gd library version). (Remi)
 
 - mbstring:

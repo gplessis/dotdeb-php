@@ -3114,7 +3114,7 @@ PHP_FUNCTION(pg_trace)
 	php_stream *stream;
 	id = PGG(default_link);
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "s|sr", &z_filename, &z_filename_len, &mode, &mode_len, &pgsql_link) == FAILURE) {
+	if (zend_parse_parameters(argc TSRMLS_CC, "p|sr", &z_filename, &z_filename_len, &mode, &mode_len, &pgsql_link) == FAILURE) {
 		return;
 	}
 
@@ -6502,6 +6502,9 @@ static inline void build_tablename(smart_str *querystr, PGconn *pg_link, const c
 	/* schame.table should be "schame"."table" */
 	table_copy = estrdup(table);
 	token = php_strtok_r(table_copy, ".", &tmp);
+	if (token == NULL) {
+		token = table;
+	}
 	len = strlen(token);
 	if (_php_pgsql_detect_identifier_escape(token, len) == SUCCESS) {
 		smart_str_appendl(querystr, token, len);
