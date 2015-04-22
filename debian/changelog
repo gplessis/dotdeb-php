@@ -1,4 +1,4 @@
-php5 (5.6.8-1~dotdeb+wheezy-zts.1) stable; urgency=medium
+php5 (5.6.8-1~dotdeb+wheezy+zts.1) stable; urgency=medium
 
   * generic Dockerfile to ease Debian packaging
   * Imported Upstream version 5.6.8
