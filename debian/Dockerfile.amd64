@@ -3,24 +3,16 @@
 # Requirements:
 #   * Docker >= 1.5
 # Usage:
-#   # docker build -t build-wheezy-amd64-php56 -f debian/Dockerfile .
+#   # docker build -t build-wheezy-amd64-php56 -f debian/Dockerfile.amd64 .
 #   # docker run build-wheezy-amd64-php56
 #   # ID=$(docker ps -l -q)
 #   # docker cp $ID:/usr/src ~/Downloads/
 #   # docker rm $ID
 
-FROM debian:wheezy
+FROM dotdeb/debian:wheezy-amd64
 MAINTAINER Guillaume Plessis "gui@dotdeb.org"
 
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN echo "deb http://http.debian.net/debian/ wheezy main contrib non-free" > /etc/apt/sources.list
-RUN echo "deb http://http.debian.net/debian/ wheezy-updates main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb http://http.debian.net/debian/ wheezy-backports main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb http://security.debian.org/ wheezy/updates main contrib non-free" >> /etc/apt/sources.list
-
-RUN echo "APT::Install-Recommends "false";" > /etc/apt/apt.conf.d/10recommends
-RUN echo "APT::Install-Suggests "false";" >> /etc/apt/apt.conf.d/10recommends
 
 RUN apt-get update
 RUN apt-get dist-upgrade -y
@@ -33,7 +25,6 @@ RUN mk-build-deps --install --tool 'apt-get -y' --remove /root/control && rm -f 
 ADD . /usr/src/builddir
 WORKDIR /usr/src/builddir
 
-RUN rm -f debian/Dockerfile
 RUN uscan --download-current-version
 RUN dpkg-buildpackage
 
