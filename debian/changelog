@@ -1,3 +1,10 @@
+php5 (5.4.41-1~dotdeb+6.1) oldoldstable; urgency=medium
+
+  * Imported Upstream version 5.4.41
+  * Fix debian/watch
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 15 May 2015 00:56:01 -0700
+
 php5 (5.4.40-1~dotdeb+squeeze.1) oldstable; urgency=medium
 
   * generic Dockerfile to ease Debian packaging
