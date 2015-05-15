@@ -3912,7 +3912,8 @@ static void zend_add_trait_method(zend_class_entry *ce, const char *name, const 
 			}
 			zend_hash_quick_update(*overriden, arKey, nKeyLength, h, fn, sizeof(zend_function), (void**)&fn);
 			return;
-		} else if (existing_fn->common.fn_flags & ZEND_ACC_ABSTRACT) {
+		} else if (existing_fn->common.fn_flags & ZEND_ACC_ABSTRACT &&
+				(existing_fn->common.scope->ce_flags & ZEND_ACC_INTERFACE) == 0) {
 			/* Make sure the trait method is compatible with previosly declared abstract method */
 			if (!zend_traits_method_compatibility_check(fn, existing_fn TSRMLS_CC)) {
 				zend_error(E_COMPILE_ERROR, "Declaration of %s must be compatible with %s",
@@ -3942,6 +3943,7 @@ static void zend_add_trait_method(zend_class_entry *ce, const char *name, const 
 			/* inherited members are overridden by members inserted by traits */
 			/* check whether the trait method fulfills the inheritance requirements */
 			do_inheritance_check_on_method(fn, existing_fn TSRMLS_CC);
+			fn->common.prototype = NULL;
 		}
 	}
 
@@ -7014,7 +7016,7 @@ void zend_do_begin_namespace(const znode *name, zend_bool with_bracket TSRMLS_DC
 }
 /* }}} */
 
-void zend_do_use(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{{ */
+void zend_do_use(znode *ns_name, znode *new_name TSRMLS_DC) /* {{{ */
 {
 	char *lcname;
 	zval *name, *ns, tmp;
@@ -7042,7 +7044,7 @@ void zend_do_use(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{
 		} else {
 			*name = *ns;
 			zval_copy_ctor(name);
-			warn = !is_global && !CG(current_namespace);
+			warn = !CG(current_namespace);
 		}
 	}
 
