@@ -1,5 +1,52 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+14 May 2015, PHP 5.6.9
+
+- Core:
+  . Fixed bug #69467 (Wrong checked for the interface by using Trait). 
+    (Laruence)
+  . Fixed bug #69420 (Invalid read in zend_std_get_method). (Laruence)
+  . Fixed bug #60022 ("use statement [...] has no effect" depends on leading
+    backslash). (Nikita)
+  . Fixed bug #67314 (Segmentation fault in gc_remove_zval_from_buffer).
+    (Dmitry)
+  . Fixed bug #68652 (segmentation fault in destructor). (Dmitry)
+  . Fixed bug #69419 (Returning compatible sub generator produces a warning).
+    (Nikita)
+  . Fixed bug #69472 (php_sys_readlink ignores misc errors from
+       GetFinalPathNameByHandleA). (Jan Starke)
+  . Fixed bug #69364 (PHP Multipart/form-data remote dos Vulnerability). (Stas)
+  . Fixed bug #69403 (str_repeat() sign mismatch based memory corruption).
+    (Stas)
+  . Fixed bug #69418 (CVE-2006-7243 fix regressions in 5.4+). (Stas)
+  . Fixed bug #69522 (heap buffer overflow in unpack()). (Stas)
+
+- FTP:
+  . Fixed bug #69545 (Integer overflow in ftp_genlist() resulting in heap
+    overflow). (Stas)
+
+- ODBC:
+  . Fixed bug #69354 (Incorrect use of SQLColAttributes with ODBC 3.0).
+    (Anatol)
+  . Fixed bug #69474 (ODBC: Query with same field name from two tables returns
+    incorrect result). (Anatol)
+  . Fixed bug #69381 (out of memory with sage odbc driver). (Frederic Marchall,
+      Anatol Belski)
+
+- OpenSSL:
+  . Fixed bug #69402 (Reading empty SSL stream hangs until timeout).
+    (Daniel Lowrey)
+
+- PCNTL:
+  . Fixed bug #68598 (pcntl_exec() should not allow null char). (Stas)
+
+- PCRE
+  . Upgraded pcrelib to 8.37.
+
+- Phar:
+  . Fixed bug #69453 (Memory Corruption in phar_parse_tarfile when entry
+    filename starts with null). (Stas)
+
 16 Apr 2015, PHP 5.6.8
 
 - Core:
@@ -48,10 +95,14 @@ PHP                                                                        NEWS
     segfault). (Anatol Belski)
 
 - Filter:
-  . Fixed bug #69202: (FILTER_FLAG_STRIP_BACKTICK ignored unless other
+  . Fixed bug #69202 (FILTER_FLAG_STRIP_BACKTICK ignored unless other
     flags are used). (Jeff Welch)
   . Fixed bug #69203 (FILTER_FLAG_STRIP_HIGH doesn't strip ASCII 127). (Jeff
     Welch)
+
+- Mbstring:
+  . Fixed bug #68846 (False detection of CJK Unified Ideographs Extension E).
+    (Masaki Kagaya)
 
 - OPCache:
   . Fixed bug #69297 (function_exists strange behavior with OPCache on
@@ -59,7 +110,7 @@ PHP                                                                        NEWS
   . Fixed bug #69281 (opcache_is_script_cached no longer works). (danack)
   . Fixed bug #68677 (Use After Free). (CVE-2015-1351) (Laruence)
 
-- OpenSSL
+- OpenSSL:
   . Fixed bugs #68853, #65137 (Buffered crypto stream data breaks IO polling
     in stream_select() contexts) (Chris Wright)
   . Fixed bug #69197 (openssl_pkcs7_sign handles default value incorrectly)
@@ -82,13 +133,15 @@ PHP                                                                        NEWS
 - Postgres:
   . Fixed bug #68741 (Null pointer dereference). (CVE-2015-1352) (Laruence)
 
+- SOAP:
+  . Fixed bug #69152 (Type Confusion Infoleak Vulnerability in unserialize()
+    with SoapFault). (Dmitry)
+  . Fixed bug #69293 (NEW segfault when using SoapClient::__setSoapHeader 
+     (bisected, regression)). (Laruence)
+
 - SPL:
   . Fixed bug #69227 (Use after free in zval_scan caused by
      spl_object_storage_get_gc). (adam dot scarr at 99designs dot com)
-
-- SOAP:
-  . Fixed bug #69293 (NEW segfault when using SoapClient::__setSoapHeader 
-     (bisected, regression)). (Laruence)
 
 - Sqlite3:
   . Fixed bug #68760 (SQLITE segfaults if custom collator throws an exception).
