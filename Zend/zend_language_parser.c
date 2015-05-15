@@ -3897,62 +3897,62 @@ yyreduce:
 
   case 23:
 
-    { zend_do_use(&(yyvsp[(1) - (1)]), NULL, 0 TSRMLS_CC); }
+    { zend_do_use(&(yyvsp[(1) - (1)]), NULL TSRMLS_CC); }
     break;
 
   case 24:
 
-    { zend_do_use(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]), 0 TSRMLS_CC); }
+    { zend_do_use(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]) TSRMLS_CC); }
     break;
 
   case 25:
 
-    { zend_do_use(&(yyvsp[(2) - (2)]), NULL, 1 TSRMLS_CC); }
+    { zend_do_use(&(yyvsp[(2) - (2)]), NULL TSRMLS_CC); }
     break;
 
   case 26:
 
-    { zend_do_use(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]), 1 TSRMLS_CC); }
+    { zend_do_use(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]) TSRMLS_CC); }
     break;
 
   case 29:
 
-    { zend_do_use_function(&(yyvsp[(1) - (1)]), NULL, 0 TSRMLS_CC); }
+    { zend_do_use_function(&(yyvsp[(1) - (1)]), NULL TSRMLS_CC); }
     break;
 
   case 30:
 
-    { zend_do_use_function(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]), 0 TSRMLS_CC); }
+    { zend_do_use_function(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]) TSRMLS_CC); }
     break;
 
   case 31:
 
-    { zend_do_use_function(&(yyvsp[(2) - (2)]), NULL, 1 TSRMLS_CC); }
+    { zend_do_use_function(&(yyvsp[(2) - (2)]), NULL TSRMLS_CC); }
     break;
 
   case 32:
 
-    { zend_do_use_function(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]), 1 TSRMLS_CC); }
+    { zend_do_use_function(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]) TSRMLS_CC); }
     break;
 
   case 35:
 
-    { zend_do_use_const(&(yyvsp[(1) - (1)]), NULL, 0 TSRMLS_CC); }
+    { zend_do_use_const(&(yyvsp[(1) - (1)]), NULL TSRMLS_CC); }
     break;
 
   case 36:
 
-    { zend_do_use_const(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]), 0 TSRMLS_CC); }
+    { zend_do_use_const(&(yyvsp[(1) - (3)]), &(yyvsp[(3) - (3)]) TSRMLS_CC); }
     break;
 
   case 37:
 
-    { zend_do_use_const(&(yyvsp[(2) - (2)]), NULL, 1 TSRMLS_CC); }
+    { zend_do_use_const(&(yyvsp[(2) - (2)]), NULL TSRMLS_CC); }
     break;
 
   case 38:
 
-    { zend_do_use_const(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]), 1 TSRMLS_CC); }
+    { zend_do_use_const(&(yyvsp[(2) - (4)]), &(yyvsp[(4) - (4)]) TSRMLS_CC); }
     break;
 
   case 39:

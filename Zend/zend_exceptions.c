@@ -588,7 +588,7 @@ ZEND_METHOD(exception, getTraceAsString)
 	DEFAULT_0_PARAMS;
 	
 	trace = zend_read_property(default_exception_ce, getThis(), "trace", sizeof("trace")-1, 1 TSRMLS_CC);
-	if(Z_TYPE_P(trace) != IS_ARRAY) {
+	if (Z_TYPE_P(trace) != IS_ARRAY) {
 		RETURN_FALSE;
 	}
 
