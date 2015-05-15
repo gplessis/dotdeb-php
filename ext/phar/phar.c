@@ -606,7 +606,8 @@ int phar_parse_metadata(char **buffer, zval **metadata, php_uint32 zip_metadata_
 	php_unserialize_data_t var_hash;
 
 	if (zip_metadata_len) {
-		const unsigned char *p, *p_buff = estrndup(*buffer, zip_metadata_len);
+		const unsigned char *p;
+		unsigned char *p_buff = (unsigned char *)estrndup(*buffer, zip_metadata_len);
 		p = p_buff;
 		ALLOC_ZVAL(*metadata);
 		INIT_ZVAL(**metadata);
@@ -1111,6 +1112,7 @@ static int phar_parse_pharfile(php_stream *fp, char *fname, int fname_len, char 
 			entry.metadata_len = 0;
 		}
 		if (len > endbuffer - buffer) {
+			pefree(entry.filename, entry.is_persistent);
 			MAPPHAR_FAIL("internal corruption of phar \"%s\" (truncated manifest entry)");
 		}
 		if (phar_parse_metadata(&buffer, &entry.metadata, len TSRMLS_CC) == FAILURE) {

@@ -1,4 +1,4 @@
-Terminals unused in grammar
+Terminaux inutilisés dans la grammaire
 
    T_CHARACTER
    T_BAD_CHARACTER
@@ -10,8 +10,8 @@ Terminals unused in grammar
    "whitespace (T_WHITESPACE)"
 
 
-État 229conflits: 1 décalage/réduction
-État 672conflits: 2 décalage/réduction
+État 229 conflits: 1 décalage/réduction
+État 672 conflits: 2 décalage/réduction
 
 
 Grammaire
