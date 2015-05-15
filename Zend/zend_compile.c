@@ -4051,7 +4051,8 @@ static void zend_add_trait_method(zend_class_entry *ce, const char *name, const 
 			}
 			zend_hash_quick_update(*overriden, arKey, nKeyLength, h, fn, sizeof(zend_function), (void**)&fn);
 			return;
-		} else if (existing_fn->common.fn_flags & ZEND_ACC_ABSTRACT) {
+		} else if (existing_fn->common.fn_flags & ZEND_ACC_ABSTRACT &&
+				(existing_fn->common.scope->ce_flags & ZEND_ACC_INTERFACE) == 0) {
 			/* Make sure the trait method is compatible with previosly declared abstract method */
 			if (!zend_traits_method_compatibility_check(fn, existing_fn TSRMLS_CC)) {
 				zend_error_noreturn(E_COMPILE_ERROR, "Declaration of %s must be compatible with %s",
@@ -4081,6 +4082,7 @@ static void zend_add_trait_method(zend_class_entry *ce, const char *name, const 
 			/* inherited members are overridden by members inserted by traits */
 			/* check whether the trait method fulfills the inheritance requirements */
 			do_inheritance_check_on_method(fn, existing_fn TSRMLS_CC);
+			fn->common.prototype = NULL;
 		}
 	}
 
@@ -7141,7 +7143,7 @@ void zend_do_begin_namespace(const znode *name, zend_bool with_bracket TSRMLS_DC
 }
 /* }}} */
 
-void zend_do_use(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{{ */
+void zend_do_use(znode *ns_name, znode *new_name TSRMLS_DC) /* {{{ */
 {
 	char *lcname;
 	zval *name, *ns, tmp;
@@ -7168,7 +7170,7 @@ void zend_do_use(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{
 			ZVAL_STRING(name, p+1, 1);
 		} else {
 			ZVAL_ZVAL(name, ns, 1, 0);
-			warn = !is_global && !CG(current_namespace);
+			warn = !CG(current_namespace);
 		}
 	}
 
@@ -7224,7 +7226,7 @@ void zend_do_use(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{
 }
 /* }}} */
 
-void zend_do_use_non_class(znode *ns_name, znode *new_name, int is_global, int is_function, zend_bool case_sensitive, HashTable *current_import_sub, HashTable *lookup_table TSRMLS_DC) /* {{{ */
+void zend_do_use_non_class(znode *ns_name, znode *new_name, int is_function, zend_bool case_sensitive, HashTable *current_import_sub, HashTable *lookup_table TSRMLS_DC) /* {{{ */
 {
 	char *lookup_name;
 	zval *name, *ns, tmp;
@@ -7245,7 +7247,7 @@ void zend_do_use_non_class(znode *ns_name, znode *new_name, int is_global, int i
 			ZVAL_STRING(name, p+1, 1);
 		} else {
 			ZVAL_ZVAL(name, ns, 1, 0);
-			warn = !is_global && !CG(current_namespace);
+			warn = !CG(current_namespace);
 		}
 	}
 
@@ -7309,25 +7311,25 @@ void zend_do_use_non_class(znode *ns_name, znode *new_name, int is_global, int i
 }
 /* }}} */
 
-void zend_do_use_function(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{{ */
+void zend_do_use_function(znode *ns_name, znode *new_name TSRMLS_DC) /* {{{ */
 {
 	if (!CG(current_import_function)) {
 		CG(current_import_function) = emalloc(sizeof(HashTable));
 		zend_hash_init(CG(current_import_function), 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
 
-	zend_do_use_non_class(ns_name, new_name, is_global, 1, 0, CG(current_import_function), CG(function_table) TSRMLS_CC);
+	zend_do_use_non_class(ns_name, new_name, 1, 0, CG(current_import_function), CG(function_table) TSRMLS_CC);
 }
 /* }}} */
 
-void zend_do_use_const(znode *ns_name, znode *new_name, int is_global TSRMLS_DC) /* {{{ */
+void zend_do_use_const(znode *ns_name, znode *new_name TSRMLS_DC) /* {{{ */
 {
 	if (!CG(current_import_const)) {
 		CG(current_import_const) = emalloc(sizeof(HashTable));
 		zend_hash_init(CG(current_import_const), 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
 
-	zend_do_use_non_class(ns_name, new_name, is_global, 0, 1, CG(current_import_const), &CG(const_filenames) TSRMLS_CC);
+	zend_do_use_non_class(ns_name, new_name, 0, 1, CG(current_import_const), &CG(const_filenames) TSRMLS_CC);
 }
 /* }}} */
 
