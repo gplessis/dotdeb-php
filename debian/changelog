@@ -1,3 +1,9 @@
+php5 (5.5.25-1~dotdeb+7.1) oldstable; urgency=medium
+
+  * Imported Upstream version 5.5.25
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 15 May 2015 07:58:47 -0700
+
 php5 (5.5.24-1~dotdeb+wheezy.1) stable; urgency=medium
 
   * generic Dockerfile to ease Debian packaging
