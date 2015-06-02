@@ -1,0 +1,31 @@
+Index: dotdeb-php5/ext/pcre/pcrelib/config.h
+===================================================================
+--- dotdeb-php5.orig/ext/pcre/pcrelib/config.h
++++ dotdeb-php5/ext/pcre/pcrelib/config.h
+@@ -314,7 +314,7 @@ them both to 0; an emulation function wi
+ #define PACKAGE_NAME "PCRE"
+ 
+ /* Define to the full name and version of this package. */
+-#define PACKAGE_STRING "PCRE 8.36"
++#define PACKAGE_STRING "PCRE 8.37"
+ 
+ /* Define to the one symbol short name of this package. */
+ #define PACKAGE_TARNAME "pcre"
+@@ -323,7 +323,7 @@ them both to 0; an emulation function wi
+ #define PACKAGE_URL ""
+ 
+ /* Define to the version of this package. */
+-#define PACKAGE_VERSION "8.36"
++#define PACKAGE_VERSION "8.37"
+ 
+ /* to make a symbol visible */
+ /* #undef PCRECPP_EXP_DECL */
+@@ -439,7 +439,7 @@ them both to 0; an emulation function wi
+ 
+ /* Version number of package */
+ #ifndef VERSION
+-#define VERSION "8.36"
++#define VERSION "8.37"
+ #endif
+ 
+ /* Define to empty if `const' does not conform to ANSI C. */

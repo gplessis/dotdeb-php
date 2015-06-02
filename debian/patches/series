@@ -18,3 +18,4 @@ php-5.3.9-mysqlnd.patch
 php-fpm-listen-on-unix-socket.patch
 zlib-largefile-function-renaming.patch
 hack-phpdbg-to-explicitly-link-with-libedit.patch
+temp_pcre_fix.patch
