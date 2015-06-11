@@ -1,4 +1,4 @@
-Terminaux inutilisés dans la grammaire
+Terminals unused in grammar
 
    T_CHARACTER
    T_BAD_CHARACTER
@@ -10,8 +10,8 @@ Terminaux inutilisés dans la grammaire
    "whitespace (T_WHITESPACE)"
 
 
-État 229 conflits: 1 décalage/réduction
-État 672 conflits: 2 décalage/réduction
+État 229conflits: 1 décalage/réduction
+État 672conflits: 2 décalage/réduction
 
 
 Grammaire
