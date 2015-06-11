@@ -1,5 +1,56 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+11 Jun 2015, PHP 5.6.10
+
+- Core:
+  . Fixed bug #66048 (temp. directory is cached during multiple requests).
+    (Julien)
+  . Fixed bug #69566 (Conditional jump or move depends on uninitialised value
+    in extension trait). (jbboehr at gmail dot com)
+  . Fixed bug #69599 (Strange generator+exception+variadic crash). (Nikita)
+  . Fixed bug #69628 (complex GLOB_BRACE fails on Windows).
+    (Christoph M. Becker)
+  . Fixed POST data processing slowdown due to small input buffer size
+    on Windows. (Jorge Oliveira, Anatol)
+  . Fixed bug #69646 (OS command injection vulnerability in escapeshellarg).
+    (Anatol Belski)
+  . Fixed bug #69719 (Incorrect handling of paths with NULs). (Stas)
+
+- FTP
+  . Improved fix for bug #69545 (Integer overflow in ftp_genlist()
+    resulting in heap overflow). (Max Spelsberg)
+
+- GD:
+  . Fixed bug #69479 (GD fails to build with newer libvpx). (Remi)
+
+- Iconv:
+  . Fixed bug #48147 (iconv with //IGNORE cuts the string). (Stas)
+
+- Litespeed SAPI:
+  . Fixed bug #68812 (Unchecked return value). (George Wang)
+
+- Mail:
+  . Fixed bug #68776 (mail() does not have mail header injection prevention for
+    additional headers). (Yasuo)
+
+- MCrypt:
+  . Added file descriptor caching to mcrypt_create_iv() (Leigh)
+
+- Opcache
+  . Fixed bug #69549 (Memory leak with opcache.optimization_level=0xFFFFFFFF).
+    (Laruence, Dmitry)
+
+- Phar:
+  . Fixed bug #69680 (phar symlink in binary directory broken).
+    (Matteo Bernardini, Remi)
+
+- Postgres:
+  . Fixed bug #69667 (segfault in php_pgsql_meta_data). (Remi)
+
+- Sqlite3:
+  . Upgrade bundled sqlite to 3.8.10.2. (CVE-2015-3414, CVE-2015-3415,
+    CVE-2015-3416) (Kaplan)
+
 14 May 2015, PHP 5.6.9
 
 - Core:
@@ -15,15 +66,17 @@ PHP                                                                        NEWS
     (Nikita)
   . Fixed bug #69472 (php_sys_readlink ignores misc errors from
        GetFinalPathNameByHandleA). (Jan Starke)
-  . Fixed bug #69364 (PHP Multipart/form-data remote dos Vulnerability). (Stas)
+  . Fixed bug #69364 (PHP Multipart/form-data remote dos Vulnerability).
+    (CVE-2015-4024) (Stas)
   . Fixed bug #69403 (str_repeat() sign mismatch based memory corruption).
     (Stas)
-  . Fixed bug #69418 (CVE-2006-7243 fix regressions in 5.4+). (Stas)
+  . Fixed bug #69418 (CVE-2006-7243 fix regressions in 5.4+). (CVE-2015-4025)
+    (Stas)
   . Fixed bug #69522 (heap buffer overflow in unpack()). (Stas)
 
 - FTP:
   . Fixed bug #69545 (Integer overflow in ftp_genlist() resulting in heap
-    overflow). (Stas)
+    overflow). (CVE-2015-4022) (Stas)
 
 - ODBC:
   . Fixed bug #69354 (Incorrect use of SQLColAttributes with ODBC 3.0).
@@ -38,14 +91,15 @@ PHP                                                                        NEWS
     (Daniel Lowrey)
 
 - PCNTL:
-  . Fixed bug #68598 (pcntl_exec() should not allow null char). (Stas)
+  . Fixed bug #68598 (pcntl_exec() should not allow null char). (CVE-2015-4026)
+    (Stas)
 
 - PCRE
-  . Upgraded pcrelib to 8.37.
+  . Upgraded pcrelib to 8.37. (CVE-2015-2325, CVE-2015-2326)
 
 - Phar:
   . Fixed bug #69453 (Memory Corruption in phar_parse_tarfile when entry
-    filename starts with null). (Stas)
+    filename starts with null). (CVE-2015-4021) (Stas)
 
 16 Apr 2015, PHP 5.6.8
 
