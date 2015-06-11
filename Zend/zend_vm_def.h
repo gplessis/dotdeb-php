@@ -1887,7 +1887,7 @@ ZEND_VM_HELPER(zend_leave_helper, ANY, ANY)
 
 			EX(call)--;
 
-			zend_vm_stack_clear_multiple(1 TSRMLS_CC);
+			zend_vm_stack_clear_multiple(0 TSRMLS_CC);
 
 			if (UNEXPECTED(EG(exception) != NULL)) {
 				zend_throw_exception_internal(NULL TSRMLS_CC);
@@ -2075,7 +2075,7 @@ ZEND_VM_HELPER(zend_do_fcall_common_helper, ANY, ANY)
 
 	EX(call)--;
 
-	zend_vm_stack_clear_multiple(1 TSRMLS_CC);
+	zend_vm_stack_clear_multiple(0 TSRMLS_CC);
 
 	if (UNEXPECTED(EG(exception) != NULL)) {
 		zend_throw_exception_internal(NULL TSRMLS_CC);
@@ -5425,7 +5425,6 @@ ZEND_VM_HANDLER(153, ZEND_DECLARE_LAMBDA_FUNCTION, CONST, UNUSED)
 {
 	USE_OPLINE
 	zend_function *op_array;
-	int closure_is_static, closure_is_being_defined_inside_static_context;
 
 	SAVE_OPLINE();
 
@@ -5434,9 +5433,9 @@ ZEND_VM_HANDLER(153, ZEND_DECLARE_LAMBDA_FUNCTION, CONST, UNUSED)
 		zend_error_noreturn(E_ERROR, "Base lambda function for closure not found");
 	}
 
-	closure_is_static = op_array->common.fn_flags & ZEND_ACC_STATIC;
-	closure_is_being_defined_inside_static_context = EX(prev_execute_data) && EX(prev_execute_data)->function_state.function->common.fn_flags & ZEND_ACC_STATIC;
-	if (closure_is_static || closure_is_being_defined_inside_static_context) {
+	if (UNEXPECTED((op_array->common.fn_flags & ZEND_ACC_STATIC) || 
+			(EX(prev_execute_data) &&
+			 EX(prev_execute_data)->function_state.function->common.fn_flags & ZEND_ACC_STATIC))) {
 		zend_create_closure(&EX_T(opline->result.var).tmp_var, (zend_function *) op_array,  EG(called_scope), NULL TSRMLS_CC);
 	} else {
 		zend_create_closure(&EX_T(opline->result.var).tmp_var, (zend_function *) op_array,  EG(scope), EG(This) TSRMLS_CC);
