@@ -2033,7 +2033,10 @@
 /* iconv() is aliased to libiconv() in -liconv */
 #undef ICONV_ALIASED_LIBICONV
 
-/* Whether iconv supports error no or not */
+/* Whether iconv supports IGNORE */
+#undef ICONV_BROKEN_IGNORE
+
+/* Whether iconv supports IGNORE */
 #undef ICONV_SUPPORTS_ERRNO
 
 /* */

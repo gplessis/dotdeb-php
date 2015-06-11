@@ -1239,7 +1239,7 @@ void pcntl_signal_dispatch()
 	if(!PCNTL_G(pending_signals)) {
 		return;
 	}
-	
+		
 	/* Mask all signals */
 	sigfillset(&mask);
 	sigprocmask(SIG_BLOCK, &mask, &old_mask);
