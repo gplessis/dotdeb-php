@@ -1,3 +1,9 @@
+php5 (5.4.42-1~dotdeb+6.2) oldoldstable; urgency=medium
+
+  * PCRE displayed as 8.37. Fixes #85
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 13 Jun 2015 12:22:49 -0700
+
 php5 (5.4.42-1~dotdeb+6.1) oldoldstable; urgency=medium
 
   * Imported Upstream version 5.4.42
