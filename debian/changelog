@@ -1,3 +1,9 @@
+php5 (5.5.26-1~dotdeb+7.3) oldstable; urgency=medium
+
+  * Use system PCRE for Apache flavors
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Mon, 15 Jun 2015 12:05:18 -0700
+
 php5 (5.5.26-1~dotdeb+7.2) oldstable; urgency=medium
 
   * PCRE displayed as 8.37. Fixes #85
