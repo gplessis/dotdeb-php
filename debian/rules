@@ -129,6 +129,7 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-gettext \
 		--enable-mbstring \
 		--with-onig=/usr \
+		--with-pcre-regex=/usr \
 		--enable-shmop \
 		--enable-sockets \
 		--enable-wddx \
@@ -293,7 +294,6 @@ configure-apache2-stamp: prepared-stamp
 		--enable-mysqlnd=shared \
 		--with-mysql=shared,mysqlnd \
 		--with-mysqli=shared,mysqlnd \
-		--with-pcre-regex=/usr \
 		--with-pspell=shared,/usr \
 		--with-unixODBC=shared,/usr \
 		--with-recode=shared,/usr \
@@ -332,7 +332,6 @@ configure-apache2filter-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct --without-mssql \
-		--with-pcre-regex=/usr \
 		--without-sqlite3
 	cd apache2filter-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -355,7 +354,6 @@ configure-cgi-stamp: prepared-stamp
 		--enable-pdo=shared \
 		--with-mysql=shared,/usr \
 		--with-mysqli=shared,/usr/bin/mysql_config \
-		--with-pcre-regex \
 		--with-pdo-mysql=shared,/usr \
 		--without-pdo-sqlite \
 		--without-sybase-ct --without-mssql \
@@ -382,7 +380,6 @@ configure-cli-stamp: prepared-stamp
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3 --enable-pcntl \
-		--with-pcre-regex \
 		--with-libedit=shared,/usr
 	cd cli-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -404,8 +401,7 @@ configure-embed-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
-		--without-mssql --without-sqlite3 --enable-pcntl \
-		--with-pcre-regex
+		--without-mssql --without-sqlite3 --enable-pcntl
 	cd embed-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -428,8 +424,7 @@ configure-fpm-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
-		--without-mssql --without-sqlite3 \
-		--with-pcre-regex
+		--without-mssql --without-sqlite3
 	cd fpm-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
