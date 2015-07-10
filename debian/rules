@@ -141,6 +141,7 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-gettext \
 		--enable-mbstring \
 		--with-onig=/usr \
+		--with-pcre-regex=/usr \
 		--enable-shmop \
 		--enable-sockets \
 		--enable-wddx \
@@ -153,7 +154,6 @@ COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
 		--with-mhash=yes \
 		--with-system-tzdata \
 		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
-		--enable-maintainer-zts \
 		$(CONFIGURE_DTRACE_ARGS)
 
 BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
@@ -313,7 +313,6 @@ configure-apache2-stamp: prepared-stamp
 		--with-mcrypt=shared,/usr \
 		--with-mysql=shared,/usr \
 		--with-mysqli=shared,/usr/bin/mysql_config \
-		--with-pcre-regex=/usr \
 		--with-pspell=shared,/usr \
 		--with-unixODBC=shared,/usr \
 		--with-recode=shared,/usr \
@@ -352,7 +351,6 @@ configure-apache2filter-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct --without-mssql \
-		--with-pcre-regex=/usr \
 		--without-sqlite3
 	cd apache2filter-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -376,7 +374,6 @@ configure-cgi-stamp: prepared-stamp
 		--enable-mysqlnd=shared \
 		--with-mysql=shared,mysqlnd \
 		--with-mysqli=shared,mysqlnd \
-		--with-pcre-regex \
 		--with-pdo-mysql=shared,mysqlnd \
 		--without-pdo-sqlite \
 		--without-sybase-ct --without-mssql \
@@ -403,7 +400,6 @@ configure-cli-stamp: prepared-stamp
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3 --enable-pcntl \
-		--with-pcre-regex \
 		--with-libedit=shared,/usr
 	cd cli-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -426,7 +422,6 @@ configure-phpdbg-stamp: prepared-stamp
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3 --enable-pcntl \
-		--with-pcre-regex \
 		--with-libedit=shared
 	cd phpdbg-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
@@ -448,8 +443,7 @@ configure-embed-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
-		--without-mssql --without-sqlite3 --enable-pcntl \
-		--with-pcre-regex
+		--without-mssql --without-sqlite3 --enable-pcntl
 	cd embed-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -472,8 +466,7 @@ configure-fpm-stamp: prepared-stamp
 		--without-mm \
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
-		--without-mssql --without-sqlite3 \
-		--with-pcre-regex
+		--without-mssql --without-sqlite3
 	cd fpm-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
