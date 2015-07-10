@@ -169,13 +169,14 @@ static PHP_MSHUTDOWN_FUNCTION(pcre)
 /* {{{ static pcre_clean_cache */
 static int pcre_clean_cache(void *data, void *arg TSRMLS_DC)
 {
+	pcre_cache_entry *pce = (pcre_cache_entry *) data;
 	int *num_clean = (int *)arg;
 
-	if (*num_clean > 0) {
+	if (*num_clean > 0 && !pce->refcount) {
 		(*num_clean)--;
-		return 1;
+		return ZEND_HASH_APPLY_REMOVE;
 	} else {
-		return 0;
+		return ZEND_HASH_APPLY_KEEP;
 	}
 }
 /* }}} */
@@ -221,6 +222,25 @@ static char **make_subpats_table(int num_subpats, pcre_cache_entry *pce TSRMLS_D
 	}
 
 	return subpat_names;
+}
+/* }}} */
+
+/* {{{ static calculate_unit_length */
+/* Calculates the byte length of the next character. Assumes valid UTF-8 for PCRE_UTF8. */
+static zend_always_inline int calculate_unit_length(pcre_cache_entry *pce, char *start)
+{
+	int unit_len;
+
+	if (pce->compile_options & PCRE_UTF8) {
+		char *end = start;
+
+		/* skip continuation bytes */
+		while ((*++end & 0xC0) == 0x80);
+		unit_len = end - start;
+	} else {
+		unit_len = 1;
+	}
+	return unit_len;
 }
 /* }}} */
 
@@ -446,6 +466,7 @@ PHPAPI pcre_cache_entry* pcre_get_compiled_regex_cache(char *regex, int regex_le
 	new_entry.locale = pestrdup(locale, 1);
 	new_entry.tables = tables;
 #endif
+	new_entry.refcount = 0;
 
 	/*
 	 * Interned strings are not duplicated when stored in HashTable,
@@ -550,8 +571,10 @@ static void php_do_pcre_match(INTERNAL_FUNCTION_PARAMETERS, int global) /* {{{ *
 		RETURN_FALSE;
 	}
 
+	pce->refcount++;
 	php_pcre_match_impl(pce, subject, subject_len, return_value, subpats, 
 		global, ZEND_NUM_ARGS() >= 4, flags, start_offset TSRMLS_CC);
+	pce->refcount--;
 }
 /* }}} */
 
@@ -754,8 +777,10 @@ PHPAPI void php_pcre_match_impl(pcre_cache_entry *pce, char *subject, int subjec
 			   the start offset, and continue. Fudge the offset values
 			   to achieve this, unless we're already at the end of the string. */
 			if (g_notempty != 0 && start_offset < subject_len) {
+				int unit_len = calculate_unit_length(pce, subject + start_offset);
+				
 				offsets[0] = start_offset;
-				offsets[1] = start_offset + 1;
+				offsets[1] = start_offset + unit_len;
 			} else
 				break;
 		} else {
@@ -988,14 +1013,18 @@ PHPAPI char *php_pcre_replace(char *regex,   int regex_len,
 							  int *result_len, int limit, int *replace_count TSRMLS_DC)
 {
 	pcre_cache_entry	*pce;			    /* Compiled regular expression */
+	char		 		*result;			/* Function result */
 
 	/* Compile regex or get it from cache. */
 	if ((pce = pcre_get_compiled_regex_cache(regex, regex_len TSRMLS_CC)) == NULL) {
 		return NULL;
 	}
-
-	return php_pcre_replace_impl(pce, subject, subject_len, replace_val, 
+	pce->refcount++;
+	result = php_pcre_replace_impl(pce, subject, subject_len, replace_val, 
 		is_callable_replace, result_len, limit, replace_count TSRMLS_CC);
+	pce->refcount--;
+
+	return result;
 }
 /* }}} */
 
@@ -1198,10 +1227,12 @@ PHPAPI char *php_pcre_replace_impl(pcre_cache_entry *pce, char *subject, int sub
 			   the start offset, and continue. Fudge the offset values
 			   to achieve this, unless we're already at the end of the string. */
 			if (g_notempty != 0 && start_offset < subject_len) {
+				int unit_len = calculate_unit_length(pce, piece);
+
 				offsets[0] = start_offset;
-				offsets[1] = start_offset + 1;
-				memcpy(&result[*result_len], piece, 1);
-				(*result_len)++;
+				offsets[1] = start_offset + unit_len;
+				memcpy(&result[*result_len], piece, unit_len);
+				*result_len += unit_len;
 			} else {
 				new_len = *result_len + subject_len - start_offset;
 				if (new_len + 1 > alloc_len) {
@@ -1476,7 +1507,9 @@ static PHP_FUNCTION(preg_split)
 		RETURN_FALSE;
 	}
 
+	pce->refcount++;
 	php_pcre_split_impl(pce, subject, subject_len, return_value, limit_val, flags TSRMLS_CC);
+	pce->refcount--;
 }
 /* }}} */
 
@@ -1756,8 +1789,10 @@ static PHP_FUNCTION(preg_grep)
 	if ((pce = pcre_get_compiled_regex_cache(regex, regex_len TSRMLS_CC)) == NULL) {
 		RETURN_FALSE;
 	}
-	
+
+	pce->refcount++;
 	php_pcre_grep_impl(pce, input, return_value, flags TSRMLS_CC);
+	pce->refcount--;
 }
 /* }}} */
 

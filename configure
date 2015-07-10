@@ -3691,7 +3691,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=5
 PHP_MINOR_VERSION=5
-PHP_RELEASE_VERSION=26
+PHP_RELEASE_VERSION=27
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -46350,10 +46350,10 @@ $as_echo_n "checking if iconv supports //IGNORE... " >&6; }
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
-  echo "#define ICONV_SUPPORTS_ERRNO 0" > ext/iconv/php_iconv_supports_errno.h
+  echo "#define ICONV_BROKEN_IGNORE 0" > ext/iconv/php_iconv_broken_ignore.h
 
 
-$as_echo "#define ICONV_SUPPORTS_ERRNO 0" >>confdefs.h
+$as_echo "#define ICONV_BROKEN_IGNORE 0" >>confdefs.h
 
 
 else
