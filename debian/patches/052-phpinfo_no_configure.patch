@@ -14,7 +14,7 @@ Index: dotdeb-php5/ext/standard/info.c
 ===================================================================
 --- dotdeb-php5.orig/ext/standard/info.c
 +++ dotdeb-php5/ext/standard/info.c
-@@ -743,7 +743,7 @@ PHPAPI void php_print_info(int flag TSRM
+@@ -949,7 +949,7 @@ PHPAPI void php_print_info(int flag TSRM
  #ifdef ARCHITECTURE
  		php_info_print_table_row(2, "Architecture", ARCHITECTURE);
  #endif
