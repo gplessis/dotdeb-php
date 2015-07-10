@@ -3060,10 +3060,11 @@ PHP_FUNCTION(imagegammacorrect)
 			for (x = 0; x < gdImageSX(im); x++)	{
 				c = gdImageGetPixel(im, x, y);
 				gdImageSetPixel(im, x, y,
-					gdTrueColor(
+					gdTrueColorAlpha(
 						(int) ((pow((pow((gdTrueColorGetRed(c)   / 255.0), input)), 1.0 / output) * 255) + .5),
 						(int) ((pow((pow((gdTrueColorGetGreen(c) / 255.0), input)), 1.0 / output) * 255) + .5),
-						(int) ((pow((pow((gdTrueColorGetBlue(c)  / 255.0), input)), 1.0 / output) * 255) + .5)
+						(int) ((pow((pow((gdTrueColorGetBlue(c)  / 255.0), input)), 1.0 / output) * 255) + .5),
+						gdTrueColorGetAlpha(c)
 					)
 				);
 			}
@@ -4459,7 +4460,7 @@ static void _php_image_convert(INTERNAL_FUNCTION_PARAMETERS, int image_type )
 	int x, y;
 	float x_ratio, y_ratio;
     long ignore_warning;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "pplll", &f_org, &f_org_len, &f_dest, &f_dest_len, &height, &width, &threshold) == FAILURE) {
 		return;
 	}
