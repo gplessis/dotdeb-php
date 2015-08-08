@@ -1,3 +1,10 @@
+php5 (5.6.12-1~dotdeb+zts+7.1) oldstable; urgency=medium
+
+  * Imported Upstream version 5.6.12
+  * Patches refresh for 5.6.12
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 07 Aug 2015 17:32:12 -0700
+
 php5 (5.6.11-1~dotdeb+zts+7.1) oldstable; urgency=medium
 
   * Imported Upstream version 5.6.11
