@@ -995,6 +995,9 @@
 /* */
 #undef HAVE_LDAP
 
+/* Define to 1 if you have the `ldap_control_find' function. */
+#undef HAVE_LDAP_CONTROL_FIND
+
 /* Define to 1 if you have the `ldap_parse_reference' function. */
 #undef HAVE_LDAP_PARSE_REFERENCE
 

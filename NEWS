@@ -1,6 +1,68 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-10 Jul 2015, PHP 5.6.11
+06 Aug 2015, PHP 5.6.12
+
+- Core:
+  . Fixed bug #70012 (Exception lost with nested finally block). (Laruence)
+  . Fixed bug #70002 (TS issues with temporary dir handling). (Anatol)
+  . Fixed bug #69793 (Remotely triggerable stack exhaustion via recursive
+    method calls). (Stas)
+  . Fixed bug #69892 (Different arrays compare indentical due to integer key
+    truncation). (Nikita)
+  . Fixed bug #70121 (unserialize() could lead to unexpected methods execution
+    / NULL pointer deref). (Stas)
+
+- CLI server:
+  . Fixed bug #69655 (php -S changes MKCALENDAR request method to MKCOL). (cmb)
+  . Fixed bug #64878 (304 responses return Content-Type header). (cmb)
+  
+- GD:
+  . Fixed bug #53156 (imagerectangle problem with point ordering). (cmb)
+  . Fixed bug #66387 (Stack overflow with imagefilltoborder). (cmb)
+  . Fixed bug #70102 (imagecreatefromwebm() shifts colors). (cmb)
+  . Fixed bug #66590 (imagewebp() doesn't pad to even length). (cmb)
+  . Fixed bug #66882 (imagerotate by -90 degrees truncates image by 1px). (cmb)
+  . Fixed bug #70064 (imagescale(..., IMG_BICUBIC) leaks memory). (cmb)
+  . Fixed bug #69024 (imagescale segfault with palette based image). (cmb)
+  . Fixed bug #53154 (Zero-height rectangle has whiskers). (cmb)
+  . Fixed bug #67447 (imagecrop() add a black line when cropping). (cmb)
+  . Fixed bug #68714 (copy 'n paste error). (cmb)
+  . Fixed bug #66339 (PHP segfaults in imagexbm). (cmb)
+  . Fixed bug #70047 (gd_info() doesn't report WebP support). (cmb)
+
+- ODBC:
+  . Fixed bug #69975 (PHP segfaults when accessing nvarchar(max) defined
+    columns). (cmb)
+
+- OpenSSL:
+  . Fixed bug #69882 (OpenSSL error “key values mismatch” after 
+    openssl_pkcs12_read with extra cert) (Tomasz Sawicki)
+  . Fixed bug #70014 (openssl_random_pseudo_bytes() is not cryptographically
+    secure). (Stas)
+
+- Phar:
+  . Improved fix for bug #69441. (Anatol Belski)
+  . Fixed bug #70019 (Files extracted from archive may be placed outside of
+    destination directory). (Anatol Belski)
+
+- SOAP:
+  . Fixed bug #70081 (SoapClient info leak / null pointer dereference via
+    multiple type confusions). (Stas)
+
+- SPL:
+  . Fixed bug #70068 (Dangling pointer in the unserialization of ArrayObject
+    items). (sean.heelan)
+  . Fixed bug #70166 (Use After Free Vulnerability in unserialize() with
+    SPLArrayObject). (taoguangchen at icloud dot com)
+  . Fixed bug #70168 (Use After Free Vulnerability in unserialize() with
+    SplObjectStorage). (taoguangchen at icloud dot com)
+  . Fixed bug #70169 (Use After Free Vulnerability in unserialize() with
+    SplDoublyLinkedList). (taoguangchen at icloud dot com)
+
+- Standard:
+  . Fixed bug #70096 (Repeated iptcembed() adds superfluous FF bytes). (cmb)
+
+09 Jul 2015, PHP 5.6.11
 
 - Core:
   . Fixed bug #69768 (escapeshell*() doesn't cater to !). (cmb)
@@ -29,6 +91,10 @@ PHP                                                                        NEWS
 - GMP:
   . Fixed bug #69803 (gmp_random_range() modifies second parameter if GMP
     number). (Nikita)
+
+- Mysqlnd:
+  . Fixed bug #69669 (mysqlnd is vulnerable to BACKRONYM) (CVE-2015-3152).
+    (Andrey)
     
 - PCRE:
   . Fixed Bug #53823 (preg_replace: * qualifier on unicode replace garbles the

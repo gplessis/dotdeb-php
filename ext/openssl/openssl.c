@@ -1613,7 +1613,7 @@ PHP_FUNCTION(openssl_spki_export)
 
 	EVP_PKEY *pkey = NULL;
 	NETSCAPE_SPKI *spki = NULL;
-	BIO *out = BIO_new(BIO_s_mem());
+	BIO *out = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &spkstr, &spkstr_len) == FAILURE) {
 		return;
@@ -1640,8 +1640,13 @@ PHP_FUNCTION(openssl_spki_export)
 		goto cleanup;
 	}
 
-	out = BIO_new_fp(stdout, BIO_NOCLOSE);
-	PEM_write_bio_PUBKEY(out, pkey);
+	out = BIO_new(BIO_s_mem());
+	if (out && PEM_write_bio_PUBKEY(out, pkey))  {
+		BUF_MEM *bio_buf;
+
+		BIO_get_mem_ptr(out, &bio_buf);
+		RETVAL_STRINGL((char *)bio_buf->data, bio_buf->length, 1);
+	}
 	goto cleanup;
 
 cleanup:
@@ -2575,7 +2580,15 @@ PHP_FUNCTION(openssl_pkcs12_read)
 				zval * zextracert;
 				X509* aCA = sk_X509_pop(ca);
 				if (!aCA) break;
-				
+
+				/* fix for bug 69882 */
+				{
+					int err = ERR_peek_error();
+					if (err == OPENSSL_ERROR_X509_PRIVATE_KEY_VALUES_MISMATCH) {
+						ERR_get_error();
+					}
+				}
+
 				bio_out = BIO_new(BIO_s_mem());
 				if (PEM_write_bio_X509(bio_out, aCA)) {
 					BUF_MEM *bio_buf;
@@ -5377,7 +5390,6 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	long buffer_length;
 	unsigned char *buffer = NULL;
 	zval *zstrong_result_returned = NULL;
-	int strong_result = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|z", &buffer_length, &zstrong_result_returned) == FAILURE) {
 		return;
@@ -5395,7 +5407,6 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	buffer = emalloc(buffer_length + 1);
 
 #ifdef PHP_WIN32
-	strong_result = 1;
 	/* random/urandom equivalent on Windows */
 	if (php_win32_get_random_bytes(buffer, (size_t) buffer_length) == FAILURE){
 		efree(buffer);
@@ -5405,7 +5416,7 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 		RETURN_FALSE;
 	}
 #else
-	if ((strong_result = RAND_pseudo_bytes(buffer, buffer_length)) < 0) {
+	if (RAND_bytes(buffer, buffer_length) <= 0) {
 		efree(buffer);
 		if (zstrong_result_returned) {
 			ZVAL_BOOL(zstrong_result_returned, 0);
@@ -5418,7 +5429,7 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	RETVAL_STRINGL((char *)buffer, buffer_length, 0);
 
 	if (zstrong_result_returned) {
-		ZVAL_BOOL(zstrong_result_returned, strong_result);
+		ZVAL_BOOL(zstrong_result_returned, 1);
 	}
 }
 /* }}} */
