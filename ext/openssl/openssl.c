@@ -4822,6 +4822,10 @@ PHP_FUNCTION(openssl_verify)
 		return;
 	}
 
+	if (UINT_MAX < signature_len) {
+		php_error_docref(NULL, E_WARNING, "signature is too long");
+		RETURN_FALSE;
+	}
 	if (method == NULL || Z_TYPE_P(method) == IS_LONG) {
 		if (method != NULL) {
 			signature_algo = Z_LVAL_P(method);
@@ -4846,7 +4850,7 @@ PHP_FUNCTION(openssl_verify)
 
 	EVP_VerifyInit   (&md_ctx, mdtype);
 	EVP_VerifyUpdate (&md_ctx, data, data_len);
-	err = EVP_VerifyFinal (&md_ctx, (unsigned char *)signature, (int)signature_len, pkey);
+	err = EVP_VerifyFinal(&md_ctx, (unsigned char *)signature, (unsigned int)signature_len, pkey);
 	EVP_MD_CTX_cleanup(&md_ctx);
 
 	if (keyresource == NULL) {
@@ -5228,6 +5232,10 @@ PHP_FUNCTION(openssl_encrypt)
 
 	EVP_EncryptInit(&cipher_ctx, cipher_type, NULL, NULL);
 	if (password_len > keylen) {
+		if (INT_MAX < password_len) {
+			php_error_docref(NULL, E_WARNING, "password is too long");
+			RETURN_FALSE;
+		}
 		EVP_CIPHER_CTX_set_key_length(&cipher_ctx, (int)password_len);
 	}
 	EVP_EncryptInit_ex(&cipher_ctx, NULL, NULL, key, (unsigned char *)iv);
@@ -5324,6 +5332,10 @@ PHP_FUNCTION(openssl_decrypt)
 
 	EVP_DecryptInit(&cipher_ctx, cipher_type, NULL, NULL);
 	if (password_len > keylen) {
+		if (INT_MAX < password_len) {
+			php_error_docref(NULL, E_WARNING, "password is too long");
+			RETURN_FALSE;
+		}
 		EVP_CIPHER_CTX_set_key_length(&cipher_ctx, (int)password_len);
 	}
 	EVP_DecryptInit_ex(&cipher_ctx, NULL, NULL, key, (unsigned char *)iv);
@@ -5403,6 +5415,10 @@ PHP_FUNCTION(openssl_dh_compute_key)
 		RETURN_FALSE;
 	}
 
+	if (INT_MAX < pub_len) {
+		php_error_docref(NULL, E_WARNING, "pub_key is too long");
+		RETURN_FALSE;
+	}
 	pub = BN_bin2bn((unsigned char*)pub_str, (int)pub_len, NULL);
 
 	data = zend_string_alloc(DH_size(pkey->pkey.dh), 0);
@@ -5428,7 +5444,6 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	zend_long buffer_length;
 	zend_string *buffer = NULL;
 	zval *zstrong_result_returned = NULL;
-	int strong_result = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|z/", &buffer_length, &zstrong_result_returned) == FAILURE) {
 		return;
@@ -5446,7 +5461,6 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	buffer = zend_string_alloc(buffer_length, 0);
 
 #ifdef PHP_WIN32
-	strong_result = 1;
 	/* random/urandom equivalent on Windows */
 	if (php_win32_get_random_bytes((unsigned char*)buffer->val, (size_t) buffer_length) == FAILURE){
 		zend_string_release(buffer);
@@ -5456,7 +5470,11 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 		RETURN_FALSE;
 	}
 #else
-	if ((strong_result = RAND_pseudo_bytes((unsigned char*)ZSTR_VAL(buffer), buffer_length)) < 0) {
+	if (INT_MAX < buffer_length) {
+		php_error_docref(NULL, E_WARNING, "length is too long");
+		RETURN_FALSE;
+	}
+	if (RAND_bytes((unsigned char*)ZSTR_VAL(buffer), (int)buffer_length) <= 0) {
 		zend_string_release(buffer);
 		if (zstrong_result_returned) {
 			ZVAL_FALSE(zstrong_result_returned);
@@ -5469,7 +5487,7 @@ PHP_FUNCTION(openssl_random_pseudo_bytes)
 	RETVAL_STR(buffer);
 
 	if (zstrong_result_returned) {
-		ZVAL_BOOL(zstrong_result_returned, strong_result);
+		ZVAL_BOOL(zstrong_result_returned, 1);
 	}
 }
 /* }}} */

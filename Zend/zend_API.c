@@ -3923,7 +3923,7 @@ ZEND_API int zend_update_static_property(zend_class_entry *scope, const char *na
 			if (Z_ISREF_P(property)) {
 				zval_dtor(property);
 				ZVAL_COPY_VALUE(property, value);
-				if (Z_REFCOUNT_P(value) > 0) {
+				if (Z_REFCOUNTED_P(value) && Z_REFCOUNT_P(value) > 0) {
 					zval_opt_copy_ctor(property);
 				}
 			} else {
@@ -4106,8 +4106,7 @@ ZEND_API zend_string* zend_find_alias_name(zend_class_entry *ce, zend_string *na
 	if ((alias_ptr = ce->trait_aliases)) {
 		alias = *alias_ptr;
 		while (alias) {
-			if (ZSTR_LEN(alias->alias) == ZSTR_LEN(name) &&
-				!strncasecmp(ZSTR_VAL(name), ZSTR_VAL(alias->alias), ZSTR_LEN(alias->alias))) {
+			if (alias->alias && zend_string_equals_ci(alias->alias, name)) {
 				return alias->alias;
 			}
 			alias_ptr++;

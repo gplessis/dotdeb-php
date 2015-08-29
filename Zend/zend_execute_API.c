@@ -46,10 +46,7 @@ ZEND_API const zend_fcall_info empty_fcall_info = { 0, NULL, {{0}, {{0}}, {0}}, 
 ZEND_API const zend_fcall_info_cache empty_fcall_info_cache = { 0, NULL, NULL, NULL, NULL };
 
 #ifdef ZEND_WIN32
-#ifdef ZTS
-__declspec(thread)
-#endif
-HANDLE tq_timer = NULL;
+ZEND_TLS HANDLE tq_timer = NULL;
 #endif
 
 #if 0&&ZEND_DEBUG
@@ -846,8 +843,8 @@ int zend_call_function(zend_fcall_info *fci, zend_fcall_info_cache *fci_cache) /
 		EG(scope) = func->common.scope;
 		call->symbol_table = fci->symbol_table;
 		if (UNEXPECTED(func->op_array.fn_flags & ZEND_ACC_CLOSURE)) {
-			ZEND_ASSERT(GC_TYPE(func->op_array.prototype) == IS_OBJECT);
-			GC_REFCOUNT(func->op_array.prototype)++;
+			ZEND_ASSERT(GC_TYPE((zend_object*)func->op_array.prototype) == IS_OBJECT);
+			GC_REFCOUNT((zend_object*)func->op_array.prototype)++;
 			ZEND_ADD_CALL_FLAG(call, ZEND_CALL_CLOSURE);
 		}
 		if (EXPECTED((func->op_array.fn_flags & ZEND_ACC_GENERATOR) == 0)) {

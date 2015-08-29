@@ -463,13 +463,13 @@ static void zend_generator_add_child(zend_generator *generator, zend_generator *
 	}
 }
 
-void zend_generator_yield_from(zend_generator *this, zend_generator *from)
+void zend_generator_yield_from(zend_generator *generator, zend_generator *from)
 {
-	zend_generator_add_child(from, this);
+	zend_generator_add_child(from, generator);
 
-	this->node.parent = from;
-	zend_generator_get_current(this);
-	--GC_REFCOUNT(from);
+	generator->node.parent = from;
+	zend_generator_get_current(generator);
+	--GC_REFCOUNT(&from->std);
 }
 
 ZEND_API zend_generator *zend_generator_get_current(zend_generator *generator)

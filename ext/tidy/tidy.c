@@ -991,10 +991,9 @@ static void php_tidy_create_node(INTERNAL_FUNCTION_PARAMETERS, tidy_base_nodetyp
 static int _php_tidy_apply_config_array(TidyDoc doc, HashTable *ht_options)
 {
 	zval *opt_val;
-	zend_ulong opt_indx;
 	zend_string *opt_name;
 
-	ZEND_HASH_FOREACH_KEY_VAL(ht_options, opt_indx, opt_name, opt_val) {
+	ZEND_HASH_FOREACH_STR_KEY_VAL(ht_options, opt_name, opt_val) {
 		if (opt_name == NULL) {
 			continue;
 		}
@@ -1150,7 +1149,6 @@ static int php_tidy_output_handler(void **nothing, php_output_context *output_co
 	int status = FAILURE;
 	TidyDoc doc;
 	TidyBuffer inbuf, outbuf, errbuf;
-	PHP_OUTPUT_TSRMLS(output_context);
 
 	if (TG(clean_output) && (output_context->op & PHP_OUTPUT_HANDLER_START) && (output_context->op & PHP_OUTPUT_HANDLER_FINAL)) {
 		doc = tidyCreate();

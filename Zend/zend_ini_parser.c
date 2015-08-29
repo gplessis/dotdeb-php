@@ -173,8 +173,16 @@ static void zend_ini_init_string(zval *result)
 */
 static void zend_ini_add_string(zval *result, zval *op1, zval *op2)
 {
-	int op1_len = (int)Z_STRLEN_P(op1);
-	int length = op1_len + (int)Z_STRLEN_P(op2);
+	int length, op1_len;
+
+	if (Z_TYPE_P(op1) != IS_STRING) {
+		zend_string *str = zval_get_string(op1);
+		ZVAL_PSTRINGL(op1, str->val, str->len);
+		zend_string_release(str);
+	}
+
+	op1_len = (int)Z_STRLEN_P(op1);
+	length = op1_len + (int)Z_STRLEN_P(op2);
 
 	ZVAL_NEW_STR(result, zend_string_extend(Z_STR_P(op1), length, 1));
 	memcpy(Z_STRVAL_P(result)+op1_len, Z_STRVAL_P(op2), Z_STRLEN_P(op2));
@@ -702,12 +710,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   277,   277,   278,   282,   289,   297,   306,   307,   311,
-     312,   316,   317,   318,   319,   320,   324,   325,   329,   330,
-     331,   335,   336,   337,   338,   339,   340,   344,   345,   346,
-     347,   348,   349,   353,   354,   355,   356,   357,   358,   359,
-     363,   367,   368,   369,   370,   371,   375,   376,   377,   378,
-     379
+       0,   285,   285,   286,   290,   297,   305,   318,   319,   323,
+     324,   328,   329,   330,   331,   332,   336,   337,   341,   342,
+     343,   347,   348,   349,   350,   351,   352,   356,   357,   358,
+     359,   360,   361,   365,   366,   367,   368,   369,   370,   371,
+     375,   379,   380,   381,   382,   383,   387,   388,   389,   390,
+     391
 };
 #endif
 
@@ -1578,7 +1586,11 @@ yyreduce:
 #endif
 			ZEND_INI_PARSER_CB(&(yyvsp[-4]), &(yyvsp[0]), &(yyvsp[-3]), ZEND_INI_PARSER_POP_ENTRY, ZEND_INI_PARSER_ARG);
 			zend_string_release(Z_STR((yyvsp[-4])));
-			zend_string_release(Z_STR((yyvsp[-3])));
+			if (Z_TYPE((yyvsp[-3])) == IS_STRING) {
+				zend_string_release(Z_STR((yyvsp[-3])));
+			} else {
+				zval_dtor(&(yyvsp[-3]));
+			}
 			zval_ptr_dtor(&(yyvsp[0]));
 		}
 

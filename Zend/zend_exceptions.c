@@ -203,14 +203,14 @@ static zend_object *zend_default_exception_new_ex(zend_class_entry *class_type, 
 		array_init(&trace);
 	}
 	Z_SET_REFCOUNT(trace, 0);
-	
+
 	base_ce = i_get_exception_base(&obj);
 
 	if (EXPECTED(class_type != zend_ce_parse_error || !(filename = zend_get_compiled_filename()))) {
 		zend_update_property_string(base_ce, &obj, "file", sizeof("file")-1, zend_get_executed_filename());
 		zend_update_property_long(base_ce, &obj, "line", sizeof("line")-1, zend_get_executed_lineno());
 	} else {
-		zend_update_property_string(base_ce, &obj, "file", sizeof("file")-1, ZSTR_VAL(filename));
+		zend_update_property_str(base_ce, &obj, "file", sizeof("file")-1, filename);
 		zend_update_property_long(base_ce, &obj, "line", sizeof("line")-1, zend_get_compiled_lineno());
 	}
 	zend_update_property(base_ce, &obj, "trace", sizeof("trace")-1, &trace);
@@ -276,6 +276,32 @@ ZEND_METHOD(exception, __construct)
 	if (previous) {
 		zend_update_property(base_ce, object, "previous", sizeof("previous")-1, previous);
 	}
+}
+/* }}} */
+
+/* {{{ proto Exception::__wakeup()
+   Exception unserialize checks */
+#define CHECK_EXC_TYPE(name, type) \
+	ZVAL_UNDEF(&value); \
+	pvalue = zend_read_property(i_get_exception_base(object), (object), name, sizeof(name) - 1, 1, &value); \
+	if(Z_TYPE_P(pvalue) != IS_UNDEF && Z_TYPE_P(pvalue) != type) { \
+		zval tmp; \
+		ZVAL_STRINGL(&tmp, name, sizeof(name) - 1); \
+		Z_OBJ_HANDLER_P(object, unset_property)(object, &tmp, NULL); \
+		zval_ptr_dtor(&tmp); \
+	}
+
+ZEND_METHOD(exception, __wakeup)
+{
+	zval value, *pvalue;
+	zval *object = getThis();
+	CHECK_EXC_TYPE("message", IS_STRING);
+	CHECK_EXC_TYPE("string", IS_STRING);
+	CHECK_EXC_TYPE("code", IS_LONG);
+	CHECK_EXC_TYPE("file", IS_STRING);
+	CHECK_EXC_TYPE("line", IS_LONG);
+	CHECK_EXC_TYPE("trace", IS_ARRAY);
+	CHECK_EXC_TYPE("previous", IS_OBJECT);
 }
 /* }}} */
 
@@ -608,7 +634,7 @@ ZEND_METHOD(exception, getTraceAsString)
 	uint32_t num = 0;
 
 	DEFAULT_0_PARAMS;
-	
+
 	object = getThis();
 	base_ce = i_get_exception_base(object);
 
@@ -686,7 +712,7 @@ ZEND_METHOD(exception, __toString)
 	exception = getThis();
 	ZVAL_STRINGL(&fname, "gettraceasstring", sizeof("gettraceasstring")-1);
 
-	while (exception && Z_TYPE_P(exception) == IS_OBJECT) {
+	while (exception && Z_TYPE_P(exception) == IS_OBJECT && instanceof_function(Z_OBJCE_P(exception), zend_ce_throwable)) {
 		zend_string *prev_str = str;
 		zend_string *message = zval_get_string(GET_PROPERTY(exception, "message"));
 		zend_string *file = zval_get_string(GET_PROPERTY(exception, "file"));
@@ -782,6 +808,7 @@ ZEND_END_ARG_INFO()
 static const zend_function_entry default_exception_functions[] = {
 	ZEND_ME(exception, __clone, NULL, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(exception, __construct, arginfo_exception___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(exception, __wakeup, NULL, ZEND_ACC_PUBLIC)
 	ZEND_ME(exception, getMessage, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(exception, getCode, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(exception, getFile, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -812,7 +839,7 @@ static const zend_function_entry error_exception_functions[] = {
 void zend_register_default_exception(void) /* {{{ */
 {
 	zend_class_entry ce;
-	
+
 	REGISTER_MAGIC_INTERFACE(throwable, Throwable);
 
 	memcpy(&default_exception_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -868,7 +895,7 @@ void zend_register_default_exception(void) /* {{{ */
 /* }}} */
 
 /* {{{ Deprecated - Use zend_ce_exception directly instead */
-ZEND_API zend_class_entry *zend_exception_get_default(void) 
+ZEND_API zend_class_entry *zend_exception_get_default(void)
 {
 	return zend_ce_exception;
 }
@@ -965,9 +992,8 @@ ZEND_API void zend_exception_error(zend_object *ex, int severity) /* {{{ */
 		zend_string *message = zval_get_string(GET_PROPERTY(&exception, "message"));
 		zend_string *file = zval_get_string(GET_PROPERTY_SILENT(&exception, "file"));
 		zend_long line = zval_get_long(GET_PROPERTY_SILENT(&exception, "line"));
-		zend_long code = zval_get_long(GET_PROPERTY_SILENT(&exception, "code"));
 
-		zend_error_helper(code? code : E_ERROR, ZSTR_VAL(file), line, "%s", ZSTR_VAL(message));
+		zend_error_helper(E_PARSE, ZSTR_VAL(file), line, "%s", ZSTR_VAL(message));
 
 		zend_string_release(file);
 		zend_string_release(message);

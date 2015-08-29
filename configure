@@ -989,7 +989,7 @@ with_pcre_dir
 enable_ftp
 with_openssl_dir
 with_gd
-with_vpx_dir
+with_webp_dir
 with_jpeg_dir
 with_png_dir
 with_xpm_dir
@@ -1820,7 +1820,7 @@ Extensions:
   --with-openssl-dir=DIR  FTP: openssl install prefix
   --with-gd=DIR           Include GD support.  DIR is the GD library base
                           install directory BUNDLED
-  --with-vpx-dir=DIR      GD: Set the path to libvpx install prefix
+  --with-webp-dir=DIR      GD: Set the path to libwebp install prefix
   --with-jpeg-dir=DIR     GD: Set the path to libjpeg install prefix
   --with-png-dir=DIR      GD: Set the path to libpng install prefix
   --with-zlib-dir=DIR     GD: Set the path to libz install prefix
@@ -3640,7 +3640,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
 PHP_RELEASE_VERSION=0
-PHP_EXTRA_VERSION="beta1"
+PHP_EXTRA_VERSION="RC1"
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
 
@@ -5709,11 +5709,6 @@ if test "$ZEND_GCC_GLOBAL_REGS" != "no"; then
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-
-int
-main ()
-{
-
 #if defined(__GNUC__)
 # define ZEND_GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
 #else
@@ -5726,6 +5721,9 @@ main ()
 # define ZEND_VM_FP_GLOBAL_REG "%r14"
 # define ZEND_VM_IP_GLOBAL_REG "%r15"
 #elif defined(__GNUC__) && ZEND_GCC_VERSION >= 4008 && defined(__powerpc64__)
+# define ZEND_VM_FP_GLOBAL_REG "r28"
+# define ZEND_VM_IP_GLOBAL_REG "r29"
+#elif defined(__IBMC__) && ZEND_GCC_VERSION >= 4002 && defined(__powerpc64__)
 # define ZEND_VM_FP_GLOBAL_REG "r28"
 # define ZEND_VM_IP_GLOBAL_REG "r29"
 #else
@@ -5743,6 +5741,11 @@ int emu(const opcode_handler_t *ip, void *fp) {
 	FP = orig_fp;
 	IP = orig_ip;
 }
+
+int
+main ()
+{
+
 
   ;
   return 0;
@@ -9338,7 +9341,7 @@ $as_echo "$PHP_LITESPEED" >&6; }
 
 
 
-php_enable_phpdbg=no
+php_enable_phpdbg=yes
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for phpdbg support" >&5
 $as_echo_n "checking for phpdbg support... " >&6; }
@@ -9347,13 +9350,34 @@ if test "${enable_phpdbg+set}" = set; then :
   enableval=$enable_phpdbg; PHP_PHPDBG=$enableval
 else
 
-  PHP_PHPDBG=no
-
+  PHP_PHPDBG=yes
+  test "$PHP_ENABLE_ALL" && PHP_PHPDBG=$PHP_ENABLE_ALL
 
 fi
 
 
-ext_output=$PHP_PHPDBG
+
+ext_output="yes, shared"
+ext_shared=yes
+case $PHP_PHPDBG in
+shared,*)
+  PHP_PHPDBG=`echo "$PHP_PHPDBG"|$SED 's/^shared,//'`
+  ;;
+shared)
+  PHP_PHPDBG=yes
+  ;;
+no)
+  ext_output=no
+  ext_shared=no
+  ;;
+*)
+  ext_output=yes
+  ext_shared=no
+  ;;
+esac
+
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
 
@@ -32067,25 +32091,25 @@ $as_echo "$ext_output" >&6; }
 
 
 
-if test -z "$PHP_VPX_DIR"; then
+if test -z "$PHP_WEBP_DIR"; then
 
-php_with_vpx_dir=no
+php_with_webp_dir=no
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the location of libvpx" >&5
-$as_echo_n "checking for the location of libvpx... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the location of libwebp" >&5
+$as_echo_n "checking for the location of libwebp... " >&6; }
 
-# Check whether --with-vpx-dir was given.
-if test "${with_vpx_dir+set}" = set; then :
-  withval=$with_vpx_dir; PHP_VPX_DIR=$withval
+# Check whether --with-webp-dir was given.
+if test "${with_webp_dir+set}" = set; then :
+  withval=$with_webp_dir; PHP_WEBP_DIR=$withval
 else
 
-  PHP_VPX_DIR=no
+  PHP_WEBP_DIR=no
 
 
 fi
 
 
-ext_output=$PHP_VPX_DIR
+ext_output=$PHP_WEBP_DIR
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
 
@@ -32320,20 +32344,28 @@ $as_echo "#define USE_GD_IMGSTRTTF 1" >>confdefs.h
   fi
 
 
-  if test "$PHP_VPX_DIR" != "no"; then
+  if test "$PHP_WEBP_DIR" != "no"; then
 
-    for i in $PHP_VPX_DIR /usr/local /usr; do
-      test -f $i/include/vpx_codec.h || test -f $i/include/vpx/vpx_codec.h && GD_VPX_DIR=$i && break
+    for i in $PHP_WEBP_DIR /usr/local /usr; do
+      test -f $i/include/webp/decode.h && GD_WEBP_DIR=$i && break
     done
 
-    if test -z "$GD_VPX_DIR"; then
-      as_fn_error $? "vpx_codec.h not found." "$LINENO" 5
+    if test -z "$GD_WEBP_DIR"; then
+      as_fn_error $? "webp/decode.h not found." "$LINENO" 5
+    fi
+
+    for i in $PHP_WEBP_DIR /usr/local /usr; do
+      test -f $i/include/webp/encode.h && GD_WEBP_DIR=$i && break
+    done
+
+    if test -z "$GD_WEBP_DIR"; then
+      as_fn_error $? "webp/encode.h not found." "$LINENO" 5
     fi
 
 
   save_old_LDFLAGS=$LDFLAGS
   ac_stuff="
-      -L$GD_VPX_DIR/$PHP_LIBDIR
+      -L$GD_WEBP_DIR/$PHP_LIBDIR
     "
 
   save_ext_shared=$ext_shared
@@ -32427,13 +32459,13 @@ $as_echo "#define USE_GD_IMGSTRTTF 1" >>confdefs.h
     esac
   done
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for vpx_codec_destroy in -lvpx" >&5
-$as_echo_n "checking for vpx_codec_destroy in -lvpx... " >&6; }
-if ${ac_cv_lib_vpx_vpx_codec_destroy+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for WebPGetInfo in -lwebp" >&5
+$as_echo_n "checking for WebPGetInfo in -lwebp... " >&6; }
+if ${ac_cv_lib_webp_WebPGetInfo+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvpx  $LIBS"
+LIBS="-lwebp  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -32443,42 +32475,42 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char vpx_codec_destroy ();
+char WebPGetInfo ();
 int
 main ()
 {
-return vpx_codec_destroy ();
+return WebPGetInfo ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_vpx_vpx_codec_destroy=yes
+  ac_cv_lib_webp_WebPGetInfo=yes
 else
-  ac_cv_lib_vpx_vpx_codec_destroy=no
+  ac_cv_lib_webp_WebPGetInfo=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_vpx_vpx_codec_destroy" >&5
-$as_echo "$ac_cv_lib_vpx_vpx_codec_destroy" >&6; }
-if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_webp_WebPGetInfo" >&5
+$as_echo "$ac_cv_lib_webp_WebPGetInfo" >&6; }
+if test "x$ac_cv_lib_webp_WebPGetInfo" = xyes; then :
 
     LDFLAGS=$save_old_LDFLAGS
     ext_shared=$save_ext_shared
 
 
-  if test "$GD_VPX_DIR/include" != "/usr/include"; then
+  if test "$GD_WEBP_DIR/include" != "/usr/include"; then
 
-  if test -z "$GD_VPX_DIR/include" || echo "$GD_VPX_DIR/include" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/include
+  if test -z "$GD_WEBP_DIR/include" || echo "$GD_WEBP_DIR/include" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/include
   else
 
-    ep_dir=`echo $GD_VPX_DIR/include|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/include|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/include"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/include"`
   fi
 
 
@@ -32512,19 +32544,19 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
 
 
   if test "$ext_shared" = "yes"; then
-    GD_SHARED_LIBADD="-lvpx $GD_SHARED_LIBADD"
-    if test -n "$GD_VPX_DIR/$PHP_LIBDIR"; then
+    GD_SHARED_LIBADD="-lwebp $GD_SHARED_LIBADD"
+    if test -n "$GD_WEBP_DIR/$PHP_LIBDIR"; then
 
-  if test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/lib"; then
+  if test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/lib"; then
 
-  if test -z "$GD_VPX_DIR/$PHP_LIBDIR" || echo "$GD_VPX_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/$PHP_LIBDIR
+  if test -z "$GD_WEBP_DIR/$PHP_LIBDIR" || echo "$GD_WEBP_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/$PHP_LIBDIR
   else
 
-    ep_dir=`echo $GD_VPX_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/$PHP_LIBDIR"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/$PHP_LIBDIR"`
   fi
 
 
@@ -32556,18 +32588,18 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
   else
 
 
-  if test -n "$GD_VPX_DIR/$PHP_LIBDIR"; then
+  if test -n "$GD_WEBP_DIR/$PHP_LIBDIR"; then
 
-  if test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/lib"; then
+  if test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/lib"; then
 
-  if test -z "$GD_VPX_DIR/$PHP_LIBDIR" || echo "$GD_VPX_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/$PHP_LIBDIR
+  if test -z "$GD_WEBP_DIR/$PHP_LIBDIR" || echo "$GD_WEBP_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/$PHP_LIBDIR
   else
 
-    ep_dir=`echo $GD_VPX_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/$PHP_LIBDIR"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/$PHP_LIBDIR"`
   fi
 
 
@@ -32593,10 +32625,10 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
   fi
 
 
-  case vpx in
+  case webp in
   c|c_r|pthread*) ;;
   *)
-      LIBS="-lvpx $LIBS"
+      LIBS="-lwebp $LIBS"
    ;;
   esac
 
@@ -32612,16 +32644,16 @@ else
 
     LDFLAGS=$save_old_LDFLAGS
     ext_shared=$save_ext_shared
-    unset ac_cv_lib_vpx_vpx_codec_destroy
+    unset ac_cv_lib_webp_WebPGetInfo
 
-      as_fn_error $? "Problem with libvpx.(a|so). Please check config.log for more information." "$LINENO" 5
+      as_fn_error $? "Problem with libwebp.(a|so). Please check config.log for more information." "$LINENO" 5
 
 
 fi
 
   else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: If configure fails try --with-vpx-dir=<DIR>" >&5
-$as_echo "If configure fails try --with-vpx-dir=<DIR>" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: If configure fails try --with-webp-dir=<DIR>" >&5
+$as_echo "If configure fails try --with-webp-dir=<DIR>" >&6; }
   fi
 
 
@@ -33880,7 +33912,7 @@ fi
 if test "$PHP_GD" = "yes"; then
   GD_MODULE_TYPE=builtin
   extra_sources="libgd/gd.c libgd/gd_gd.c libgd/gd_gd2.c libgd/gd_io.c libgd/gd_io_dp.c \
-                 libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c libgd/webpimg.c libgd/gd_webp.c \
+                 libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c libgd/gd_webp.c \
                  libgd/gd_png.c libgd/gd_jpeg.c libgd/gdxpm.c libgd/gdfontt.c libgd/gdfonts.c \
                  libgd/gdfontmb.c libgd/gdfontl.c libgd/gdfontg.c libgd/gdtables.c libgd/gdft.c \
                  libgd/gdcache.c libgd/gdkanji.c libgd/wbmp.c libgd/gd_wbmp.c libgd/gdhelpers.c \
@@ -33914,11 +33946,11 @@ $as_echo "#define HAVE_GD_CACHE_CREATE 1" >>confdefs.h
   GDLIB_CFLAGS="-DHAVE_LIBPNG"
 
 
-  if test -n "$GD_VPX_DIR"; then
+  if test -n "$GD_WEBP_DIR"; then
 
 $as_echo "#define HAVE_GD_WEBP 1" >>confdefs.h
 
-    GDLIB_CFLAGS="$GDLIB_CFLAGS -DHAVE_LIBVPX"
+    GDLIB_CFLAGS="$GDLIB_CFLAGS -DHAVE_LIBWEBP"
   fi
 
   if test -n "$GD_JPEG_DIR"; then
@@ -33989,20 +34021,28 @@ $as_echo "#define USE_GD_IMGSTRTTF 1" >>confdefs.h
   fi
 
 
-  if test "$PHP_VPX_DIR" != "no"; then
+  if test "$PHP_WEBP_DIR" != "no"; then
 
-    for i in $PHP_VPX_DIR /usr/local /usr; do
-      test -f $i/include/vpx_codec.h || test -f $i/include/vpx/vpx_codec.h && GD_VPX_DIR=$i && break
+    for i in $PHP_WEBP_DIR /usr/local /usr; do
+      test -f $i/include/webp/decode.h && GD_WEBP_DIR=$i && break
     done
 
-    if test -z "$GD_VPX_DIR"; then
-      as_fn_error $? "vpx_codec.h not found." "$LINENO" 5
+    if test -z "$GD_WEBP_DIR"; then
+      as_fn_error $? "webp/decode.h not found." "$LINENO" 5
+    fi
+
+    for i in $PHP_WEBP_DIR /usr/local /usr; do
+      test -f $i/include/webp/encode.h && GD_WEBP_DIR=$i && break
+    done
+
+    if test -z "$GD_WEBP_DIR"; then
+      as_fn_error $? "webp/encode.h not found." "$LINENO" 5
     fi
 
 
   save_old_LDFLAGS=$LDFLAGS
   ac_stuff="
-      -L$GD_VPX_DIR/$PHP_LIBDIR
+      -L$GD_WEBP_DIR/$PHP_LIBDIR
     "
 
   save_ext_shared=$ext_shared
@@ -34096,13 +34136,13 @@ $as_echo "#define USE_GD_IMGSTRTTF 1" >>confdefs.h
     esac
   done
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for vpx_codec_destroy in -lvpx" >&5
-$as_echo_n "checking for vpx_codec_destroy in -lvpx... " >&6; }
-if ${ac_cv_lib_vpx_vpx_codec_destroy+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for WebPGetInfo in -lwebp" >&5
+$as_echo_n "checking for WebPGetInfo in -lwebp... " >&6; }
+if ${ac_cv_lib_webp_WebPGetInfo+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvpx  $LIBS"
+LIBS="-lwebp  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -34112,42 +34152,42 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char vpx_codec_destroy ();
+char WebPGetInfo ();
 int
 main ()
 {
-return vpx_codec_destroy ();
+return WebPGetInfo ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_vpx_vpx_codec_destroy=yes
+  ac_cv_lib_webp_WebPGetInfo=yes
 else
-  ac_cv_lib_vpx_vpx_codec_destroy=no
+  ac_cv_lib_webp_WebPGetInfo=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_vpx_vpx_codec_destroy" >&5
-$as_echo "$ac_cv_lib_vpx_vpx_codec_destroy" >&6; }
-if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_webp_WebPGetInfo" >&5
+$as_echo "$ac_cv_lib_webp_WebPGetInfo" >&6; }
+if test "x$ac_cv_lib_webp_WebPGetInfo" = xyes; then :
 
     LDFLAGS=$save_old_LDFLAGS
     ext_shared=$save_ext_shared
 
 
-  if test "$GD_VPX_DIR/include" != "/usr/include"; then
+  if test "$GD_WEBP_DIR/include" != "/usr/include"; then
 
-  if test -z "$GD_VPX_DIR/include" || echo "$GD_VPX_DIR/include" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/include
+  if test -z "$GD_WEBP_DIR/include" || echo "$GD_WEBP_DIR/include" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/include
   else
 
-    ep_dir=`echo $GD_VPX_DIR/include|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/include|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/include"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/include"`
   fi
 
 
@@ -34181,19 +34221,19 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
 
 
   if test "$ext_shared" = "yes"; then
-    GD_SHARED_LIBADD="-lvpx $GD_SHARED_LIBADD"
-    if test -n "$GD_VPX_DIR/$PHP_LIBDIR"; then
+    GD_SHARED_LIBADD="-lwebp $GD_SHARED_LIBADD"
+    if test -n "$GD_WEBP_DIR/$PHP_LIBDIR"; then
 
-  if test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/lib"; then
+  if test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/lib"; then
 
-  if test -z "$GD_VPX_DIR/$PHP_LIBDIR" || echo "$GD_VPX_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/$PHP_LIBDIR
+  if test -z "$GD_WEBP_DIR/$PHP_LIBDIR" || echo "$GD_WEBP_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/$PHP_LIBDIR
   else
 
-    ep_dir=`echo $GD_VPX_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/$PHP_LIBDIR"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/$PHP_LIBDIR"`
   fi
 
 
@@ -34225,18 +34265,18 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
   else
 
 
-  if test -n "$GD_VPX_DIR/$PHP_LIBDIR"; then
+  if test -n "$GD_WEBP_DIR/$PHP_LIBDIR"; then
 
-  if test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_VPX_DIR/$PHP_LIBDIR" != "/usr/lib"; then
+  if test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$GD_WEBP_DIR/$PHP_LIBDIR" != "/usr/lib"; then
 
-  if test -z "$GD_VPX_DIR/$PHP_LIBDIR" || echo "$GD_VPX_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
-    ai_p=$GD_VPX_DIR/$PHP_LIBDIR
+  if test -z "$GD_WEBP_DIR/$PHP_LIBDIR" || echo "$GD_WEBP_DIR/$PHP_LIBDIR" | grep '^/' >/dev/null ; then
+    ai_p=$GD_WEBP_DIR/$PHP_LIBDIR
   else
 
-    ep_dir=`echo $GD_VPX_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
+    ep_dir=`echo $GD_WEBP_DIR/$PHP_LIBDIR|$SED 's%/*[^/][^/]*/*$%%'`
 
     ep_realdir=`(cd "$ep_dir" && pwd)`
-    ai_p="$ep_realdir"/`basename "$GD_VPX_DIR/$PHP_LIBDIR"`
+    ai_p="$ep_realdir"/`basename "$GD_WEBP_DIR/$PHP_LIBDIR"`
   fi
 
 
@@ -34262,10 +34302,10 @@ if test "x$ac_cv_lib_vpx_vpx_codec_destroy" = xyes; then :
   fi
 
 
-  case vpx in
+  case webp in
   c|c_r|pthread*) ;;
   *)
-      LIBS="-lvpx $LIBS"
+      LIBS="-lwebp $LIBS"
    ;;
   esac
 
@@ -34281,16 +34321,16 @@ else
 
     LDFLAGS=$save_old_LDFLAGS
     ext_shared=$save_ext_shared
-    unset ac_cv_lib_vpx_vpx_codec_destroy
+    unset ac_cv_lib_webp_WebPGetInfo
 
-      as_fn_error $? "Problem with libvpx.(a|so). Please check config.log for more information." "$LINENO" 5
+      as_fn_error $? "Problem with libwebp.(a|so). Please check config.log for more information." "$LINENO" 5
 
 
 fi
 
   else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: If configure fails try --with-vpx-dir=<DIR>" >&5
-$as_echo "If configure fails try --with-vpx-dir=<DIR>" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: If configure fails try --with-webp-dir=<DIR>" >&5
+$as_echo "If configure fails try --with-webp-dir=<DIR>" >&6; }
   fi
 
 
@@ -51717,7 +51757,7 @@ fi
   ext_builddir=ext/mcrypt
   ext_srcdir=$abs_srcdir/ext/mcrypt
 
-  ac_extra=
+  ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
   if test "$ext_shared" != "shared" && test "$ext_shared" != "yes" && test "" != "cli"; then
     PHP_MCRYPT_SHARED=no
@@ -70220,7 +70260,7 @@ fi
 done
 
 
-  for ac_func in seteuid setegid setsid getsid setpgid getpgid ctermid mkfifo mknod getrlimit getlogin getgroups makedev initgroups getpwuid_r getgrgid_r
+  for ac_func in seteuid setegid setsid getsid setpgid getpgid ctermid mkfifo mknod setrlimit getrlimit getlogin getgroups makedev initgroups getpwuid_r getgrgid_r
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -94408,7 +94448,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 94411 "configure"
+#line 94451 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -96286,7 +96326,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 96289 "configure"' > conftest.$ac_ext
+  echo '#line 96329 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -97684,7 +97724,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 97687 "configure"
+#line 97727 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -97842,11 +97882,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:97845: $lt_compile\"" >&5)
+   (eval echo "\"configure:97885: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:97849: \$? = $ac_status" >&5
+   echo "configure:97889: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98140,11 +98180,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98143: $lt_compile\"" >&5)
+   (eval echo "\"configure:98183: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98147: \$? = $ac_status" >&5
+   echo "configure:98187: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98244,11 +98284,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98247: $lt_compile\"" >&5)
+   (eval echo "\"configure:98287: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:98251: \$? = $ac_status" >&5
+   echo "configure:98291: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -98708,7 +98748,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 98711 "configure"
+#line 98751 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98750,7 +98790,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 98753 "configure"
+#line 98793 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -100267,7 +100307,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100270 "configure"
+#line 100310 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -100367,7 +100407,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100370 "configure"
+#line 100410 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -101432,7 +101472,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101435 "configure"
+#line 101475 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -101475,7 +101515,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101478 "configure"
+#line 101518 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -102727,11 +102767,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:102730: $lt_compile\"" >&5)
+   (eval echo "\"configure:102770: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:102734: \$? = $ac_status" >&5
+   echo "configure:102774: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -102831,11 +102871,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:102834: $lt_compile\"" >&5)
+   (eval echo "\"configure:102874: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:102838: \$? = $ac_status" >&5
+   echo "configure:102878: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -104063,7 +104103,6 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 
 
-if test "$enable_debug" != "yes"; then
 
   if test -z "$LIBTOOL"; then
     LIBTOOL='$(SHELL) $(top_builddir)/libtool --silent'
@@ -104071,7 +104110,6 @@ if test "$enable_debug" != "yes"; then
     LIBTOOL="$LIBTOOL --silent"
   fi
 
-fi
 
 
   if test -z "$LIBTOOL"; then

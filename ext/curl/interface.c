@@ -2791,7 +2791,7 @@ PHP_FUNCTION(curl_setopt_array)
 	zend_ulong	option;
 	zend_string	*string_key;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "za", &zid, &arr) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "ra", &zid, &arr) == FAILURE) {
 		return;
 	}
 
@@ -2904,7 +2904,11 @@ PHP_FUNCTION(curl_getinfo)
 
 	if (ZEND_NUM_ARGS() < 2) {
 		char *s_code;
-		zend_long l_code;
+		/* libcurl expects long datatype. So far no cases are known where
+		   it would be an issue. Using zend_long would truncate a 64-bit
+		   var on Win64, so the exact long datatype fits everywhere, as
+		   long as there's no 32-bit int overflow. */
+		long l_code;
 		double d_code;
 #if LIBCURL_VERSION_NUM >  0x071301
 		struct curl_certinfo *ci = NULL;

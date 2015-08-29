@@ -25,9 +25,9 @@
 #include "zend_smart_str.h"
 #include "zend_inheritance.h"
 
-static void ptr_dtor(zval *zv) /* {{{ */
+static void overriden_ptr_dtor(zval *zv) /* {{{ */
 {
-	efree(Z_PTR_P(zv));
+	efree_size(Z_PTR_P(zv), sizeof(zend_function));
 }
 /* }}} */
 
@@ -821,7 +821,13 @@ ZEND_API void zend_do_inheritance(zend_class_entry *ce, zend_class_entry *parent
 		do {
 			dst--;
 			src--;
-			ZVAL_MAKE_REF(src);
+			if (parent_ce->type == ZEND_INTERNAL_CLASS) {
+				if (!Z_ISREF_P(src)) {
+					ZVAL_NEW_PERSISTENT_REF(src, src);
+				}
+			} else {
+				ZVAL_MAKE_REF(src);
+			}
 			ZVAL_COPY_VALUE(dst, src);
 			Z_ADDREF_P(dst);
 			if (Z_CONSTANT_P(Z_REFVAL_P(dst))) {
@@ -831,6 +837,8 @@ ZEND_API void zend_do_inheritance(zend_class_entry *ce, zend_class_entry *parent
 		ce->default_static_members_count += parent_ce->default_static_members_count;
 		if (ce->type == ZEND_USER_CLASS) {
 			ce->static_members_table = ce->default_static_members_table;
+		} else {
+			ce->ce_flags &= ~ZEND_ACC_CONSTANTS_UPDATED;
 		}
 	}
 
@@ -909,7 +917,13 @@ static zend_bool do_inherit_constant_check(HashTable *child_constants_table, zva
 static void do_inherit_iface_constant(zend_string *name, zval *zv, zend_class_entry *ce, zend_class_entry *iface) /* {{{ */
 {
 	if (do_inherit_constant_check(&ce->constants_table, zv, name, iface)) {
-		ZVAL_MAKE_REF(zv);
+		if (!Z_ISREF_P(zv)) {
+			if (iface->type == ZEND_INTERNAL_CLASS) {
+				ZVAL_NEW_PERSISTENT_REF(zv, zv);
+			} else {
+				ZVAL_NEW_REF(zv, zv);
+			}
+		}
 		Z_ADDREF_P(zv);
 		if (Z_CONSTANT_P(Z_REFVAL_P(zv))) {
 			ce->ce_flags &= ~ZEND_ACC_CONSTANTS_UPDATED;
@@ -1090,7 +1104,7 @@ static void zend_add_trait_method(zend_class_entry *ce, const char *name, zend_s
 				}
 			} else {
 				ALLOC_HASHTABLE(*overriden);
-				zend_hash_init_ex(*overriden, 8, NULL, ptr_dtor, 0, 0);
+				zend_hash_init_ex(*overriden, 8, NULL, overriden_ptr_dtor, 0, 0);
 			}
 			zend_hash_update_mem(*overriden, key, fn, sizeof(zend_function));
 			return;
@@ -1192,7 +1206,8 @@ static int zend_traits_copy_functions(zend_string *fnname, zend_function *fn, ze
 
 	if (exclude_table == NULL || zend_hash_find(exclude_table, fnname) == NULL) {
 		/* is not in hashtable, thus, function is not to be excluded */
-		fn_copy = *fn;
+		/* And how about ZEND_OVERLOADED_FUNCTION? */
+		memcpy(&fn_copy, fn, fn->type == ZEND_USER_FUNCTION? sizeof(zend_op_array) : sizeof(zend_internal_function));
 
 		/* apply aliases which have not alias name, just setting visibility */
 		if (ce->trait_aliases) {
