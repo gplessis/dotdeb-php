@@ -1,0 +1,34 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: libtool2.2
+
+---
+ scripts/phpize.in | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/phpize.in b/scripts/phpize.in
+index 9bd3b9a..7a0e599 100644
+--- a/scripts/phpize.in
++++ b/scripts/phpize.in
+@@ -9,7 +9,9 @@ includedir="$prefix/include/php/@DEBIAN_PHP_API@"
+ builddir="`pwd`"
+ SED="@SED@"
+ 
+-FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool libtool.m4"
++aclocaldir="$prefix/share/aclocal"
++FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool"
++LIBTOOL_FILES="libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4"
+ FILES="acinclude.m4 Makefile.global config.sub config.guess ltmain.sh run-tests*.php"
+ CLEAN_FILES="$FILES *.o *.lo *.la .deps .libs/ build/ modules/ install-sh \
+ 	mkinstalldirs missing config.nice config.sub config.guess configure configure.in \
+@@ -145,8 +147,9 @@ phpize_copy_files()
+   test -d build || mkdir build
+  
+   (cd "$phpdir" && cp $FILES_BUILD "$builddir"/build)
++  (cd "$aclocaldir" && cp $LIBTOOL_FILES "$builddir"/build)
+   (cd "$phpdir" && cp $FILES "$builddir")
+-  (cd "$builddir" && cat acinclude.m4 ./build/libtool.m4 > aclocal.m4)
++  (cd "$builddir/build" && cat ../acinclude.m4 $LIBTOOL_FILES > ../aclocal.m4)
+ }
+ 
+ phpize_replace_prefix()

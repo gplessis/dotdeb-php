@@ -1,0 +1,3 @@
+usr/share/man/man8/php-fpm@PHP_VERSION@.8
+usr/sbin/php-fpm@PHP_VERSION@
+usr/share/php/@PHP_VERSION@/fpm/status.html

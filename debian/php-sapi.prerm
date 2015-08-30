@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+php_enable() { return 0; }
+
+if [ -e /usr/lib/php/php@PHP_VERSION@-maintscript-helper ]; then
+    . /usr/lib/php/php@PHP_VERSION@-maintscript-helper
+
+    mods=$(phpquery -M -v @PHP_VERSION@)
+    for mod in $mods; do
+	php_invoke dismod @PHP_VERSION@ @sapi@ $mod
+    done
+fi
+
+#DEBHELPER#
+
+exit 0

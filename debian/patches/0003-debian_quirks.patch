@@ -1,0 +1,830 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: debian_quirks
+
+---
+ configure.in          |   7 +-
+ ext/ext_skel          | 332 --------------------------------------------------
+ ext/ext_skel.in       | 332 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ php.ini-development   |   2 +-
+ php.ini-production    |   2 +-
+ sapi/cli/php.1.in     |  11 +-
+ scripts/Makefile.frag |   4 +-
+ scripts/php-config.in |   6 +-
+ scripts/phpize.in     |   4 +-
+ 9 files changed, 352 insertions(+), 348 deletions(-)
+ delete mode 100755 ext/ext_skel
+ create mode 100644 ext/ext_skel.in
+
+diff --git a/configure.in b/configure.in
+index b09998e..01379b6 100644
+--- a/configure.in
++++ b/configure.in
+@@ -1088,7 +1088,7 @@ if test "$PHP_CLI" = "no"; then
+ fi
+ 
+ PHP_ARG_WITH(pear, [whether to install PEAR],
+-[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/lib/php@:>@
++[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/share/php@:>@
+   --without-pear          Do not install PEAR], DEFAULT, yes)
+ 
+ if test "$PHP_PEAR" != "no"; then
+@@ -1197,6 +1197,8 @@ dnl Build extension directory path
+ 
+ ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
+ 
++AC_SUBST(ZEND_MODULE_API_NO)
++
+ if test -z "$EXTENSION_DIR"; then
+   extbasedir=$ZEND_MODULE_API_NO
+   if test "$oldstyleextdir" = "yes"; then
+@@ -1245,7 +1247,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfdir`
+ EXPANDED_DATADIR=$datadir
+ EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
+ EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
+-INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR
++INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR:/usr/share/pear
+ 
+ exec_prefix=$old_exec_prefix
+ libdir=$old_libdir
+@@ -1526,6 +1528,7 @@ $php_shtool mkdir -p scripts/man1
+ ALL_OUTPUT_FILES="php7.spec main/build-defs.h \
+ scripts/phpize scripts/man1/phpize.1 \
+ scripts/php-config scripts/man1/php-config.1 \
++ext/ext_skel
+ $PHP_OUTPUT_FILES"
+ 
+ dnl
+diff --git a/ext/ext_skel b/ext/ext_skel
+deleted file mode 100755
+index a1c6464..0000000
+--- a/ext/ext_skel
++++ /dev/null
+@@ -1,332 +0,0 @@
+-#!/bin/sh
+-
+-givup() {
+-	echo $*
+-	exit 1
+-}
+-
+-usage() {
+-echo "$0 --extname=module [--proto=file] [--stubs=file] [--xml[=file]]"
+-echo "           [--skel=dir] [--full-xml] [--no-help]"
+-echo ""
+-echo "  --extname=module   module is the name of your extension"
+-echo "  --proto=file       file contains prototypes of functions to create"
+-echo "  --stubs=file       generate only function stubs in file"
+-echo "  --xml              generate xml documentation to be added to phpdoc-svn"
+-echo "  --skel=dir         path to the skeleton directory"
+-echo "  --full-xml         generate xml documentation for a self-contained extension"
+-echo "                     (not yet implemented)"
+-echo "  --no-help          don't try to be nice and create comments in the code"
+-echo "                     and helper functions to test if the module compiled"
+-exit 1
+-}
+-
+-if test $# = 0; then
+-  usage
+-fi
+-
+-while test $# -gt 0; do
+-  case "$1" in
+-  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+-  *) optarg= ;;
+-  esac
+-
+-  case $1 in
+-    --extname=?*)
+-	extname=$optarg
+-	EXTNAME=`echo $extname | tr "[:lower:]" "[:upper:]"`
+-	;;
+-    --proto=?*)
+-	proto=$optarg
+-	;;
+-    --stubs=*)
+-	stubs=yes
+-	stubfile=$optarg
+-	;;
+-    --xml)
+-	xml="yes"
+-	;;
+-    --xml=?*)
+-	xml=$optarg
+-	;;
+-    --full-xml)
+-	full_xml="yes"
+-	;;
+-    --no-help)
+-	no_help="yes"
+-	;;
+-    --skel=?*)
+-	skel_dir=$optarg
+-	;;
+-    *)
+-	usage
+-	;;
+-  esac
+-  shift
+-done
+-
+-if test -d "$extname" ; then
+-  givup "Directory $extname already exists."
+-fi
+-
+-if test -z "$skel_dir"; then
+-  skel_dir="skeleton"
+-fi
+-
+-## convert skel_dir to full path
+-skel_dir=`cd $skel_dir && pwd`
+-
+-test -d $skel_dir || givup "directory $skel_dir does not exist or is not directory"
+-
+-if echo '\c' | grep -s c >/dev/null 2>&1
+-then
+-    ECHO_N="echo -n"
+-    ECHO_C=""
+-else
+-    ECHO_N="echo"
+-    ECHO_C='\c'
+-fi
+-
+-if test -z "$stubs"; then
+-  echo "Creating directory $extname"
+-  stubfile=$extname"/function_stubs"
+-  mkdir $extname || givup "Cannot create directory $extname"
+-fi
+-
+-if test -n "$proto"; then
+-  cat $proto | awk -v extname=$extname -v stubs=$stubs -v stubfile=$stubfile -v xml=$xml -v full_xml=$full_xml -v i_know_what_to_do_shut_up_i_dont_need_your_help_mode=$no_help -f $skel_dir/create_stubs
+-fi
+-
+-if test -z "$stubs"; then
+-  cd $extname
+-  chmod 755 .
+-
+-$ECHO_N "Creating basic files:$ECHO_C"
+-
+-$ECHO_N " config.m4$ECHO_C"
+-cat >config.m4 <<eof
+-dnl \$Id\$
+-dnl config.m4 for extension $extname
+-
+-dnl Comments in this file start with the string 'dnl'.
+-dnl Remove where necessary. This file will not work
+-dnl without editing.
+-
+-dnl If your extension references something external, use with:
+-
+-dnl PHP_ARG_WITH($extname, for $extname support,
+-dnl Make sure that the comment is aligned:
+-dnl [  --with-$extname             Include $extname support])
+-
+-dnl Otherwise use enable:
+-
+-dnl PHP_ARG_ENABLE($extname, whether to enable $extname support,
+-dnl Make sure that the comment is aligned:
+-dnl [  --enable-$extname           Enable $extname support])
+-
+-if test "\$PHP_$EXTNAME" != "no"; then
+-  dnl Write more examples of tests here...
+-
+-  dnl # --with-$extname -> check with-path
+-  dnl SEARCH_PATH="/usr/local /usr"     # you might want to change this
+-  dnl SEARCH_FOR="/include/$extname.h"  # you most likely want to change this
+-  dnl if test -r \$PHP_$EXTNAME/\$SEARCH_FOR; then # path given as parameter
+-  dnl   ${EXTNAME}_DIR=\$PHP_$EXTNAME
+-  dnl else # search default path list
+-  dnl   AC_MSG_CHECKING([for $extname files in default path])
+-  dnl   for i in \$SEARCH_PATH ; do
+-  dnl     if test -r \$i/\$SEARCH_FOR; then
+-  dnl       ${EXTNAME}_DIR=\$i
+-  dnl       AC_MSG_RESULT(found in \$i)
+-  dnl     fi
+-  dnl   done
+-  dnl fi
+-  dnl
+-  dnl if test -z "\$${EXTNAME}_DIR"; then
+-  dnl   AC_MSG_RESULT([not found])
+-  dnl   AC_MSG_ERROR([Please reinstall the $extname distribution])
+-  dnl fi
+-
+-  dnl # --with-$extname -> add include path
+-  dnl PHP_ADD_INCLUDE(\$${EXTNAME}_DIR/include)
+-
+-  dnl # --with-$extname -> check for lib and symbol presence
+-  dnl LIBNAME=$extname # you may want to change this
+-  dnl LIBSYMBOL=$extname # you most likely want to change this 
+-
+-  dnl PHP_CHECK_LIBRARY(\$LIBNAME,\$LIBSYMBOL,
+-  dnl [
+-  dnl   PHP_ADD_LIBRARY_WITH_PATH(\$LIBNAME, \$${EXTNAME}_DIR/\$PHP_LIBDIR, ${EXTNAME}_SHARED_LIBADD)
+-  dnl   AC_DEFINE(HAVE_${EXTNAME}LIB,1,[ ])
+-  dnl ],[
+-  dnl   AC_MSG_ERROR([wrong $extname lib version or lib not found])
+-  dnl ],[
+-  dnl   -L\$${EXTNAME}_DIR/\$PHP_LIBDIR -lm
+-  dnl ])
+-  dnl
+-  dnl PHP_SUBST(${EXTNAME}_SHARED_LIBADD)
+-
+-  PHP_NEW_EXTENSION($extname, $extname.c, \$ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
+-fi
+-eof
+-
+-$ECHO_N " config.w32$ECHO_C"
+-cat >config.w32 <<eof
+-// \$Id\$
+-// vim:ft=javascript
+-
+-// If your extension references something external, use ARG_WITH
+-// ARG_WITH("$extname", "for $extname support", "no");
+-
+-// Otherwise, use ARG_ENABLE
+-// ARG_ENABLE("$extname", "enable $extname support", "no");
+-
+-if (PHP_$EXTNAME != "no") {
+-	EXTENSION("$extname", "$extname.c", PHP_EXTNAME_SHARED, "/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
+-}
+-
+-eof
+-
+-$ECHO_N " .gitignore$ECHO_C"
+-cat >.gitignore <<eof
+-.deps
+-*.lo
+-*.la
+-.libs
+-acinclude.m4
+-aclocal.m4
+-autom4te.cache
+-build
+-config.guess
+-config.h
+-config.h.in
+-config.log
+-config.nice
+-config.status
+-config.sub
+-configure
+-configure.in
+-include
+-install-sh
+-libtool
+-ltmain.sh
+-Makefile
+-Makefile.fragments
+-Makefile.global
+-Makefile.objects
+-missing
+-mkinstalldirs
+-modules
+-run-tests.php
+-tests/*/*.diff
+-tests/*/*.out
+-tests/*/*.php
+-tests/*/*.exp
+-tests/*/*.log
+-tests/*/*.sh
+-eof
+-
+-$ECHO_N " $extname.c$ECHO_C"
+-echo "s/extname/$extname/g" > sedscript
+-echo "s/EXTNAME/$EXTNAME/g"  >> sedscript
+-echo '/__function_entries_here__/r function_entries'  >> sedscript
+-echo '/__function_stubs_here__/r function_stubs'  >> sedscript
+-echo '/__header_here__/r ../../header'  >> sedscript
+-echo '/__footer_here__/r ../../footer'  >> sedscript
+-echo '/__function_entries_here__/D'  >> sedscript
+-echo '/__function_stubs_here__/D'  >> sedscript
+-echo '/__header_here__/D'  >> sedscript
+-echo '/__footer_here__/D'  >> sedscript
+-if [ ! -z "$no_help" ]; then
+-    echo "/confirm_$extname_compiled/D" >> sedscript
+-    echo '/Remove the following/,/^\*\//D' >> sedscript
+-    echo 's/[[:space:]]\/\*.\+\*\///' >> sedscript
+-    echo 's/^\/\*.*\*\/$//' >> sedscript
+-    echo '/^[[:space:]]*\/\*/,/^[[:space:]]*\*\//D' >> sedscript
+-fi
+-
+-sed -f sedscript < $skel_dir/skeleton.c > $extname.c
+-
+-
+-$ECHO_N " php_$extname.h$ECHO_C"
+-echo "s/extname/$extname/g" > sedscript
+-echo "s/EXTNAME/$EXTNAME/g" >> sedscript
+-echo '/__function_declarations_here__/r function_declarations' >> sedscript
+-echo '/__header_here__/r ../../header'  >> sedscript
+-echo '/__footer_here__/r ../../footer'  >> sedscript
+-echo '/__function_declarations_here__/D' >> sedscript
+-echo '/__header_here__/D'  >> sedscript
+-echo '/__footer_here__/D'  >> sedscript
+-if [ ! -z "$no_help" ]; then
+-    echo "/confirm_$extname_compiled/D" >> sedscript
+-    echo 's/[[:space:]]\/\*.\+\*\///' >> sedscript
+-    echo 's/^\/\*.*\*\/$//' >> sedscript
+-    echo '/^[[:space:]]*\/\*/,/^[[:space:]]*\*\//D' >> sedscript
+-fi
+-sed -f sedscript <$skel_dir/php_skeleton.h > php_$extname.h
+-
+-$ECHO_N " CREDITS$ECHO_C"
+-echo "s/extname/$extname/g" > sedscript
+-sed -f sedscript <$skel_dir/CREDITS > CREDITS
+-
+-$ECHO_N " EXPERIMENTAL$ECHO_C"
+-echo "s/extname/$extname/g" > sedscript
+-sed -f sedscript <$skel_dir/EXPERIMENTAL > EXPERIMENTAL
+-
+-$ECHO_N " tests/001.phpt$ECHO_C"
+-mkdir tests || givup "Cannot create tests directory"
+-chmod 755 tests
+-sed -f sedscript <$skel_dir/tests/001.phpt > tests/001.phpt
+-
+-if test -z "$stubs" && test -z "$no_help"; then
+-  $ECHO_N " $extname.php$ECHO_C"
+-  sed \
+-    -e "s/extname/$extname/g" \
+-    <$skel_dir/skeleton.php \
+-    > $extname.php
+-fi
+-
+-rm sedscript
+-
+-if test -n "$proto"; then
+-  if test -z "$stubs"; then
+-    rm function_entries
+-    rm function_declarations
+-    rm function_stubs
+-  fi
+-  if test -f function_warning; then
+-    rm function_warning
+-    warning="
+-NOTE! Because some arguments to functions were resources, the code generated
+-cannot yet be compiled without editing. Please consider this to be step 4.5
+-in the instructions above. 
+-"
+-  fi
+-fi
+-
+-find . -type f | xargs chmod 644 
+-find . -type d | xargs chmod 755
+-fi
+-
+-echo " [done]."
+-
+-if test -z "$no_help" && test -z "$stubs"; then
+-  cat <<eof
+-
+-To use your new extension, you will have to execute the following steps:
+-
+-1.  $ cd ..
+-2.  $ vi ext/$extname/config.m4
+-3.  $ ./buildconf
+-4.  $ ./configure --[with|enable]-$extname
+-5.  $ make
+-6.  $ ./sapi/cli/php -f ext/$extname/$extname.php
+-7.  $ vi ext/$extname/$extname.c
+-8.  $ make
+-
+-Repeat steps 3-6 until you are satisfied with ext/$extname/config.m4 and
+-step 6 confirms that your module is compiled into PHP. Then, start writing
+-code and repeat the last two steps as often as necessary.
+-$warning
+-eof
+-fi
+diff --git a/ext/ext_skel.in b/ext/ext_skel.in
+new file mode 100644
+index 0000000..6b65859
+--- /dev/null
++++ b/ext/ext_skel.in
+@@ -0,0 +1,332 @@
++#!/bin/sh
++
++givup() {
++	echo $*
++	exit 1
++}
++
++usage() {
++echo "$0 --extname=module [--proto=file] [--stubs=file] [--xml[=file]]"
++echo "           [--skel=dir] [--full-xml] [--no-help]"
++echo ""
++echo "  --extname=module   module is the name of your extension"
++echo "  --proto=file       file contains prototypes of functions to create"
++echo "  --stubs=file       generate only function stubs in file"
++echo "  --xml              generate xml documentation to be added to phpdoc-svn"
++echo "  --skel=dir         path to the skeleton directory"
++echo "  --full-xml         generate xml documentation for a self-contained extension"
++echo "                     (not yet implemented)"
++echo "  --no-help          don't try to be nice and create comments in the code"
++echo "                     and helper functions to test if the module compiled"
++exit 1
++}
++
++if test $# = 0; then
++  usage
++fi
++
++while test $# -gt 0; do
++  case "$1" in
++  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
++  *) optarg= ;;
++  esac
++
++  case $1 in
++    --extname=?*)
++	extname=$optarg
++	EXTNAME=`echo $extname | tr "[:lower:]" "[:upper:]"`
++	;;
++    --proto=?*)
++	proto=$optarg
++	;;
++    --stubs=*)
++	stubs=yes
++	stubfile=$optarg
++	;;
++    --xml)
++	xml="yes"
++	;;
++    --xml=?*)
++	xml=$optarg
++	;;
++    --full-xml)
++	full_xml="yes"
++	;;
++    --no-help)
++	no_help="yes"
++	;;
++    --skel=?*)
++	skel_dir=$optarg
++	;;
++    *)
++	usage
++	;;
++  esac
++  shift
++done
++
++if test -d "$extname" ; then
++  givup "Directory $extname already exists."
++fi
++
++if test -z "$skel_dir"; then
++  skel_dir="/usr/lib/php/@DEBIAN_PHP_API@/skeleton" #FIXME!!!
++fi
++
++## convert skel_dir to full path
++skel_dir=`cd $skel_dir && pwd`
++
++test -d $skel_dir || givup "directory $skel_dir does not exist or is not directory"
++
++if echo '\c' | grep -s c >/dev/null 2>&1
++then
++    ECHO_N="echo -n"
++    ECHO_C=""
++else
++    ECHO_N="echo"
++    ECHO_C='\c'
++fi
++
++if test -z "$stubs"; then
++  echo "Creating directory $extname"
++  stubfile=$extname"/function_stubs"
++  mkdir $extname || givup "Cannot create directory $extname"
++fi
++
++if test -n "$proto"; then
++  cat $proto | awk -v extname=$extname -v stubs=$stubs -v stubfile=$stubfile -v xml=$xml -v full_xml=$full_xml -v i_know_what_to_do_shut_up_i_dont_need_your_help_mode=$no_help -f $skel_dir/create_stubs
++fi
++
++if test -z "$stubs"; then
++  cd $extname
++  chmod 755 .
++
++$ECHO_N "Creating basic files:$ECHO_C"
++
++$ECHO_N " config.m4$ECHO_C"
++cat >config.m4 <<eof
++dnl \$Id\$
++dnl config.m4 for extension $extname
++
++dnl Comments in this file start with the string 'dnl'.
++dnl Remove where necessary. This file will not work
++dnl without editing.
++
++dnl If your extension references something external, use with:
++
++dnl PHP_ARG_WITH($extname, for $extname support,
++dnl Make sure that the comment is aligned:
++dnl [  --with-$extname             Include $extname support])
++
++dnl Otherwise use enable:
++
++dnl PHP_ARG_ENABLE($extname, whether to enable $extname support,
++dnl Make sure that the comment is aligned:
++dnl [  --enable-$extname           Enable $extname support])
++
++if test "\$PHP_$EXTNAME" != "no"; then
++  dnl Write more examples of tests here...
++
++  dnl # --with-$extname -> check with-path
++  dnl SEARCH_PATH="/usr/local /usr"     # you might want to change this
++  dnl SEARCH_FOR="/include/$extname.h"  # you most likely want to change this
++  dnl if test -r \$PHP_$EXTNAME/\$SEARCH_FOR; then # path given as parameter
++  dnl   ${EXTNAME}_DIR=\$PHP_$EXTNAME
++  dnl else # search default path list
++  dnl   AC_MSG_CHECKING([for $extname files in default path])
++  dnl   for i in \$SEARCH_PATH ; do
++  dnl     if test -r \$i/\$SEARCH_FOR; then
++  dnl       ${EXTNAME}_DIR=\$i
++  dnl       AC_MSG_RESULT(found in \$i)
++  dnl     fi
++  dnl   done
++  dnl fi
++  dnl
++  dnl if test -z "\$${EXTNAME}_DIR"; then
++  dnl   AC_MSG_RESULT([not found])
++  dnl   AC_MSG_ERROR([Please reinstall the $extname distribution])
++  dnl fi
++
++  dnl # --with-$extname -> add include path
++  dnl PHP_ADD_INCLUDE(\$${EXTNAME}_DIR/include)
++
++  dnl # --with-$extname -> check for lib and symbol presence
++  dnl LIBNAME=$extname # you may want to change this
++  dnl LIBSYMBOL=$extname # you most likely want to change this 
++
++  dnl PHP_CHECK_LIBRARY(\$LIBNAME,\$LIBSYMBOL,
++  dnl [
++  dnl   PHP_ADD_LIBRARY_WITH_PATH(\$LIBNAME, \$${EXTNAME}_DIR/\$PHP_LIBDIR, ${EXTNAME}_SHARED_LIBADD)
++  dnl   AC_DEFINE(HAVE_${EXTNAME}LIB,1,[ ])
++  dnl ],[
++  dnl   AC_MSG_ERROR([wrong $extname lib version or lib not found])
++  dnl ],[
++  dnl   -L\$${EXTNAME}_DIR/\$PHP_LIBDIR -lm
++  dnl ])
++  dnl
++  dnl PHP_SUBST(${EXTNAME}_SHARED_LIBADD)
++
++  PHP_NEW_EXTENSION($extname, $extname.c, \$ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
++fi
++eof
++
++$ECHO_N " config.w32$ECHO_C"
++cat >config.w32 <<eof
++// \$Id\$
++// vim:ft=javascript
++
++// If your extension references something external, use ARG_WITH
++// ARG_WITH("$extname", "for $extname support", "no");
++
++// Otherwise, use ARG_ENABLE
++// ARG_ENABLE("$extname", "enable $extname support", "no");
++
++if (PHP_$EXTNAME != "no") {
++	EXTENSION("$extname", "$extname.c", PHP_EXTNAME_SHARED, "/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
++}
++
++eof
++
++$ECHO_N " .gitignore$ECHO_C"
++cat >.gitignore <<eof
++.deps
++*.lo
++*.la
++.libs
++acinclude.m4
++aclocal.m4
++autom4te.cache
++build
++config.guess
++config.h
++config.h.in
++config.log
++config.nice
++config.status
++config.sub
++configure
++configure.in
++include
++install-sh
++libtool
++ltmain.sh
++Makefile
++Makefile.fragments
++Makefile.global
++Makefile.objects
++missing
++mkinstalldirs
++modules
++run-tests.php
++tests/*/*.diff
++tests/*/*.out
++tests/*/*.php
++tests/*/*.exp
++tests/*/*.log
++tests/*/*.sh
++eof
++
++$ECHO_N " $extname.c$ECHO_C"
++echo "s/extname/$extname/g" > sedscript
++echo "s/EXTNAME/$EXTNAME/g"  >> sedscript
++echo '/__function_entries_here__/r function_entries'  >> sedscript
++echo '/__function_stubs_here__/r function_stubs'  >> sedscript
++echo '/__header_here__/r ../../header'  >> sedscript
++echo '/__footer_here__/r ../../footer'  >> sedscript
++echo '/__function_entries_here__/D'  >> sedscript
++echo '/__function_stubs_here__/D'  >> sedscript
++echo '/__header_here__/D'  >> sedscript
++echo '/__footer_here__/D'  >> sedscript
++if [ ! -z "$no_help" ]; then
++    echo "/confirm_$extname_compiled/D" >> sedscript
++    echo '/Remove the following/,/^\*\//D' >> sedscript
++    echo 's/[[:space:]]\/\*.\+\*\///' >> sedscript
++    echo 's/^\/\*.*\*\/$//' >> sedscript
++    echo '/^[[:space:]]*\/\*/,/^[[:space:]]*\*\//D' >> sedscript
++fi
++
++sed -f sedscript < $skel_dir/skeleton.c > $extname.c
++
++
++$ECHO_N " php_$extname.h$ECHO_C"
++echo "s/extname/$extname/g" > sedscript
++echo "s/EXTNAME/$EXTNAME/g" >> sedscript
++echo '/__function_declarations_here__/r function_declarations' >> sedscript
++echo '/__header_here__/r ../../header'  >> sedscript
++echo '/__footer_here__/r ../../footer'  >> sedscript
++echo '/__function_declarations_here__/D' >> sedscript
++echo '/__header_here__/D'  >> sedscript
++echo '/__footer_here__/D'  >> sedscript
++if [ ! -z "$no_help" ]; then
++    echo "/confirm_$extname_compiled/D" >> sedscript
++    echo 's/[[:space:]]\/\*.\+\*\///' >> sedscript
++    echo 's/^\/\*.*\*\/$//' >> sedscript
++    echo '/^[[:space:]]*\/\*/,/^[[:space:]]*\*\//D' >> sedscript
++fi
++sed -f sedscript <$skel_dir/php_skeleton.h > php_$extname.h
++
++$ECHO_N " CREDITS$ECHO_C"
++echo "s/extname/$extname/g" > sedscript
++sed -f sedscript <$skel_dir/CREDITS > CREDITS
++
++$ECHO_N " EXPERIMENTAL$ECHO_C"
++echo "s/extname/$extname/g" > sedscript
++sed -f sedscript <$skel_dir/EXPERIMENTAL > EXPERIMENTAL
++
++$ECHO_N " tests/001.phpt$ECHO_C"
++mkdir tests || givup "Cannot create tests directory"
++chmod 755 tests
++sed -f sedscript <$skel_dir/tests/001.phpt > tests/001.phpt
++
++if test -z "$stubs" && test -z "$no_help"; then
++  $ECHO_N " $extname.php$ECHO_C"
++  sed \
++    -e "s/extname/$extname/g" \
++    <$skel_dir/skeleton.php \
++    > $extname.php
++fi
++
++rm sedscript
++
++if test -n "$proto"; then
++  if test -z "$stubs"; then
++    rm function_entries
++    rm function_declarations
++    rm function_stubs
++  fi
++  if test -f function_warning; then
++    rm function_warning
++    warning="
++NOTE! Because some arguments to functions were resources, the code generated
++cannot yet be compiled without editing. Please consider this to be step 4.5
++in the instructions above. 
++"
++  fi
++fi
++
++find . -type f | xargs chmod 644 
++find . -type d | xargs chmod 755
++fi
++
++echo " [done]."
++
++if test -z "$no_help" && test -z "$stubs"; then
++  cat <<eof
++
++To use your new extension, you will have to execute the following steps:
++
++1.  $ cd ..
++2.  $ vi ext/$extname/config.m4
++3.  $ ./buildconf
++4.  $ ./configure --[with|enable]-$extname
++5.  $ make
++6.  $ ./sapi/cli/php -f ext/$extname/$extname.php
++7.  $ vi ext/$extname/$extname.c
++8.  $ make
++
++Repeat steps 3-6 until you are satisfied with ext/$extname/config.m4 and
++step 6 confirms that your module is compiled into PHP. Then, start writing
++code and repeat the last two steps as often as necessary.
++$warning
++eof
++fi
+diff --git a/php.ini-development b/php.ini-development
+index 592a042..cfd3c7e 100644
+--- a/php.ini-development
++++ b/php.ini-development
+@@ -697,7 +697,7 @@ default_charset = "UTF-8"
+ ;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ ; UNIX: "/path1:/path2"
+-;include_path = ".:/php/includes"
++;include_path = ".:/usr/share/php"
+ ;
+ ; Windows: "\path1;\path2"
+ ;include_path = ".;c:\php\includes"
+diff --git a/php.ini-production b/php.ini-production
+index 9febdf8..2d721eb 100644
+--- a/php.ini-production
++++ b/php.ini-production
+@@ -697,7 +697,7 @@ default_charset = "UTF-8"
+ ;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ ; UNIX: "/path1:/path2"
+-;include_path = ".:/php/includes"
++;include_path = ".:/usr/share/php"
+ ;
+ ; Windows: "\path1;\path2"
+ ;include_path = ".;c:\php\includes"
+diff --git a/sapi/cli/php.1.in b/sapi/cli/php.1.in
+index c062f3d..0fad75a 100644
+--- a/sapi/cli/php.1.in
++++ b/sapi/cli/php.1.in
+@@ -365,13 +365,14 @@ Shows configuration for extension
+ Show configuration file names
+ .SH FILES
+ .TP 15
+-.B php\-cli.ini
++.B /etc/php/@PHP_MAJOR_VERSION@.@PHP_MINOR_VERSION@/cli/php.ini
+ The configuration file for the CLI version of PHP.
+ .TP
+-.B php.ini
+-The standard configuration file will only be used when 
+-.B php\-cli.ini
+-cannot be found.
++.B /etc/php/@PHP_MAJOR_VERSION@.@PHP_MINOR_VERSION@/cgi/php.ini
++The configuration file for the CGI version of PHP.
++.TP
++.B /etc/php/@PHP_MAJOR_VERSION@.@PHP_MINOR_VERSION@/apache2/php.ini
++The configuration file for the version of PHP that apache2 uses.
+ .SH EXAMPLES
+ .TP 5
+ \fI@program_prefix@php \-r 'echo "Hello World\\n";'\fP
+diff --git a/scripts/Makefile.frag b/scripts/Makefile.frag
+index 7cd78fa..df7cfdd 100644
+--- a/scripts/Makefile.frag
++++ b/scripts/Makefile.frag
+@@ -3,8 +3,8 @@
+ # Build environment install
+ #
+ 
+-phpincludedir = $(includedir)/php
+-phpbuilddir = $(libdir)/build
++phpincludedir = $(includedir)/php/$(DEBIAN_PHP_API)
++phpbuilddir = $(prefix)/lib/php/$(DEBIAN_PHP_API)/build
+ 
+ BUILD_FILES = \
+ 	scripts/phpize.m4 \
+diff --git a/scripts/php-config.in b/scripts/php-config.in
+index d6c62cc..754876a 100644
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -6,9 +6,9 @@ datarootdir="@datarootdir@"
+ exec_prefix="@exec_prefix@"
+ version="@PHP_VERSION@"
+ vernum="@PHP_VERSION_ID@"
+-include_dir="@includedir@/php"
+-includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib"
+-ldflags="@PHP_LDFLAGS@"
++include_dir="@includedir@/php/@DEBIAN_PHP_API@"
++includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib $(getconf LFS_CFLAGS)"
++ldflags="-L$prefix/lib/php/@DEBIAN_PHP_API@ @PHP_LDFLAGS@"
+ libs="@EXTRA_LIBS@"
+ extension_dir='@EXTENSION_DIR@'
+ man_dir=`eval echo @mandir@`
+diff --git a/scripts/phpize.in b/scripts/phpize.in
+index b86925e..9bd3b9a 100644
+--- a/scripts/phpize.in
++++ b/scripts/phpize.in
+@@ -4,8 +4,8 @@
+ prefix='@prefix@'
+ datarootdir='@datarootdir@'
+ exec_prefix="`eval echo @exec_prefix@`"
+-phpdir="`eval echo @libdir@`/build"
+-includedir="`eval echo @includedir@`/php"
++phpdir="$prefix/lib/php/@DEBIAN_PHP_API@/build"
++includedir="$prefix/include/php/@DEBIAN_PHP_API@"
+ builddir="`pwd`"
+ SED="@SED@"
+ 

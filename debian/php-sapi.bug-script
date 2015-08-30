@@ -1,0 +1,23 @@
+#!/bin/sh
+
+MATCH="^[[:space:]]*($|;)"
+
+echo "==== Additional PHP @PHP_VERSION@ information ====" >&3
+echo "" >&3
+echo "++++ PHP @PHP_VERSION@ SAPI (php@PHP_VERSION@query -S): ++++" >&3
+/usr/sbin/php@PHP_VERSION@query -S >&3
+echo "" >&3
+echo "++++ PHP @PHP_VERSION@ Extensions (php@PHP_VERSION@query -M -v): ++++" >&3
+/usr/sbin/php@PHP_VERSION@query -M -v >&3
+echo "" >&3
+
+echo "++++ Configuration files: ++++" >&3
+"**** /etc/php/@PHP_VERSION@/@sapi@/php.ini ****" >&3
+grep -Ev "$MATCH" /etc/php/@PHP_VERSION@/@sapi@/php.ini >&3
+echo "" >&3
+find /etc/php/@PHP_VERSION@/@sapi@/conf.d/ -name '*.ini' | \
+while read CONF; do
+    echo "**** $CONF ****" >&3
+    grep -Ev "$MATCH" "$CONF" >&3
+    echo "" >&3
+done

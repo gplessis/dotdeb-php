@@ -1,0 +1,22 @@
+php7.0 (7.0.0~beta2-1) experimental; urgency=medium
+
+  ****************************************************************
+  ************************* EXPERIMENTAL *************************
+  ****************************************************************
+  * DON'T COMPLAIN IT DOESN'T WORK, SEND A PATCH OR YOU WILL BE IGNORED
+  ****************************************************************
+  * WORK IN PROGRESS
+  ****************************************************************
+  * Highly-experimental, don't use, unless you are willing to debug
+    the code, send patches or pull requests; and don't complain if
+    this doesn't work, you will have to put some effort to make it
+    work yourself
+  * IMPORTANT: Any bugs opened in Debian BTS without a working patch
+    will be closed without any notice
+  * It might eat your dog, make your cat disappear or destroy your
+    computer, you have been warned, so don't complain
+  ****************************************************************
+  ************************* EXPERIMENTAL *************************
+  ****************************************************************
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 09 Jul 2015 17:05:00 +0200

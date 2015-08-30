@@ -1,0 +1,3 @@
+php@PHP_VERSION@-common: non-standard-dir-perm var/lib/php/@PHP_VERSION@/sessions/ 1733 != 0755
+php@PHP_VERSION@-common: package-contains-empty-directory usr/lib/php/@PHP_VERSION@/libexec/
+php@PHP_VERSION@-common: missing-dependency-on-phpapi

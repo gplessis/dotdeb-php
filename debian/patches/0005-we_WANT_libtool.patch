@@ -1,0 +1,22 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: we_WANT_libtool
+
+---
+ build/build2.mk | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/build/build2.mk b/build/build2.mk
+index 335bec3..118b05e 100644
+--- a/build/build2.mk
++++ b/build/build2.mk
+@@ -46,7 +46,8 @@ $(TOUCH_FILES):
+ 
+ aclocal.m4: configure.in acinclude.m4
+ 	@echo rebuilding $@
+-	cat acinclude.m4 ./build/libtool.m4 > $@
++	libtoolize --copy --install --automake --force
++	aclocal
+ 
+ configure: aclocal.m4 configure.in $(config_m4_files)
+ 	@echo rebuilding $@

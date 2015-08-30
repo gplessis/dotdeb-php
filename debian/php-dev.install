@@ -1,0 +1,6 @@
+usr/bin/php-config@PHP_VERSION@
+usr/bin/phpize@PHP_VERSION@
+usr/include/php/*/*
+usr/lib/php/*/build/*
+usr/share/man/man1/php-config@PHP_VERSION@.1
+usr/share/man/man1/phpize@PHP_VERSION@.1

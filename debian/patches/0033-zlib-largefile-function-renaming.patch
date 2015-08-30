@@ -1,0 +1,31 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:56 +0200
+Subject: zlib-largefile-function-renaming
+
+---
+ ext/zlib/zlib.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/ext/zlib/zlib.c b/ext/zlib/zlib.c
+index 7abd7cf..b6b0a46 100644
+--- a/ext/zlib/zlib.c
++++ b/ext/zlib/zlib.c
+@@ -49,6 +49,18 @@
+ int le_deflate;
+ int le_inflate;
+ 
++/*
++ * zlib include files can define the following preprocessor defines which rename
++ * the corresponding PHP functions to gzopen64, gzseek64 and gztell64 and thereby
++ * breaking some software, most notably PEAR's Archive_Tar, which halts execution
++ * without error message on gzip compressed archivesa.
++ *
++ * This only seems to happen on 32bit systems with large file support.
++ */
++#undef gzopen
++#undef gzseek
++#undef gztell
++
+ ZEND_DECLARE_MODULE_GLOBALS(zlib);
+ 
+ /* {{{ Memory management wrappers */

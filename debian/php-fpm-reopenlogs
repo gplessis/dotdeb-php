@@ -1,0 +1,7 @@
+#!/bin/sh
+CONFFILE=/etc/php/@PHP_VERSION@/fpm/php-fpm.conf
+[ -r /etc/default/php@PHP_VERSION@-fpm ] && . /etc/default/php@PHP_VERSION@-fpm
+CONF_PIDFILE=$(sed -n 's/^[[:space:]]*pid[[:space:]]*=[[:space:]]*//p' $CONFFILE)
+PIDFILE=${CONF_PIDFILE:-/run/php/php@PHP_VERSION@-fpm.pid}
+[ -r "$PIDFILE" ] && kill -USR1 $(cat "$PIDFILE") > /dev/null
+exit 0

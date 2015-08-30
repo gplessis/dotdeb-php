@@ -1,0 +1,4 @@
+/etc/apache2/mods-available
+/usr/lib/cgi-bin
+/usr/bin
+/usr/share/man/man1

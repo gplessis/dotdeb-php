@@ -1,0 +1,5 @@
+php7.0 (7.0.0~rc1-1~dotdeb+8.1) stable; urgency=medium
+
+  * Imported Upstream version 7.0.0~rc1
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 29 Aug 2015 16:47:42 -0700

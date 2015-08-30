@@ -1,0 +1,5 @@
+if [ "$1" = "configure" ]; then
+    update-alternatives \
+	--install /usr/bin/phpdbg phpdbg /usr/bin/phpdbg@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
+	--slave /usr/share/man/man1/phpdbg.1.gz phpdbg.1.gz /usr/share/man/man1/phpdbg@PHP_VERSION@.1.gz
+fi

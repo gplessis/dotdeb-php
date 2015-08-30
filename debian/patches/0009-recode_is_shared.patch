@@ -1,0 +1,20 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: recode_is_shared
+
+---
+ ext/recode/config9.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/recode/config9.m4 b/ext/recode/config9.m4
+index 66df50e..f0a98ca 100644
+--- a/ext/recode/config9.m4
++++ b/ext/recode/config9.m4
+@@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
+   fi
+ 
+   if test -n "$recode_conflict"; then
+-    AC_MSG_ERROR([recode extension can not be configured together with:$recode_conflict])
++    AC_MSG_WARN([recode extension can not be used together with:$recode_conflict])
+   fi
+ fi

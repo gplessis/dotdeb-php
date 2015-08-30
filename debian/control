@@ -1,0 +1,296 @@
+Source: php7.0
+Section: php
+Priority: optional
+Maintainer: Guillaume Plessis <gui@dotdeb.org>
+Build-Depends: apache2-dev (>= 2.4),
+               autoconf (>= 2.63),
+               automake (>= 1.11) | automake1.11,
+               bison,
+               chrpath,
+               debhelper (>= 9),
+               dh-apache2,
+               dh-systemd (>= 1.3),
+               dpkg-dev (>= 1.16.1~),
+               firebird-dev [!hurd-any !m68k !hppa !ppc64] | firebird2.5-dev [!hurd-any !m68k !hppa !ppc64] | firebird2.1-dev [!hurd-any !m68k !hppa !ppc64],
+               flex,
+               freetds-dev,
+               libapparmor-dev,
+               libapr1-dev (>= 1.2.7-8),
+               libbz2-dev,
+               libc-client-dev,
+               libcurl4-openssl-dev | libcurl-dev,
+               libdb-dev,
+               libedit-dev (>= 2.11-20080614-4),
+               libenchant-dev,
+               libevent-dev (>= 1.4.11),
+               libexpat1-dev (>= 1.95.2-2.1),
+               libfreetype6-dev,
+               libgcrypt11-dev,
+               libglib2.0-dev,
+               libgmp3-dev,
+               libicu-dev,
+               libjpeg-dev | libjpeg62-dev,
+               libkrb5-dev,
+               libldap2-dev,
+               libmagic-dev,
+               libmcrypt-dev,
+               libmhash-dev (>= 0.8.8),
+               libonig-dev,
+               libpam0g-dev,
+               libpcre3-dev (>= 6.6),
+               libpng-dev | libpng12-dev,
+               libpq-dev,
+               libpspell-dev,
+               libqdbm-dev,
+               librecode-dev,
+               libsasl2-dev,
+               libsnmp-dev,
+               libsqlite3-dev,
+               libssl-dev,
+               libsystemd-daemon-dev [linux-any],
+               libtidy-dev,
+               libtool (>= 2.2),
+               libvpx-dev,
+               libwrap0-dev,
+               libxml2-dev,
+               libxmlrpc-core-c3-dev,
+               libxmltok1-dev,
+               libxslt1-dev (>= 1.0.18),
+	       libzip-dev,
+               locales-all | language-pack-de,
+               mysql-server | virtual-mysql-server,
+               netbase,
+               netcat-traditional,
+               re2c,
+               systemtap-sdt-dev [amd64 i386 powerpc armel armhf ia64],
+               tzdata,
+               unixodbc-dev,
+               zlib1g-dev
+Build-Conflicts: bind-dev
+Standards-Version: 3.9.6
+Vcs-Git: git://anonscm.debian.org/pkg-php/php.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-php/php.git
+Homepage: http://www.php.net/
+XS-Testsuite: autopkgtest
+
+Package: php7.0
+Architecture: all
+Depends: libapache2-mod-php7.0 (>= ${source:Version}~) | php7.0-cgi (>= ${source:Version}~) | php7.0-fpm (>= ${source:Version}~),
+         php7.0-common (>= ${source:Version}~),
+         ${misc:Depends}
+Description: server-side, HTML-embedded scripting language (metapackage)
+ This package is a metapackage that, when installed, guarantees that you
+ have at least one of the four server-side versions of the PHP interpreter
+ installed. Removing this package won't remove PHP from your system, however
+ it may remove other packages that depend on this one.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-common
+Architecture: all
+Depends: php-common
+Suggests: php-user-cache
+Description: Common files for packages built from the PHP source
+ This package contains the documentation and example files relevant to all
+ the other packages built from the PHP source.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: libapache2-mod-php7.0
+Section: httpd
+Architecture: any
+Depends: apache2 (>= 2.4),
+         libmagic1,
+         mime-support,
+         php7.0-cli,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Conflicts: libapache2-mod-php5,
+           libapache2-mod-php5filter
+Provides: ${php:Provides}
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (Apache 2 module)
+ This package provides the PHP module for the Apache 2 webserver (as
+ found in the apache2-mpm-prefork package).  Please note that this package
+ ONLY works with Apache's prefork MPM, as it is not compiled thread-safe.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-cgi
+Architecture: any
+Depends: libmagic1,
+         mime-support,
+         php7.0-cli,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: ${php:Provides}
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (CGI binary)
+ This package provides the /usr/lib/cgi-bin/php CGI interpreter built
+ for use in Apache 2 with mod_actions, or any other CGI httpd that
+ supports a similar mechanism.  Note that MOST users probably
+ want the php7.0-fpm package.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-cli
+Architecture: any
+Depends: libedit2 (>= 2.11-20080614-4),
+         libmagic1,
+         mime-support,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: ${php:Provides}
+Recommends: php-readline
+Suggests: php-pear
+Description: command-line interpreter for the PHP scripting language
+ This package provides the /usr/bin/php7.0 command interpreter, useful for
+ testing PHP scripts from a shell or performing general shell scripting tasks.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-phpdbg
+Architecture: any
+Depends: libmagic1,
+         mime-support,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: ${php:Provides}
+Recommends: php-readline
+Description: server-side, HTML-embedded scripting language (PHPDBG binary)
+ This package provides the /usr/bin/phpdbg command interpreter, useful for
+ stepthrough debugging of PHP code.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-fpm
+Architecture: any
+Depends: libmagic1,
+         mime-support,
+         php7.0-cli,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: ${php:Provides}
+Suggests: php-pear
+Pre-Depends: ${misc:Pre-Depends}
+Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
+ This package provides the Fast Process Manager interpreter that runs
+ as a daemon and receives Fast/CGI requests.  Note that MOST Apache users
+ probably want the libapache2-mod-php7.0 package.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: libphp7.0-embed
+Architecture: any
+Depends: libmagic1,
+         mime-support,
+         php7.0-common (>= ${source:Version}),
+         tzdata,
+         ucf,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: ${php:Provides}
+Suggests: php-pear
+Priority: optional
+Description: HTML-embedded scripting language (Embedded SAPI library)
+ This package provides the library /usr/lib/libphp7.0.so which can
+ be used by application developers to embed PHP scripting functionality.
+ .
+ ${php:Extensions}
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+ .
+ WARNING: The embed SAPI is experimental and there's no guarantee that
+ the API/ABI will be kept compatible even between minor releases.  You
+ have been warned.
+
+Package: php7.0-dev
+Depends: autoconf (>= 2.63),
+         automake (>= 1.11),
+         libpcre3-dev,
+         libssl-dev,
+         libtool (>= 2.2),
+         php7.0-cli (>= ${binary:Version}),
+         php7.0-common (>= ${source:Version}),
+         shtool,
+         ${misc:Depends},
+         ${perl:Depends}
+Conflicts: ${libtool:Conflicts}
+Architecture: any
+Recommends: dh-php7.0,
+            pkg-php-tools
+Description: Files for PHP7.0 module development
+ This package provides the files from the PHP7.0 source needed for compiling
+ additional modules.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-dbg
+Depends: libapache2-mod-php7.0 (= ${binary:Version}) | php7.0-cgi (= ${binary:Version}) | php7.0-cli (= ${binary:Version}) | php7.0-fpm (= ${binary:Version}) | libphp7.0-embed (= ${binary:Version}) | php7.0-phpdbg (= ${binary:Version}),
+         ${misc:Depends}
+Recommends: gdb
+Section: debug
+Priority: extra
+Architecture: any
+Description: Debug symbols for PHP7.0
+ This package provides the debug symbols for PHP7.0 needed for properly
+ debugging errors in PHP7.0 with gdb.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-modules-source
+Architecture: all
+Depends: php7.0-dev,
+         ${misc:Depends}
+Description: PHP 7.0 modules source package
+ This package contains source for PHP 7.0 modules that can be
+ built using phpize7.0.  It is mainly used to generate packages
+ with PHP modules built from the main PHP package.
+ .
+ You probably don't want to install this package unless you want to
+ build specific PHP module that is not distributed with Debian itself.

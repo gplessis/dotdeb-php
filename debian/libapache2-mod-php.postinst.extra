@@ -1,0 +1,32 @@
+if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+    . /usr/share/apache2/apache2-maintscript-helper
+
+    php_enable() {
+	mpm=$(a2query -M)
+	case "$(a2query -M)" in
+	    prefork|itk) return 0;;
+	    *) if apache2_switch_mpm prefork; then return 0; fi;;
+	esac
+        apache2_msg err "Could not switch to prefork MPM, not enabling PHP @PHP_VERSION@"
+	return 1
+    }
+
+else
+    echo "Warning: Could not load Apache 2.4 maintainer script helper."
+
+    php_enable() {
+        return 1;
+    }
+
+fi
+
+# we've registered a trigger to handle extension updates.
+if [ "$1" = "triggered" ] && [ "$2" = "/etc/php/@PHP_VERSION@/apache2/conf.d" ]; then
+    if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+	. /usr/share/apache2/apache2-maintscript-helper
+	apache2_reload restart
+    fi
+    exit 0
+elif [ "$1" != "configure" ]; then
+    exit 0
+fi

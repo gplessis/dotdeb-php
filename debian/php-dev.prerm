@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" -o "$1" = "purge" ]; then
+    for i in php-config phpize; do
+	update-alternatives --remove $i /usr/bin/"$i"@PHP_VERSION@
+    done
+fi
+
+#DEBHELPER#
+
+exit 0

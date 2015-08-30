@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+# Author: Robie Basak <robie.basak@ubuntu.com>
+
+# /etc/apache2/conf-available/php5-cgi.conf should exist. If this is renamed
+# to /etc/apache2/conf-available/php5-cgi in the future, then this test needs
+# to be updated.
+
+if [ ! -f /etc/apache2/conf-available/php5-cgi.conf ]; then
+    echo "/etc/apache2/conf-available/php5-cgi.conf not found" >&2
+    exit 1
+fi
+
+echo "Action application/x-httpd-php /cgi-bin/php5" >> /etc/apache2/conf-available/php5-cgi.conf
+
+cat > /var/www/html/hello.php <<EOT
+<?php echo "Hello, world!\n"; ?>
+EOT
+
+# Make sure that any mod_php mechanism is disabled, since we want to get CGI
+# mode here.
+a2dismod php5 2>/dev/null || true
+
+a2enmod actions
+a2enmod cgi 2>/dev/null
+a2enconf php5-cgi
+service apache2 restart 2>/dev/null
+result=`wget -O- http://localhost/hello.php 2>/dev/null`
+test "$result" = "Hello, world!"

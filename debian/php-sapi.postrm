@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+php_enable() { return 0; }
+
+if [ "$1" = "purge" ]; then
+    phpini=/etc/php/@PHP_VERSION@/@sapi@/php.ini
+    # remove the flag to remember the original state
+    if [ -e /etc/php/@PHP_VERSION@/@sapi@/.start ]; then
+	rm -f /etc/php/@PHP_VERSION@/@sapi@/.start
+    fi
+    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+	rm -f $phpini$ext
+    done
+    rm -f $phpini
+    if which ucf >/dev/null; then
+	ucf --purge $phpini
+    fi
+    if which ucfr >/dev/null; then
+	ucfr --purge @package@ $phpini
+    fi
+fi
+
+if [ -e /usr/lib/php/php-maintscript-helper ]; then
+    . /usr/lib/php/php-maintscript-helper
+
+    mods=$(phpquery -M -v @PHP_VERSION@)
+    for mod in $mods; do
+	php_invoke dismod @PHP_VERSION@ @sapi@ $mod
+    done
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,20 @@
+# The extensions directory must exist, even if empty
+@sapi@: package-contains-empty-directory @extdir@/
+# Not a spelling mistake, just a compilation curiosity
+@sapi@: spelling-error-in-binary * ment meant
+# Not a spelling mistake, tz code for Tahiti
+@sapi@: spelling-error-in-binary * taht that
+@sapi@: missing-dependency-on-phpapi
+libapache2-mod-php@PHP_VERSION@: embedded-library usr/lib/apache2/modules/libphp@PHP_VERSION@.so: file
+libapache2-mod-php@PHP_VERSION@: apache2-module-does-not-ship-load-file libphp@PHP_VERSION@
+libapache2-mod-php@PHP_VERSION@: non-standard-apache2-module-package-name libapache2-mod-php@PHP_VERSION@ != libapache2-libphp@PHP_VERSION@
+php@PHP_VERSION@-cgi: embedded-library usr/bin/php-cgi@PHP_VERSION@: file
+php@PHP_VERSION@-cgi: embedded-library usr/lib/cgi-bin/php@PHP_VERSION@: file
+php@PHP_VERSION@-cli: embedded-library usr/bin/php@PHP_VERSION@: file
+php@PHP_VERSION@-fpm: embedded-library usr/sbin/php-fpm@PHP_VERSION@: file
+php@PHP_VERSION@-phpdbg: embedded-library usr/bin/phpdbg@PHP_VERSION@: file
+libphp@PHP_VERSION@-embed: embedded-library usr/lib/libphp@PHP_VERSION@.so: file
+libphp@PHP_VERSION@-embed: embedded-library usr/lib/php@PHP_VERSION@/libphp@PHP_VERSION@-*.so: file
+libphp@PHP_VERSION@-embed: package-name-doesnt-match-sonames libphp@PHP_MAJOR@
+libphp@PHP_VERSION@-embed: ldconfig-symlink-missing-for-shlib usr/lib/libphp@PHP_MAJOR@.so usr/lib/libphp@PHP_VERSION@.so libphp@PHP_MAJOR@.so
+libphp@PHP_VERSION@-embed: shlib-without-versioned-soname usr/lib/libphp@PHP_VERSION@.so libphp@PHP_MAJOR@.so

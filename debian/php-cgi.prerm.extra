@@ -1,0 +1,4 @@
+if [ "$1" = "remove" -o "$1" = "deconfigure" ]; then
+    update-alternatives --remove php-cgi /usr/bin/php-cgi@PHP_VERSION@
+    update-alternatives --remove php-cgi-bin /usr/lib/cgi-bin/php@PHP_VERSION@
+fi

@@ -1,0 +1,32 @@
+# This is a generic Dockerfile to ease Debian packaging
+#
+# Requirements:
+#   * Docker >= 1.5
+# Usage:
+#   # docker build -t build-jessie-i386 -f debian/Dockerfile.adm64
+#   # docker run build-jessie-i386
+#   # ID=$(docker ps -l -q)
+#   # docker cp $ID:/usr/src ~/Downloads/
+#   # docker rm $ID
+
+FROM dotdeb/debian:jessie-i386
+MAINTAINER Guillaume Plessis "gui@dotdeb.org"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update
+RUN apt-get dist-upgrade -y
+
+RUN apt-get install -y build-essential devscripts equivs libwww-perl curl
+
+ADD debian/control /root/
+RUN mk-build-deps --install --tool 'apt-get -y' --remove /root/control && rm -f /root/control
+
+ADD . /usr/src/builddir
+WORKDIR /usr/src/builddir
+
+#RUN uscan --download-current-version
+RUN curl -Lo ../php7.0_7.0.0~rc1.orig.tar.xz https://downloads.php.net/~ab/php-7.0.0RC1.tar.xz
+RUN dpkg-buildpackage
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/builddir

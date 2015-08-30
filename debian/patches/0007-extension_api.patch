@@ -1,0 +1,62 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: extension_api
+
+---
+ configure.in          | 5 ++++-
+ scripts/php-config.in | 4 ++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.in b/configure.in
+index 01379b6..3f8f390 100644
+--- a/configure.in
++++ b/configure.in
+@@ -1199,8 +1199,10 @@ ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modul
+ 
+ AC_SUBST(ZEND_MODULE_API_NO)
+ 
++DEBIAN_PHP_API=$ZEND_MODULE_API_NO
++
+ if test -z "$EXTENSION_DIR"; then
+-  extbasedir=$ZEND_MODULE_API_NO
++  extbasedir=$DEBIAN_PHP_API
+   if test "$oldstyleextdir" = "yes"; then
+     if test "$PHP_DEBUG" = "1"; then
+       part1=debug
+@@ -1344,6 +1346,7 @@ PHP_SUBST(CXX)
+ PHP_SUBST(CXXFLAGS)
+ PHP_SUBST(CXXFLAGS_CLEAN)
+ PHP_SUBST_OLD(DEBUG_CFLAGS)
++PHP_SUBST_OLD(DEBIAN_PHP_API)
+ PHP_SUBST_OLD(EXTENSION_DIR)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS)
+ PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
+diff --git a/scripts/php-config.in b/scripts/php-config.in
+index 754876a..1f4bb4c 100644
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -19,6 +19,7 @@ php_cli_binary=NONE
+ php_cgi_binary=NONE
+ configure_options="@CONFIGURE_OPTIONS@"
+ php_sapis="@PHP_INSTALLED_SAPIS@"
++phpapi="@DEBIAN_PHP_API@"
+ 
+ # Set php_cli_binary and php_cgi_binary if available
+ for sapi in $php_sapis; do
+@@ -57,6 +58,8 @@ case "$1" in
+   echo $include_dir;;
+ --php-binary)
+   echo $php_binary;;
++--phpapi)
++  echo $phpapi;;
+ --php-sapis)
+   echo $php_sapis;;
+ --configure-options)
+@@ -80,6 +83,7 @@ Options:
+   --man-dir           [$man_dir]
+   --php-binary        [$php_binary]
+   --php-sapis         [$php_sapis]
++  --phpapi            [$phpapi]
+   --configure-options [$configure_options]
+   --version           [$version]
+   --vernum            [$vernum]

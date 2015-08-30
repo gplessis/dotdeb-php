@@ -1,0 +1,3 @@
+if [ "$1" = "remove" -o "$1" = "deconfigure" ]; then
+    update-alternatives --remove php /usr/bin/php@PHP_VERSION@
+fi

@@ -1,0 +1,21 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:54 +0200
+Subject: php-fpm-sysconfdir
+
+---
+ sapi/fpm/fpm/fpm_conf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sapi/fpm/fpm/fpm_conf.c b/sapi/fpm/fpm/fpm_conf.c
+index 9a619ce..801c24d 100644
+--- a/sapi/fpm/fpm/fpm_conf.c
++++ b/sapi/fpm/fpm/fpm_conf.c
+@@ -1679,7 +1679,7 @@ int fpm_conf_init_main(int test_conf, int force_daemon) /* {{{ */
+ 		char *tmp;
+ 
+ 		if (fpm_globals.prefix == NULL) {
+-			spprintf(&tmp, 0, "%s/php-fpm.conf", PHP_SYSCONFDIR);
++			spprintf(&tmp, 0, "%s/php/7.0/fpm/php-fpm.conf", PHP_SYSCONFDIR);
+ 		} else {
+ 			spprintf(&tmp, 0, "%s/etc/php-fpm.conf", fpm_globals.prefix);
+ 		}

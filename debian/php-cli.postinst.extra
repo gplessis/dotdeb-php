@@ -1,0 +1,5 @@
+if [ "$1" = "configure" ]; then
+    update-alternatives \
+	--install /usr/bin/php php /usr/bin/php@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
+	--slave /usr/share/man/man1/php.1.gz php.1.gz /usr/share/man/man1/php@PHP_VERSION@.1.gz
+fi

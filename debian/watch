@@ -1,0 +1,8 @@
+version=3
+opts=uversionmangle=s#((alpha|beta|rc|RC)\d*)#~$1# \
+http://downloads.php.net/~ab/ php-(7\.0\.0[A-Z]*\d*)\.tar\.xz debian
+
+#opts=downloadurlmangle=s#/a/#/this/#,\
+#filenamemangle=s#/get/(php-(7\.0\.[0-9]*)\.tar\.xz)/.*#$1#,\
+#dversionmangle=s/\+dfsg$// \
+#http://www.php.net/downloads.php /get/php-(7\.0\.[0-9]*)\.tar\.xz/from/a/mirror debian

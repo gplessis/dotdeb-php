@@ -1,0 +1,6 @@
+usr/bin/php@PHP_VERSION@
+usr/share/man/man1/php@PHP_VERSION@.1
+usr/bin/phar.phar
+usr/bin/phar
+usr/share/man/man1/phar.1
+usr/share/man/man1/phar.phar.1

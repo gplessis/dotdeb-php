@@ -1,0 +1,3 @@
+if [ "$1" = "triggered" ] && [ "$2" = "/etc/php/@PHP_VERSION@/fpm/conf.d" ]; then
+    invoke-rc.d php@PHP_VERSION@-fpm restart
+fi

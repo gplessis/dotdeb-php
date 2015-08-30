@@ -1,0 +1,2 @@
+rm .gitignore
+rm -r ext/json/
