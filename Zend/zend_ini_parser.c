@@ -185,7 +185,18 @@ static void zend_ini_init_string(zval *result)
 */
 static void zend_ini_add_string(zval *result, zval *op1, zval *op2)
 {
-	int length = Z_STRLEN_P(op1) + Z_STRLEN_P(op2);
+	int length;
+
+	if (Z_TYPE_P(op1) != IS_STRING) {
+		zval copy;
+		MAKE_COPY_ZVAL(&op1, &copy);
+		convert_to_string(&copy);
+		Z_STRVAL_P(op1) = zend_strndup(Z_STRVAL(copy), Z_STRLEN(copy));
+		Z_STRLEN_P(op1) = Z_STRLEN(copy);
+		zval_dtor(&copy);
+	}
+
+	length = Z_STRLEN_P(op1) + Z_STRLEN_P(op2);
 
 	Z_STRVAL_P(result) = (char *) realloc(Z_STRVAL_P(op1), length+1);
 	memcpy(Z_STRVAL_P(result)+Z_STRLEN_P(op1), Z_STRVAL_P(op2), Z_STRLEN_P(op2));
@@ -290,7 +301,7 @@ ZEND_API int zend_parse_ini_file(zend_file_handle *fh, zend_bool unbuffered_erro
 	zend_file_handle_dtor(fh TSRMLS_CC);
 
 	shutdown_ini_scanner(TSRMLS_C);
-	
+
 	if (retval == 0) {
 		return SUCCESS;
 	} else {
@@ -703,12 +714,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   280,   280,   281,   285,   292,   300,   309,   310,   314,
-     315,   319,   320,   321,   322,   323,   327,   328,   332,   333,
-     334,   338,   339,   340,   341,   342,   343,   347,   348,   349,
-     350,   351,   352,   356,   357,   358,   359,   360,   361,   362,
-     366,   370,   371,   372,   373,   374,   378,   379,   380,   381,
-     382
+       0,   291,   291,   292,   296,   303,   311,   324,   325,   329,
+     330,   334,   335,   336,   337,   338,   342,   343,   347,   348,
+     349,   353,   354,   355,   356,   357,   358,   362,   363,   364,
+     365,   366,   367,   371,   372,   373,   374,   375,   376,   377,
+     381,   385,   386,   387,   388,   389,   393,   394,   395,   396,
+     397
 };
 #endif
 
@@ -1700,7 +1711,11 @@ yyreduce:
 #endif
 			ZEND_INI_PARSER_CB(&(yyvsp[(1) - (5)]), &(yyvsp[(5) - (5)]), &(yyvsp[(2) - (5)]), ZEND_INI_PARSER_POP_ENTRY, ZEND_INI_PARSER_ARG TSRMLS_CC);
 			free(Z_STRVAL((yyvsp[(1) - (5)])));
-			free(Z_STRVAL((yyvsp[(2) - (5)])));
+			if (Z_TYPE((yyvsp[(2) - (5)])) == IS_STRING) {
+				free(Z_STRVAL((yyvsp[(2) - (5)])));
+			} else {
+				zval_dtor(&(yyvsp[(2) - (5)]));
+			}
 			zval_internal_dtor(&(yyvsp[(5) - (5)]));
 		}
     break;
