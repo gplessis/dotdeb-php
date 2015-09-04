@@ -6,10 +6,10 @@ Subject: we_WANT_libtool
  build/build2.mk | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/build/build2.mk b/build/build2.mk
-index 335bec3..118b05e 100644
---- a/build/build2.mk
-+++ b/build/build2.mk
+Index: dotdeb-php/build/build2.mk
+===================================================================
+--- dotdeb-php.orig/build/build2.mk
++++ dotdeb-php/build/build2.mk
 @@ -46,7 +46,8 @@ $(TOUCH_FILES):
  
  aclocal.m4: configure.in acinclude.m4

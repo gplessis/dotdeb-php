@@ -7,10 +7,10 @@ Subject: expose_all_built_and_installed_apis
  scripts/php-config.in        | 5 ++++-
  2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/man1/php-config.1.in b/scripts/man1/php-config.1.in
-index ae2ee56..05e5e2d 100644
---- a/scripts/man1/php-config.1.in
-+++ b/scripts/man1/php-config.1.in
+Index: dotdeb-php/scripts/man1/php-config.1.in
+===================================================================
+--- dotdeb-php.orig/scripts/man1/php-config.1.in
++++ dotdeb-php/scripts/man1/php-config.1.in
 @@ -44,7 +44,7 @@ Full path to php CLI or CGI binary
  .TP
  .PD 0
@@ -20,10 +20,10 @@ index ae2ee56..05e5e2d 100644
  .TP
  .PD 0
  .B \-\-configure-options
-diff --git a/scripts/php-config.in b/scripts/php-config.in
-index 1f4bb4c..ad2c57a 100644
---- a/scripts/php-config.in
-+++ b/scripts/php-config.in
+Index: dotdeb-php/scripts/php-config.in
+===================================================================
+--- dotdeb-php.orig/scripts/php-config.in
++++ dotdeb-php/scripts/php-config.in
 @@ -18,9 +18,12 @@ exe_extension="@EXEEXT@"
  php_cli_binary=NONE
  php_cgi_binary=NONE

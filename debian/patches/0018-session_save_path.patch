@@ -8,11 +8,11 @@ Subject: session_save_path
  php.ini-production    | 2 +-
  3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/ext/session/session.c b/ext/session/session.c
-index ef17b86..685ffdd 100644
---- a/ext/session/session.c
-+++ b/ext/session/session.c
-@@ -788,7 +788,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /* {{{ */
+Index: dotdeb-php/ext/session/session.c
+===================================================================
+--- dotdeb-php.orig/ext/session/session.c
++++ dotdeb-php/ext/session/session.c
+@@ -790,7 +790,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
  /* {{{ PHP_INI
   */
  PHP_INI_BEGIN()
@@ -21,10 +21,10 @@ index ef17b86..685ffdd 100644
  	STD_PHP_INI_ENTRY("session.name",               "PHPSESSID", PHP_INI_ALL, OnUpdateName, session_name,       php_ps_globals,    ps_globals)
  	PHP_INI_ENTRY("session.save_handler",           "files",     PHP_INI_ALL, OnUpdateSaveHandler)
  	STD_PHP_INI_BOOLEAN("session.auto_start",       "0",         PHP_INI_PERDIR, OnUpdateBool,   auto_start,         php_ps_globals,    ps_globals)
-diff --git a/php.ini-development b/php.ini-development
-index 28647e3..0814660 100644
---- a/php.ini-development
-+++ b/php.ini-development
+Index: dotdeb-php/php.ini-development
+===================================================================
+--- dotdeb-php.orig/php.ini-development
++++ dotdeb-php/php.ini-development
 @@ -1313,7 +1313,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
@@ -34,10 +34,10 @@ index 28647e3..0814660 100644
  
  ; Whether to use strict session mode.
  ; Strict session mode does not accept uninitialized session ID and regenerate
-diff --git a/php.ini-production b/php.ini-production
-index aaa1fe2..6c4e9c3 100644
---- a/php.ini-production
-+++ b/php.ini-production
+Index: dotdeb-php/php.ini-production
+===================================================================
+--- dotdeb-php.orig/php.ini-production
++++ dotdeb-php/php.ini-production
 @@ -1313,7 +1313,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.

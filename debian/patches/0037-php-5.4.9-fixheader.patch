@@ -7,11 +7,11 @@ Make generated php_config.h constant across rebuilds.
  configure.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/configure.in b/configure.in
-index e537197..e10f8fc 100644
---- a/configure.in
-+++ b/configure.in
-@@ -1284,7 +1284,7 @@ fi
+Index: dotdeb-php/configure.in
+===================================================================
+--- dotdeb-php.orig/configure.in
++++ dotdeb-php/configure.in
+@@ -1282,7 +1282,7 @@ fi
  EXTRA_LDFLAGS="$EXTRA_LDFLAGS $PHP_LDFLAGS"
  EXTRA_LDFLAGS_PROGRAM="$EXTRA_LDFLAGS_PROGRAM $PHP_LDFLAGS"
  
@@ -20,7 +20,7 @@ index e537197..e10f8fc 100644
  AC_DEFINE_UNQUOTED(PHP_BUILD_DATE,"$PHP_BUILD_DATE",[PHP build date])
  
  case $host_alias in
-@@ -1295,7 +1295,7 @@ case $host_alias in
+@@ -1293,7 +1293,7 @@ case $host_alias in
    AC_DEFINE_UNQUOTED(PHP_UNAME,"$PHP_UNAME",[hardcode for each of the cross compiler host])
    ;;
  *)

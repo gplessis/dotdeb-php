@@ -6,11 +6,11 @@ Subject: hack-phpdbg-to-explicitly-link-with-libedit
  sapi/phpdbg/config.m4 | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sapi/phpdbg/config.m4 b/sapi/phpdbg/config.m4
-index 1e4714e..3321713 100644
---- a/sapi/phpdbg/config.m4
-+++ b/sapi/phpdbg/config.m4
-@@ -32,7 +32,9 @@ if test "$BUILD_PHPDBG" == "" && test "$PHP_PHPDBG" != "no"; then
+Index: dotdeb-php/sapi/phpdbg/config.m4
+===================================================================
+--- dotdeb-php.orig/sapi/phpdbg/config.m4
++++ dotdeb-php/sapi/phpdbg/config.m4
+@@ -25,7 +25,9 @@ if test "$BUILD_PHPDBG" == "" && test "$
    PHP_PHPDBG_FILES="phpdbg.c phpdbg_parser.c phpdbg_lexer.c phpdbg_prompt.c phpdbg_help.c phpdbg_break.c phpdbg_print.c phpdbg_bp.c phpdbg_opcode.c phpdbg_list.c phpdbg_utils.c phpdbg_info.c phpdbg_cmd.c phpdbg_set.c phpdbg_frame.c phpdbg_watch.c phpdbg_btree.c phpdbg_sigsafe.c phpdbg_wait.c phpdbg_io.c phpdbg_eol.c phpdbg_out.c"
  
    if test "$PHP_READLINE" != "no" -o  "$PHP_LIBEDIT" != "no"; then

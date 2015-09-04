@@ -11,11 +11,11 @@ Subject: temporary-path-fixes-for-multiarch
  ext/pdo_dblib/config.m4 | 2 +-
  6 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/acinclude.m4 b/acinclude.m4
-index 6b0a3c6..1330183 100644
---- a/acinclude.m4
-+++ b/acinclude.m4
-@@ -2282,7 +2282,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
+Index: dotdeb-php/acinclude.m4
+===================================================================
+--- dotdeb-php.orig/acinclude.m4
++++ dotdeb-php/acinclude.m4
+@@ -2283,7 +2283,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
      fi
  
      for i in $PHP_KERBEROS; do
@@ -24,7 +24,7 @@ index 6b0a3c6..1330183 100644
          PHP_KERBEROS_DIR=$i
          break
        fi
-@@ -2361,7 +2361,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+@@ -2362,7 +2362,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
        if test -r $i/include/openssl/evp.h; then
          OPENSSL_INCDIR=$i/include
        fi
@@ -33,10 +33,10 @@ index 6b0a3c6..1330183 100644
          OPENSSL_LIBDIR=$i/$PHP_LIBDIR
        fi
        test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
-diff --git a/ext/dba/config.m4 b/ext/dba/config.m4
-index d2e6fd9..f3aec83 100644
---- a/ext/dba/config.m4
-+++ b/ext/dba/config.m4
+Index: dotdeb-php/ext/dba/config.m4
+===================================================================
+--- dotdeb-php.orig/ext/dba/config.m4
++++ dotdeb-php/ext/dba/config.m4
 @@ -239,7 +239,7 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
      AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
    fi
@@ -46,10 +46,10 @@ index d2e6fd9..f3aec83 100644
        lib_found="";
        PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
          AC_TRY_LINK([
-diff --git a/ext/gmp/config.m4 b/ext/gmp/config.m4
-index 8265fb8..00469df 100644
---- a/ext/gmp/config.m4
-+++ b/ext/gmp/config.m4
+Index: dotdeb-php/ext/gmp/config.m4
+===================================================================
+--- dotdeb-php.orig/ext/gmp/config.m4
++++ dotdeb-php/ext/gmp/config.m4
 @@ -5,6 +5,7 @@ if test "$PHP_GMP" != "no"; then
  
    for i in $PHP_GMP /usr/local /usr; do
@@ -66,10 +66,10 @@ index 8265fb8..00469df 100644
  
    PHP_NEW_EXTENSION(gmp, gmp.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
    PHP_SUBST(GMP_SHARED_LIBADD)
-diff --git a/ext/ldap/config.m4 b/ext/ldap/config.m4
-index 947cebc..b2da7b4 100644
---- a/ext/ldap/config.m4
-+++ b/ext/ldap/config.m4
+Index: dotdeb-php/ext/ldap/config.m4
+===================================================================
+--- dotdeb-php.orig/ext/ldap/config.m4
++++ dotdeb-php/ext/ldap/config.m4
 @@ -117,7 +117,7 @@ if test "$PHP_LDAP" != "no"; then
      LDAP_PTHREAD=
    fi
@@ -79,10 +79,10 @@ index 947cebc..b2da7b4 100644
      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
  
-diff --git a/ext/pcre/config0.m4 b/ext/pcre/config0.m4
-index 7749bb6..590ee1f 100644
---- a/ext/pcre/config0.m4
-+++ b/ext/pcre/config0.m4
+Index: dotdeb-php/ext/pcre/config0.m4
+===================================================================
+--- dotdeb-php.orig/ext/pcre/config0.m4
++++ dotdeb-php/ext/pcre/config0.m4
 @@ -21,7 +21,7 @@ PHP_ARG_WITH(pcre-regex,,
      AC_MSG_RESULT([$PCRE_INCDIR])
  
@@ -92,10 +92,10 @@ index 7749bb6..590ee1f 100644
        test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
      done
      
-diff --git a/ext/pdo_dblib/config.m4 b/ext/pdo_dblib/config.m4
-index 407c3fe..17eb11a 100644
---- a/ext/pdo_dblib/config.m4
-+++ b/ext/pdo_dblib/config.m4
+Index: dotdeb-php/ext/pdo_dblib/config.m4
+===================================================================
+--- dotdeb-php.orig/ext/pdo_dblib/config.m4
++++ dotdeb-php/ext/pdo_dblib/config.m4
 @@ -46,7 +46,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
      PHP_LIBDIR=lib
    fi

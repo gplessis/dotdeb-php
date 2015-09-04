@@ -7,10 +7,10 @@ Subject: php.ini_securitynotes
  php.ini-production  | 6 ++++++
  2 files changed, 12 insertions(+)
 
-diff --git a/php.ini-development b/php.ini-development
-index cfd3c7e..28647e3 100644
---- a/php.ini-development
-+++ b/php.ini-development
+Index: dotdeb-php/php.ini-development
+===================================================================
+--- dotdeb-php.orig/php.ini-development
++++ dotdeb-php/php.ini-development
 @@ -291,6 +291,12 @@ serialize_precision = 17
  ; and below.  This directive makes most sense if used in a per-directory
  ; or per-virtualhost web server configuration file.
@@ -24,10 +24,10 @@ index cfd3c7e..28647e3 100644
  ;open_basedir =
  
  ; This directive allows you to disable certain functions for security reasons.
-diff --git a/php.ini-production b/php.ini-production
-index 2d721eb..aaa1fe2 100644
---- a/php.ini-production
-+++ b/php.ini-production
+Index: dotdeb-php/php.ini-production
+===================================================================
+--- dotdeb-php.orig/php.ini-production
++++ dotdeb-php/php.ini-production
 @@ -291,6 +291,12 @@ serialize_precision = 17
  ; and below.  This directive makes most sense if used in a per-directory
  ; or per-virtualhost web server configuration file.

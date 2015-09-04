@@ -16,10 +16,10 @@ Subject: debian_quirks
  delete mode 100755 ext/ext_skel
  create mode 100644 ext/ext_skel.in
 
-diff --git a/configure.in b/configure.in
-index b09998e..01379b6 100644
---- a/configure.in
-+++ b/configure.in
+Index: dotdeb-php/configure.in
+===================================================================
+--- dotdeb-php.orig/configure.in
++++ dotdeb-php/configure.in
 @@ -1088,7 +1088,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
@@ -38,7 +38,7 @@ index b09998e..01379b6 100644
  if test -z "$EXTENSION_DIR"; then
    extbasedir=$ZEND_MODULE_API_NO
    if test "$oldstyleextdir" = "yes"; then
-@@ -1245,7 +1247,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfdir`
+@@ -1245,7 +1247,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
@@ -55,10 +55,9 @@ index b09998e..01379b6 100644
  $PHP_OUTPUT_FILES"
  
  dnl
-diff --git a/ext/ext_skel b/ext/ext_skel
-deleted file mode 100755
-index a1c6464..0000000
---- a/ext/ext_skel
+Index: dotdeb-php/ext/ext_skel
+===================================================================
+--- dotdeb-php.orig/ext/ext_skel
 +++ /dev/null
 @@ -1,332 +0,0 @@
 -#!/bin/sh
@@ -393,11 +392,10 @@ index a1c6464..0000000
 -$warning
 -eof
 -fi
-diff --git a/ext/ext_skel.in b/ext/ext_skel.in
-new file mode 100644
-index 0000000..6b65859
+Index: dotdeb-php/ext/ext_skel.in
+===================================================================
 --- /dev/null
-+++ b/ext/ext_skel.in
++++ dotdeb-php/ext/ext_skel.in
 @@ -0,0 +1,332 @@
 +#!/bin/sh
 +
@@ -731,10 +729,10 @@ index 0000000..6b65859
 +$warning
 +eof
 +fi
-diff --git a/php.ini-development b/php.ini-development
-index 592a042..cfd3c7e 100644
---- a/php.ini-development
-+++ b/php.ini-development
+Index: dotdeb-php/php.ini-development
+===================================================================
+--- dotdeb-php.orig/php.ini-development
++++ dotdeb-php/php.ini-development
 @@ -697,7 +697,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -744,10 +742,10 @@ index 592a042..cfd3c7e 100644
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-diff --git a/php.ini-production b/php.ini-production
-index 9febdf8..2d721eb 100644
---- a/php.ini-production
-+++ b/php.ini-production
+Index: dotdeb-php/php.ini-production
+===================================================================
+--- dotdeb-php.orig/php.ini-production
++++ dotdeb-php/php.ini-production
 @@ -697,7 +697,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
@@ -757,10 +755,10 @@ index 9febdf8..2d721eb 100644
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-diff --git a/sapi/cli/php.1.in b/sapi/cli/php.1.in
-index c062f3d..0fad75a 100644
---- a/sapi/cli/php.1.in
-+++ b/sapi/cli/php.1.in
+Index: dotdeb-php/sapi/cli/php.1.in
+===================================================================
+--- dotdeb-php.orig/sapi/cli/php.1.in
++++ dotdeb-php/sapi/cli/php.1.in
 @@ -365,13 +365,14 @@ Shows configuration for extension
  Show configuration file names
  .SH FILES
@@ -781,10 +779,10 @@ index c062f3d..0fad75a 100644
  .SH EXAMPLES
  .TP 5
  \fI@program_prefix@php \-r 'echo "Hello World\\n";'\fP
-diff --git a/scripts/Makefile.frag b/scripts/Makefile.frag
-index 7cd78fa..df7cfdd 100644
---- a/scripts/Makefile.frag
-+++ b/scripts/Makefile.frag
+Index: dotdeb-php/scripts/Makefile.frag
+===================================================================
+--- dotdeb-php.orig/scripts/Makefile.frag
++++ dotdeb-php/scripts/Makefile.frag
 @@ -3,8 +3,8 @@
  # Build environment install
  #
@@ -796,10 +794,10 @@ index 7cd78fa..df7cfdd 100644
  
  BUILD_FILES = \
  	scripts/phpize.m4 \
-diff --git a/scripts/php-config.in b/scripts/php-config.in
-index d6c62cc..754876a 100644
---- a/scripts/php-config.in
-+++ b/scripts/php-config.in
+Index: dotdeb-php/scripts/php-config.in
+===================================================================
+--- dotdeb-php.orig/scripts/php-config.in
++++ dotdeb-php/scripts/php-config.in
 @@ -6,9 +6,9 @@ datarootdir="@datarootdir@"
  exec_prefix="@exec_prefix@"
  version="@PHP_VERSION@"
@@ -813,10 +811,10 @@ index d6c62cc..754876a 100644
  libs="@EXTRA_LIBS@"
  extension_dir='@EXTENSION_DIR@'
  man_dir=`eval echo @mandir@`
-diff --git a/scripts/phpize.in b/scripts/phpize.in
-index b86925e..9bd3b9a 100644
---- a/scripts/phpize.in
-+++ b/scripts/phpize.in
+Index: dotdeb-php/scripts/phpize.in
+===================================================================
+--- dotdeb-php.orig/scripts/phpize.in
++++ dotdeb-php/scripts/phpize.in
 @@ -4,8 +4,8 @@
  prefix='@prefix@'
  datarootdir='@datarootdir@'
