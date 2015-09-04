@@ -1,7 +1,7 @@
-Index: dotdeb-php5/TSRM/configure.in
+Index: dotdeb-php/TSRM/configure.in
 ===================================================================
---- dotdeb-php5.orig/TSRM/configure.in
-+++ dotdeb-php5/TSRM/configure.in
+--- dotdeb-php.orig/TSRM/configure.in
++++ dotdeb-php/TSRM/configure.in
 @@ -17,9 +17,6 @@ TSRM_BASIC_CHECKS
  TSRM_THREADS_CHECKS
  	
@@ -12,10 +12,10 @@ Index: dotdeb-php5/TSRM/configure.in
  
  dnl TSRM_PTHREAD
  
-Index: dotdeb-php5/configure.in
+Index: dotdeb-php/configure.in
 ===================================================================
---- dotdeb-php5.orig/configure.in
-+++ dotdeb-php5/configure.in
+--- dotdeb-php.orig/configure.in
++++ dotdeb-php/configure.in
 @@ -1416,9 +1416,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
  ])
  AC_PROG_LIBTOOL

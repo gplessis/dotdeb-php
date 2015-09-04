@@ -1,7 +1,7 @@
-Index: dotdeb-php5/ext/zlib/zlib.c
+Index: dotdeb-php/ext/zlib/zlib.c
 ===================================================================
---- dotdeb-php5.orig/ext/zlib/zlib.c
-+++ dotdeb-php5/ext/zlib/zlib.c
+--- dotdeb-php.orig/ext/zlib/zlib.c
++++ dotdeb-php/ext/zlib/zlib.c
 @@ -46,6 +46,18 @@
  #undef gzseek
  #undef gztell

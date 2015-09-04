@@ -3,10 +3,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: dotdeb-php5/sapi/apache2handler/config.m4
+Index: dotdeb-php/sapi/apache2handler/config.m4
 ===================================================================
---- dotdeb-php5.orig/sapi/apache2handler/config.m4
-+++ dotdeb-php5/sapi/apache2handler/config.m4
+--- dotdeb-php.orig/sapi/apache2handler/config.m4
++++ dotdeb-php/sapi/apache2handler/config.m4
 @@ -58,14 +58,6 @@ if test "$PHP_APXS2" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
@@ -22,10 +22,10 @@ Index: dotdeb-php5/sapi/apache2handler/config.m4
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
      INSTALL_IT="\$(mkinstalldirs) '$APXS_LIBEXECDIR' && \
-Index: dotdeb-php5/sapi/apache/config.m4
+Index: dotdeb-php/sapi/apache/config.m4
 ===================================================================
---- dotdeb-php5.orig/sapi/apache/config.m4
-+++ dotdeb-php5/sapi/apache/config.m4
+--- dotdeb-php.orig/sapi/apache/config.m4
++++ dotdeb-php/sapi/apache/config.m4
 @@ -56,12 +56,6 @@ if test "$PHP_APXS" != "no"; then
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
@@ -39,10 +39,10 @@ Index: dotdeb-php5/sapi/apache/config.m4
    for flag in $APXS_CFLAGS; do
      case $flag in
      -D*) APACHE_CPPFLAGS="$APACHE_CPPFLAGS $flag";;
-Index: dotdeb-php5/sapi/apache2filter/config.m4
+Index: dotdeb-php/sapi/apache2filter/config.m4
 ===================================================================
---- dotdeb-php5.orig/sapi/apache2filter/config.m4
-+++ dotdeb-php5/sapi/apache2filter/config.m4
+--- dotdeb-php.orig/sapi/apache2filter/config.m4
++++ dotdeb-php/sapi/apache2filter/config.m4
 @@ -59,14 +59,6 @@ if test "$PHP_APXS2FILTER" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
@@ -58,10 +58,10 @@ Index: dotdeb-php5/sapi/apache2filter/config.m4
    APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
    if test -z `$APXS -q SYSCONFDIR`; then
      INSTALL_IT="\$(mkinstalldirs) '$APXS_LIBEXECDIR' && \
-Index: dotdeb-php5/sapi/apache_hooks/config.m4
+Index: dotdeb-php/sapi/apache_hooks/config.m4
 ===================================================================
---- dotdeb-php5.orig/sapi/apache_hooks/config.m4
-+++ dotdeb-php5/sapi/apache_hooks/config.m4
+--- dotdeb-php.orig/sapi/apache_hooks/config.m4
++++ dotdeb-php/sapi/apache_hooks/config.m4
 @@ -57,12 +57,6 @@ if test "$PHP_APACHE_HOOKS" != "no"; the
    APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
    APACHE_INCLUDE=-I$APXS_INCLUDEDIR
