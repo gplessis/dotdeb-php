@@ -1,3 +1,10 @@
+php5 (5.4.45-1~dotdeb+6.1) oldoldstable; urgency=medium
+
+  * Imported Upstream version 5.4.45
+  * Patches refresh for 5.4.45
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 04 Sep 2015 16:08:29 -0700
+
 php5 (5.4.44-1~dotdeb+6.1) oldoldstable; urgency=medium
 
   * Imported Upstream version 5.4.44
