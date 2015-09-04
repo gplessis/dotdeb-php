@@ -1,7 +1,7 @@
-Index: dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
+Index: dotdeb-php/sapi/fpm/fpm/fpm_conf.c
 ===================================================================
---- dotdeb-php5.orig/sapi/fpm/fpm/fpm_conf.c
-+++ dotdeb-php5/sapi/fpm/fpm/fpm_conf.c
+--- dotdeb-php.orig/sapi/fpm/fpm/fpm_conf.c
++++ dotdeb-php/sapi/fpm/fpm/fpm_conf.c
 @@ -1644,7 +1644,7 @@ int fpm_conf_init_main(int test_conf, in
  		char *tmp;
  

@@ -3,10 +3,10 @@ Origin: vendor
 Forwarded: not-needed
 Last-Update: 2010-01-18
 
-Index: dotdeb-php5/php.ini-development
+Index: dotdeb-php/php.ini-development
 ===================================================================
---- dotdeb-php5.orig/php.ini-development
-+++ dotdeb-php5/php.ini-development
+--- dotdeb-php.orig/php.ini-development
++++ dotdeb-php/php.ini-development
 @@ -296,6 +296,12 @@ serialize_precision = 17
  ; or per-virtualhost web server configuration file. This directive is
  ; *NOT* affected by whether Safe Mode is turned On or Off.

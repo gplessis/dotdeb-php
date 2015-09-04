@@ -1,7 +1,7 @@
-Index: dotdeb-php5/ext/standard/info.c
+Index: dotdeb-php/ext/standard/info.c
 ===================================================================
---- dotdeb-php5.orig/ext/standard/info.c
-+++ dotdeb-php5/ext/standard/info.c
+--- dotdeb-php.orig/ext/standard/info.c
++++ dotdeb-php/ext/standard/info.c
 @@ -844,6 +844,16 @@ PHPAPI void php_print_info(int flag TSRM
  			zend_html_puts(zend_version, strlen(zend_version) TSRMLS_CC);
  		}
