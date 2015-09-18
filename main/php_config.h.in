@@ -834,6 +834,9 @@
 /* */
 #undef HAVE_HTONL
 
+/* Define to enable copying PHP CODE pages into HUGE PAGES (experimental) */
+#undef HAVE_HUGE_CODE_PAGES
+
 /* whether HUGE_VAL == INF */
 #undef HAVE_HUGE_VAL_INF
 
