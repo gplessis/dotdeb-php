@@ -168,6 +168,7 @@ COMMON_CONFIG=  --build=$(DEB_BUILD_GNU_TYPE) \
 		--enable-filter \
 		--enable-ftp \
 		--enable-hash \
+		--with-iconv \
 		--enable-json \
 		--enable-pdo \
 		--enable-mbregex \

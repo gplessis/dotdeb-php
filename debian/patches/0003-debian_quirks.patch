@@ -43,7 +43,7 @@ Index: dotdeb-php/configure.in
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
 -INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR
-+INCLUDE_PATH=.:$EXPANDED_PEAR_INSTALLDIR:/usr/share/pear
++INCLUDE_PATH=.:/usr/share/php:$EXPANDED_PEAR_INSTALLDIR
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
