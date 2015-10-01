@@ -110,7 +110,7 @@ do_tmpfiles() {
     TMPFILES=/usr/lib/tmpfiles.d/php@PHP_VERSION@-fpm.conf
 
     if [ -r "$TMPFILES" ]; then
-	while read type path mode user group; do
+	while read type path mode user group age argument; do
 	    if [ "$type" = "d" ]; then
 		mkdir $V -p "$path"
 		chmod $V "$mode" "$path"

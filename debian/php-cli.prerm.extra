@@ -1,3 +1,5 @@
 if [ "$1" = "remove" -o "$1" = "deconfigure" ]; then
-    update-alternatives --remove php /usr/bin/php@PHP_VERSION@
+    for binary in php phar phar phar.phar; do
+        update-alternatives --remove ${binary} /usr/bin/${binary}@PHP_VERSION@
+    done
 fi

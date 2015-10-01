@@ -1,8 +1,8 @@
 if [ "$1" = "configure" ]; then
     update-alternatives \
-	--install /usr/bin/php-cgi php-cgi /usr/bin/php@PHP_VERSION@-cgi @PHP_MAJOR@@PHP_MINOR@ \
+	--install /usr/bin/php-cgi php-cgi /usr/bin/php-cgi@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
 	--slave /usr/share/man/man1/php-cgi.1.gz php-cgi.1.gz \
-	/usr/share/man/man1/php@PHP_VERSION@-cgi.1.gz
+	/usr/share/man/man1/php-cgi@PHP_VERSION@.1.gz
 
     update-alternatives \
 	--install /usr/lib/cgi-bin/php php-cgi-bin /usr/lib/cgi-bin/php@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@
