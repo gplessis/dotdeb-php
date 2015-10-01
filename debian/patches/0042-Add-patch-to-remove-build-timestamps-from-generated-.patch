@@ -85,7 +85,7 @@ Index: dotdeb-php/sapi/fpm/fpm/fpm_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/fpm/fpm/fpm_main.c
 +++ dotdeb-php/sapi/fpm/fpm/fpm_main.c
-@@ -1734,9 +1734,9 @@ int main(int argc, char *argv[])
+@@ -1733,9 +1733,9 @@ int main(int argc, char *argv[])
  				SG(request_info).no_headers = 1;
  
  #if ZEND_DEBUG
@@ -101,7 +101,7 @@ Index: dotdeb-php/sapi/litespeed/lsapi_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/litespeed/lsapi_main.c
 +++ dotdeb-php/sapi/litespeed/lsapi_main.c
-@@ -807,9 +807,9 @@ static int cli_main( int argc, char * ar
+@@ -808,9 +808,9 @@ static int cli_main( int argc, char * ar
              case 'v':
                  if (php_request_startup() != FAILURE) {
  #if ZEND_DEBUG
@@ -117,7 +117,7 @@ Index: dotdeb-php/sapi/phpdbg/phpdbg.c
 ===================================================================
 --- dotdeb-php.orig/sapi/phpdbg/phpdbg.c
 +++ dotdeb-php/sapi/phpdbg/phpdbg.c
-@@ -1505,10 +1505,8 @@ phpdbg_main:
+@@ -1515,10 +1515,8 @@ phpdbg_main:
  				sapi_startup(phpdbg);
  				phpdbg->startup(phpdbg);
  				printf(
