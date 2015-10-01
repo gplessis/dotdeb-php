@@ -1781,7 +1781,7 @@ Extensions:
 
   --disable-libxml        Disable LIBXML support
   --with-libxml-dir=DIR   LIBXML: libxml2 install prefix
-  --with-openssl=DIR      Include OpenSSL support (requires OpenSSL >= 0.9.6)
+  --with-openssl=DIR      Include OpenSSL support (requires OpenSSL >= 0.9.8)
   --with-kerberos=DIR     OPENSSL: Include Kerberos support
   --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value
   --with-pcre-regex=DIR   Include Perl Compatible Regular Expressions support.
@@ -3643,7 +3643,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
 PHP_RELEASE_VERSION=0
-PHP_EXTRA_VERSION="RC3"
+PHP_EXTRA_VERSION="RC4"
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
 
@@ -16592,6 +16592,14 @@ cat > $ext_builddir/lib/timelib_config.h <<EOF
 #endif
 #include <php_stdint.h>
 #define TIMELIB_OMIT_STDINT 1
+
+#include "zend.h"
+
+#define timelib_malloc  emalloc
+#define timelib_realloc erealloc
+#define timelib_calloc  ecalloc
+#define timelib_strdup  estrdup
+#define timelib_free    efree
 EOF
 
 config_m4_src=ext/libxml/config0.m4
@@ -17985,90 +17993,6 @@ fi
 
   fi
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for DSA_get_default_method in -lssl" >&5
-$as_echo_n "checking for DSA_get_default_method in -lssl... " >&6; }
-if ${ac_cv_lib_ssl_DSA_get_default_method+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lssl  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char DSA_get_default_method ();
-int
-main ()
-{
-return DSA_get_default_method ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_ssl_DSA_get_default_method=yes
-else
-  ac_cv_lib_ssl_DSA_get_default_method=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_DSA_get_default_method" >&5
-$as_echo "$ac_cv_lib_ssl_DSA_get_default_method" >&6; }
-if test "x$ac_cv_lib_ssl_DSA_get_default_method" = xyes; then :
-
-$as_echo "#define HAVE_DSA_DEFAULT_METHOD 1" >>confdefs.h
-
-fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X509_free in -lcrypto" >&5
-$as_echo_n "checking for X509_free in -lcrypto... " >&6; }
-if ${ac_cv_lib_crypto_X509_free+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lcrypto  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char X509_free ();
-int
-main ()
-{
-return X509_free ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_crypto_X509_free=yes
-else
-  ac_cv_lib_crypto_X509_free=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_X509_free" >&5
-$as_echo "$ac_cv_lib_crypto_X509_free" >&6; }
-if test "x$ac_cv_lib_crypto_X509_free" = xyes; then :
-
-$as_echo "#define HAVE_DSA_DEFAULT_METHOD 1" >>confdefs.h
-
-fi
-
   for ac_func in RAND_egd
 do :
   ac_fn_c_check_func "$LINENO" "RAND_egd" "ac_cv_func_RAND_egd"
@@ -18140,13 +18064,13 @@ fi
   fi
 
     if test "$PHP_OPENSSL_DIR" = "yes" && test -x "$PKG_CONFIG" && $PKG_CONFIG --exists openssl; then
-    if $PKG_CONFIG --atleast-version=0.9.6 openssl; then
+    if $PKG_CONFIG --atleast-version=0.9.8 openssl; then
       found_openssl=yes
       OPENSSL_LIBS=`$PKG_CONFIG --libs openssl`
       OPENSSL_INCS=`$PKG_CONFIG --cflags-only-I openssl`
       OPENSSL_INCDIR=`$PKG_CONFIG --variable=includedir openssl`
     else
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
     fi
 
     if test -n "$OPENSSL_LIBS"; then
@@ -18316,7 +18240,7 @@ $as_echo_n "checking for OpenSSL version... " >&6; }
 /* end confdefs.h.  */
 
 #include <openssl/opensslv.h>
-#if OPENSSL_VERSION_NUMBER >= 0x0090600fL
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
   yes
 #endif
 
@@ -18324,12 +18248,12 @@ _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then :
 
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.6" >&5
-$as_echo ">= 0.9.6" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.8" >&5
+$as_echo ">= 0.9.8" >&6; }
 
 else
 
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
 
 fi
 rm -f conftest*
@@ -31455,13 +31379,13 @@ fi
   fi
 
     if test "$PHP_OPENSSL_DIR" = "yes" && test -x "$PKG_CONFIG" && $PKG_CONFIG --exists openssl; then
-    if $PKG_CONFIG --atleast-version=0.9.6 openssl; then
+    if $PKG_CONFIG --atleast-version=0.9.8 openssl; then
       found_openssl=yes
       OPENSSL_LIBS=`$PKG_CONFIG --libs openssl`
       OPENSSL_INCS=`$PKG_CONFIG --cflags-only-I openssl`
       OPENSSL_INCDIR=`$PKG_CONFIG --variable=includedir openssl`
     else
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
     fi
 
     if test -n "$OPENSSL_LIBS"; then
@@ -31631,7 +31555,7 @@ $as_echo_n "checking for OpenSSL version... " >&6; }
 /* end confdefs.h.  */
 
 #include <openssl/opensslv.h>
-#if OPENSSL_VERSION_NUMBER >= 0x0090600fL
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
   yes
 #endif
 
@@ -31639,12 +31563,12 @@ _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then :
 
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.6" >&5
-$as_echo ">= 0.9.6" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.8" >&5
+$as_echo ">= 0.9.8" >&6; }
 
 else
 
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
 
 fi
 rm -f conftest*
@@ -42338,13 +42262,13 @@ fi
   fi
 
     if test "$PHP_OPENSSL_DIR" = "yes" && test -x "$PKG_CONFIG" && $PKG_CONFIG --exists openssl; then
-    if $PKG_CONFIG --atleast-version=0.9.6 openssl; then
+    if $PKG_CONFIG --atleast-version=0.9.8 openssl; then
       found_openssl=yes
       OPENSSL_LIBS=`$PKG_CONFIG --libs openssl`
       OPENSSL_INCS=`$PKG_CONFIG --cflags-only-I openssl`
       OPENSSL_INCDIR=`$PKG_CONFIG --variable=includedir openssl`
     else
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
     fi
 
     if test -n "$OPENSSL_LIBS"; then
@@ -42514,7 +42438,7 @@ $as_echo_n "checking for OpenSSL version... " >&6; }
 /* end confdefs.h.  */
 
 #include <openssl/opensslv.h>
-#if OPENSSL_VERSION_NUMBER >= 0x0090600fL
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
   yes
 #endif
 
@@ -42522,12 +42446,12 @@ _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then :
 
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.6" >&5
-$as_echo ">= 0.9.6" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.8" >&5
+$as_echo ">= 0.9.8" >&6; }
 
 else
 
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
 
 fi
 rm -f conftest*
@@ -82019,6 +81943,18 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+ac_fn_c_check_decl "$LINENO" "getrandom" "ac_cv_have_decl_getrandom" "$ac_includes_default"
+if test "x$ac_cv_have_decl_getrandom" = xyes; then :
+  ac_have_decl=1
+else
+  ac_have_decl=0
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_GETRANDOM $ac_have_decl
+_ACEOF
+
+
 
   ext_builddir=$config_m4_dir
   ext_srcdir=$abs_srcdir/$config_m4_dir
@@ -92510,13 +92446,13 @@ fi
   fi
 
     if test "$PHP_OPENSSL_DIR" = "yes" && test -x "$PKG_CONFIG" && $PKG_CONFIG --exists openssl; then
-    if $PKG_CONFIG --atleast-version=0.9.6 openssl; then
+    if $PKG_CONFIG --atleast-version=0.9.8 openssl; then
       found_openssl=yes
       OPENSSL_LIBS=`$PKG_CONFIG --libs openssl`
       OPENSSL_INCS=`$PKG_CONFIG --cflags-only-I openssl`
       OPENSSL_INCDIR=`$PKG_CONFIG --variable=includedir openssl`
     else
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
     fi
 
     if test -n "$OPENSSL_LIBS"; then
@@ -92686,7 +92622,7 @@ $as_echo_n "checking for OpenSSL version... " >&6; }
 /* end confdefs.h.  */
 
 #include <openssl/opensslv.h>
-#if OPENSSL_VERSION_NUMBER >= 0x0090600fL
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
   yes
 #endif
 
@@ -92694,12 +92630,12 @@ _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then :
 
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.6" >&5
-$as_echo ">= 0.9.6" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: >= 0.9.8" >&5
+$as_echo ">= 0.9.8" >&6; }
 
 else
 
-      as_fn_error $? "OpenSSL version 0.9.6 or greater required." "$LINENO" 5
+      as_fn_error $? "OpenSSL version 0.9.8 or greater required." "$LINENO" 5
 
 fi
 rm -f conftest*
@@ -94735,7 +94671,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 94738 "configure"
+#line 94674 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -96613,7 +96549,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 96616 "configure"' > conftest.$ac_ext
+  echo '#line 96552 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -98011,7 +97947,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 98014 "configure"
+#line 97950 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98169,11 +98105,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98172: $lt_compile\"" >&5)
+   (eval echo "\"configure:98108: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98176: \$? = $ac_status" >&5
+   echo "configure:98112: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98467,11 +98403,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98470: $lt_compile\"" >&5)
+   (eval echo "\"configure:98406: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98474: \$? = $ac_status" >&5
+   echo "configure:98410: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98571,11 +98507,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98574: $lt_compile\"" >&5)
+   (eval echo "\"configure:98510: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:98578: \$? = $ac_status" >&5
+   echo "configure:98514: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -99035,7 +98971,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99038 "configure"
+#line 98974 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -99077,7 +99013,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99080 "configure"
+#line 99016 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -100594,7 +100530,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100597 "configure"
+#line 100533 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -100694,7 +100630,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100697 "configure"
+#line 100633 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -101759,7 +101695,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101762 "configure"
+#line 101698 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -101802,7 +101738,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101805 "configure"
+#line 101741 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -103054,11 +102990,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103057: $lt_compile\"" >&5)
+   (eval echo "\"configure:102993: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:103061: \$? = $ac_status" >&5
+   echo "configure:102997: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -103158,11 +103094,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103161: $lt_compile\"" >&5)
+   (eval echo "\"configure:103097: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:103165: \$? = $ac_status" >&5
+   echo "configure:103101: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

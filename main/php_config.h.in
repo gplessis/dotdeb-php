@@ -554,6 +554,10 @@
    you don't. */
 #undef HAVE_DECL_ARC4RANDOM_BUF
 
+/* Define to 1 if you have the declaration of `getrandom', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETRANDOM
+
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME
