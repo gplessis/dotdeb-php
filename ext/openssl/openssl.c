@@ -348,11 +348,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_openssl_verify, 0, 0, 3)
     ZEND_ARG_INFO(0, method)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO(arginfo_openssl_seal, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_openssl_seal, 0, 0, 4)
     ZEND_ARG_INFO(0, data)
     ZEND_ARG_INFO(1, sealdata)
     ZEND_ARG_INFO(1, ekeys) /* arary */
     ZEND_ARG_INFO(0, pubkeys) /* array */
+	ZEND_ARG_INFO(0, method)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_openssl_open, 0)
@@ -1264,6 +1265,7 @@ PHP_MINFO_FUNCTION(openssl)
 	php_info_print_table_row(2, "OpenSSL support", "enabled");
 	php_info_print_table_row(2, "OpenSSL Library Version", SSLeay_version(SSLEAY_VERSION));
 	php_info_print_table_row(2, "OpenSSL Header Version", OPENSSL_VERSION_TEXT);
+	php_info_print_table_row(2, "Openssl default config", default_ssl_conf_filename);
 	php_info_print_table_end();
 	DISPLAY_INI_ENTRIES();
 }
@@ -3597,13 +3599,10 @@ PHP_FUNCTION(openssl_pkey_new)
 					OPENSSL_PKEY_SET_BN(Z_ARRVAL_PP(data), dh, g);
 					OPENSSL_PKEY_SET_BN(Z_ARRVAL_PP(data), dh, priv_key);
 					OPENSSL_PKEY_SET_BN(Z_ARRVAL_PP(data), dh, pub_key);
-					if (dh->p && dh->g) {
-						if (!dh->pub_key) {
-							DH_generate_key(dh);
-						}
-						if (EVP_PKEY_assign_DH(pkey, dh)) {
-							RETURN_RESOURCE(zend_list_insert(pkey, le_key TSRMLS_CC));
-						}
+					if (dh->p && dh->g &&
+							(dh->pub_key || DH_generate_key(dh)) &&
+							EVP_PKEY_assign_DH(pkey, dh)) {
+						RETURN_RESOURCE(zend_list_insert(pkey, le_key TSRMLS_CC));
 					}
 					DH_free(dh);
 				}
@@ -4871,6 +4870,10 @@ PHP_FUNCTION(openssl_seal)
 		cipher = EVP_get_cipherbyname(method);
 		if (!cipher) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unknown signature algorithm.");
+			RETURN_FALSE;
+		}
+		if (EVP_CIPHER_iv_length(cipher) > 0) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ciphers with modes requiring IV are not supported");
 			RETURN_FALSE;
 		}
 	} else {
