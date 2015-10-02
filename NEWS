@@ -1,5 +1,50 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+01 Oct 2015, PHP 5.6.14
+
+- Core:
+  . Fixed bug #70370 (Bundled libtool.m4 doesn't handle FreeBSD 10 when
+    building extensions). (Adam)
+
+- CLI server:
+  . Fixed bug #68291 (404 on urls with '+'). (cmb)
+
+- DOM:
+  . Fixed bug #70001 (Assigning to DOMNode::textContent does additional entity
+    encoding). (cmb)
+
+- Mysqlnd:
+  . Fixed bug #70456 (mysqlnd doesn't activate TCP keep-alive when connecting to
+    a server). (Sergei Turchanov)
+
+- OpenSSL:
+  . Fixed bug #55259 (openssl extension does not get the DH parameters from 
+    DH key resource). (Jakub Zelenka)
+  . Fixed bug #70395 (Missing ARG_INFO for openssl_seal()). (cmb)
+  . Fixed bug #60632 (openssl_seal fails with AES). (Jakub Zelenka)
+  . Fixed bug #68312 (Lookup for openssl.cnf causes a message box). (Anatol)
+
+- PDO:
+  . Fixed bug #70389 (PDO constructor changes unrelated variables). (Laruence)
+
+- Phar:
+  . Fixed bug #69720 (Null pointer dereference in phar_get_fp_offset()). (Stas)
+  . FIxed bug #70433 (Uninitialized pointer in phar_make_dirstream when zip
+    entry filename is "/"). (Stas)
+
+- Phpdbg:
+  . Fix phpdbg_break_next() sometimes not breaking. (Bob)
+
+- Standard:
+  . Fixed bug #67131 (setcookie() conditional for empty values not met). (cmb)
+
+- Streams:
+  . Fixed bug #70361 (HTTP stream wrapper doesn't close keep-alive connections).
+    (Niklas Keller)
+
+- Zip:
+  . Fixed bug #70322 (ZipArchive::close() doesn't indicate errors). (cmb)
+
 03 Sep 2015, PHP 5.6.13
 
 - Core:
@@ -25,6 +70,10 @@ PHP                                                                        NEWS
 - EXIF:
   . Fixed bug #70385 (Buffer over-read in exif_read_data with TIFF IFD tag byte
     value of 32 bytes). (Stas)
+
+- GMP:
+  . Fixed bug #70284 (Use after free vulnerability in unserialize() with GMP).
+    (stas)
 
 - hash:
   . Fixed bug #70312 (HAVAL gives wrong hashes in specific cases). (letsgolee
