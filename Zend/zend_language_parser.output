@@ -378,8 +378,8 @@ Grammar
   276 property_list: property_list ',' property
   277              | property
 
-  278 property: "variable (T_VARIABLE)"
-  279         | "variable (T_VARIABLE)" '=' expr
+  278 property: "variable (T_VARIABLE)" backup_doc_comment
+  279         | "variable (T_VARIABLE)" '=' expr backup_doc_comment
 
   280 class_const_list: class_const_list ',' class_const_decl
   281                 | class_const_decl
@@ -1040,7 +1040,8 @@ expr_without_variable (262)
 function (263)
     on left: 370, on right: 162 244 368 369
 backup_doc_comment (264)
-    on left: 371, on right: 162 168 170 176 178 244 292 368 369
+    on left: 371, on right: 162 168 170 176 178 244 278 279 292 368
+    369
 returns_ref (265)
     on left: 372 373, on right: 162 244 368 369
 lexical_vars (266)
@@ -23351,12 +23352,14 @@ State 809
 
 State 810
 
-  278 property: "variable (T_VARIABLE)" .
-  279         | "variable (T_VARIABLE)" . '=' expr
+  278 property: "variable (T_VARIABLE)" . backup_doc_comment
+  279         | "variable (T_VARIABLE)" . '=' expr backup_doc_comment
 
     '='  shift, and go to state 845
 
-    $default  reduce using rule 278 (property)
+    $default  reduce using rule 371 (backup_doc_comment)
+
+    backup_doc_comment  go to state 846
 
 
 State 811
@@ -23364,8 +23367,8 @@ State 811
   241 class_statement: variable_modifiers property_list . ';'
   276 property_list: property_list . ',' property
 
-    ','  shift, and go to state 846
-    ';'  shift, and go to state 847
+    ','  shift, and go to state 847
+    ';'  shift, and go to state 848
 
 
 State 812
@@ -23383,7 +23386,7 @@ State 813
 
     $default  reduce using rule 372 (returns_ref)
 
-    returns_ref  go to state 848
+    returns_ref  go to state 849
 
 
 State 814
@@ -23406,7 +23409,7 @@ State 816
 
     $default  reduce using rule 240 (class_statement_list)
 
-    class_statement_list  go to state 849
+    class_statement_list  go to state 850
 
 
 State 817
@@ -23420,14 +23423,14 @@ State 818
 
   162 function_declaration_statement: function returns_ref "identifier (T_STRING)" '(' parameter_list ')' return_type backup_doc_comment . '{' inner_statement_list '}'
 
-    '{'  shift, and go to state 850
+    '{'  shift, and go to state 851
 
 
 State 819
 
   379 lexical_var: '&' . "variable (T_VARIABLE)"
 
-    "variable (T_VARIABLE)"  shift, and go to state 851
+    "variable (T_VARIABLE)"  shift, and go to state 852
 
 
 State 820
@@ -23442,8 +23445,8 @@ State 821
   375 lexical_vars: "use (T_USE)" '(' lexical_var_list . ')'
   376 lexical_var_list: lexical_var_list . ',' lexical_var
 
-    ','  shift, and go to state 852
-    ')'  shift, and go to state 853
+    ','  shift, and go to state 853
+    ')'  shift, and go to state 854
 
 
 State 822
@@ -23457,7 +23460,7 @@ State 823
 
   368 expr_without_variable: function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment . '{' inner_statement_list '}'
 
-    '{'  shift, and go to state 854
+    '{'  shift, and go to state 855
 
 
 State 824
@@ -23527,7 +23530,7 @@ State 824
     dereferencable_scalar       go to state 102
     scalar                      go to state 103
     constant                    go to state 104
-    expr                        go to state 855
+    expr                        go to state 856
     variable_class_name         go to state 106
     dereferencable              go to state 107
     callable_expr               go to state 108
@@ -23552,7 +23555,7 @@ State 825
     "const (T_CONST)"          shift, and go to state 767
     "use (T_USE)"              shift, and go to state 768
     "var (T_VAR)"              shift, and go to state 769
-    '}'                        shift, and go to state 856
+    '}'                        shift, and go to state 857
 
     $default  reduce using rule 266 (method_modifiers)
 
@@ -23567,7 +23570,7 @@ State 826
 
   369 expr_without_variable: "static (T_STATIC)" function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment . '{' inner_statement_list '}'
 
-    '{'  shift, and go to state 857
+    '{'  shift, and go to state 858
 
 
 State 827
@@ -23576,7 +23579,7 @@ State 827
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 858
+    inner_statement_list  go to state 859
 
 
 State 828
@@ -23604,7 +23607,7 @@ State 831
 
   191 foreach_statement: ':' inner_statement_list "endforeach (T_ENDFOREACH)" . ';'
 
-    ';'  shift, and go to state 859
+    ';'  shift, and go to state 860
 
 
 State 832
@@ -23627,7 +23630,7 @@ State 834
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 860
+    inner_statement_list  go to state 861
 
 
 State 835
@@ -23752,7 +23755,7 @@ State 836
 
   156 catch_list: catch_list "catch (T_CATCH)" '(' name "variable (T_VARIABLE)" . ')' '{' inner_statement_list '}'
 
-    ')'  shift, and go to state 861
+    ')'  shift, and go to state 862
 
 
 State 837
@@ -23836,7 +23839,7 @@ State 839
     dereferencable_scalar       go to state 102
     scalar                      go to state 103
     constant                    go to state 104
-    expr                        go to state 862
+    expr                        go to state 863
     variable_class_name         go to state 106
     dereferencable              go to state 107
     callable_expr               go to state 108
@@ -23930,7 +23933,7 @@ State 840
     reserved_non_modifiers  go to state 476
     semi_reserved           go to state 477
     identifier              go to state 806
-    class_const_decl        go to state 863
+    class_const_decl        go to state 864
 
 
 State 841
@@ -23974,7 +23977,7 @@ State 843
     "private (T_PRIVATE)"                shift, and go to state 419
     "protected (T_PROTECTED)"            shift, and go to state 420
     "public (T_PUBLIC)"                  shift, and go to state 421
-    "identifier (T_STRING)"              shift, and go to state 864
+    "identifier (T_STRING)"              shift, and go to state 865
     "exit (T_EXIT)"                      shift, and go to state 423
     "if (T_IF)"                          shift, and go to state 424
     "echo (T_ECHO)"                      shift, and go to state 425
@@ -24025,22 +24028,22 @@ State 843
     "__TRAIT__ (T_TRAIT_C)"              shift, and go to state 470
     "__METHOD__ (T_METHOD_C)"            shift, and go to state 471
     "__FUNCTION__ (T_FUNC_C)"            shift, and go to state 472
-    "namespace (T_NAMESPACE)"            shift, and go to state 865
+    "namespace (T_NAMESPACE)"            shift, and go to state 866
     "__NAMESPACE__ (T_NS_C)"             shift, and go to state 474
     "\\ (T_NS_SEPARATOR)"                shift, and go to state 76
-    '}'                                  shift, and go to state 866
+    '}'                                  shift, and go to state 867
 
     reserved_non_modifiers           go to state 476
     semi_reserved                    go to state 477
-    identifier                       go to state 867
+    identifier                       go to state 868
     namespace_name                   go to state 83
-    name                             go to state 868
-    trait_adaptation_list            go to state 869
-    trait_adaptation                 go to state 870
-    trait_precedence                 go to state 871
-    trait_alias                      go to state 872
-    trait_method_reference           go to state 873
-    absolute_trait_method_reference  go to state 874
+    name                             go to state 869
+    trait_adaptation_list            go to state 870
+    trait_adaptation                 go to state 871
+    trait_precedence                 go to state 872
+    trait_alias                      go to state 873
+    trait_method_reference           go to state 874
+    absolute_trait_method_reference  go to state 875
 
 
 State 844
@@ -24052,7 +24055,7 @@ State 844
 
 State 845
 
-  279 property: "variable (T_VARIABLE)" '=' . expr
+  279 property: "variable (T_VARIABLE)" '=' . expr backup_doc_comment
 
     "include (T_INCLUDE)"                         shift, and go to state 4
     "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
@@ -24117,7 +24120,7 @@ State 845
     dereferencable_scalar       go to state 102
     scalar                      go to state 103
     constant                    go to state 104
-    expr                        go to state 875
+    expr                        go to state 876
     variable_class_name         go to state 106
     dereferencable              go to state 107
     callable_expr               go to state 108
@@ -24130,21 +24133,28 @@ State 845
 
 State 846
 
+  278 property: "variable (T_VARIABLE)" backup_doc_comment .
+
+    $default  reduce using rule 278 (property)
+
+
+State 847
+
   276 property_list: property_list ',' . property
 
     "variable (T_VARIABLE)"  shift, and go to state 810
 
-    property  go to state 876
+    property  go to state 877
 
 
-State 847
+State 848
 
   241 class_statement: variable_modifiers property_list ';' .
 
     $default  reduce using rule 241 (class_statement)
 
 
-State 848
+State 849
 
   244 class_statement: method_modifiers function returns_ref . identifier '(' parameter_list ')' return_type backup_doc_comment method_body
 
@@ -24226,10 +24236,10 @@ State 848
 
     reserved_non_modifiers  go to state 476
     semi_reserved           go to state 477
-    identifier              go to state 877
+    identifier              go to state 878
 
 
-State 849
+State 850
 
   168 class_declaration_statement: class_modifiers "class (T_CLASS)" @4 "identifier (T_STRING)" extends_from implements_list backup_doc_comment '{' class_statement_list . '}'
   239 class_statement_list: class_statement_list . class_statement
@@ -24243,7 +24253,7 @@ State 849
     "const (T_CONST)"          shift, and go to state 767
     "use (T_USE)"              shift, and go to state 768
     "var (T_VAR)"              shift, and go to state 769
-    '}'                        shift, and go to state 878
+    '}'                        shift, and go to state 879
 
     $default  reduce using rule 266 (method_modifiers)
 
@@ -24254,49 +24264,49 @@ State 849
     member_modifier             go to state 775
 
 
-State 850
+State 851
 
   162 function_declaration_statement: function returns_ref "identifier (T_STRING)" '(' parameter_list ')' return_type backup_doc_comment '{' . inner_statement_list '}'
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 879
+    inner_statement_list  go to state 880
 
 
-State 851
+State 852
 
   379 lexical_var: '&' "variable (T_VARIABLE)" .
 
     $default  reduce using rule 379 (lexical_var)
 
 
-State 852
+State 853
 
   376 lexical_var_list: lexical_var_list ',' . lexical_var
 
     '&'                      shift, and go to state 819
     "variable (T_VARIABLE)"  shift, and go to state 820
 
-    lexical_var  go to state 880
+    lexical_var  go to state 881
 
 
-State 853
+State 854
 
   375 lexical_vars: "use (T_USE)" '(' lexical_var_list ')' .
 
     $default  reduce using rule 375 (lexical_vars)
 
 
-State 854
+State 855
 
   368 expr_without_variable: function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' . inner_statement_list '}'
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 881
+    inner_statement_list  go to state 882
 
 
-State 855
+State 856
 
   218 parameter: optional_type is_reference is_variadic "variable (T_VARIABLE)" '=' expr .
   315 expr_without_variable: expr . "|| (T_BOOLEAN_OR)" expr
@@ -24363,23 +24373,23 @@ State 855
     $default  reduce using rule 218 (parameter)
 
 
-State 856
+State 857
 
   292 anonymous_class: "class (T_CLASS)" @8 ctor_arguments extends_from implements_list backup_doc_comment '{' class_statement_list '}' .
 
     $default  reduce using rule 292 (anonymous_class)
 
 
-State 857
+State 858
 
   369 expr_without_variable: "static (T_STATIC)" function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' . inner_statement_list '}'
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 882
+    inner_statement_list  go to state 883
 
 
-State 858
+State 859
 
   122 inner_statement_list: inner_statement_list . inner_statement
   189 for_statement: ':' inner_statement_list . "endfor (T_ENDFOR)" ';'
@@ -24424,7 +24434,7 @@ State 858
     "do (T_DO)"                                   shift, and go to state 41
     "while (T_WHILE)"                             shift, and go to state 42
     "for (T_FOR)"                                 shift, and go to state 43
-    "endfor (T_ENDFOR)"                           shift, and go to state 883
+    "endfor (T_ENDFOR)"                           shift, and go to state 884
     "foreach (T_FOREACH)"                         shift, and go to state 44
     "declare (T_DECLARE)"                         shift, and go to state 45
     "switch (T_SWITCH)"                           shift, and go to state 46
@@ -24496,14 +24506,14 @@ State 858
     internal_functions_in_yacc       go to state 113
 
 
-State 859
+State 860
 
   191 foreach_statement: ':' inner_statement_list "endforeach (T_ENDFOREACH)" ';' .
 
     $default  reduce using rule 191 (foreach_statement)
 
 
-State 860
+State 861
 
   122 inner_statement_list: inner_statement_list . inner_statement
   199 case_list: case_list "case (T_CASE)" expr case_separator inner_statement_list .
@@ -24621,14 +24631,14 @@ State 860
     internal_functions_in_yacc       go to state 113
 
 
-State 861
+State 862
 
   156 catch_list: catch_list "catch (T_CATCH)" '(' name "variable (T_VARIABLE)" ')' . '{' inner_statement_list '}'
 
-    '{'  shift, and go to state 884
+    '{'  shift, and go to state 885
 
 
-State 862
+State 863
 
   282 class_const_decl: identifier '=' expr .
   315 expr_without_variable: expr . "|| (T_BOOLEAN_OR)" expr
@@ -24695,14 +24705,14 @@ State 862
     $default  reduce using rule 282 (class_const_decl)
 
 
-State 863
+State 864
 
   280 class_const_list: class_const_list ',' class_const_decl .
 
     $default  reduce using rule 280 (class_const_list)
 
 
-State 864
+State 865
 
    77 identifier: "identifier (T_STRING)" .
    81 namespace_name: "identifier (T_STRING)" .
@@ -24711,7 +24721,7 @@ State 864
     $default     reduce using rule 81 (namespace_name)
 
 
-State 865
+State 866
 
    57 reserved_non_modifiers: "namespace (T_NAMESPACE)" .
    84 name: "namespace (T_NAMESPACE)" . "\\ (T_NS_SEPARATOR)" namespace_name
@@ -24721,28 +24731,28 @@ State 865
     $default  reduce using rule 57 (reserved_non_modifiers)
 
 
-State 866
+State 867
 
   248 trait_adaptations: '{' '}' .
 
     $default  reduce using rule 248 (trait_adaptations)
 
 
-State 867
+State 868
 
   259 trait_method_reference: identifier .
 
     $default  reduce using rule 259 (trait_method_reference)
 
 
-State 868
+State 869
 
   261 absolute_trait_method_reference: name . ":: (T_PAAMAYIM_NEKUDOTAYIM)" identifier
 
-    ":: (T_PAAMAYIM_NEKUDOTAYIM)"  shift, and go to state 885
+    ":: (T_PAAMAYIM_NEKUDOTAYIM)"  shift, and go to state 886
 
 
-State 869
+State 870
 
   249 trait_adaptations: '{' trait_adaptation_list . '}'
   251 trait_adaptation_list: trait_adaptation_list . trait_adaptation
@@ -24769,7 +24779,7 @@ State 869
     "private (T_PRIVATE)"                shift, and go to state 419
     "protected (T_PROTECTED)"            shift, and go to state 420
     "public (T_PUBLIC)"                  shift, and go to state 421
-    "identifier (T_STRING)"              shift, and go to state 864
+    "identifier (T_STRING)"              shift, and go to state 865
     "exit (T_EXIT)"                      shift, and go to state 423
     "if (T_IF)"                          shift, and go to state 424
     "echo (T_ECHO)"                      shift, and go to state 425
@@ -24820,67 +24830,67 @@ State 869
     "__TRAIT__ (T_TRAIT_C)"              shift, and go to state 470
     "__METHOD__ (T_METHOD_C)"            shift, and go to state 471
     "__FUNCTION__ (T_FUNC_C)"            shift, and go to state 472
-    "namespace (T_NAMESPACE)"            shift, and go to state 865
+    "namespace (T_NAMESPACE)"            shift, and go to state 866
     "__NAMESPACE__ (T_NS_C)"             shift, and go to state 474
     "\\ (T_NS_SEPARATOR)"                shift, and go to state 76
-    '}'                                  shift, and go to state 886
+    '}'                                  shift, and go to state 887
 
     reserved_non_modifiers           go to state 476
     semi_reserved                    go to state 477
-    identifier                       go to state 867
+    identifier                       go to state 868
     namespace_name                   go to state 83
-    name                             go to state 868
-    trait_adaptation                 go to state 887
-    trait_precedence                 go to state 871
-    trait_alias                      go to state 872
-    trait_method_reference           go to state 873
-    absolute_trait_method_reference  go to state 874
+    name                             go to state 869
+    trait_adaptation                 go to state 888
+    trait_precedence                 go to state 872
+    trait_alias                      go to state 873
+    trait_method_reference           go to state 874
+    absolute_trait_method_reference  go to state 875
 
 
-State 870
+State 871
 
   250 trait_adaptation_list: trait_adaptation .
 
     $default  reduce using rule 250 (trait_adaptation_list)
 
 
-State 871
-
-  252 trait_adaptation: trait_precedence . ';'
-
-    ';'  shift, and go to state 888
-
-
 State 872
 
-  253 trait_adaptation: trait_alias . ';'
+  252 trait_adaptation: trait_precedence . ';'
 
     ';'  shift, and go to state 889
 
 
 State 873
 
+  253 trait_adaptation: trait_alias . ';'
+
+    ';'  shift, and go to state 890
+
+
+State 874
+
   255 trait_alias: trait_method_reference . "as (T_AS)" "identifier (T_STRING)"
   256            | trait_method_reference . "as (T_AS)" reserved_non_modifiers
   257            | trait_method_reference . "as (T_AS)" member_modifier identifier
   258            | trait_method_reference . "as (T_AS)" member_modifier
 
-    "as (T_AS)"  shift, and go to state 890
-
-
-State 874
-
-  254 trait_precedence: absolute_trait_method_reference . "insteadof (T_INSTEADOF)" name_list
-  260 trait_method_reference: absolute_trait_method_reference .
-
-    "insteadof (T_INSTEADOF)"  shift, and go to state 891
-
-    $default  reduce using rule 260 (trait_method_reference)
+    "as (T_AS)"  shift, and go to state 891
 
 
 State 875
 
-  279 property: "variable (T_VARIABLE)" '=' expr .
+  254 trait_precedence: absolute_trait_method_reference . "insteadof (T_INSTEADOF)" name_list
+  260 trait_method_reference: absolute_trait_method_reference .
+
+    "insteadof (T_INSTEADOF)"  shift, and go to state 892
+
+    $default  reduce using rule 260 (trait_method_reference)
+
+
+State 876
+
+  279 property: "variable (T_VARIABLE)" '=' expr . backup_doc_comment
   315 expr_without_variable: expr . "|| (T_BOOLEAN_OR)" expr
   316                      | expr . "&& (T_BOOLEAN_AND)" expr
   317                      | expr . "or (T_LOGICAL_OR)" expr
@@ -24942,275 +24952,36 @@ State 875
     "instanceof (T_INSTANCEOF)"   shift, and go to state 266
     "** (T_POW)"                  shift, and go to state 267
 
-    $default  reduce using rule 279 (property)
+    $default  reduce using rule 371 (backup_doc_comment)
+
+    backup_doc_comment  go to state 893
 
 
-State 876
+State 877
 
   276 property_list: property_list ',' property .
 
     $default  reduce using rule 276 (property_list)
 
 
-State 877
+State 878
 
   244 class_statement: method_modifiers function returns_ref identifier . '(' parameter_list ')' return_type backup_doc_comment method_body
 
-    '('  shift, and go to state 892
+    '('  shift, and go to state 894
 
 
-State 878
+State 879
 
   168 class_declaration_statement: class_modifiers "class (T_CLASS)" @4 "identifier (T_STRING)" extends_from implements_list backup_doc_comment '{' class_statement_list '}' .
 
     $default  reduce using rule 168 (class_declaration_statement)
 
 
-State 879
+State 880
 
   122 inner_statement_list: inner_statement_list . inner_statement
   162 function_declaration_statement: function returns_ref "identifier (T_STRING)" '(' parameter_list ')' return_type backup_doc_comment '{' inner_statement_list . '}'
-
-    "include (T_INCLUDE)"                         shift, and go to state 4
-    "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
-    "eval (T_EVAL)"                               shift, and go to state 6
-    "require (T_REQUIRE)"                         shift, and go to state 7
-    "require_once (T_REQUIRE_ONCE)"               shift, and go to state 8
-    "print (T_PRINT)"                             shift, and go to state 9
-    "yield (T_YIELD)"                             shift, and go to state 10
-    "yield from (T_YIELD_FROM)"                   shift, and go to state 11
-    '+'                                           shift, and go to state 12
-    '-'                                           shift, and go to state 13
-    '!'                                           shift, and go to state 14
-    '~'                                           shift, and go to state 15
-    "++ (T_INC)"                                  shift, and go to state 16
-    "-- (T_DEC)"                                  shift, and go to state 17
-    "(int) (T_INT_CAST)"                          shift, and go to state 18
-    "(double) (T_DOUBLE_CAST)"                    shift, and go to state 19
-    "(string) (T_STRING_CAST)"                    shift, and go to state 20
-    "(array) (T_ARRAY_CAST)"                      shift, and go to state 21
-    "(object) (T_OBJECT_CAST)"                    shift, and go to state 22
-    "(bool) (T_BOOL_CAST)"                        shift, and go to state 23
-    "(unset) (T_UNSET_CAST)"                      shift, and go to state 24
-    '@'                                           shift, and go to state 25
-    '['                                           shift, and go to state 26
-    "new (T_NEW)"                                 shift, and go to state 27
-    "clone (T_CLONE)"                             shift, and go to state 28
-    "static (T_STATIC)"                           shift, and go to state 29
-    "abstract (T_ABSTRACT)"                       shift, and go to state 30
-    "final (T_FINAL)"                             shift, and go to state 31
-    "integer number (T_LNUMBER)"                  shift, and go to state 32
-    "floating-point number (T_DNUMBER)"           shift, and go to state 33
-    "identifier (T_STRING)"                       shift, and go to state 34
-    "variable (T_VARIABLE)"                       shift, and go to state 35
-    T_INLINE_HTML                                 shift, and go to state 36
-    "quoted-string (T_CONSTANT_ENCAPSED_STRING)"  shift, and go to state 37
-    "exit (T_EXIT)"                               shift, and go to state 38
-    "if (T_IF)"                                   shift, and go to state 39
-    "echo (T_ECHO)"                               shift, and go to state 40
-    "do (T_DO)"                                   shift, and go to state 41
-    "while (T_WHILE)"                             shift, and go to state 42
-    "for (T_FOR)"                                 shift, and go to state 43
-    "foreach (T_FOREACH)"                         shift, and go to state 44
-    "declare (T_DECLARE)"                         shift, and go to state 45
-    "switch (T_SWITCH)"                           shift, and go to state 46
-    "break (T_BREAK)"                             shift, and go to state 47
-    "continue (T_CONTINUE)"                       shift, and go to state 48
-    "goto (T_GOTO)"                               shift, and go to state 49
-    "function (T_FUNCTION)"                       shift, and go to state 50
-    "return (T_RETURN)"                           shift, and go to state 52
-    "try (T_TRY)"                                 shift, and go to state 53
-    "throw (T_THROW)"                             shift, and go to state 54
-    "global (T_GLOBAL)"                           shift, and go to state 56
-    "unset (T_UNSET)"                             shift, and go to state 57
-    "isset (T_ISSET)"                             shift, and go to state 58
-    "empty (T_EMPTY)"                             shift, and go to state 59
-    "__halt_compiler (T_HALT_COMPILER)"           shift, and go to state 375
-    "class (T_CLASS)"                             shift, and go to state 61
-    "trait (T_TRAIT)"                             shift, and go to state 62
-    "interface (T_INTERFACE)"                     shift, and go to state 63
-    "list (T_LIST)"                               shift, and go to state 64
-    "array (T_ARRAY)"                             shift, and go to state 65
-    "__LINE__ (T_LINE)"                           shift, and go to state 66
-    "__FILE__ (T_FILE)"                           shift, and go to state 67
-    "__DIR__ (T_DIR)"                             shift, and go to state 68
-    "__CLASS__ (T_CLASS_C)"                       shift, and go to state 69
-    "__TRAIT__ (T_TRAIT_C)"                       shift, and go to state 70
-    "__METHOD__ (T_METHOD_C)"                     shift, and go to state 71
-    "__FUNCTION__ (T_FUNC_C)"                     shift, and go to state 72
-    "heredoc start (T_START_HEREDOC)"             shift, and go to state 73
-    "namespace (T_NAMESPACE)"                     shift, and go to state 116
-    "__NAMESPACE__ (T_NS_C)"                      shift, and go to state 75
-    "\\ (T_NS_SEPARATOR)"                         shift, and go to state 76
-    '('                                           shift, and go to state 77
-    ';'                                           shift, and go to state 78
-    '{'                                           shift, and go to state 79
-    '}'                                           shift, and go to state 893
-    '`'                                           shift, and go to state 80
-    '"'                                           shift, and go to state 81
-    '$'                                           shift, and go to state 82
-
-    namespace_name                   go to state 83
-    name                             go to state 84
-    inner_statement                  go to state 377
-    statement                        go to state 378
-    function_declaration_statement   go to state 379
-    class_declaration_statement      go to state 380
-    class_modifiers                  go to state 89
-    class_modifier                   go to state 90
-    trait_declaration_statement      go to state 381
-    interface_declaration_statement  go to state 382
-    if_stmt_without_else             go to state 93
-    if_stmt                          go to state 94
-    alt_if_stmt_without_else         go to state 95
-    alt_if_stmt                      go to state 96
-    new_expr                         go to state 97
-    expr_without_variable            go to state 98
-    function                         go to state 99
-    function_call                    go to state 100
-    class_name                       go to state 101
-    dereferencable_scalar            go to state 102
-    scalar                           go to state 103
-    constant                         go to state 104
-    expr                             go to state 105
-    variable_class_name              go to state 106
-    dereferencable                   go to state 107
-    callable_expr                    go to state 108
-    callable_variable                go to state 109
-    variable                         go to state 110
-    simple_variable                  go to state 111
-    static_member                    go to state 112
-    internal_functions_in_yacc       go to state 113
-
-
-State 880
-
-  376 lexical_var_list: lexical_var_list ',' lexical_var .
-
-    $default  reduce using rule 376 (lexical_var_list)
-
-
-State 881
-
-  122 inner_statement_list: inner_statement_list . inner_statement
-  368 expr_without_variable: function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list . '}'
-
-    "include (T_INCLUDE)"                         shift, and go to state 4
-    "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
-    "eval (T_EVAL)"                               shift, and go to state 6
-    "require (T_REQUIRE)"                         shift, and go to state 7
-    "require_once (T_REQUIRE_ONCE)"               shift, and go to state 8
-    "print (T_PRINT)"                             shift, and go to state 9
-    "yield (T_YIELD)"                             shift, and go to state 10
-    "yield from (T_YIELD_FROM)"                   shift, and go to state 11
-    '+'                                           shift, and go to state 12
-    '-'                                           shift, and go to state 13
-    '!'                                           shift, and go to state 14
-    '~'                                           shift, and go to state 15
-    "++ (T_INC)"                                  shift, and go to state 16
-    "-- (T_DEC)"                                  shift, and go to state 17
-    "(int) (T_INT_CAST)"                          shift, and go to state 18
-    "(double) (T_DOUBLE_CAST)"                    shift, and go to state 19
-    "(string) (T_STRING_CAST)"                    shift, and go to state 20
-    "(array) (T_ARRAY_CAST)"                      shift, and go to state 21
-    "(object) (T_OBJECT_CAST)"                    shift, and go to state 22
-    "(bool) (T_BOOL_CAST)"                        shift, and go to state 23
-    "(unset) (T_UNSET_CAST)"                      shift, and go to state 24
-    '@'                                           shift, and go to state 25
-    '['                                           shift, and go to state 26
-    "new (T_NEW)"                                 shift, and go to state 27
-    "clone (T_CLONE)"                             shift, and go to state 28
-    "static (T_STATIC)"                           shift, and go to state 29
-    "abstract (T_ABSTRACT)"                       shift, and go to state 30
-    "final (T_FINAL)"                             shift, and go to state 31
-    "integer number (T_LNUMBER)"                  shift, and go to state 32
-    "floating-point number (T_DNUMBER)"           shift, and go to state 33
-    "identifier (T_STRING)"                       shift, and go to state 34
-    "variable (T_VARIABLE)"                       shift, and go to state 35
-    T_INLINE_HTML                                 shift, and go to state 36
-    "quoted-string (T_CONSTANT_ENCAPSED_STRING)"  shift, and go to state 37
-    "exit (T_EXIT)"                               shift, and go to state 38
-    "if (T_IF)"                                   shift, and go to state 39
-    "echo (T_ECHO)"                               shift, and go to state 40
-    "do (T_DO)"                                   shift, and go to state 41
-    "while (T_WHILE)"                             shift, and go to state 42
-    "for (T_FOR)"                                 shift, and go to state 43
-    "foreach (T_FOREACH)"                         shift, and go to state 44
-    "declare (T_DECLARE)"                         shift, and go to state 45
-    "switch (T_SWITCH)"                           shift, and go to state 46
-    "break (T_BREAK)"                             shift, and go to state 47
-    "continue (T_CONTINUE)"                       shift, and go to state 48
-    "goto (T_GOTO)"                               shift, and go to state 49
-    "function (T_FUNCTION)"                       shift, and go to state 50
-    "return (T_RETURN)"                           shift, and go to state 52
-    "try (T_TRY)"                                 shift, and go to state 53
-    "throw (T_THROW)"                             shift, and go to state 54
-    "global (T_GLOBAL)"                           shift, and go to state 56
-    "unset (T_UNSET)"                             shift, and go to state 57
-    "isset (T_ISSET)"                             shift, and go to state 58
-    "empty (T_EMPTY)"                             shift, and go to state 59
-    "__halt_compiler (T_HALT_COMPILER)"           shift, and go to state 375
-    "class (T_CLASS)"                             shift, and go to state 61
-    "trait (T_TRAIT)"                             shift, and go to state 62
-    "interface (T_INTERFACE)"                     shift, and go to state 63
-    "list (T_LIST)"                               shift, and go to state 64
-    "array (T_ARRAY)"                             shift, and go to state 65
-    "__LINE__ (T_LINE)"                           shift, and go to state 66
-    "__FILE__ (T_FILE)"                           shift, and go to state 67
-    "__DIR__ (T_DIR)"                             shift, and go to state 68
-    "__CLASS__ (T_CLASS_C)"                       shift, and go to state 69
-    "__TRAIT__ (T_TRAIT_C)"                       shift, and go to state 70
-    "__METHOD__ (T_METHOD_C)"                     shift, and go to state 71
-    "__FUNCTION__ (T_FUNC_C)"                     shift, and go to state 72
-    "heredoc start (T_START_HEREDOC)"             shift, and go to state 73
-    "namespace (T_NAMESPACE)"                     shift, and go to state 116
-    "__NAMESPACE__ (T_NS_C)"                      shift, and go to state 75
-    "\\ (T_NS_SEPARATOR)"                         shift, and go to state 76
-    '('                                           shift, and go to state 77
-    ';'                                           shift, and go to state 78
-    '{'                                           shift, and go to state 79
-    '}'                                           shift, and go to state 894
-    '`'                                           shift, and go to state 80
-    '"'                                           shift, and go to state 81
-    '$'                                           shift, and go to state 82
-
-    namespace_name                   go to state 83
-    name                             go to state 84
-    inner_statement                  go to state 377
-    statement                        go to state 378
-    function_declaration_statement   go to state 379
-    class_declaration_statement      go to state 380
-    class_modifiers                  go to state 89
-    class_modifier                   go to state 90
-    trait_declaration_statement      go to state 381
-    interface_declaration_statement  go to state 382
-    if_stmt_without_else             go to state 93
-    if_stmt                          go to state 94
-    alt_if_stmt_without_else         go to state 95
-    alt_if_stmt                      go to state 96
-    new_expr                         go to state 97
-    expr_without_variable            go to state 98
-    function                         go to state 99
-    function_call                    go to state 100
-    class_name                       go to state 101
-    dereferencable_scalar            go to state 102
-    scalar                           go to state 103
-    constant                         go to state 104
-    expr                             go to state 105
-    variable_class_name              go to state 106
-    dereferencable                   go to state 107
-    callable_expr                    go to state 108
-    callable_variable                go to state 109
-    variable                         go to state 110
-    simple_variable                  go to state 111
-    static_member                    go to state 112
-    internal_functions_in_yacc       go to state 113
-
-
-State 882
-
-  122 inner_statement_list: inner_statement_list . inner_statement
-  369 expr_without_variable: "static (T_STATIC)" function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list . '}'
 
     "include (T_INCLUDE)"                         shift, and go to state 4
     "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
@@ -25324,23 +25095,264 @@ State 882
     internal_functions_in_yacc       go to state 113
 
 
+State 881
+
+  376 lexical_var_list: lexical_var_list ',' lexical_var .
+
+    $default  reduce using rule 376 (lexical_var_list)
+
+
+State 882
+
+  122 inner_statement_list: inner_statement_list . inner_statement
+  368 expr_without_variable: function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list . '}'
+
+    "include (T_INCLUDE)"                         shift, and go to state 4
+    "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
+    "eval (T_EVAL)"                               shift, and go to state 6
+    "require (T_REQUIRE)"                         shift, and go to state 7
+    "require_once (T_REQUIRE_ONCE)"               shift, and go to state 8
+    "print (T_PRINT)"                             shift, and go to state 9
+    "yield (T_YIELD)"                             shift, and go to state 10
+    "yield from (T_YIELD_FROM)"                   shift, and go to state 11
+    '+'                                           shift, and go to state 12
+    '-'                                           shift, and go to state 13
+    '!'                                           shift, and go to state 14
+    '~'                                           shift, and go to state 15
+    "++ (T_INC)"                                  shift, and go to state 16
+    "-- (T_DEC)"                                  shift, and go to state 17
+    "(int) (T_INT_CAST)"                          shift, and go to state 18
+    "(double) (T_DOUBLE_CAST)"                    shift, and go to state 19
+    "(string) (T_STRING_CAST)"                    shift, and go to state 20
+    "(array) (T_ARRAY_CAST)"                      shift, and go to state 21
+    "(object) (T_OBJECT_CAST)"                    shift, and go to state 22
+    "(bool) (T_BOOL_CAST)"                        shift, and go to state 23
+    "(unset) (T_UNSET_CAST)"                      shift, and go to state 24
+    '@'                                           shift, and go to state 25
+    '['                                           shift, and go to state 26
+    "new (T_NEW)"                                 shift, and go to state 27
+    "clone (T_CLONE)"                             shift, and go to state 28
+    "static (T_STATIC)"                           shift, and go to state 29
+    "abstract (T_ABSTRACT)"                       shift, and go to state 30
+    "final (T_FINAL)"                             shift, and go to state 31
+    "integer number (T_LNUMBER)"                  shift, and go to state 32
+    "floating-point number (T_DNUMBER)"           shift, and go to state 33
+    "identifier (T_STRING)"                       shift, and go to state 34
+    "variable (T_VARIABLE)"                       shift, and go to state 35
+    T_INLINE_HTML                                 shift, and go to state 36
+    "quoted-string (T_CONSTANT_ENCAPSED_STRING)"  shift, and go to state 37
+    "exit (T_EXIT)"                               shift, and go to state 38
+    "if (T_IF)"                                   shift, and go to state 39
+    "echo (T_ECHO)"                               shift, and go to state 40
+    "do (T_DO)"                                   shift, and go to state 41
+    "while (T_WHILE)"                             shift, and go to state 42
+    "for (T_FOR)"                                 shift, and go to state 43
+    "foreach (T_FOREACH)"                         shift, and go to state 44
+    "declare (T_DECLARE)"                         shift, and go to state 45
+    "switch (T_SWITCH)"                           shift, and go to state 46
+    "break (T_BREAK)"                             shift, and go to state 47
+    "continue (T_CONTINUE)"                       shift, and go to state 48
+    "goto (T_GOTO)"                               shift, and go to state 49
+    "function (T_FUNCTION)"                       shift, and go to state 50
+    "return (T_RETURN)"                           shift, and go to state 52
+    "try (T_TRY)"                                 shift, and go to state 53
+    "throw (T_THROW)"                             shift, and go to state 54
+    "global (T_GLOBAL)"                           shift, and go to state 56
+    "unset (T_UNSET)"                             shift, and go to state 57
+    "isset (T_ISSET)"                             shift, and go to state 58
+    "empty (T_EMPTY)"                             shift, and go to state 59
+    "__halt_compiler (T_HALT_COMPILER)"           shift, and go to state 375
+    "class (T_CLASS)"                             shift, and go to state 61
+    "trait (T_TRAIT)"                             shift, and go to state 62
+    "interface (T_INTERFACE)"                     shift, and go to state 63
+    "list (T_LIST)"                               shift, and go to state 64
+    "array (T_ARRAY)"                             shift, and go to state 65
+    "__LINE__ (T_LINE)"                           shift, and go to state 66
+    "__FILE__ (T_FILE)"                           shift, and go to state 67
+    "__DIR__ (T_DIR)"                             shift, and go to state 68
+    "__CLASS__ (T_CLASS_C)"                       shift, and go to state 69
+    "__TRAIT__ (T_TRAIT_C)"                       shift, and go to state 70
+    "__METHOD__ (T_METHOD_C)"                     shift, and go to state 71
+    "__FUNCTION__ (T_FUNC_C)"                     shift, and go to state 72
+    "heredoc start (T_START_HEREDOC)"             shift, and go to state 73
+    "namespace (T_NAMESPACE)"                     shift, and go to state 116
+    "__NAMESPACE__ (T_NS_C)"                      shift, and go to state 75
+    "\\ (T_NS_SEPARATOR)"                         shift, and go to state 76
+    '('                                           shift, and go to state 77
+    ';'                                           shift, and go to state 78
+    '{'                                           shift, and go to state 79
+    '}'                                           shift, and go to state 896
+    '`'                                           shift, and go to state 80
+    '"'                                           shift, and go to state 81
+    '$'                                           shift, and go to state 82
+
+    namespace_name                   go to state 83
+    name                             go to state 84
+    inner_statement                  go to state 377
+    statement                        go to state 378
+    function_declaration_statement   go to state 379
+    class_declaration_statement      go to state 380
+    class_modifiers                  go to state 89
+    class_modifier                   go to state 90
+    trait_declaration_statement      go to state 381
+    interface_declaration_statement  go to state 382
+    if_stmt_without_else             go to state 93
+    if_stmt                          go to state 94
+    alt_if_stmt_without_else         go to state 95
+    alt_if_stmt                      go to state 96
+    new_expr                         go to state 97
+    expr_without_variable            go to state 98
+    function                         go to state 99
+    function_call                    go to state 100
+    class_name                       go to state 101
+    dereferencable_scalar            go to state 102
+    scalar                           go to state 103
+    constant                         go to state 104
+    expr                             go to state 105
+    variable_class_name              go to state 106
+    dereferencable                   go to state 107
+    callable_expr                    go to state 108
+    callable_variable                go to state 109
+    variable                         go to state 110
+    simple_variable                  go to state 111
+    static_member                    go to state 112
+    internal_functions_in_yacc       go to state 113
+
+
 State 883
 
-  189 for_statement: ':' inner_statement_list "endfor (T_ENDFOR)" . ';'
+  122 inner_statement_list: inner_statement_list . inner_statement
+  369 expr_without_variable: "static (T_STATIC)" function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list . '}'
 
-    ';'  shift, and go to state 896
+    "include (T_INCLUDE)"                         shift, and go to state 4
+    "include_once (T_INCLUDE_ONCE)"               shift, and go to state 5
+    "eval (T_EVAL)"                               shift, and go to state 6
+    "require (T_REQUIRE)"                         shift, and go to state 7
+    "require_once (T_REQUIRE_ONCE)"               shift, and go to state 8
+    "print (T_PRINT)"                             shift, and go to state 9
+    "yield (T_YIELD)"                             shift, and go to state 10
+    "yield from (T_YIELD_FROM)"                   shift, and go to state 11
+    '+'                                           shift, and go to state 12
+    '-'                                           shift, and go to state 13
+    '!'                                           shift, and go to state 14
+    '~'                                           shift, and go to state 15
+    "++ (T_INC)"                                  shift, and go to state 16
+    "-- (T_DEC)"                                  shift, and go to state 17
+    "(int) (T_INT_CAST)"                          shift, and go to state 18
+    "(double) (T_DOUBLE_CAST)"                    shift, and go to state 19
+    "(string) (T_STRING_CAST)"                    shift, and go to state 20
+    "(array) (T_ARRAY_CAST)"                      shift, and go to state 21
+    "(object) (T_OBJECT_CAST)"                    shift, and go to state 22
+    "(bool) (T_BOOL_CAST)"                        shift, and go to state 23
+    "(unset) (T_UNSET_CAST)"                      shift, and go to state 24
+    '@'                                           shift, and go to state 25
+    '['                                           shift, and go to state 26
+    "new (T_NEW)"                                 shift, and go to state 27
+    "clone (T_CLONE)"                             shift, and go to state 28
+    "static (T_STATIC)"                           shift, and go to state 29
+    "abstract (T_ABSTRACT)"                       shift, and go to state 30
+    "final (T_FINAL)"                             shift, and go to state 31
+    "integer number (T_LNUMBER)"                  shift, and go to state 32
+    "floating-point number (T_DNUMBER)"           shift, and go to state 33
+    "identifier (T_STRING)"                       shift, and go to state 34
+    "variable (T_VARIABLE)"                       shift, and go to state 35
+    T_INLINE_HTML                                 shift, and go to state 36
+    "quoted-string (T_CONSTANT_ENCAPSED_STRING)"  shift, and go to state 37
+    "exit (T_EXIT)"                               shift, and go to state 38
+    "if (T_IF)"                                   shift, and go to state 39
+    "echo (T_ECHO)"                               shift, and go to state 40
+    "do (T_DO)"                                   shift, and go to state 41
+    "while (T_WHILE)"                             shift, and go to state 42
+    "for (T_FOR)"                                 shift, and go to state 43
+    "foreach (T_FOREACH)"                         shift, and go to state 44
+    "declare (T_DECLARE)"                         shift, and go to state 45
+    "switch (T_SWITCH)"                           shift, and go to state 46
+    "break (T_BREAK)"                             shift, and go to state 47
+    "continue (T_CONTINUE)"                       shift, and go to state 48
+    "goto (T_GOTO)"                               shift, and go to state 49
+    "function (T_FUNCTION)"                       shift, and go to state 50
+    "return (T_RETURN)"                           shift, and go to state 52
+    "try (T_TRY)"                                 shift, and go to state 53
+    "throw (T_THROW)"                             shift, and go to state 54
+    "global (T_GLOBAL)"                           shift, and go to state 56
+    "unset (T_UNSET)"                             shift, and go to state 57
+    "isset (T_ISSET)"                             shift, and go to state 58
+    "empty (T_EMPTY)"                             shift, and go to state 59
+    "__halt_compiler (T_HALT_COMPILER)"           shift, and go to state 375
+    "class (T_CLASS)"                             shift, and go to state 61
+    "trait (T_TRAIT)"                             shift, and go to state 62
+    "interface (T_INTERFACE)"                     shift, and go to state 63
+    "list (T_LIST)"                               shift, and go to state 64
+    "array (T_ARRAY)"                             shift, and go to state 65
+    "__LINE__ (T_LINE)"                           shift, and go to state 66
+    "__FILE__ (T_FILE)"                           shift, and go to state 67
+    "__DIR__ (T_DIR)"                             shift, and go to state 68
+    "__CLASS__ (T_CLASS_C)"                       shift, and go to state 69
+    "__TRAIT__ (T_TRAIT_C)"                       shift, and go to state 70
+    "__METHOD__ (T_METHOD_C)"                     shift, and go to state 71
+    "__FUNCTION__ (T_FUNC_C)"                     shift, and go to state 72
+    "heredoc start (T_START_HEREDOC)"             shift, and go to state 73
+    "namespace (T_NAMESPACE)"                     shift, and go to state 116
+    "__NAMESPACE__ (T_NS_C)"                      shift, and go to state 75
+    "\\ (T_NS_SEPARATOR)"                         shift, and go to state 76
+    '('                                           shift, and go to state 77
+    ';'                                           shift, and go to state 78
+    '{'                                           shift, and go to state 79
+    '}'                                           shift, and go to state 897
+    '`'                                           shift, and go to state 80
+    '"'                                           shift, and go to state 81
+    '$'                                           shift, and go to state 82
+
+    namespace_name                   go to state 83
+    name                             go to state 84
+    inner_statement                  go to state 377
+    statement                        go to state 378
+    function_declaration_statement   go to state 379
+    class_declaration_statement      go to state 380
+    class_modifiers                  go to state 89
+    class_modifier                   go to state 90
+    trait_declaration_statement      go to state 381
+    interface_declaration_statement  go to state 382
+    if_stmt_without_else             go to state 93
+    if_stmt                          go to state 94
+    alt_if_stmt_without_else         go to state 95
+    alt_if_stmt                      go to state 96
+    new_expr                         go to state 97
+    expr_without_variable            go to state 98
+    function                         go to state 99
+    function_call                    go to state 100
+    class_name                       go to state 101
+    dereferencable_scalar            go to state 102
+    scalar                           go to state 103
+    constant                         go to state 104
+    expr                             go to state 105
+    variable_class_name              go to state 106
+    dereferencable                   go to state 107
+    callable_expr                    go to state 108
+    callable_variable                go to state 109
+    variable                         go to state 110
+    simple_variable                  go to state 111
+    static_member                    go to state 112
+    internal_functions_in_yacc       go to state 113
 
 
 State 884
+
+  189 for_statement: ':' inner_statement_list "endfor (T_ENDFOR)" . ';'
+
+    ';'  shift, and go to state 898
+
+
+State 885
 
   156 catch_list: catch_list "catch (T_CATCH)" '(' name "variable (T_VARIABLE)" ')' '{' . inner_statement_list '}'
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 897
+    inner_statement_list  go to state 899
 
 
-State 885
+State 886
 
   261 absolute_trait_method_reference: name ":: (T_PAAMAYIM_NEKUDOTAYIM)" . identifier
 
@@ -25422,38 +25434,38 @@ State 885
 
     reserved_non_modifiers  go to state 476
     semi_reserved           go to state 477
-    identifier              go to state 898
+    identifier              go to state 900
 
 
-State 886
+State 887
 
   249 trait_adaptations: '{' trait_adaptation_list '}' .
 
     $default  reduce using rule 249 (trait_adaptations)
 
 
-State 887
+State 888
 
   251 trait_adaptation_list: trait_adaptation_list trait_adaptation .
 
     $default  reduce using rule 251 (trait_adaptation_list)
 
 
-State 888
+State 889
 
   252 trait_adaptation: trait_precedence ';' .
 
     $default  reduce using rule 252 (trait_adaptation)
 
 
-State 889
+State 890
 
   253 trait_adaptation: trait_alias ';' .
 
     $default  reduce using rule 253 (trait_adaptation)
 
 
-State 890
+State 891
 
   255 trait_alias: trait_method_reference "as (T_AS)" . "identifier (T_STRING)"
   256            | trait_method_reference "as (T_AS)" . reserved_non_modifiers
@@ -25482,7 +25494,7 @@ State 890
     "private (T_PRIVATE)"                shift, and go to state 764
     "protected (T_PROTECTED)"            shift, and go to state 765
     "public (T_PUBLIC)"                  shift, and go to state 766
-    "identifier (T_STRING)"              shift, and go to state 899
+    "identifier (T_STRING)"              shift, and go to state 901
     "exit (T_EXIT)"                      shift, and go to state 423
     "if (T_IF)"                          shift, and go to state 424
     "echo (T_ECHO)"                      shift, and go to state 425
@@ -25536,11 +25548,11 @@ State 890
     "namespace (T_NAMESPACE)"            shift, and go to state 473
     "__NAMESPACE__ (T_NS_C)"             shift, and go to state 474
 
-    reserved_non_modifiers  go to state 900
-    member_modifier         go to state 901
+    reserved_non_modifiers  go to state 902
+    member_modifier         go to state 903
 
 
-State 891
+State 892
 
   254 trait_precedence: absolute_trait_method_reference "insteadof (T_INSTEADOF)" . name_list
 
@@ -25550,10 +25562,17 @@ State 891
 
     namespace_name  go to state 83
     name            go to state 665
-    name_list       go to state 902
+    name_list       go to state 904
 
 
-State 892
+State 893
+
+  279 property: "variable (T_VARIABLE)" '=' expr backup_doc_comment .
+
+    $default  reduce using rule 279 (property)
+
+
+State 894
 
   244 class_statement: method_modifiers function returns_ref identifier '(' . parameter_list ')' return_type backup_doc_comment method_body
 
@@ -25568,42 +25587,42 @@ State 892
 
     namespace_name            go to state 83
     name                      go to state 612
-    parameter_list            go to state 903
+    parameter_list            go to state 905
     non_empty_parameter_list  go to state 614
     parameter                 go to state 615
     optional_type             go to state 616
     type                      go to state 617
 
 
-State 893
+State 895
 
   162 function_declaration_statement: function returns_ref "identifier (T_STRING)" '(' parameter_list ')' return_type backup_doc_comment '{' inner_statement_list '}' .
 
     $default  reduce using rule 162 (function_declaration_statement)
 
 
-State 894
+State 896
 
   368 expr_without_variable: function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list '}' .
 
     $default  reduce using rule 368 (expr_without_variable)
 
 
-State 895
+State 897
 
   369 expr_without_variable: "static (T_STATIC)" function returns_ref '(' parameter_list ')' lexical_vars return_type backup_doc_comment '{' inner_statement_list '}' .
 
     $default  reduce using rule 369 (expr_without_variable)
 
 
-State 896
+State 898
 
   189 for_statement: ':' inner_statement_list "endfor (T_ENDFOR)" ';' .
 
     $default  reduce using rule 189 (for_statement)
 
 
-State 897
+State 899
 
   122 inner_statement_list: inner_statement_list . inner_statement
   156 catch_list: catch_list "catch (T_CATCH)" '(' name "variable (T_VARIABLE)" ')' '{' inner_statement_list . '}'
@@ -25682,7 +25701,7 @@ State 897
     '('                                           shift, and go to state 77
     ';'                                           shift, and go to state 78
     '{'                                           shift, and go to state 79
-    '}'                                           shift, and go to state 904
+    '}'                                           shift, and go to state 906
     '`'                                           shift, and go to state 80
     '"'                                           shift, and go to state 81
     '$'                                           shift, and go to state 82
@@ -25720,28 +25739,28 @@ State 897
     internal_functions_in_yacc       go to state 113
 
 
-State 898
+State 900
 
   261 absolute_trait_method_reference: name ":: (T_PAAMAYIM_NEKUDOTAYIM)" identifier .
 
     $default  reduce using rule 261 (absolute_trait_method_reference)
 
 
-State 899
+State 901
 
   255 trait_alias: trait_method_reference "as (T_AS)" "identifier (T_STRING)" .
 
     $default  reduce using rule 255 (trait_alias)
 
 
-State 900
+State 902
 
   256 trait_alias: trait_method_reference "as (T_AS)" reserved_non_modifiers .
 
     $default  reduce using rule 256 (trait_alias)
 
 
-State 901
+State 903
 
   257 trait_alias: trait_method_reference "as (T_AS)" member_modifier . identifier
   258            | trait_method_reference "as (T_AS)" member_modifier .
@@ -25826,10 +25845,10 @@ State 901
 
     reserved_non_modifiers  go to state 476
     semi_reserved           go to state 477
-    identifier              go to state 905
+    identifier              go to state 907
 
 
-State 902
+State 904
 
   246 name_list: name_list . ',' name
   254 trait_precedence: absolute_trait_method_reference "insteadof (T_INSTEADOF)" name_list .
@@ -25839,28 +25858,28 @@ State 902
     $default  reduce using rule 254 (trait_precedence)
 
 
-State 903
+State 905
 
   244 class_statement: method_modifiers function returns_ref identifier '(' parameter_list . ')' return_type backup_doc_comment method_body
 
-    ')'  shift, and go to state 906
+    ')'  shift, and go to state 908
 
 
-State 904
+State 906
 
   156 catch_list: catch_list "catch (T_CATCH)" '(' name "variable (T_VARIABLE)" ')' '{' inner_statement_list '}' .
 
     $default  reduce using rule 156 (catch_list)
 
 
-State 905
+State 907
 
   257 trait_alias: trait_method_reference "as (T_AS)" member_modifier identifier .
 
     $default  reduce using rule 257 (trait_alias)
 
 
-State 906
+State 908
 
   244 class_statement: method_modifiers function returns_ref identifier '(' parameter_list ')' . return_type backup_doc_comment method_body
 
@@ -25868,52 +25887,52 @@ State 906
 
     $default  reduce using rule 224 (return_type)
 
-    return_type  go to state 907
+    return_type  go to state 909
 
 
-State 907
+State 909
 
   244 class_statement: method_modifiers function returns_ref identifier '(' parameter_list ')' return_type . backup_doc_comment method_body
 
     $default  reduce using rule 371 (backup_doc_comment)
 
-    backup_doc_comment  go to state 908
+    backup_doc_comment  go to state 910
 
 
-State 908
+State 910
 
   244 class_statement: method_modifiers function returns_ref identifier '(' parameter_list ')' return_type backup_doc_comment . method_body
 
-    ';'  shift, and go to state 909
-    '{'  shift, and go to state 910
+    ';'  shift, and go to state 911
+    '{'  shift, and go to state 912
 
-    method_body  go to state 911
+    method_body  go to state 913
 
 
-State 909
+State 911
 
   262 method_body: ';' .
 
     $default  reduce using rule 262 (method_body)
 
 
-State 910
+State 912
 
   263 method_body: '{' . inner_statement_list '}'
 
     $default  reduce using rule 123 (inner_statement_list)
 
-    inner_statement_list  go to state 912
+    inner_statement_list  go to state 914
 
 
-State 911
+State 913
 
   244 class_statement: method_modifiers function returns_ref identifier '(' parameter_list ')' return_type backup_doc_comment method_body .
 
     $default  reduce using rule 244 (class_statement)
 
 
-State 912
+State 914
 
   122 inner_statement_list: inner_statement_list . inner_statement
   263 method_body: '{' inner_statement_list . '}'
@@ -25992,7 +26011,7 @@ State 912
     '('                                           shift, and go to state 77
     ';'                                           shift, and go to state 78
     '{'                                           shift, and go to state 79
-    '}'                                           shift, and go to state 913
+    '}'                                           shift, and go to state 915
     '`'                                           shift, and go to state 80
     '"'                                           shift, and go to state 81
     '$'                                           shift, and go to state 82
@@ -26030,7 +26049,7 @@ State 912
     internal_functions_in_yacc       go to state 113
 
 
-State 913
+State 915
 
   263 method_body: '{' inner_statement_list '}' .
 
