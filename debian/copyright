@@ -29,6 +29,10 @@ Copyright: 1985-1995 Ian F. Darwin
 	   1994-2009 Christos Zoulas <christos@zoulas.com>
 License: BSD-2-clause-libmagic
 
+Files: ext/date/lib/*
+Copyright: 2015 Derick Rethans
+License: Expat
+
 Files: ext/mbstring/libmbfl/LICENSE
 Copyright: 1998,1999,2000,2001 HappySize, Inc.
 License: LGPL-2.1
