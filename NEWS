@@ -1,5 +1,34 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+29 Oct 2015, PHP 7.0.0 RC 6
+
+- Core:
+  . Fixed bug #70748 (Segfault in ini_lex () at Zend/zend_ini_scanner.l).
+   (Laruence)
+  . Fixed bug #70689 (Exception handler does not work as expected). (Laruence)
+  . Fixed bug #70430 (Stack buffer overflow in zend_language_parser()). (Nikita)
+  . Fixed bug #70782 (null ptr deref and segfault (zend_get_class_fetch_type)).
+    (Nikita)
+  . Fixed bug #70785 (Infinite loop due to exception during identical
+    comparison). (Laruence)
+
+- Opcache:
+  . Fixed bug #70724 (Undefined Symbols from opcache.so on Mac OS X 10.10).
+    (Laruence)
+
+- PDO_DBlib:
+  . Fixed bug #69757 (Segmentation fault on nextRowset).
+    (miracle at rpz dot name)
+
+- SOAP:
+  . Fixed bug #70715 (Segmentation fault inside soap client). (Laruence)
+  . Fixed bug #70709 (SOAP Client generates Segfault). (Laruence)
+
+- SPL:
+  . Fixed bug #70730 (Incorrect ArrayObject serialization if unset is called
+    in serialize()). (Laruence)
+
+
 15 Oct 2015, PHP 7.0.0 RC 5
 
 - Core:
