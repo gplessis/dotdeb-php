@@ -54,7 +54,7 @@ Index: dotdeb-php/sapi/cgi/cgi_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/cgi/cgi_main.c
 +++ dotdeb-php/sapi/cgi/cgi_main.c
-@@ -2217,9 +2217,9 @@ consult the installation file that came 
+@@ -2216,9 +2216,9 @@ consult the installation file that came 
  								SG(request_info).no_headers = 1;
  							}
  #if ZEND_DEBUG
