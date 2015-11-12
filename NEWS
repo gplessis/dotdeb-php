@@ -1,5 +1,55 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+12 Nov 2015, PHP 7.0.0 RC 7
+
+- Core:
+  . Fixed bug #70249 (Segmentation fault while running PHPUnit tests on
+    phpBB 3.2-dev). (Laruence)
+  . Fixed bug #70805 (Segmentation faults whilst running Drupal 8 test suite).
+    (Dmitry, Laruence)
+  . Fixed bug #70842 (Persistent Stream Segmentation Fault). (Caleb Champlin)
+  . Fixed bug #70862 (Several functions do not check return code of
+    php_stream_copy_to_mem()). (Anatol)
+  . Fixed bug #70863 (Incorect logic to increment_function for proxy objects).
+    (Anatol)
+  . Fixed bug #70323 (Regression in zend_fetch_debug_backtrace() can cause
+    segfaults). (Aharvey, Laruence)
+  . Fixed bug #70873 (Regression on private static properties access).
+    (Laruence)
+
+- OCI8:
+  . Fixed bug #68298 (OCI int overflow) (Senthil).
+
+- Opcache:
+  . Fixed bug #70656 (require() statement broken after opcache_reset() or a
+    few hours of use). (Laruence)
+  . Fixed bug #70843 (Segmentation fault on MacOSX with
+    opcache.file_cache_only=1). (Laruence)
+
+- PDO:
+  . Fix bug #70861 (Segmentation fault in pdo_parse_params() during Drupal 8
+    test suite). (Anatol)
+
+- Session:
+  . Fixed bug #70876 (Segmentation fault when regenerating session id with
+    strict mode). (Laruence)
+
+- SOAP:
+  . Fixed bug #70875 (Segmentation fault if wsdl has no targetNamespace
+    attribute). (Matteo)
+
+- SPL:
+  . Fixed bug #70853 (SplFixedArray throws exception when using ref variable
+    as index). (Laruence)
+  . Fixed bug #70868 (PCRE JIT and pattern reuse segfault). (Laruence)
+
+- Standard:
+  . Fixed bug #70808 (array_merge_recursive corrupts memory of unset items).
+    (Laruence)
+
+- XSL:
+  . Fixed bug #70678 (PHP7 returns true when false is expected). (Felipe)
+
 29 Oct 2015, PHP 7.0.0 RC 6
 
 - Core:
