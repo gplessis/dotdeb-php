@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ]; then
+    if [ -e /usr/lib/php/php-maintscript-helper ] ; then
+	. /usr/lib/php/php-maintscript-helper
+
+	for dsoname in @modules@; do
+	    php_invoke dismod ALL ALL ${dsoname}
+	done
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,3 @@
+activate-noawait /etc/php/@PHP_VERSION@/apache2/conf.d
+activate-noawait /etc/php/@PHP_VERSION@/apache2filter/conf.d
+activate-noawait /etc/php/@PHP_VERSION@/fpm/conf.d

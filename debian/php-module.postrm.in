@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+if [ "$1" = "purge" ]; then
+    inidir=/etc/php/mods-available
+    for dsoname in @modules@; do
+	inifile=${dsoname}.ini
+
+        # Query which package has this conffile registered
+	if which ucfq >/dev/null; then
+	    ucfp=$(ucfq -w ${inidir}/${inifile} | cut -f 2 -d:)
+	fi
+	    
+        # Only work with the config file if it still belongs to us
+	if test "$ucfp" = @package@; then
+	    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+		rm -f ${inidir}/${inifile}${ext}
+	    done
+	    rm -f ${inidir}/${inifile}
+	    if which ucf >/dev/null; then
+		ucf --purge ${inidir}/${inifile}
+	    fi
+	    if which ucfr >/dev/null; then
+		ucfr --purge @package@ ${inidir}/${inifile}
+	    fi
+	fi
+	
+	if [ -e /usr/lib/php/php-maintscript-helper ] ; then
+	    . /usr/lib/php/php-maintscript-helper
+		
+	    php_invoke dismod ALL ALL ${dsoname}
+	fi
+    done
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Calling sed $@..." >&2
+exec sed "$@"

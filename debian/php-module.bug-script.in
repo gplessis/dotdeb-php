@@ -1,0 +1,20 @@
+#!/bin/sh
+
+MATCH="^[[:space:]]*($|;)"
+
+echo "==== Additional PHP @PHP_VERSION@ information ====" >&3
+echo "" >&3
+echo "++++ PHP @PHP_VERSION SAPI (php@PHP_VERSION@query -S): ++++" >&3
+/usr/sbin/php@PHP_VERSION@query -S >&3
+echo "" >&3
+echo "++++ PHP @PHP_VERSION@ Extensions (php@PHP_VERSION@query -M -v): ++++" >&3
+/usr/sbin/php@PHP_VERSION@query -M -v >&3
+echo "" >&3
+
+echo "++++ Configuration files: ++++" >&3
+for dsoname in @modules@; do
+    inifile=${dsoname}.ini
+    echo "**** /etc/php/@PHP_VERSION@/mods-available/$dsoname.ini ****" >&3
+    grep -Ev "$MATCH" "/etc/php/@PHP_VERSION@/mods-available/$dsoname.ini" >&3
+    echo "" >&3
+done

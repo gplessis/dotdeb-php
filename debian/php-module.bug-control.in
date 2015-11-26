@@ -1,0 +1,1 @@
+report-with: php@PHP_VERSION@-common php@PHP_VERSION@-cli libphp@PHP_VERSION@-embed libapache2-mod-php@PHP_VERSION@ libapache2-mod-php@PHP_VERSION@filter php@PHP_VERSION@-cgi php@PHP_VERSION@-fpm

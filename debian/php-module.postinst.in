@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -e
+
+#EXTRA#
+
+if [ "$1" = "configure" ]; then
+    inidir=/etc/php/mods-available
+
+    if [ -e /usr/lib/php/php-maintscript-helper ] ; then
+	. /usr/lib/php/php-maintscript-helper
+
+	for dsoname in @modules@; do
+	    inifile=${dsoname}.ini
+
+	    # Register new conffile with UCF
+	    ucf /usr/share/@package@/@module@/${inifile} ${inidir}/${inifile}
+	    ucfr --force @package@ ${inidir}/${inifile}
+	    
+	    if [ -f "${inidir}/${inifile}.dpkg-new" ]; then
+		md5sum="$(md5sum ${inidir}/${inifile}.dpkg-new | sed -e 's/ .*//')"
+		old_md5sum="$(md5sum ${inidir}/${inifile} | sed -e 's/ .*//')"
+		if [ "$md5sum" = "$old_md5sum" ]; then
+		    mv "${inidir}/${inifile}.dpkg-new" "${inidir}/${inifile}"
+		fi
+	    fi
+	
+	    php_invoke enmod ALL ALL ${dsoname}
+	done
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -78,6 +78,7 @@ Architecture: all
 Depends: libapache2-mod-php@PHP_VERSION@ (>= ${source:Version}~) | php@PHP_VERSION@-cgi (>= ${source:Version}~) | php@PHP_VERSION@-fpm (>= ${source:Version}~),
          php@PHP_VERSION@-common (>= ${source:Version}~),
          ${misc:Depends}
+Conflicts: php5
 Description: server-side, HTML-embedded scripting language (metapackage)
  This package is a metapackage that, when installed, guarantees that you
  have at least one of the four server-side versions of the PHP interpreter
@@ -90,8 +91,10 @@ Description: server-side, HTML-embedded scripting language (metapackage)
 
 Package: php@PHP_VERSION@-common
 Architecture: all
-Depends: php-common
+Depends: php-common,
+	 ${misc:Depends}
 Suggests: php-user-cache
+Conflicts: php5-common
 Description: Common files for packages built from the PHP source
  This package contains the documentation and example files relevant to all
  the other packages built from the PHP source.
@@ -138,6 +141,7 @@ Depends: libmagic1,
          ${misc:Depends},
          ${shlibs:Depends}
 Provides: ${php:Provides}
+Conflicts: php5-cgi
 Suggests: php-pear
 Description: server-side, HTML-embedded scripting language (CGI binary)
  This package provides the /usr/lib/cgi-bin/php CGI interpreter built
@@ -162,6 +166,7 @@ Depends: libedit2 (>= 2.11-20080614-4),
          ${misc:Depends},
          ${shlibs:Depends}
 Provides: ${php:Provides}
+Conflicts: php5-cli
 Recommends: php-readline
 Suggests: php-pear
 Description: command-line interpreter for the PHP scripting language
@@ -184,6 +189,7 @@ Depends: libmagic1,
          ${misc:Depends},
          ${shlibs:Depends}
 Provides: ${php:Provides}
+Conflicts: php5-phpdbg
 Recommends: php-readline
 Description: server-side, HTML-embedded scripting language (PHPDBG binary)
  This package provides the /usr/bin/phpdbg command interpreter, useful for
@@ -208,6 +214,7 @@ Depends: libmagic1,
 Provides: ${php:Provides}
 Suggests: php-pear
 Pre-Depends: ${misc:Pre-Depends}
+Conflicts: php5-fpm
 Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
  This package provides the Fast Process Manager interpreter that runs
  as a daemon and receives Fast/CGI requests.  Note that MOST Apache users
@@ -230,6 +237,7 @@ Depends: libmagic1,
          ${shlibs:Depends}
 Provides: ${php:Provides}
 Suggests: php-pear
+Conflicts: libphp5-embed
 Priority: optional
 Description: HTML-embedded scripting language (Embedded SAPI library)
  This package provides the library /usr/lib/libphp@PHP_VERSION@.so which can
@@ -256,7 +264,8 @@ Depends: autoconf (>= 2.63),
          shtool,
          ${misc:Depends},
          ${perl:Depends}
-Conflicts: ${libtool:Conflicts}
+Conflicts: php5-dev,
+           ${libtool:Conflicts}
 Architecture: any
 Recommends: dh-php@PHP_VERSION@,
             pkg-php-tools
