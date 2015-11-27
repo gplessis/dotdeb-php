@@ -26,7 +26,7 @@ ADD . /usr/src/builddir
 WORKDIR /usr/src/builddir
 
 #RUN uscan --download-current-version
-RUN curl -Lo ../php7.0_7.0.0~rc7.orig.tar.xz https://downloads.php.net/~ab/php-7.0.0RC7.tar.xz
+RUN curl -Lo ../php7.0_7.0.0~rc8.orig.tar.xz https://downloads.php.net/~ab/php-7.0.0RC8.tar.xz
 RUN dpkg-buildpackage
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/builddir
