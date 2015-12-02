@@ -401,6 +401,22 @@ Description: Internationalisation module for PHP
  open source general-purpose scripting language that is especially suited
  for web development and can be embedded into HTML.
 
+Package: php7.0-json
+Architecture: any
+Depends: php-common,
+         ucf,
+         ${misc:Depends},
+         ${php:Depends},
+         ${shlibs:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Built-Using: ${php:Built-Using}
+Description: JSON module for PHP
+ This package provides a JSON module for PHP.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
 Package: php7.0-pgsql
 Architecture: any
 Depends: php-common,
@@ -412,6 +428,22 @@ Pre-Depends: ${misc:Pre-Depends}
 Built-Using: ${php:Built-Using}
 Description: PostgreSQL module for PHP
  This package provides a PostgreSQL module for PHP.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
+Package: php7.0-opcache
+Architecture: any
+Depends: php-common,
+         ucf,
+         ${misc:Depends},
+         ${php:Depends},
+         ${shlibs:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Built-Using: ${php:Built-Using}
+Description: Zend OpCache module for PHP
+ This package provides a Zend OpCache module for PHP.
  .
  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
  open source general-purpose scripting language that is especially suited
