@@ -1,3 +1,10 @@
+php7.0 (7.0.0-1~dotdeb+8.1) stable; urgency=medium
+
+  * debian/watch for GA
+  * Imported Upstream version 7.0.0
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 03 Dec 2015 13:51:24 -0800
+
 php7.0 (7.0.0~rc8-2~dotdeb+8.1) stable; urgency=medium
 
   * Fixes control.in to include libxpm-dev
