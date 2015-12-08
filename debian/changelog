@@ -1,3 +1,9 @@
+php7.0 (7.0.0-5~dotdeb+8.1) stable; urgency=medium
+
+  * Sync with Debian
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Tue, 08 Dec 2015 19:01:40 +0000
+
 php7.0 (7.0.0-1~dotdeb+8.1) stable; urgency=medium
 
   * debian/watch for GA
