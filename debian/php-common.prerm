@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" -o "$1" = "purge" ]; then
+    if dpkg-statoverride --list /var/lib/php/sessions; then
+	dpkg-statoverride --remove /var/lib/php/sessions;
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

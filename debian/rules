@@ -35,6 +35,7 @@ TARGETS              := $(REAL_TARGETS) $(EXTRA_TARGETS)
 CONFIGURE_TARGETS    := $(addprefix configure-, $(addsuffix -stamp, $(TARGETS)))
 BUILD_TARGETS        := $(addprefix build-, $(addsuffix -stamp, $(TARGETS)))
 INSTALL_TARGETS      := $(addprefix install-, $(addsuffix -stamp, $(TARGETS)))
+CLI_INSTALL_DEPEND   := $(filter-out install-cli-stamp,$(INSTALL_TARGETS))
 
 # Special package names
 PHP_PHP      := php$(PHP_NAME_VERSION)
@@ -155,6 +156,7 @@ COMMON_CONFIG := \
 		--with-layout=GNU \
 		--without-pear \
 		--enable-bcmath \
+		--with-bz2 \
 		--enable-calendar \
 		--enable-ctype \
 		--enable-dba \
@@ -184,7 +186,6 @@ COMMON_CONFIG := \
 		  --enable-mysqlnd-compression-support \
 		  --with-zlib-dir=/usr \
 		--with-openssl=yes \
-		--with-libedit=/usr \
 		--enable-libxml \
 		--enable-session \
 		--enable-simplexml \
@@ -205,19 +206,19 @@ COMMON_CONFIG := \
 
 # disable all SAPIs in extension build
 ext_config = \
-		--prefix=/usr --disable-cli --disable-cgi \
+		--prefix=/usr --enable-cli --disable-cgi \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/apache2 \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/apache2/conf.d \
 		$(COMMON_CONFIG)
 
 apache2_config = \
-		--prefix=/usr --with-apxs2=/usr/bin/apxs2 --disable-cli --disable-cgi \
+		--prefix=/usr --with-apxs2=/usr/bin/apxs2 --enable-cli --disable-cgi \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/apache2 \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/apache2/conf.d \
 		$(COMMON_CONFIG)
 
 cgi_config = \
-		--prefix=/usr --enable-cgi --disable-cli \
+		--prefix=/usr --enable-cgi --enable-cli \
 		--enable-force-cgi-redirect --enable-fastcgi \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/cgi \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/cgi/conf.d \
@@ -230,10 +231,10 @@ cli_config = \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/cli/conf.d \
 		$(COMMON_CONFIG) \
 		--enable-pcntl \
-		--with-libedit=shared
+		--with-libedit=shared,/usr
 
 embed_config = \
-		--prefix=/usr --enable-embed --disable-cli --disable-cgi \
+		--prefix=/usr --enable-embed --enable-cli --disable-cgi \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/embed \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/embed/conf.d \
 		$(COMMON_CONFIG) \
@@ -241,7 +242,7 @@ embed_config = \
 		--enable-pcntl
 
 fpm_config = \
-		--prefix=/usr --enable-fpm --disable-cli --disable-cgi \
+		--prefix=/usr --enable-fpm --enable-cli --disable-cgi \
 		--sysconfdir=/etc/php/$(PHP_NAME_VERSION)/fpm \
 		--with-fpm-user=www-data --with-fpm-group=www-data \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/fpm \
@@ -251,12 +252,12 @@ fpm_config = \
 		$(CONFIGURE_SYSTEMD)
 
 phpdbg_config = \
-		--prefix=/usr --enable-phpdbg --disable-cli --disable-cgi \
+		--prefix=/usr --enable-phpdbg --enable-cli --disable-cgi \
 		--with-config-file-path=/etc/php/$(PHP_NAME_VERSION)/phpdbg \
 		--with-config-file-scan-dir=/etc/php/$(PHP_NAME_VERSION)/phpdbg/conf.d \
 		$(COMMON_CONFIG) \
 		--enable-pcntl \
-		--with-libedit=shared
+		--with-libedit=shared,/usr
 
 export apache2_config apache2_filter_config cgi_config cli_config embed_config fpm_config phpdbg_config ext_config
 
@@ -278,7 +279,7 @@ $(info Enabled extensions $(ext_EXTENSIONS))
 $(info Enabled config $(ext_config))
 
 %:
-	dh $@ $(DH_SYSTEMD) --with apache2
+	dh $@ $(DH_SYSTEMD) --with apache2 --parallel
 
 PREPARE_FILES := $(addprefix debian/,$(shell cat debian/prepare-files))
 
@@ -339,16 +340,15 @@ build-%-stamp: configure-%-stamp
 
 override_dh_auto_install: $(INSTALL_TARGETS)
 
+# install_targets = install-sapi install-binaries install-build install-headers install-programs install-pharcmd
 install-%-stamp: build-%-stamp
-	dh_auto_install --builddirectory $*-build -- install-headers install-build install-sapi install-programs INSTALL_ROOT=$(CURDIR)/debian/tmp
+	dh_auto_install --builddirectory $*-build -- install INSTALL_ROOT=$(CURDIR)/debian/tmp
 	touch install-$*-stamp
 
-# install extra CGI-BIN
-install-cgi-stamp:
-	dh_auto_install --builddirectory cgi-build -- install-headers install-build install-sapi install-programs INSTALL_ROOT=$(CURDIR)/debian/tmp
-	mkdir -p debian/tmp/usr/lib/cgi-bin/
-	install -m 755 cgi-build/sapi/cgi/usr.bin.$(PHP_CGI) debian/tmp/usr/lib/cgi-bin/php$(PHP_NAME_VERSION)
-	touch install-cgi-stamp
+# CLI has to be installed as last target
+install-cli-stamp: $(CLI_INSTALL_DEPEND)
+	dh_auto_install --builddirectory cli-build -- install INSTALL_ROOT=$(CURDIR)/debian/tmp
+	touch install-cli-stamp
 
 PCNTL_FUNCTIONS := $(shell < ext/pcntl/php_pcntl.h $(SED) -ne "/^PHP_FUNCTION/ s/PHP_FUNCTION(\(.*\));/\1/;t end;d;:end p" | tr '\n' ',')
 
@@ -458,8 +458,6 @@ remove-files-stamp:
 	find debian/tmp/ -name '*.la' -delete
 	# get rid of static versions of PHP modules (WTF?)
 	rm -f debian/tmp/usr/lib/php/$(PHP_ZEND_VERSION)/*.a
-	# get rid of readline.so
-	rm -f debian/tmp/usr/lib/php/$(PHP_ZEND_VERSION)/readline.so
 
 	rm -rf \
 	  debian/tmp/.filemap \
@@ -495,6 +493,10 @@ override_dh_installdirs: prepare-files-stamp
 	dh_installdirs
 
 override_dh_install: rename-files-stamp remove-files-stamp create-modules-source-stamp prepare-fpm-pools
+	# install extra CGI-BIN
+	install -d -m 755 debian/tmp/usr/lib/cgi-bin/; \
+	install -m 755 cgi-build/sapi/cgi/usr.bin.$(PHP_CGI) debian/tmp/usr/lib/cgi-bin/php$(PHP_NAME_VERSION); \
+
 	# sanitize php.ini files
 	mkdir -p debian/$(PHP_COMMON)/usr/lib/php/$(PHP_NAME_VERSION)/
 	cat php.ini-production | tr "\t" " " | \
@@ -551,8 +553,10 @@ override_dh_compress:
 override_dh_installchangelogs:
 	dh_installchangelogs -p$(PHP_COMMON) NEWS
 
-override_dh_fixperms:
-	dh_fixperms -X/var/lib/php/$(PHP_NAME_VERSION)
+override_dh_fixperms-indep:
+	chmod 01733 debian/php$(PHP_NAME_VERSION)-common/var/lib/php/sessions/
+	dh_fixperms -i  -p$(PHP_COMMON) -X/var/lib/php
+	dh_fixperms -i --remaining-packages
 
 override_dh_strip:
 	dh_strip --dbg-package=$(PHP_DBG)

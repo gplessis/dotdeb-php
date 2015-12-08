@@ -7,7 +7,7 @@ Type=notify
 PIDFile=/run/php/php@PHP_VERSION@-fpm.pid
 ExecStartPre=/usr/lib/php/php@PHP_VERSION@-fpm-checkconf
 ExecStart=/usr/sbin/php-fpm@PHP_VERSION@ --nodaemonize --fpm-config /etc/php/@PHP_VERSION@/fpm/php-fpm.conf
-ExecReload=/usr/lib/php/@PHP_VERSION@/php@PHP_VERSION@-fpm-checkconf
+ExecReload=/usr/lib/php/php@PHP_VERSION@-fpm-checkconf
 ExecReload=/bin/kill -USR2 $MAINPID
 
 [Install]

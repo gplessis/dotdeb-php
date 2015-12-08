@@ -3,6 +3,8 @@ php@PHP_VERSION@-cgi.conf
 php@PHP_VERSION@-common.docs
 php@PHP_VERSION@-common.lintian-overrides
 php@PHP_VERSION@-common.README.Debian
+php@PHP_VERSION@-common.postinst
+php@PHP_VERSION@-common.prerm
 php@PHP_VERSION@.conf
 php@PHP_VERSION@dbg.1
 php@PHP_VERSION@-dev.dirs

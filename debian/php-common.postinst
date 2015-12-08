@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+    if ! dpkg-statoverride --list /var/lib/php/sessions; then
+        dpkg-statoverride --update --quiet --add root root 01733 /var/lib/php/sessions
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0
