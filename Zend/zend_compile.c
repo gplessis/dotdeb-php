@@ -190,10 +190,10 @@ typedef struct _builtin_type_info {
 } builtin_type_info;
 
 static const builtin_type_info builtin_types[] = {
-	{"int", sizeof("int") - 1, IS_LONG},
-	{"float", sizeof("float") - 1, IS_DOUBLE},
-	{"string", sizeof("string") - 1, IS_STRING},
-	{"bool", sizeof("bool") - 1, _IS_BOOL},
+	{ZEND_STRL("int"), IS_LONG},
+	{ZEND_STRL("float"), IS_DOUBLE},
+	{ZEND_STRL("string"), IS_STRING},
+	{ZEND_STRL("bool"), _IS_BOOL},
 	{NULL, 0, IS_UNDEF}
 };
 
@@ -4383,6 +4383,11 @@ static void zend_compile_typename(zend_ast *ast, zend_arg_info *arg_info) /* {{{
 		zend_uchar type = zend_lookup_builtin_type_by_name(class_name);
 
 		if (type != 0) {
+			if (ast->attr != ZEND_NAME_NOT_FQ) {
+				zend_error_noreturn(E_COMPILE_ERROR,
+					"Scalar type declaration '%s' must be unqualified",
+					ZSTR_VAL(zend_string_tolower(class_name)));
+			}
 			arg_info->type_hint = type;
 		} else {
 			uint32_t fetch_type = zend_get_class_fetch_type_ast(ast);
@@ -5630,7 +5635,7 @@ void zend_compile_namespace(zend_ast *ast) /* {{{ */
 		}
 		if (num > 0) {
 			zend_error_noreturn(E_COMPILE_ERROR, "Namespace declaration statement has to be "
-				"the very first statement in the script");
+				"the very first statement or after any declare call in the script");
 		}
 	}
 
@@ -7472,10 +7477,13 @@ void zend_eval_const_expr(zend_ast **ast_ptr) /* {{{ */
 
 			if (zend_try_compile_const_expr_resolve_class_name(&result, class_ast, name_ast, 0)) {
 				if (Z_TYPE(result) == IS_NULL) {
+					if (zend_get_class_fetch_type(zend_ast_get_str(class_ast)) == ZEND_FETCH_CLASS_SELF) {
+						zend_ast_destroy(ast);
+						*ast_ptr = zend_ast_create_ex(ZEND_AST_MAGIC_CONST, T_CLASS_C);
+					}
 					return;
-				} else {
-					break;
 				}
+				break;
 			}
 
 			zend_eval_const_expr(&class_ast);
