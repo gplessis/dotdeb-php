@@ -3642,7 +3642,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=0
+PHP_RELEASE_VERSION=1
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -6065,11 +6065,13 @@ $as_echo "" >&6; }
 $as_echo "${T_MD}Configuring SAPI modules${T_ME}" >&6; }
 
 
-config_m4_src=sapi/*/config0.m4
-config_m4_dir=sapi/*
 
-config_m4_src=sapi/apache2handler/config.m4
-config_m4_dir=sapi/apache2handler
+
+
+
+
+
+
 
 
 php_with_apxs2=no
@@ -6894,8 +6896,9 @@ $as_echo "no" >&6; }
 fi
 
 
-config_m4_src=sapi/cli/config.m4
-config_m4_dir=sapi/cli
+
+
+
 
 
 php_enable_cli=yes
@@ -7089,9 +7092,9 @@ EOF
   case $host_alias in
   *aix*)
     if test "$php_sapi_module" = "shared"; then
-      BUILD_CLI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/.libs\/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
+      BUILD_CLI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/.libs\/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
     else
-      BUILD_CLI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
+      BUILD_CLI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
     fi
     ;;
   *darwin*)
@@ -7143,8 +7146,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PHP_CLI" >&5
 $as_echo "$PHP_CLI" >&6; }
 
-config_m4_src=sapi/embed/config.m4
-config_m4_dir=sapi/embed
+
+
+
 
 
 php_enable_embed=no
@@ -7371,8 +7375,9 @@ $as_echo "no" >&6; }
 fi
 
 
-config_m4_src=sapi/fpm/config.m4
-config_m4_dir=sapi/fpm
+
+
+
 
 
 php_enable_fpm=no
@@ -9156,7 +9161,7 @@ EOF
 
   case $host_alias in
       *aix*)
-        BUILD_FPM="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_FPM_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_FPM_OBJS) \$(EXTRA_LIBS) \$(FPM_EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_FPM_PATH)"
+        BUILD_FPM="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_FPM_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_FPM_OBJS) \$(EXTRA_LIBS) \$(FPM_EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_FPM_PATH)"
         ;;
       *darwin*)
         BUILD_FPM="\$(CC) \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(NATIVE_RPATHS) \$(PHP_GLOBAL_OBJS:.lo=.o) \$(PHP_BINARY_OBJS:.lo=.o) \$(PHP_FASTCGI_OBJS:.lo=.o) \$(PHP_FPM_OBJS:.lo=.o) \$(PHP_FRAMEWORKS) \$(EXTRA_LIBS) \$(FPM_EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_FPM_PATH)"
@@ -9178,8 +9183,9 @@ else
 $as_echo "no" >&6; }
 fi
 
-config_m4_src=sapi/litespeed/config.m4
-config_m4_dir=sapi/litespeed
+
+
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for LiteSpeed support" >&5
 $as_echo_n "checking for LiteSpeed support... " >&6; }
@@ -9354,8 +9360,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PHP_LITESPEED" >&5
 $as_echo "$PHP_LITESPEED" >&6; }
 
-config_m4_src=sapi/phpdbg/config.m4
-config_m4_dir=sapi/phpdbg
+
+
+
 
 
 php_enable_phpdbg=yes
@@ -9543,7 +9550,7 @@ $as_echo "#define PHPDBG_DEBUG 0" >>confdefs.h
 
   fi
 
-  PHP_PHPDBG_CFLAGS="-D_GNU_SOURCE"
+  PHP_PHPDBG_CFLAGS="-D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"
   PHP_PHPDBG_FILES="phpdbg.c phpdbg_parser.c phpdbg_lexer.c phpdbg_prompt.c phpdbg_help.c phpdbg_break.c phpdbg_print.c phpdbg_bp.c phpdbg_opcode.c phpdbg_list.c phpdbg_utils.c phpdbg_info.c phpdbg_cmd.c phpdbg_set.c phpdbg_frame.c phpdbg_watch.c phpdbg_btree.c phpdbg_sigsafe.c phpdbg_wait.c phpdbg_io.c phpdbg_eol.c phpdbg_out.c"
 
   if test "$PHP_READLINE" != "no" -o  "$PHP_LIBEDIT" != "no"; then
@@ -9702,9 +9709,9 @@ fi
 
 if test "$PHP_PHPDBG_WEBHELPER" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=sapi/phpdbg
+  ext_srcdir=$abs_srcdir/sapi/phpdbg
+  ext_dir=sapi/phpdbg
 
   ac_extra=
 
@@ -9998,8 +10005,9 @@ EOF
 fi
 
 
-config_m4_src=sapi/cgi/config9.m4
-config_m4_dir=sapi/cgi
+
+
+
 
 
 php_enable_cgi=yes
@@ -10200,9 +10208,9 @@ EOF
     case $host_alias in
       *aix*)
         if test "$php_sapi_module" = "shared"; then
-          BUILD_CGI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CGI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/.libs\/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_CGI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
+          BUILD_CGI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CGI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/.libs\/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_CGI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
         else
-          BUILD_CGI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CGI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_CGI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
+          BUILD_CGI="echo '\#! .' > php.sym && echo >>php.sym && nm -BCpg \`echo \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_CGI_OBJS) | sed 's/\([A-Za-z0-9_]*\)\.lo/\1.o/g'\` | \$(AWK) '{ if (((\$\$2 == \"T\") || (\$\$2 == \"D\") || (\$\$2 == \"B\")) && (substr(\$\$3,1,1) != \".\")) { print \$\$3 } }' | sort -u >> php.sym && \$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) -Wl,-brtl -Wl,-bE:php.sym \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_BINARY_OBJS) \$(PHP_FASTCGI_OBJS) \$(PHP_CGI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
         fi
         ;;
       *darwin*)
@@ -13944,6 +13952,126 @@ _ACEOF
 
 
 
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __builtin_clz" >&5
+$as_echo_n "checking for __builtin_clz... " >&6; }
+
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+    return __builtin_clz(1) ? 1 : 0;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+    have_builtin_clz=1
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+
+    have_builtin_clz=0
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+
+
+cat >>confdefs.h <<_ACEOF
+#define PHP_HAVE_BUILTIN_CLZ $have_builtin_clz
+_ACEOF
+
+
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __builtin_ctzl" >&5
+$as_echo_n "checking for __builtin_ctzl... " >&6; }
+
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+    return __builtin_ctzl(2L) ? 1 : 0;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+    have_builtin_ctzl=1
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+
+    have_builtin_ctzl=0
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+
+
+cat >>confdefs.h <<_ACEOF
+#define PHP_HAVE_BUILTIN_CTZL $have_builtin_ctzl
+_ACEOF
+
+
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __builtin_ctzll" >&5
+$as_echo_n "checking for __builtin_ctzll... " >&6; }
+
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+    return __builtin_ctzll(2LL) ? 1 : 0;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+    have_builtin_ctzll=1
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+
+    have_builtin_ctzll=0
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+
+
+cat >>confdefs.h <<_ACEOF
+#define PHP_HAVE_BUILTIN_CTZLL $have_builtin_ctzll
+_ACEOF
+
+
+
+
 ac_fn_c_check_member "$LINENO" "struct stat" "st_blksize" "ac_cv_member_struct_stat_st_blksize" "$ac_includes_default"
 if test "x$ac_cv_member_struct_stat_st_blksize" = xyes; then :
 
@@ -15993,8 +16121,9 @@ fi
 
 
 # reading config stubs
-config_m4_src=ext/date/config0.m4
-config_m4_dir=ext/date
+
+
+
 
 
 
@@ -16198,9 +16327,9 @@ timelib_sources="lib/astro.c lib/dow.c lib/parse_date.c lib/parse_tz.c
                  lib/timelib.c lib/tm2unixtime.c lib/unixtime2tm.c lib/parse_iso_intervals.c lib/interval.c"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/date
+  ext_srcdir=$abs_srcdir/ext/date
+  ext_dir=ext/date
 
   ac_extra=`echo "$PHP_DATE_CFLAGS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -16602,8 +16731,9 @@ cat > $ext_builddir/lib/timelib_config.h <<EOF
 #define timelib_free    efree
 EOF
 
-config_m4_src=ext/libxml/config0.m4
-config_m4_dir=ext/libxml
+
+
+
 
 
 php_enable_libxml=yes
@@ -16901,9 +17031,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/libxml
+  ext_srcdir=$abs_srcdir/ext/libxml
+  ext_dir=ext/libxml
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -17223,8 +17353,9 @@ else
 
 fi
 
-config_m4_src=ext/openssl/config0.m4
-config_m4_dir=ext/openssl
+
+
+
 
 
 php_with_openssl=no
@@ -17321,9 +17452,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_OPENSSL" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/openssl
+  ext_srcdir=$abs_srcdir/ext/openssl
+  ext_dir=ext/openssl
 
   ac_extra=
 
@@ -18730,8 +18861,9 @@ $as_echo "#define USE_OPENSSL_SYSTEM_CIPHERS 1" >>confdefs.h
   fi
 fi
 
-config_m4_src=ext/pcre/config0.m4
-config_m4_dir=ext/pcre
+
+
+
 
 
 
@@ -18879,9 +19011,9 @@ $as_echo "#define HAVE_PCRE 1" >>confdefs.h
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pcre
+  ext_srcdir=$abs_srcdir/ext/pcre
+  ext_dir=ext/pcre
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -19207,9 +19339,9 @@ $as_echo "bundled" >&6; }
     				 pcrelib/pcre_jit_compile.c"
     PHP_PCRE_CFLAGS="-DHAVE_CONFIG_H -I@ext_srcdir@/pcrelib -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pcre
+  ext_srcdir=$abs_srcdir/ext/pcre
+  ext_dir=ext/pcre
 
   ac_extra=`echo "$PHP_PCRE_CFLAGS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -19530,8 +19662,9 @@ $as_echo "#define HAVE_BUNDLED_PCRE 1" >>confdefs.h
 
   fi
 
-config_m4_src=ext/sqlite3/config0.m4
-config_m4_dir=ext/sqlite3
+
+
+
 
 
 php_with_sqlite3=yes
@@ -20398,9 +20531,9 @@ $as_echo "#define HAVE_SQLITE3 1" >>confdefs.h
   sqlite3_sources="sqlite3.c $sqlite3_extra_sources"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/sqlite3
+  ext_srcdir=$abs_srcdir/ext/sqlite3
+  ext_dir=ext/sqlite3
 
   ac_extra=`echo "$PHP_SQLITE3_CFLAGS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -20701,8 +20834,9 @@ EOF
 
 fi
 
-config_m4_src=ext/zlib/config0.m4
-config_m4_dir=ext/zlib
+
+
+
 
 
 php_with_zlib=no
@@ -20775,9 +20909,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_ZLIB" != "no" || test "$PHP_ZLIB_DIR" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/zlib
+  ext_srcdir=$abs_srcdir/ext/zlib
+  ext_dir=ext/zlib
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -21362,8 +21496,9 @@ fi
 
 fi
 
-config_m4_src=ext/bcmath/config.m4
-config_m4_dir=ext/bcmath
+
+
+
 
 
 php_enable_bcmath=no
@@ -21411,9 +21546,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_BCMATH" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/bcmath
+  ext_srcdir=$abs_srcdir/ext/bcmath
+  ext_dir=ext/bcmath
 
   ac_extra=`echo "-I@ext_srcdir@/libbcmath/src -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -21730,8 +21865,9 @@ $as_echo "#define HAVE_BCMATH 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/bz2/config.m4
-config_m4_dir=ext/bz2
+
+
+
 
 
 php_with_bz2=no
@@ -22084,9 +22220,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/bz2
+  ext_srcdir=$abs_srcdir/ext/bz2
+  ext_dir=ext/bz2
 
   ac_extra=
 
@@ -22382,8 +22518,9 @@ EOF
 
 fi
 
-config_m4_src=ext/calendar/config.m4
-config_m4_dir=ext/calendar
+
+
+
 
 
 php_enable_calendar=no
@@ -22434,9 +22571,9 @@ if test "$PHP_CALENDAR" = "yes"; then
 $as_echo "#define HAVE_CALENDAR 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/calendar
+  ext_srcdir=$abs_srcdir/ext/calendar
+  ext_dir=ext/calendar
 
   ac_extra=
 
@@ -22729,8 +22866,9 @@ EOF
 
 fi
 
-config_m4_src=ext/ctype/config.m4
-config_m4_dir=ext/ctype
+
+
+
 
 
 php_enable_ctype=yes
@@ -22781,9 +22919,9 @@ if test "$PHP_CTYPE" != "no"; then
 $as_echo "#define HAVE_CTYPE 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/ctype
+  ext_srcdir=$abs_srcdir/ext/ctype
+  ext_dir=ext/ctype
 
   ac_extra=
 
@@ -23076,8 +23214,9 @@ EOF
 
 fi
 
-config_m4_src=ext/curl/config.m4
-config_m4_dir=ext/curl
+
+
+
 
 
 php_with_curl=no
@@ -24117,9 +24256,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/curl
+  ext_srcdir=$abs_srcdir/ext/curl
+  ext_dir=ext/curl
 
   ac_extra=
 
@@ -24415,8 +24554,9 @@ EOF
 
 fi
 
-config_m4_src=ext/dba/config.m4
-config_m4_dir=ext/dba
+
+
+
 
 
 
@@ -28057,9 +28197,9 @@ $as_echo "yes" >&6; }
 $as_echo "#define HAVE_DBA 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/dba
+  ext_srcdir=$abs_srcdir/ext/dba
+  ext_dir=ext/dba
 
   ac_extra=
 
@@ -28373,8 +28513,9 @@ else
 $as_echo "no" >&6; }
 fi
 
-config_m4_src=ext/dom/config.m4
-config_m4_dir=ext/dom
+
+
+
 
 
 php_enable_dom=yes
@@ -28674,9 +28815,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_DOM 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/dom
+  ext_srcdir=$abs_srcdir/ext/dom
+  ext_dir=ext/dom
 
   ac_extra=
 
@@ -29054,8 +29195,9 @@ else
 
 fi
 
-config_m4_src=ext/enchant/config.m4
-config_m4_dir=ext/enchant
+
+
+
 
 
 php_with_enchant=no
@@ -29104,9 +29246,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_ENCHANT" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/enchant
+  ext_srcdir=$abs_srcdir/ext/enchant
+  ext_dir=ext/enchant
 
   ac_extra=
 
@@ -29708,8 +29850,9 @@ fi
 
 fi
 
-config_m4_src=ext/exif/config.m4
-config_m4_dir=ext/exif
+
+
+
 
 
 php_enable_exif=no
@@ -29760,9 +29903,9 @@ if test "$PHP_EXIF" != "no"; then
 $as_echo "#define HAVE_EXIF 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/exif
+  ext_srcdir=$abs_srcdir/ext/exif
+  ext_dir=ext/exif
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -30055,8 +30198,9 @@ EOF
 
 fi
 
-config_m4_src=ext/fileinfo/config.m4
-config_m4_dir=ext/fileinfo
+
+
+
 
 
 php_enable_fileinfo=yes
@@ -30168,9 +30312,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/fileinfo
+  ext_srcdir=$abs_srcdir/ext/fileinfo
+  ext_dir=ext/fileinfo
 
   ac_extra=`echo "-I@ext_srcdir@/libmagic"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -30488,8 +30632,9 @@ done
 
 fi
 
-config_m4_src=ext/filter/config.m4
-config_m4_dir=ext/filter
+
+
+
 
 
 php_enable_filter=yes
@@ -30611,9 +30756,9 @@ rm -f conftest*
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/filter
+  ext_srcdir=$abs_srcdir/ext/filter
+  ext_dir=ext/filter
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -30947,8 +31092,9 @@ but you've either not enabled pcre, or have disabled it.
 
 fi
 
-config_m4_src=ext/ftp/config.m4
-config_m4_dir=ext/ftp
+
+
+
 
 
 php_enable_ftp=no
@@ -31023,9 +31169,9 @@ if test "$PHP_FTP" = "yes"; then
 $as_echo "#define HAVE_FTP 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/ftp
+  ext_srcdir=$abs_srcdir/ext/ftp
+  ext_dir=ext/ftp
 
   ac_extra=
 
@@ -32041,8 +32187,9 @@ $as_echo "#define HAVE_FTP_SSL 1" >>confdefs.h
   fi
 fi
 
-config_m4_src=ext/gd/config.m4
-config_m4_dir=ext/gd
+
+
+
 
 
 
@@ -36745,9 +36892,9 @@ fi
 
 if test "$PHP_GD" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/gd
+  ext_srcdir=$abs_srcdir/ext/gd
+  ext_dir=ext/gd
 
   ac_extra=`echo "\\$(GDLIB_CFLAGS)"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -37295,8 +37442,9 @@ fi
 
 fi
 
-config_m4_src=ext/gettext/config.m4
-config_m4_dir=ext/gettext
+
+
+
 
 
 php_with_gettext=no
@@ -37455,9 +37603,9 @@ fi
 $as_echo "#define HAVE_LIBINTL 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/gettext
+  ext_srcdir=$abs_srcdir/ext/gettext
+  ext_dir=ext/gettext
 
   ac_extra=
 
@@ -38063,8 +38211,9 @@ fi
 
 fi
 
-config_m4_src=ext/gmp/config.m4
-config_m4_dir=ext/gmp
+
+
+
 
 php_with_gmp=no
 
@@ -38401,9 +38550,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/gmp
+  ext_srcdir=$abs_srcdir/ext/gmp
+  ext_dir=ext/gmp
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -38702,8 +38851,9 @@ $as_echo "#define HAVE_GMP 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/hash/config.m4
-config_m4_dir=ext/hash
+
+
+
 
 
 php_with_mhash=no
@@ -38997,9 +39147,9 @@ _ACEOF
     php_hash_fnv.h php_hash_joaat.h"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/hash
+  ext_srcdir=$abs_srcdir/ext/hash
+  ext_dir=ext/hash
 
   ac_extra=
 
@@ -39314,8 +39464,9 @@ EOF
 
 fi
 
-config_m4_src=ext/iconv/config.m4
-config_m4_dir=ext/iconv
+
+
+
 
 
 php_with_iconv=yes
@@ -40380,9 +40531,9 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/iconv
+  ext_srcdir=$abs_srcdir/ext/iconv
+  ext_dir=ext/iconv
 
   ac_extra=`echo "-I\"$PHP_ICONV_PREFIX/include\" -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -40699,8 +40850,9 @@ EOF
   fi
 fi
 
-config_m4_src=ext/imap/config.m4
-config_m4_dir=ext/imap
+
+
+
 
 
 
@@ -40812,9 +40964,9 @@ if test "$PHP_IMAP" != "no"; then
   PHP_VAR_SUBST="$PHP_VAR_SUBST IMAP_SHARED_LIBADD"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/imap
+  ext_srcdir=$abs_srcdir/ext/imap
+  ext_dir=ext/imap
 
   ac_extra=
 
@@ -43218,8 +43370,9 @@ fi
 
 fi
 
-config_m4_src=ext/interbase/config.m4
-config_m4_dir=ext/interbase
+
+
+
 
 php_with_interbase=no
 
@@ -43861,9 +44014,9 @@ fi
 $as_echo "#define HAVE_IBASE 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/interbase
+  ext_srcdir=$abs_srcdir/ext/interbase
+  ext_dir=ext/interbase
 
   ac_extra=
 
@@ -44159,8 +44312,9 @@ EOF
 
 fi
 
-config_m4_src=ext/intl/config.m4
-config_m4_dir=ext/intl
+
+
+
 
 
 php_enable_intl=no
@@ -44859,9 +45013,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     icu_spoof_src=""
   fi
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/intl
+  ext_srcdir=$abs_srcdir/ext/intl
+  ext_dir=ext/intl
 
   ac_extra=`echo "$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -45515,8 +45669,9 @@ EOF
 
 fi
 
-config_m4_src=ext/json/config.m4
-config_m4_dir=ext/json
+
+
+
 
 
 php_enable_json=yes
@@ -45680,9 +45835,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/json
+  ext_srcdir=$abs_srcdir/ext/json
+  ext_dir=ext/json
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -46016,8 +46171,9 @@ EOF
 
 fi
 
-config_m4_src=ext/ldap/config.m4
-config_m4_dir=ext/ldap
+
+
+
 
 
 
@@ -46095,9 +46251,9 @@ $as_echo "$ext_output" >&6; }
 if test "$PHP_LDAP" != "no"; then
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/ldap
+  ext_srcdir=$abs_srcdir/ext/ldap
+  ext_dir=ext/ldap
 
   ac_extra=`echo "-DLDAP_DEPRECATED=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -49100,8 +49256,9 @@ fi
   LIBS=$_SAVE_LIBS
 fi
 
-config_m4_src=ext/mbstring/config.m4
-config_m4_dir=ext/mbstring
+
+
+
 
 
 
@@ -50734,9 +50891,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/mbstring
+  ext_srcdir=$abs_srcdir/ext/mbstring
+  ext_dir=ext/mbstring
 
   ac_extra=`echo "$PHP_MBSTRING_CFLAGS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -51107,10 +51264,10 @@ EOF
   if test "$ext_shared" = "no"; then
 
 
-  case $config_m4_dir in
+  case ext/mbstring in
   "") ac_srcdir="$abs_srcdir/"; unset ac_bdir; ac_inc="-I. -I$abs_srcdir" ;;
-  /*) ac_srcdir=`echo "$config_m4_dir"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
-  *) ac_srcdir="$abs_srcdir/$config_m4_dir/"; ac_bdir="$config_m4_dir/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
+  /*) ac_srcdir=`echo "ext/mbstring"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
+  *) ac_srcdir="$abs_srcdir/ext/mbstring/"; ac_bdir="ext/mbstring/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
   esac
 
 
@@ -51151,10 +51308,10 @@ EOF
     out="php_config.h"
   else
 
-  case $config_m4_dir in
+  case ext/mbstring in
   "") ac_srcdir="$abs_srcdir/"; unset ac_bdir; ac_inc="-I. -I$abs_srcdir" ;;
-  /*) ac_srcdir=`echo "$config_m4_dir"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
-  *) ac_srcdir="$abs_srcdir/$config_m4_dir/"; ac_bdir="$config_m4_dir/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
+  /*) ac_srcdir=`echo "ext/mbstring"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
+  *) ac_srcdir="$abs_srcdir/ext/mbstring/"; ac_bdir="ext/mbstring/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
   esac
 
 
@@ -51231,8 +51388,9 @@ fi
 
 # vim600: sts=2 sw=2 et
 
-config_m4_src=ext/mcrypt/config.m4
-config_m4_dir=ext/mcrypt
+
+
+
 
 
 
@@ -51785,9 +51943,9 @@ fi
   PHP_VAR_SUBST="$PHP_VAR_SUBST MCRYPT_SHARED_LIBADD"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/mcrypt
+  ext_srcdir=$abs_srcdir/ext/mcrypt
+  ext_dir=ext/mcrypt
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -52080,8 +52238,9 @@ EOF
 
 fi
 
-config_m4_src=ext/mysqli/config.m4
-config_m4_dir=ext/mysqli
+
+
+
 
 
 
@@ -52852,9 +53011,9 @@ $as_echo "no" >&6; }
                   mysqli_fe.c mysqli_report.c mysqli_driver.c mysqli_warning.c \
                   mysqli_exception.c mysqli_result_iterator.c $mysqli_extra_sources"
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/mysqli
+  ext_srcdir=$abs_srcdir/ext/mysqli
+  ext_dir=ext/mysqli
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -53230,8 +53389,9 @@ $as_echo "#define MYSQLI_USE_MYSQLND 1" >>confdefs.h
   fi
 fi
 
-config_m4_src=ext/oci8/config.m4
-config_m4_dir=ext/oci8
+
+
+
 
 if test -z "$SED"; then
   PHP_OCI8_SED="sed";
@@ -53355,8 +53515,8 @@ if test "x$ac_cv_header_sys_sdt_h" = xyes; then :
 _ACEOF
 
 
-  ac_srcdir=$abs_srcdir/$config_m4_dir/
-  ac_bdir=$config_m4_dir/
+  ac_srcdir=$abs_srcdir/ext/oci8/
+  ac_bdir=ext/oci8/
 
   ac_provsrc=oci8_dtrace.d
 
@@ -53378,7 +53538,7 @@ _ACEOF
 
   cat>>Makefile.objects<<EOF
 
-$abs_srcdir/$config_m4_dir/$ac_provsrc:;
+$abs_srcdir/ext/oci8/$ac_provsrc:;
 
 $ac_bdir$ac_hdrobj: $ac_srcdir$ac_provsrc
 	CFLAGS="\$(CFLAGS_CLEAN)" dtrace -h -C -s $ac_srcdir$ac_provsrc -o \$@.bak && \$(SED) -e 's,PHPOCI_,DTRACE_,g' \$@.bak > \$@
@@ -53440,7 +53600,7 @@ done
 
 $as_echo "#define HAVE_OCI8_DTRACE 1" >>confdefs.h
 
-            shared_objects_oci8="$shared_objects_oci8 $config_m4_dir/oci8_dtrace.d.lo"
+            shared_objects_oci8="$shared_objects_oci8 ext/oci8/oci8_dtrace.d.lo"
     fi
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -53978,9 +54138,9 @@ $as_echo "$OCI8_ORACLE_VERSION" >&6; }
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/oci8
+  ext_srcdir=$abs_srcdir/ext/oci8
+  ext_dir=ext/oci8
 
   ac_extra=
 
@@ -54616,9 +54776,9 @@ $as_echo "#define HAVE_OCI_INSTANT_CLIENT 1" >>confdefs.h
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/oci8
+  ext_srcdir=$abs_srcdir/ext/oci8
+  ext_dir=ext/oci8
 
   ac_extra=
 
@@ -54935,8 +55095,9 @@ $as_echo "#define HAVE_OCI8 1" >>confdefs.h
   fi
 fi
 
-config_m4_src=ext/odbc/config.m4
-config_m4_dir=ext/odbc
+
+
+
 
 
 
@@ -56778,9 +56939,9 @@ $as_echo "#define HAVE_UODBC 1" >>confdefs.h
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/odbc
+  ext_srcdir=$abs_srcdir/ext/odbc
+  ext_dir=ext/odbc
 
   ac_extra=`echo "$ODBC_INCLUDE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -57078,8 +57239,9 @@ $as_echo_n "checking for any ODBC driver support... " >&6; }
 $as_echo "no" >&6; }
 fi
 
-config_m4_src=ext/opcache/config.m4
-config_m4_dir=ext/opcache
+
+
+
 
 
 php_enable_opcache=yes
@@ -57235,6 +57397,20 @@ $as_echo "#define HAVE_MPROTECT 1" >>confdefs.h
 
 
 fi
+
+
+  for ac_header in unistd.h sys/uio.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
 
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sysvipc shared memory support" >&5
@@ -57726,9 +57902,9 @@ if test "$flock_type" == "unknown"; then
 fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/opcache
+  ext_srcdir=$abs_srcdir/ext/opcache
+  ext_dir=ext/opcache
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -58130,8 +58306,9 @@ but you've either not enabled pcre, or have disabled it.
 
 fi
 
-config_m4_src=ext/pcntl/config.m4
-config_m4_dir=ext/pcntl
+
+
+
 
 
 php_enable_pcntl=no
@@ -58236,9 +58413,9 @@ fi
 done
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pcntl
+  ext_srcdir=$abs_srcdir/ext/pcntl
+  ext_dir=ext/pcntl
 
   ac_extra=
 
@@ -58531,8 +58708,9 @@ EOF
 
 fi
 
-config_m4_src=ext/pdo/config.m4
-config_m4_dir=ext/pdo
+
+
+
 
 
 
@@ -58624,9 +58802,9 @@ for more detail on this issue.
     esac
   fi
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo
+  ext_srcdir=$abs_srcdir/ext/pdo
+  ext_dir=ext/pdo
 
   ac_extra=
 
@@ -58971,8 +59149,9 @@ but you've either not enabled spl, or have disabled it.
 fi
 
 
-config_m4_src=ext/pdo_dblib/config.m4
-config_m4_dir=ext/pdo_dblib
+
+
+
 
 
 php_with_pdo_dblib=no
@@ -59224,9 +59403,9 @@ as_fn_error $? "Cannot find php_pdo_driver.h." "$LINENO" 5
 
   PDO_DBLIB_DEFS="-DPDO_DBLIB_FLAVOUR=\\\"freetds\\\""
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_dblib
+  ext_srcdir=$abs_srcdir/ext/pdo_dblib
+  ext_dir=ext/pdo_dblib
 
   ac_extra=`echo "-I$pdo_cv_inc_path $PDO_DBLIB_DEFS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -59690,8 +59869,9 @@ but you've either not enabled pdo, or have disabled it.
 
 fi
 
-config_m4_src=ext/pdo_firebird/config.m4
-config_m4_dir=ext/pdo_firebird
+
+
+
 
 php_with_pdo_firebird=no
 
@@ -60367,9 +60547,9 @@ as_fn_error $? "Cannot find php_pdo_driver.h." "$LINENO" 5
 $as_echo "#define HAVE_PDO_FIREBIRD 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_firebird
+  ext_srcdir=$abs_srcdir/ext/pdo_firebird
+  ext_dir=ext/pdo_firebird
 
   ac_extra=`echo "-I$pdo_cv_inc_path"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -60684,8 +60864,9 @@ but you've either not enabled pdo, or have disabled it.
 
 fi
 
-config_m4_src=ext/pdo_mysql/config.m4
-config_m4_dir=ext/pdo_mysql
+
+
+
 
 
 php_with_pdo_mysql=no
@@ -61836,9 +62017,9 @@ _ACEOF
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_mysql
+  ext_srcdir=$abs_srcdir/ext/pdo_mysql
+  ext_dir=ext/pdo_mysql
 
   ac_extra=`echo "-I$pdo_cv_inc_path -I -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -62184,8 +62365,9 @@ but you've either not enabled mysqlnd, or have disabled it.
 
 fi
 
-config_m4_src=ext/pdo_oci/config.m4
-config_m4_dir=ext/pdo_oci
+
+
+
 
 SUPPORTED_LIB_VERS="9.0 10.1 11.1 12.1"  # The lib vers are not bumped when the DB version is bumped
 
@@ -63935,9 +64117,9 @@ as_fn_error $? "Cannot find php_pdo_driver.h." "$LINENO" 5
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_oci
+  ext_srcdir=$abs_srcdir/ext/pdo_oci
+  ext_dir=ext/pdo_oci
 
   ac_extra=`echo "-I$pdo_cv_inc_path"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -64278,8 +64460,9 @@ _ACEOF
 fi
 
 
-config_m4_src=ext/pdo_odbc/config.m4
-config_m4_dir=ext/pdo_odbc
+
+
+
 
 
 
@@ -65123,9 +65306,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_odbc
+  ext_srcdir=$abs_srcdir/ext/pdo_odbc
+  ext_dir=ext/pdo_odbc
 
   ac_extra=`echo "-I$pdo_cv_inc_path $PDO_ODBC_INCLUDE"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -65442,8 +65625,9 @@ but you've either not enabled pdo, or have disabled it.
 
 fi
 
-config_m4_src=ext/pdo_pgsql/config.m4
-config_m4_dir=ext/pdo_pgsql
+
+
+
 
 
 php_with_pdo_pgsql=no
@@ -65985,9 +66169,9 @@ as_fn_error $? "Cannot find php_pdo_driver.h." "$LINENO" 5
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_pgsql
+  ext_srcdir=$abs_srcdir/ext/pdo_pgsql
+  ext_dir=ext/pdo_pgsql
 
   ac_extra=`echo "-I$pdo_cv_inc_path $PDO_PGSQL_CFLAGS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -66301,8 +66485,9 @@ but you've either not enabled pdo, or have disabled it.
 
 fi
 
-config_m4_src=ext/pdo_sqlite/config.m4
-config_m4_dir=ext/pdo_sqlite
+
+
+
 
 
 php_with_pdo_sqlite=$PHP_PDO
@@ -66851,9 +67036,9 @@ fi
   PHP_VAR_SUBST="$PHP_VAR_SUBST PDO_SQLITE_SHARED_LIBADD"
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_sqlite
+  ext_srcdir=$abs_srcdir/ext/pdo_sqlite
+  ext_dir=ext/pdo_sqlite
 
   ac_extra=`echo "-I$pdo_cv_inc_path"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -67161,10 +67346,10 @@ EOF
       if test "$PHP_SQLITE3" != "yes"; then
 
 
-  case $config_m4_dir in
+  case ext/pdo_sqlite in
   "") ac_srcdir="$abs_srcdir/"; unset ac_bdir; ac_inc="-I. -I$abs_srcdir" ;;
-  /*) ac_srcdir=`echo "$config_m4_dir"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
-  *) ac_srcdir="$abs_srcdir/$config_m4_dir/"; ac_bdir="$config_m4_dir/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
+  /*) ac_srcdir=`echo "ext/pdo_sqlite"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
+  *) ac_srcdir="$abs_srcdir/ext/pdo_sqlite/"; ac_bdir="ext/pdo_sqlite/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
   esac
 
 
@@ -67205,9 +67390,9 @@ EOF
       fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pdo_sqlite
+  ext_srcdir=$abs_srcdir/ext/pdo_sqlite
+  ext_dir=ext/pdo_sqlite
 
   ac_extra=`echo "-DPDO_SQLITE_BUNDLED=1 $other_flags $threadsafe_flags -I$pdo_cv_inc_path"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -67771,8 +67956,9 @@ but you've either not enabled pdo, or have disabled it.
 
 fi
 
-config_m4_src=ext/pgsql/config.m4
-config_m4_dir=ext/pgsql
+
+
+
 
 
 php_with_pgsql=no
@@ -69296,9 +69482,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pgsql
+  ext_srcdir=$abs_srcdir/ext/pgsql
+  ext_dir=ext/pgsql
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -69593,8 +69779,9 @@ fi
 
 
 
-config_m4_src=ext/phar/config.m4
-config_m4_dir=ext/phar
+
+
+
 
 
 php_enable_phar=yes
@@ -69642,9 +69829,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_PHAR" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/phar
+  ext_srcdir=$abs_srcdir/ext/phar
+  ext_dir=ext/phar
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -70033,8 +70220,9 @@ but you've either not enabled spl, or have disabled it.
 
 fi
 
-config_m4_src=ext/posix/config.m4
-config_m4_dir=ext/posix
+
+
+
 
 
 php_enable_posix=yes
@@ -70085,9 +70273,9 @@ if test "$PHP_POSIX" = "yes"; then
 $as_echo "#define HAVE_POSIX 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/posix
+  ext_srcdir=$abs_srcdir/ext/posix
+  ext_dir=ext/posix
 
   ac_extra=
 
@@ -70488,8 +70676,9 @@ $as_echo "#define HAVE_UTSNAME_DOMAINNAME 1" >>confdefs.h
   fi
 fi
 
-config_m4_src=ext/pspell/config.m4
-config_m4_dir=ext/pspell
+
+
+
 
 
 php_with_pspell=no
@@ -70538,9 +70727,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_PSPELL" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/pspell
+  ext_srcdir=$abs_srcdir/ext/pspell
+  ext_dir=ext/pspell
 
   ac_extra=
 
@@ -71236,8 +71425,9 @@ $as_echo "#define HAVE_PSPELL 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/readline/config.m4
-config_m4_dir=ext/readline
+
+
+
 
 
 php_with_libedit=no
@@ -72966,9 +73156,9 @@ fi
 done
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/readline
+  ext_srcdir=$abs_srcdir/ext/readline
+  ext_dir=ext/readline
 
   ac_extra=
 
@@ -73264,8 +73454,9 @@ EOF
 
 fi
 
-config_m4_src=ext/recode/config.m4
-config_m4_dir=ext/recode
+
+
+
 
 
 php_with_recode=no
@@ -73767,9 +73958,9 @@ fi
 done
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/recode
+  ext_srcdir=$abs_srcdir/ext/recode
+  ext_dir=ext/recode
 
   ac_extra=
 
@@ -74062,16 +74253,17 @@ EOF
 
 fi
 
-config_m4_src=ext/reflection/config.m4
-config_m4_dir=ext/reflection
+
+
+
 
 
 $as_echo "#define HAVE_REFLECTION 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/reflection
+  ext_srcdir=$abs_srcdir/ext/reflection
+  ext_dir=ext/reflection
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -74363,8 +74555,9 @@ EOF
   fi
 
 
-config_m4_src=ext/session/config.m4
-config_m4_dir=ext/session
+
+
+
 
 
 php_enable_session=yes
@@ -74658,9 +74851,9 @@ $as_echo "#define PHP_PREAD_64 1" >>confdefs.h
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/session
+  ext_srcdir=$abs_srcdir/ext/session
+  ext_dir=ext/session
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -75177,8 +75370,9 @@ $as_echo "#define HAVE_LIBMM 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/shmop/config.m4
-config_m4_dir=ext/shmop
+
+
+
 
 php_enable_shmop=no
 
@@ -75228,9 +75422,9 @@ if test "$PHP_SHMOP" != "no"; then
 $as_echo "#define HAVE_SHMOP 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/shmop
+  ext_srcdir=$abs_srcdir/ext/shmop
+  ext_dir=ext/shmop
 
   ac_extra=
 
@@ -75523,8 +75717,9 @@ EOF
 
 fi
 
-config_m4_src=ext/simplexml/config.m4
-config_m4_dir=ext/simplexml
+
+
+
 
 
 php_enable_simplexml=yes
@@ -75824,9 +76019,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_SIMPLEXML 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/simplexml
+  ext_srcdir=$abs_srcdir/ext/simplexml
+  ext_dir=ext/simplexml
 
   ac_extra=
 
@@ -76187,8 +76382,9 @@ but you've either not enabled spl, or have disabled it.
 
 fi
 
-config_m4_src=ext/snmp/config.m4
-config_m4_dir=ext/snmp
+
+
+
 
 
 php_with_snmp=no
@@ -76763,9 +76959,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/snmp
+  ext_srcdir=$abs_srcdir/ext/snmp
+  ext_dir=ext/snmp
 
   ac_extra=
 
@@ -77061,8 +77257,9 @@ EOF
 
 fi
 
-config_m4_src=ext/soap/config.m4
-config_m4_dir=ext/soap
+
+
+
 
 
 php_enable_soap=no
@@ -77362,9 +77559,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_SOAP 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/soap
+  ext_srcdir=$abs_srcdir/ext/soap
+  ext_dir=ext/soap
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -77669,8 +77866,9 @@ else
 
 fi
 
-config_m4_src=ext/sockets/config.m4
-config_m4_dir=ext/sockets
+
+
+
 
 
 php_enable_sockets=no
@@ -77880,9 +78078,9 @@ $as_echo "#define HAVE_AI_V4MAPPED 1" >>confdefs.h
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/sockets
+  ext_srcdir=$abs_srcdir/ext/sockets
+  ext_dir=ext/sockets
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -78195,16 +78393,17 @@ EOF
 
 fi
 
-config_m4_src=ext/spl/config.m4
-config_m4_dir=ext/spl
+
+
+
 
 
 $as_echo "#define HAVE_SPL 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/spl
+  ext_srcdir=$abs_srcdir/ext/spl
+  ext_dir=ext/spl
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -78535,8 +78734,9 @@ but you've either not enabled pcre, or have disabled it.
   fi
 
 
-config_m4_src=ext/standard/config.m4
-config_m4_dir=ext/standard
+
+
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether flush should be called explicitly after a buffered io" >&5
 $as_echo_n "checking whether flush should be called explicitly after a buffered io... " >&6; }
@@ -79085,10 +79285,10 @@ _ACEOF
 
 
 
-  case $config_m4_dir in
+  case ext/standard in
   "") ac_srcdir="$abs_srcdir/"; unset ac_bdir; ac_inc="-I. -I$abs_srcdir" ;;
-  /*) ac_srcdir=`echo "$config_m4_dir"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
-  *) ac_srcdir="$abs_srcdir/$config_m4_dir/"; ac_bdir="$config_m4_dir/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
+  /*) ac_srcdir=`echo "ext/standard"|cut -c 2-`"/"; ac_bdir=$ac_srcdir; ac_inc="-I$ac_bdir -I$abs_srcdir/$ac_bdir" ;;
+  *) ac_srcdir="$abs_srcdir/ext/standard/"; ac_bdir="ext/standard/"; ac_inc="-I$ac_bdir -I$ac_srcdir" ;;
   esac
 
 
@@ -81913,9 +82113,9 @@ _ACEOF
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/standard
+  ext_srcdir=$abs_srcdir/ext/standard
+  ext_dir=ext/standard
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -82276,8 +82476,9 @@ EOF
 
 
 
-config_m4_src=ext/sysvmsg/config.m4
-config_m4_dir=ext/sysvmsg
+
+
+
 
 
 php_enable_sysvmsg=no
@@ -82338,9 +82539,9 @@ fi
 $as_echo "#define HAVE_SYSVMSG 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/sysvmsg
+  ext_srcdir=$abs_srcdir/ext/sysvmsg
+  ext_dir=ext/sysvmsg
 
   ac_extra=
 
@@ -82633,8 +82834,9 @@ EOF
 
 fi
 
-config_m4_src=ext/sysvsem/config.m4
-config_m4_dir=ext/sysvsem
+
+
+
 
 
 php_enable_sysvsem=no
@@ -82682,9 +82884,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_SYSVSEM" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/sysvsem
+  ext_srcdir=$abs_srcdir/ext/sysvsem
+  ext_dir=ext/sysvsem
 
   ac_extra=
 
@@ -83023,8 +83225,9 @@ $as_echo "#define HAVE_SEMUN 0" >>confdefs.h
  fi
 fi
 
-config_m4_src=ext/sysvshm/config.m4
-config_m4_dir=ext/sysvshm
+
+
+
 
 
 php_enable_sysvshm=no
@@ -83075,9 +83278,9 @@ if test "$PHP_SYSVSHM" != "no"; then
 $as_echo "#define HAVE_SYSVSHM 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/sysvshm
+  ext_srcdir=$abs_srcdir/ext/sysvshm
+  ext_dir=ext/sysvshm
 
   ac_extra=
 
@@ -83370,8 +83573,9 @@ EOF
 
 fi
 
-config_m4_src=ext/tidy/config.m4
-config_m4_dir=ext/tidy
+
+
+
 
 
 php_with_tidy=no
@@ -83724,9 +83928,9 @@ fi
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/tidy
+  ext_srcdir=$abs_srcdir/ext/tidy
+  ext_dir=ext/tidy
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -84025,8 +84229,9 @@ $as_echo "#define HAVE_TIDY 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/tokenizer/config.m4
-config_m4_dir=ext/tokenizer
+
+
+
 
 
 
@@ -84075,9 +84280,9 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_TOKENIZER" != "no"; then
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/tokenizer
+  ext_srcdir=$abs_srcdir/ext/tokenizer
+  ext_dir=ext/tokenizer
 
   ac_extra=
 
@@ -84376,8 +84581,9 @@ EOF
 
 fi
 
-config_m4_src=ext/wddx/config.m4
-config_m4_dir=ext/wddx
+
+
+
 
 
 php_enable_wddx=no
@@ -84908,9 +85114,9 @@ $as_echo "#define HAVE_LIBEXPAT 1" >>confdefs.h
 $as_echo "#define HAVE_WDDX 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/wddx
+  ext_srcdir=$abs_srcdir/ext/wddx
+  ext_dir=ext/wddx
 
   ac_extra=
 
@@ -85225,8 +85431,9 @@ but you've either not enabled libxml, or have disabled it.
 
 fi
 
-config_m4_src=ext/xml/config.m4
-config_m4_dir=ext/xml
+
+
+
 
 
 php_enable_xml=yes
@@ -85725,9 +85932,9 @@ $as_echo "#define HAVE_LIBEXPAT 1" >>confdefs.h
   fi
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xml
+  ext_srcdir=$abs_srcdir/ext/xml
+  ext_dir=ext/xml
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -86044,8 +86251,9 @@ $as_echo "#define HAVE_XML 1" >>confdefs.h
 
 fi
 
-config_m4_src=ext/xmlreader/config.m4
-config_m4_dir=ext/xmlreader
+
+
+
 
 
 php_enable_xmlreader=yes
@@ -86345,9 +86553,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_XMLREADER 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xmlreader
+  ext_srcdir=$abs_srcdir/ext/xmlreader
+  ext_dir=ext/xmlreader
 
   ac_extra=
 
@@ -86671,8 +86879,9 @@ else
 
 fi
 
-config_m4_src=ext/xmlrpc/config.m4
-config_m4_dir=ext/xmlrpc
+
+
+
 
 # Local macros for automake & autoconf
 
@@ -88319,9 +88528,9 @@ done
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xmlrpc
+  ext_srcdir=$abs_srcdir/ext/xmlrpc
+  ext_dir=ext/xmlrpc
 
   ac_extra=`echo "-I@ext_srcdir@/libxmlrpc -DVERSION="0.50""|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -88793,9 +89002,9 @@ $as_echo "not found" >&6; }
 
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xmlrpc
+  ext_srcdir=$abs_srcdir/ext/xmlrpc
+  ext_dir=ext/xmlrpc
 
   ac_extra=
 
@@ -89089,8 +89298,9 @@ EOF
   XMLRPC_MODULE_TYPE=external
 fi
 
-config_m4_src=ext/xmlwriter/config.m4
-config_m4_dir=ext/xmlwriter
+
+
+
 
 
 php_enable_xmlwriter=yes
@@ -89390,9 +89600,9 @@ $as_echo "#define HAVE_LIBXML 1" >>confdefs.h
 $as_echo "#define HAVE_XMLWRITER 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xmlwriter
+  ext_srcdir=$abs_srcdir/ext/xmlwriter
+  ext_dir=ext/xmlwriter
 
   ac_extra=
 
@@ -89697,8 +89907,9 @@ else
 
 fi
 
-config_m4_src=ext/xsl/config.m4
-config_m4_dir=ext/xsl
+
+
+
 
 
 php_with_xsl=no
@@ -90061,9 +90272,9 @@ $as_echo "#define HAVE_XSL_EXSLT 1" >>confdefs.h
 $as_echo "#define HAVE_XSL 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/xsl
+  ext_srcdir=$abs_srcdir/ext/xsl
+  ext_dir=ext/xsl
 
   ac_extra=
 
@@ -90378,8 +90589,9 @@ but you've either not enabled libxml, or have disabled it.
 
 fi
 
-config_m4_src=ext/zip/config.m4
-config_m4_dir=ext/zip
+
+
+
 
 
 php_enable_zip=no
@@ -90997,9 +91209,9 @@ fi
 $as_echo "#define HAVE_ZIP 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/zip
+  ext_srcdir=$abs_srcdir/ext/zip
+  ext_dir=ext/zip
 
   ac_extra=`echo "$LIBZIP_CFLAGS"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -91325,9 +91537,9 @@ EOF
 $as_echo "#define HAVE_ZIP 1" >>confdefs.h
 
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/zip
+  ext_srcdir=$abs_srcdir/ext/zip
+  ext_dir=ext/zip
 
   ac_extra=
 
@@ -92141,8 +92353,9 @@ esac
 
 fi
 
-config_m4_src=ext/mysqlnd/config9.m4
-config_m4_dir=ext/mysqlnd
+
+
+
 
 
 php_enable_mysqlnd=no
@@ -93062,9 +93275,9 @@ $as_echo "#define MYSQLND_HAVE_SSL 1" >>confdefs.h
 
   mysqlnd_sources="$mysqlnd_base_sources $mysqlnd_ps_sources"
 
-  ext_builddir=$config_m4_dir
-  ext_srcdir=$abs_srcdir/$config_m4_dir
-  ext_dir=$config_m4_dir
+  ext_builddir=ext/mysqlnd
+  ext_srcdir=$abs_srcdir/ext/mysqlnd
+  ext_dir=ext/mysqlnd
 
   ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
@@ -93388,8 +93601,9 @@ if test "$PHP_MYSQLND" != "no" || test "$PHP_MYSQLND_ENABLED" = "yes" || test "$
 
 fi
 
-config_m4_src=ext/recode/config9.m4
-config_m4_dir=ext/recode
+
+
+
 
 if test "$PHP_RECODE" != "no"; then
   test "$PHP_IMAP"  != "no" && recode_conflict="$recode_conflict imap"
@@ -94628,7 +94842,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 94631 "configure"
+#line 94845 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -96506,7 +96720,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 96509 "configure"' > conftest.$ac_ext
+  echo '#line 96723 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -97904,7 +98118,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 97907 "configure"
+#line 98121 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98062,11 +98276,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98065: $lt_compile\"" >&5)
+   (eval echo "\"configure:98279: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98069: \$? = $ac_status" >&5
+   echo "configure:98283: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98360,11 +98574,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98363: $lt_compile\"" >&5)
+   (eval echo "\"configure:98577: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98367: \$? = $ac_status" >&5
+   echo "configure:98581: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98464,11 +98678,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98467: $lt_compile\"" >&5)
+   (eval echo "\"configure:98681: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:98471: \$? = $ac_status" >&5
+   echo "configure:98685: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -98928,7 +99142,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 98931 "configure"
+#line 99145 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98970,7 +99184,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 98973 "configure"
+#line 99187 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -100487,7 +100701,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100490 "configure"
+#line 100704 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -100587,7 +100801,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100590 "configure"
+#line 100804 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -101652,7 +101866,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101655 "configure"
+#line 101869 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -101695,7 +101909,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101698 "configure"
+#line 101912 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -102947,11 +103161,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:102950: $lt_compile\"" >&5)
+   (eval echo "\"configure:103164: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:102954: \$? = $ac_status" >&5
+   echo "configure:103168: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -103051,11 +103265,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103054: $lt_compile\"" >&5)
+   (eval echo "\"configure:103268: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:103058: \$? = $ac_status" >&5
+   echo "configure:103272: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

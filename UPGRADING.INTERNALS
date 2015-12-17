@@ -90,7 +90,7 @@ changes. See: https://wiki.php.net/phpng-upgrading
 
        The only exceptions are the snprintf and zend_sprintf functions yet, because in some cases
        they can use the implemenations available on the system, not the PHP one. With snprintf the
-       macros ZEND_INT_FMT and ZEND_UINT_FMT should be used.
+       macros ZEND_LONG_FMT and ZEND_ULONG_FMT should be used.
 
   h. HashTable API
 
@@ -248,7 +248,7 @@ changes. See: https://wiki.php.net/phpng-upgrading
 
   w. Tick functions internal API change
      Tick functions have different declaration now. They expect a single
-	 single parameter while before they were parameterless. When registering the
+	 parameter while before they were parameterless. When registering the
 	 tick function a value for this parameter must be passed. This value will be
 	 provided to the tick function on every execution.
 
