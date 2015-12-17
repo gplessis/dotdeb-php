@@ -17,7 +17,7 @@ Index: dotdeb-php/configure.in
 ===================================================================
 --- dotdeb-php.orig/configure.in
 +++ dotdeb-php/configure.in
-@@ -1088,7 +1088,7 @@ if test "$PHP_CLI" = "no"; then
+@@ -1094,7 +1094,7 @@ if test "$PHP_CLI" = "no"; then
  fi
  
  PHP_ARG_WITH(pear, [whether to install PEAR],
@@ -26,7 +26,7 @@ Index: dotdeb-php/configure.in
    --without-pear          Do not install PEAR], DEFAULT, yes)
  
  if test "$PHP_PEAR" != "no"; then
-@@ -1197,6 +1197,8 @@ dnl Build extension directory path
+@@ -1203,6 +1203,8 @@ dnl Build extension directory path
  
  ZEND_MODULE_API_NO=`$EGREP '#define ZEND_MODULE_API_NO ' $srcdir/Zend/zend_modules.h|$SED 's/#define ZEND_MODULE_API_NO //'`
  
@@ -35,7 +35,7 @@ Index: dotdeb-php/configure.in
  if test -z "$EXTENSION_DIR"; then
    extbasedir=$ZEND_MODULE_API_NO
    if test "$oldstyleextdir" = "yes"; then
-@@ -1245,7 +1247,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
+@@ -1251,7 +1253,7 @@ EXPANDED_SYSCONFDIR=`eval echo $sysconfd
  EXPANDED_DATADIR=$datadir
  EXPANDED_PHP_CONFIG_FILE_PATH=`eval echo "$PHP_CONFIG_FILE_PATH"`
  EXPANDED_PHP_CONFIG_FILE_SCAN_DIR=`eval echo "$PHP_CONFIG_FILE_SCAN_DIR"`
@@ -44,7 +44,7 @@ Index: dotdeb-php/configure.in
  
  exec_prefix=$old_exec_prefix
  libdir=$old_libdir
-@@ -1526,6 +1528,7 @@ $php_shtool mkdir -p scripts/man1
+@@ -1532,6 +1534,7 @@ $php_shtool mkdir -p scripts/man1
  ALL_OUTPUT_FILES="php7.spec main/build-defs.h \
  scripts/phpize scripts/man1/phpize.1 \
  scripts/php-config scripts/man1/php-config.1 \

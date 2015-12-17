@@ -117,7 +117,7 @@ Index: dotdeb-php/sapi/phpdbg/phpdbg.c
 ===================================================================
 --- dotdeb-php.orig/sapi/phpdbg/phpdbg.c
 +++ dotdeb-php/sapi/phpdbg/phpdbg.c
-@@ -1519,10 +1519,8 @@ phpdbg_main:
+@@ -1520,10 +1520,8 @@ phpdbg_main:
  				sapi_startup(phpdbg);
  				phpdbg->startup(phpdbg);
  				printf(

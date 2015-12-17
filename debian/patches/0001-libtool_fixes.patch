@@ -25,7 +25,7 @@ Index: dotdeb-php/configure.in
 ===================================================================
 --- dotdeb-php.orig/configure.in
 +++ dotdeb-php/configure.in
-@@ -1420,8 +1420,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
+@@ -1426,8 +1426,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
  ])
  AC_PROG_LIBTOOL
  
