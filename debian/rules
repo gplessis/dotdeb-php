@@ -48,7 +48,6 @@ PHP_CGI      := php$(PHP_NAME_VERSION)-cgi
 PHP_CLI      := php$(PHP_NAME_VERSION)-cli
 PHP_DBG      := php$(PHP_NAME_VERSION)-dbg
 PHP_PHPDBG   := php$(PHP_NAME_VERSION)-phpdbg
-PHP_MODULES_SOURCE = php$(PHP_NAME_VERSION)-modules-source
 
 # Generic commands
 
@@ -156,7 +155,6 @@ COMMON_CONFIG := \
 		--with-layout=GNU \
 		--without-pear \
 		--enable-bcmath \
-		--with-bz2 \
 		--enable-calendar \
 		--enable-ctype \
 		--enable-dba \
@@ -484,15 +482,10 @@ remove-files-stamp:
 	  debian/tmp/etc/pear.conf
 	touch remove-files-stamp
 
-create-modules-source-stamp:
-	mkdir -p debian/tmp/usr/src/
-	tar -cJf debian/tmp/usr/src/$(PHP_MODULES_SOURCE).tar.xz ext/
-	touch create-modules-source-stamp
-
 override_dh_installdirs: prepare-files-stamp
 	dh_installdirs
 
-override_dh_install: rename-files-stamp remove-files-stamp create-modules-source-stamp prepare-fpm-pools
+override_dh_install: rename-files-stamp remove-files-stamp prepare-fpm-pools
 	# install extra CGI-BIN
 	install -d -m 755 debian/tmp/usr/lib/cgi-bin/; \
 	install -m 755 cgi-build/sapi/cgi/usr.bin.$(PHP_CGI) debian/tmp/usr/lib/cgi-bin/php$(PHP_NAME_VERSION); \

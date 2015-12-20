@@ -53,7 +53,7 @@ Build-Depends: apache2-dev (>= 2.4),
                libvpx-dev,
                libwrap0-dev,
                libxml2-dev,
-               libxmlrpc-core-c3-dev,
+               libxmlrpc-epi-dev,
                libxmltok1-dev,
                libxpm-dev,
                libxslt1-dev (>= 1.0.18),
@@ -67,7 +67,8 @@ Build-Depends: apache2-dev (>= 2.4),
                tzdata,
                unixodbc-dev,
                zlib1g-dev
-Build-Conflicts: bind-dev
+Build-Conflicts: bind-dev,
+                 libxmlrpc-core-c3-dev
 Standards-Version: 3.9.6
 Vcs-Git: git://anonscm.debian.org/pkg-php/php.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-php/php.git
@@ -279,18 +280,6 @@ Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
  open source general-purpose scripting language that is especially suited
  for web development and can be embedded into HTML.
-
-Package: php@PHP_VERSION@-modules-source
-Architecture: all
-Depends: php@PHP_VERSION@-dev,
-         ${misc:Depends}
-Description: PHP @PHP_VERSION@ modules source package
- This package contains source for PHP @PHP_VERSION@ modules that can be
- built using phpize@PHP_VERSION@.  It is mainly used to generate packages
- with PHP modules built from the main PHP package.
- .
- You probably don't want to install this package unless you want to
- build specific PHP module that is not distributed with Debian itself.
 
 Package: php@PHP_VERSION@-phpdbg
 Architecture: any
