@@ -1,0 +1,21 @@
+From: =?utf-8?q?Ond=C5=99ej_Sur=C3=BD?= <ondrej@sury.org>
+Date: Fri, 18 Dec 2015 08:29:15 +0100
+Subject: XMLRPC-EPI library has to be linked as -lxmlrpc-epi
+
+---
+ ext/xmlrpc/config.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/xmlrpc/config.m4 b/ext/xmlrpc/config.m4
+index f82016e..8b4bd5b 100644
+--- a/ext/xmlrpc/config.m4
++++ b/ext/xmlrpc/config.m4
+@@ -116,7 +116,7 @@ dnl for xmlrpc-epi because of this.
+   fi
+ 
+   PHP_ADD_INCLUDE($XMLRPC_DIR)
+-  PHP_ADD_LIBRARY_WITH_PATH(xmlrpc, $XMLRPC_DIR/$PHP_LIBDIR, XMLRPC_SHARED_LIBADD)
++  PHP_ADD_LIBRARY_WITH_PATH(xmlrpc-epi, $XMLRPC_DIR/$PHP_LIBDIR, XMLRPC_SHARED_LIBADD)
+   PHP_NEW_EXTENSION(xmlrpc,xmlrpc-epi-php.c, $ext_shared)
+   XMLRPC_MODULE_TYPE=external
+ fi
