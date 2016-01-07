@@ -1,12 +1,30 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-** PHP 5.5 is in security-only mode , please do not commit to this branch **
+
+07 Jan 2015, PHP 5.5.31
+
+- FPM:
+  . Fixed bug #70755 (fpm_log.c memory leak and buffer overflow). (Stas)
+
+- GD:
+  . Fixed bug #70976 (Memory Read via gdImageRotateInterpolated Array Index
+    Out of Bounds). (emmanuel dot law at gmail dot com).
+
+- WDDX:
+  . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet Deserialization).
+    (taoguangchen at icloud dot com)
+  . Fixed bug #70741 (Session WDDX Packet Deserialization Type Confusion
+    Vulnerability). (taoguangchen at icloud dot com)
+
+- XMLRPC:
+  . Fixed bug #70728 (Type Confusion Vulnerability in PHP_to_XMLRPC_worker()).
+    (Julien)
 
 01 Oct 2015, PHP 5.5.30
 
 - Phar:
   . Fixed bug #69720 (Null pointer dereference in phar_get_fp_offset()). (Stas)
-  . FIxed bug #70433 (Uninitialized pointer in phar_make_dirstream when zip
+  . Fixed bug #70433 (Uninitialized pointer in phar_make_dirstream when zip
     entry filename is "/"). (Stas)
 
 03 Sep 2015, PHP 5.5.29
