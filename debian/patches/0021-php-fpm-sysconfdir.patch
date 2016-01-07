@@ -15,7 +15,7 @@ Index: dotdeb-php/sapi/fpm/fpm/fpm_conf.c
  
  		if (fpm_globals.prefix == NULL) {
 -			spprintf(&tmp, 0, "%s/php-fpm.conf", PHP_SYSCONFDIR);
-+			spprintf(&tmp, 0, "%s/php/7.0/fpm/php-fpm.conf", PHP_SYSCONFDIR);
++			spprintf(&tmp, 0, "%s/php/%d.%d/fpm/php-fpm.conf", PHP_SYSCONFDIR, PHP_MAJOR_VERSION, PHP_MINOR_VERSION);
  		} else {
  			spprintf(&tmp, 0, "%s/etc/php-fpm.conf", fpm_globals.prefix);
  		}

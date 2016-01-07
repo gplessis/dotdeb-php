@@ -11,7 +11,7 @@ Index: dotdeb-php/configure.in
 ===================================================================
 --- dotdeb-php.orig/configure.in
 +++ dotdeb-php/configure.in
-@@ -1288,7 +1288,7 @@ fi
+@@ -1290,7 +1290,7 @@ fi
  EXTRA_LDFLAGS="$EXTRA_LDFLAGS $PHP_LDFLAGS"
  EXTRA_LDFLAGS_PROGRAM="$EXTRA_LDFLAGS_PROGRAM $PHP_LDFLAGS"
  
@@ -20,7 +20,7 @@ Index: dotdeb-php/configure.in
  AC_DEFINE_UNQUOTED(PHP_BUILD_DATE,"$PHP_BUILD_DATE",[PHP build date])
  
  case $host_alias in
-@@ -1299,7 +1299,7 @@ case $host_alias in
+@@ -1301,7 +1301,7 @@ case $host_alias in
    AC_DEFINE_UNQUOTED(PHP_UNAME,"$PHP_UNAME",[hardcode for each of the cross compiler host])
    ;;
  *)

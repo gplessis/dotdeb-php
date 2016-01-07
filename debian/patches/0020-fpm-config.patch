@@ -15,7 +15,7 @@ Index: dotdeb-php/sapi/fpm/php-fpm.conf.in
  ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
  ; Default Value: none
 -;pid = run/php-fpm.pid
-+pid = @EXPANDED_LOCALSTATEDIR@/run/php/php7.0-fpm.pid
++pid = @EXPANDED_LOCALSTATEDIR@/run/php/php@PHP_MAJOR_VERSION@.@PHP_MINOR_VERSION@-fpm.pid
  
  ; Error log file
  ; If it's set to "syslog", log is sent to syslogd instead of being written
@@ -23,7 +23,7 @@ Index: dotdeb-php/sapi/fpm/php-fpm.conf.in
  ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
  ; Default Value: log/php-fpm.log
 -;error_log = log/php-fpm.log
-+error_log = @EXPANDED_LOCALSTATEDIR@/log/php7.0-fpm.log
++error_log = @EXPANDED_LOCALSTATEDIR@/log/php@PHP_MAJOR_VERSION@.@PHP_MINOR_VERSION@-fpm.log
  
  ; syslog_facility is used to specify what type of program is logging the
  ; message. This lets syslogd specify that messages from different facilities

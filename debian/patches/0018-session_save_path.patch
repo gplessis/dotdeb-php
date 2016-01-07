@@ -12,7 +12,7 @@ Index: dotdeb-php/ext/session/session.c
 ===================================================================
 --- dotdeb-php.orig/ext/session/session.c
 +++ dotdeb-php/ext/session/session.c
-@@ -790,7 +790,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
+@@ -815,7 +815,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
  /* {{{ PHP_INI
   */
  PHP_INI_BEGIN()
@@ -25,7 +25,7 @@ Index: dotdeb-php/php.ini-development
 ===================================================================
 --- dotdeb-php.orig/php.ini-development
 +++ dotdeb-php/php.ini-development
-@@ -1313,7 +1313,7 @@ session.save_handler = files
+@@ -1309,7 +1309,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
  ; http://php.net/session.save-path
@@ -38,7 +38,7 @@ Index: dotdeb-php/php.ini-production
 ===================================================================
 --- dotdeb-php.orig/php.ini-production
 +++ dotdeb-php/php.ini-production
-@@ -1313,7 +1313,7 @@ session.save_handler = files
+@@ -1303,7 +1303,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
  ; http://php.net/session.save-path

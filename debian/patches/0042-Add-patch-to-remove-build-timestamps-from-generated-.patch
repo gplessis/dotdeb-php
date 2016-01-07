@@ -76,7 +76,7 @@ Index: dotdeb-php/sapi/cli/php_cli.c
  			case 'v': /* show php version & quit */
 -				php_printf("PHP %s (%s) (built: %s %s) ( %s)\nCopyright (c) 1997-2015 The PHP Group\n%s",
 -					PHP_VERSION, cli_sapi_module.name, __DATE__, __TIME__,
-+				php_printf("PHP %s (%s) %s\nCopyright (c) 1997-2015 The PHP Group\n%s",
++				php_printf("PHP %s (%s) ( %s)\nCopyright (c) 1997-2015 The PHP Group\n%s",
 +					PHP_VERSION, cli_sapi_module.name,
  #if ZTS
  					"ZTS "
@@ -101,7 +101,7 @@ Index: dotdeb-php/sapi/litespeed/lsapi_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/litespeed/lsapi_main.c
 +++ dotdeb-php/sapi/litespeed/lsapi_main.c
-@@ -808,9 +808,9 @@ static int cli_main( int argc, char * ar
+@@ -810,9 +810,9 @@ static int cli_main( int argc, char * ar
              case 'v':
                  if (php_request_startup() != FAILURE) {
  #if ZEND_DEBUG

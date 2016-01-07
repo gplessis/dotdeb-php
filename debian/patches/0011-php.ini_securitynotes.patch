@@ -4,30 +4,12 @@ Subject: php.ini_securitynotes
 
 ---
  php.ini-development | 6 ++++++
- php.ini-production  | 6 ++++++
- 2 files changed, 12 insertions(+)
+ 1 file changed, 6 insertions(+)
 
 Index: dotdeb-php/php.ini-development
 ===================================================================
 --- dotdeb-php.orig/php.ini-development
 +++ dotdeb-php/php.ini-development
-@@ -291,6 +291,12 @@ serialize_precision = 17
- ; and below.  This directive makes most sense if used in a per-directory
- ; or per-virtualhost web server configuration file.
- ; http://php.net/open-basedir
-+
-+; NOTE: this is considered a "broken" security measure.
-+;       Applications relying on this feature will not receive full
-+;       support by the security team.  For more information please
-+;       see /usr/share/doc/php-common/README.Debian.security
-+;
- ;open_basedir =
- 
- ; This directive allows you to disable certain functions for security reasons.
-Index: dotdeb-php/php.ini-production
-===================================================================
---- dotdeb-php.orig/php.ini-production
-+++ dotdeb-php/php.ini-production
 @@ -291,6 +291,12 @@ serialize_precision = 17
  ; and below.  This directive makes most sense if used in a per-directory
  ; or per-virtualhost web server configuration file.
