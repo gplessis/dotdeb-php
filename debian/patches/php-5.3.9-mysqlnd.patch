@@ -2,7 +2,7 @@ Index: dotdeb-php/ext/mysqlnd/mysqlnd.c
 ===================================================================
 --- dotdeb-php.orig/ext/mysqlnd/mysqlnd.c
 +++ dotdeb-php/ext/mysqlnd/mysqlnd.c
-@@ -965,7 +965,7 @@ MYSQLND_METHOD(mysqlnd_conn_data, connec
+@@ -961,7 +961,7 @@ MYSQLND_METHOD(mysqlnd_conn_data, connec
  		if (host_len == sizeof("localhost") - 1 && !strncasecmp(host, "localhost", host_len)) {
  			DBG_INF_FMT("socket=%s", socket_or_pipe? socket_or_pipe:"n/a");
  			if (!socket_or_pipe) {
