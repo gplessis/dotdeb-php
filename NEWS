@@ -1,12 +1,94 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+07 Jan 2016 PHP 7.0.2
+
+- Core:
+  . Fixed bug #71165 (-DGC_BENCH=1 doesn't work on PHP7).
+    (y dot uchiyama dot 1015 at gmail dot com)
+  . Fixed bug #71163 (Segmentation Fault: cleanup_unfinished_calls). (Laruence)
+  . Fixed bug #71109 (ZEND_MOD_CONFLICTS("xdebug") doesn't work). (Laruence)
+  . Fixed bug #71092 (Segmentation fault with return type hinting). (Laruence)
+  . Fixed bug memleak in header_register_callback. (Laruence)
+  . Fixed bug #71067 (Local object in class method stays in memory for each
+    call). (Laruence)
+  . Fixed bug #66909 (configure fails utf8_to_mutf7 test). (Michael Orlitzky)
+  . Fixed bug #70781 (Extension tests fail on dynamic ext dependency).
+    (Francois Laupretre)
+  . Fixed bug #71089 (No check to duplicate zend_extension). (Remi)
+  . Fixed bug #71086 (Invalid numeric literal parse error within
+    highlight_string() function). (Nikita)
+  . Fixed bug #71154 (Incorrect HT iterator invalidation causes iterator reuse).
+    (Nikita)
+  . Fixed bug #52355 (Negating zero does not produce negative zero). (Andrea)
+  . Fixed bug #66179 (var_export() exports float as integer). (Andrea)
+  . Fixed bug #70804 (Unary add on negative zero produces positive zero).
+    (Andrea)
+
+- CURL:
+  . Fixed bug #71144 (Sementation fault when using cURL with ZTS).
+    (Michael Maroszek, Laruence)
+
+- DBA:
+  . Fixed key leak with invalid resource. (Laruence)
+
+- Filter:
+  . Fixed bug #71063 (filter_input(INPUT_ENV, ..) does not work). (Reeze Xia)
+
+- FTP:
+  . Implemented FR #55651 (Option to ignore the returned FTP PASV address).
+    (abrender at elitehosts dot com)
+
+- FPM:
+  . Fixed bug #70755 (fpm_log.c memory leak and buffer overflow). (Stas)
+
+- GD:
+  . Fixed bug #70976 (Memory Read via gdImageRotateInterpolated Array Index
+    Out of Bounds). (emmanuel dot law at gmail dot com).
+
+- Mbstring:
+  . Fixed bug #71066 (mb_send_mail: Program terminated with signal SIGSEGV,
+    Segmentation fault). (Laruence)
+
+- Opcache:
+  . Fixed bug #71127 (Define in auto_prepend_file is overwrite). (Laruence)
+
+- PCRE:
+  . Fixed bug #71178 (preg_replace with arrays creates [0] in replace array
+    if not already set). (Laruence)
+
+- Readline:
+  . Fixed bug #71094 (readline_completion_function corrupts static array on
+    second TAB). (Nikita)
+
+- Session:
+  . Fixed bug #71122 (Session GC may not remove obsolete session data). (Yasuo)
+
+- SPL:
+  . Fixed bug #71077 (ReflectionMethod for ArrayObject constructor returns
+    wrong number of parameters). (Laruence)
+  . Fixed bug #71153 (Performance Degradation in ArrayIterator with large
+    arrays). (Nikita)
+
+- Standard:
+  . Fixed bug #71270 (Heap BufferOver Flow in escapeshell functions).
+    (emmanuel dot law at gmail dot com)
+
+- WDDX:
+  . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet Deserialization).
+    (taoguangchen at icloud dot com)
+  . Fixed bug #70741 (Session WDDX Packet Deserialization Type Confusion
+    Vulnerability). (taoguangchen at icloud dot com)
+
+- XMLRPC
+  . Fixed bug #70728 (Type Confusion Vulnerability in PHP_to_XMLRPC_worker).
+    (Julien)
+
 17 Dec 2015, PHP 7.0.1
 
 - Core:
   . Fixed bug #71105 (Format String Vulnerability in Class Name Error Message).
     (andrew at jmpesp dot org)
-  . Fixed bug #70831 (Compile fails on system with 160 CPUs).
-    (Daniel Axtens)
+  . Fixed bug #70831 (Compile fails on system with 160 CPUs). (Daniel Axtens)
   . Fixed bug #71006 (symbol referencing errors on Sparc/Solaris). (Dmitry)
   . Fixed bug #70997 (When using parentClass:: instead of parent::, static
     context changed). (Dmitry)
@@ -19,8 +101,8 @@ PHP                                                                        NEWS
   . Fixed bug #70944 (try{ } finally{} can create infinite chains of
     exceptions). (Laruence)
   . Fixed bug #70931 (Two errors messages are in conflict). (dams, Laruence)
-  . Fixed bug #70904 (yield from incorrectly marks valid generator as finished).
-    (Bob)
+  . Fixed bug #70904 (yield from incorrectly marks valid generator as
+    finished). (Bob)
   . Fixed bug #70899 (buildconf failure in extensions). (Bob, Reeze)
   . Fixed bug #61751 (SAPI build problem on AIX: Undefined symbol:
     php_register_internal_extensions). (Lior Kaplan)
@@ -48,12 +130,12 @@ PHP                                                                        NEWS
     connection flag. (Andrey)
 
 - OCI8:
-  . Fixed LOB implementation size_t/zend_long mismatch reported
-    by gcov. (Senthil)
+  . Fixed LOB implementation size_t/zend_long mismatch reported by gcov.
+    (Senthil)
 
 - Opcache:
-  . Fixed #71024 (Unable to use PHP 7.0 x64 side-by-side with PHP 5.6 x32 on
-    the same server). (Anatol)
+  . Fixed bug #71024 (Unable to use PHP 7.0 x64 side-by-side with PHP 5.6 x32
+    on the same server). (Anatol)
   . Fixed bug #70991 (zend_file_cache.c:710: error: array type has incomplete
     element type). (Laruence)
   . Fixed bug #70977 (Segmentation fault with opcache.huge_code_pages=1).
