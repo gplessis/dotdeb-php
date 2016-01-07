@@ -22,4 +22,5 @@
 0040-hack-phpdbg-to-explicitly-link-with-libedit.patch
 0042-Add-patch-to-remove-build-timestamps-from-generated-.patch
 0043-Remove-W3C-validation-icon-to-not-expose-the-reader-.patch
+0044-Don-t-put-INSTALL_ROOT-into-phar.phar-exec-stanza.patch
 0045-XMLRPC-EPI-library-has-to-be-linked-as-lxmlrpc-epi.patch

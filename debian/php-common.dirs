@@ -1,5 +1,3 @@
 /usr/lib/php/@PHP_VERSION@
 /usr/lib/php/@PHP_API@
 /usr/share/doc/php@PHP_VERSION@-common
-/var/lib/php
-/var/lib/php/sessions

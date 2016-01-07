@@ -1,3 +1,8 @@
+php_enable() {
+    # Don't enable PHP CGI by default
+    return 1
+}
+
 if [ "$1" = "configure" ]; then
     update-alternatives \
 	--install /usr/bin/php-cgi php-cgi /usr/bin/php-cgi@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
