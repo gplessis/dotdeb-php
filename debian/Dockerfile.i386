@@ -3,8 +3,8 @@
 # Requirements:
 #   * Docker >= 1.5
 # Usage:
-#   # docker build -t build-jessie-i386 -f debian/Dockerfile.adm64
-#   # docker run build-jessie-i386
+#   # docker build -t build-jessie-i386-php70 -f debian/Dockerfile.i386 .
+#   # docker run build-jessie-i386-php70
 #   # ID=$(docker ps -l -q)
 #   # docker cp $ID:/usr/src ~/Downloads/
 #   # docker rm $ID
