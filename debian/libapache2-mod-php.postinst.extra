@@ -2,12 +2,18 @@ if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
     . /usr/share/apache2/apache2-maintscript-helper
 
     php_enable() {
+	PHP_MODULE=$(a2query -m | sed -n 's/^\(php[\.0-9]*\) (enabled.*)/\1/p')
+        if [ -n "$PHP_MODULE" -a "$PHP_MODULE" != "php@PHP_VERSION@" ]; then
+	    apache2_msg err "ERROR: $PHP_MODULE module already enabled, not enabling PHP @PHP_VERSION@"
+	    return 1
+	fi
+
 	mpm=$(a2query -M)
 	case "$(a2query -M)" in
 	    prefork|itk) return 0;;
 	    *) if apache2_switch_mpm prefork; then return 0; fi;;
 	esac
-        apache2_msg err "Could not switch to prefork MPM, not enabling PHP @PHP_VERSION@"
+        apache2_msg err "ERROR: Could not switch to prefork MPM, not enabling PHP @PHP_VERSION@"
 	return 1
     }
 

@@ -3,11 +3,12 @@
 set -e
 
 if [ "$1" = "configure" ]; then
-    for i in php-config phpize; do
-	update-alternatives \
-	    --install /usr/bin/"$i" $i /usr/bin/"$i"@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
-	    --slave /usr/share/man/man1/"$i".1.gz "$i".1.gz /usr/share/man/man1/"$i"@PHP_VERSION@.1.gz
-    done
+    update-alternatives \
+	--install /usr/bin/php-config php-config /usr/bin/php-config@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
+	--slave /usr/share/man/man1/php-config.1.gz php-config.1.gz /usr/share/man/man1/php-config@PHP_VERSION@.1.gz
+    update-alternatives \
+	--install /usr/bin/phpize phpize /usr/bin/phpize@PHP_VERSION@ @PHP_MAJOR@@PHP_MINOR@ \
+	--slave /usr/share/man/man1/phpize.1.gz phpize.1.gz /usr/share/man/man1/phpize@PHP_VERSION@.1.gz
 fi
 
 #DEBHELPER#
