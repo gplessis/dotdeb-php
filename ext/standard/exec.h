@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 5                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2015 The PHP Group                                |
+   | Copyright (c) 1997-2016 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -33,6 +33,7 @@ PHP_FUNCTION(proc_close);
 PHP_FUNCTION(proc_terminate);
 PHP_FUNCTION(proc_nice);
 PHP_MINIT_FUNCTION(proc_open);
+PHP_MINIT_FUNCTION(exec);
 
 PHPAPI char *php_escape_shell_cmd(char *);
 PHPAPI char *php_escape_shell_arg(char *);
