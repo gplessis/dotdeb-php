@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | phar php single-file executable PHP extension                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2005-2015 The PHP Group                                |
+  | Copyright (c) 2005-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -4886,6 +4886,7 @@ PHP_METHOD(PharFileInfo, getContent)
 
 	phar_seek_efp(link, 0, SEEK_SET, 0, 0 TSRMLS_CC);
 	Z_TYPE_P(return_value) = IS_STRING;
+	Z_STRVAL_P(return_value) = NULL;
 	Z_STRLEN_P(return_value) = php_stream_copy_to_mem(fp, &(Z_STRVAL_P(return_value)), link->uncompressed_filesize, 0);
 
 	if (!Z_STRVAL_P(return_value)) {
