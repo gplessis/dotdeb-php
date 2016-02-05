@@ -1,3 +1,10 @@
+php7.0 (7.0.3-1~dotdeb+8.1) stable; urgency=medium
+
+  * Imported Upstream version 7.0.3
+  * Patches refresh for 7.0.3
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 05 Feb 2016 16:19:06 +0000
+
 php7.0 (7.0.2-1~dotdeb+8.2) stable; urgency=medium
 
   * PHP 5.6 and 7.0 are now co-installable
