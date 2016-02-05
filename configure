@@ -3642,7 +3642,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=2
+PHP_RELEASE_VERSION=3
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -44027,7 +44027,7 @@ $as_echo "#define HAVE_IBASE 1" >>confdefs.h
   ext_srcdir=$abs_srcdir/ext/interbase
   ext_dir=ext/interbase
 
-  ac_extra=
+  ac_extra=`echo "-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"|$SED s#@ext_srcdir@#$ext_srcdir#g|$SED s#@ext_builddir@#$ext_builddir#g`
 
   if test "$ext_shared" != "shared" && test "$ext_shared" != "yes" && test "" != "cli"; then
     PHP_INTERBASE_SHARED=no

@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 7                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2015 The PHP Group                                |
+   | Copyright (c) 1997-2016 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -821,7 +821,9 @@ SPL_METHOD(SplObjectStorage, unserialize)
 		var_replace(&var_hash, &entry, &element->obj);
 		var_replace(&var_hash, &inf, &element->inf);
 		zval_ptr_dtor(&entry);
+		ZVAL_UNDEF(&entry);
 		zval_ptr_dtor(&inf);
+		ZVAL_UNDEF(&inf);
 	}
 
 	if (*p != ';') {
