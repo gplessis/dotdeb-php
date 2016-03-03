@@ -85,7 +85,7 @@ Index: dotdeb-php/sapi/fpm/fpm/fpm_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/fpm/fpm/fpm_main.c
 +++ dotdeb-php/sapi/fpm/fpm/fpm_main.c
-@@ -1733,9 +1733,9 @@ int main(int argc, char *argv[])
+@@ -1757,9 +1757,9 @@ int main(int argc, char *argv[])
  				SG(request_info).no_headers = 1;
  
  #if ZEND_DEBUG
