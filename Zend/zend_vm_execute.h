@@ -587,7 +587,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_DO_ICALL_SPEC_HANDLER(ZEND_OPC
 
 #if ZEND_DEBUG
 	ZEND_ASSERT(
-		!call->func ||
+		EG(exception) || !call->func ||
 		!(call->func->common.fn_flags & ZEND_ACC_HAS_RETURN_TYPE) ||
 		zend_verify_internal_return_type(call->func, EX_VAR(opline->result.var)));
 #endif
@@ -715,7 +715,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_DO_FCALL_BY_NAME_SPEC_HANDLER(
 
 #if ZEND_DEBUG
 		ZEND_ASSERT(
-			!call->func ||
+			EG(exception) || !call->func ||
 			!(call->func->common.fn_flags & ZEND_ACC_HAS_RETURN_TYPE) ||
 			zend_verify_internal_return_type(call->func, EX_VAR(opline->result.var)));
 #endif
@@ -846,7 +846,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_DO_FCALL_SPEC_HANDLER(ZEND_OPC
 
 #if ZEND_DEBUG
 		ZEND_ASSERT(
-			!call->func ||
+			EG(exception) || !call->func ||
 			!(call->func->common.fn_flags & ZEND_ACC_HAS_RETURN_TYPE) ||
 			zend_verify_internal_return_type(call->func, EX_VAR(opline->result.var)));
 #endif
@@ -1721,10 +1721,8 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_CALL_TRAMPOLINE_SPEC_HANDLER(Z
 {
 	zend_array *args;
 	zend_function *fbc = EX(func);
-	zend_object *object = Z_OBJ(EX(This));
 	zval *ret = EX(return_value);
 	uint32_t call_info = EX_CALL_INFO() & (ZEND_CALL_NESTED | ZEND_CALL_TOP | ZEND_CALL_RELEASE_THIS);
-	zend_class_entry *scope = EX(called_scope);
 	uint32_t num_args = EX_NUM_ARGS();
 	zend_execute_data *call;
 	USE_OPLINE
@@ -1747,9 +1745,11 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_CALL_TRAMPOLINE_SPEC_HANDLER(Z
 	SAVE_OPLINE();
 	call = execute_data;
 	execute_data = EG(current_execute_data) = EX(prev_execute_data);
-	zend_vm_stack_free_call_frame(call);
-	call = zend_vm_stack_push_call_frame(call_info, fbc->common.prototype, 2, scope, object);
-	call->prev_execute_data = execute_data;
+
+	ZEND_ASSERT(zend_vm_calc_used_stack(2, fbc->common.prototype) <= (size_t)(((char*)EG(vm_stack_end)) - (char*)call));
+
+	call->func = fbc->common.prototype;
+	ZEND_CALL_NUM_ARGS(call) = 2;
 
 	ZVAL_STR(ZEND_CALL_ARG(call, 1), fbc->common.function_name);
 	ZVAL_ARR(ZEND_CALL_ARG(call, 2), args);
@@ -1813,7 +1813,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_CALL_TRAMPOLINE_SPEC_HANDLER(Z
 
 #if ZEND_DEBUG
 		ZEND_ASSERT(
-			!call->func ||
+			EG(exception) || !call->func ||
 			!(call->func->common.fn_flags & ZEND_ACC_HAS_RETURN_TYPE) ||
 			zend_verify_internal_return_type(call->func, EX_VAR(opline->result.var)));
 #endif
@@ -1837,7 +1837,7 @@ call_trampoline_end:
 	opline = EX(opline);
 
 	if (UNEXPECTED(call_info & ZEND_CALL_RELEASE_THIS)) {
-		object = Z_OBJ(call->This);
+		zend_object *object = Z_OBJ(call->This);
 		OBJ_RELEASE(object);
 	}
 	EG(scope) = EX(func)->op_array.scope;
@@ -4182,6 +4182,9 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_FROM_SPEC_CONST_HANDLER(
 	if (RETURN_VALUE_USED(opline)) {
 		ZVAL_NULL(EX_VAR(opline->result.var));
 	}
+
+	/* This generator has no send target (though the generator we delegate to might have one) */
+	generator->send_target = NULL;
 
 	/* We increment to the next op, so we are at the correct position when the
 	 * generator is resumed. */
@@ -6529,7 +6532,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CONST_CONST_HANDLER
 
 				value = EX_CONSTANT(opline->op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CONST != IS_CONST) {
+				if (IS_CONST == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -6706,7 +6709,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CONST_TMP_HANDLER(Z
 
 				value = EX_CONSTANT(opline->op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CONST != IS_CONST) {
+				if (IS_CONST == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -7248,7 +7251,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CONST_VAR_HANDLER(Z
 
 				value = EX_CONSTANT(opline->op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CONST != IS_CONST) {
+				if (IS_CONST == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -8139,7 +8142,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CONST_UNUSED_HANDLE
 
 				value = EX_CONSTANT(opline->op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CONST != IS_CONST) {
+				if (IS_CONST == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -9980,7 +9983,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CONST_CV_HANDLER(ZE
 
 				value = EX_CONSTANT(opline->op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CONST != IS_CONST) {
+				if (IS_CONST == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -12517,6 +12520,9 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_FROM_SPEC_TMP_HANDLER(ZE
 		ZVAL_NULL(EX_VAR(opline->result.var));
 	}
 
+	/* This generator has no send target (though the generator we delegate to might have one) */
+	generator->send_target = NULL;
+
 	/* We increment to the next op, so we are at the correct position when the
 	 * generator is resumed. */
 	ZEND_VM_INC_OPCODE();
@@ -13006,7 +13012,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_TMP_CONST_HANDLER(Z
 
 				value = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_TMP_VAR != IS_CONST) {
+				if (IS_TMP_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -13183,7 +13189,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_TMP_TMP_HANDLER(ZEN
 
 				value = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_TMP_VAR != IS_CONST) {
+				if (IS_TMP_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -13360,7 +13366,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_TMP_VAR_HANDLER(ZEN
 
 				value = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_TMP_VAR != IS_CONST) {
+				if (IS_TMP_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -13730,7 +13736,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_TMP_UNUSED_HANDLER(
 
 				value = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_TMP_VAR != IS_CONST) {
+				if (IS_TMP_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -14279,7 +14285,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_TMP_CV_HANDLER(ZEND
 
 				value = _get_zval_ptr_tmp(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_TMP_VAR != IS_CONST) {
+				if (IS_TMP_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -16335,6 +16341,9 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_FROM_SPEC_VAR_HANDLER(ZE
 		ZVAL_NULL(EX_VAR(opline->result.var));
 	}
 
+	/* This generator has no send target (though the generator we delegate to might have one) */
+	generator->send_target = NULL;
+
 	/* We increment to the next op, so we are at the correct position when the
 	 * generator is resumed. */
 	ZEND_VM_INC_OPCODE();
@@ -18010,7 +18019,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_VAR_CONST_HANDLER(Z
 
 				value = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_VAR != IS_CONST) {
+				if (IS_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -18216,7 +18225,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_VAR_TMP_HANDLER(ZEN
 
 				value = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_VAR != IS_CONST) {
+				if (IS_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -18482,7 +18491,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_VAR_VAR_HANDLER(ZEN
 
 				value = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_VAR != IS_CONST) {
+				if (IS_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -19464,7 +19473,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_VAR_UNUSED_HANDLER(
 
 				value = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_VAR != IS_CONST) {
+				if (IS_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -21152,7 +21161,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_VAR_CV_HANDLER(ZEND
 
 				value = _get_zval_ptr_var(opline->op1.var, execute_data, &free_op1);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_VAR != IS_CONST) {
+				if (IS_VAR == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -24287,7 +24296,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_UNUSED_CONST_HANDLE
 
 				value = NULL;
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_UNUSED != IS_CONST) {
+				if (IS_UNUSED == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -24428,7 +24437,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_UNUSED_TMP_HANDLER(
 
 				value = NULL;
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_UNUSED != IS_CONST) {
+				if (IS_UNUSED == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -24569,7 +24578,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_UNUSED_VAR_HANDLER(
 
 				value = NULL;
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_UNUSED != IS_CONST) {
+				if (IS_UNUSED == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -25108,7 +25117,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_UNUSED_UNUSED_HANDL
 
 				value = NULL;
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_UNUSED != IS_CONST) {
+				if (IS_UNUSED == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -26595,7 +26604,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_UNUSED_CV_HANDLER(Z
 
 				value = NULL;
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_UNUSED != IS_CONST) {
+				if (IS_UNUSED == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -29665,6 +29674,9 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_FROM_SPEC_CV_HANDLER(ZEN
 		ZVAL_NULL(EX_VAR(opline->result.var));
 	}
 
+	/* This generator has no send target (though the generator we delegate to might have one) */
+	generator->send_target = NULL;
+
 	/* We increment to the next op, so we are at the correct position when the
 	 * generator is resumed. */
 	ZEND_VM_INC_OPCODE();
@@ -32731,7 +32743,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CV_CONST_HANDLER(ZE
 
 				value = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CV != IS_CONST) {
+				if (IS_CV == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -33027,7 +33039,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CV_TMP_HANDLER(ZEND
 
 				value = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CV != IS_CONST) {
+				if (IS_CV == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -33700,7 +33712,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CV_VAR_HANDLER(ZEND
 
 				value = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CV != IS_CONST) {
+				if (IS_CV == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -34895,7 +34907,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CV_UNUSED_HANDLER(Z
 
 				value = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CV != IS_CONST) {
+				if (IS_CV == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}
@@ -37583,7 +37595,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_YIELD_SPEC_CV_CV_HANDLER(ZEND_
 
 				value = _get_zval_ptr_cv_BP_VAR_R(execute_data, opline->op1.var);
 				ZVAL_COPY_VALUE(&generator->value, value);
-				if (IS_CV != IS_CONST) {
+				if (IS_CV == IS_CONST) {
 					if (UNEXPECTED(Z_OPT_COPYABLE(generator->value))) {
 						zval_copy_ctor_func(&generator->value);
 					}

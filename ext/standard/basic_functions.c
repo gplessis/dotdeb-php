@@ -4836,7 +4836,7 @@ PHP_FUNCTION(forward_static_call)
 	fci.retval = &retval;
 
 	called_scope = zend_get_called_scope(execute_data);
-	if (called_scope &&
+	if (called_scope && fci_cache.calling_scope &&
 		instanceof_function(called_scope, fci_cache.calling_scope)) {
 			fci_cache.called_scope = called_scope;
 	}
@@ -4864,7 +4864,7 @@ PHP_FUNCTION(forward_static_call_array)
 	fci.retval = &retval;
 
 	called_scope = zend_get_called_scope(execute_data);
-	if (called_scope &&
+	if (called_scope && fci_cache.calling_scope &&
 		instanceof_function(called_scope, fci_cache.calling_scope)) {
 			fci_cache.called_scope = called_scope;
 	}

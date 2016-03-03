@@ -1317,6 +1317,10 @@ PHP_MSHUTDOWN_FUNCTION(openssl)
 {
 	EVP_cleanup();
 
+#if OPENSSL_VERSION_NUMBER >= 0x00090805f
+	ERR_free_strings();
+#endif
+
 	php_unregister_url_stream_wrapper("https");
 	php_unregister_url_stream_wrapper("ftps");
 
@@ -5209,14 +5213,14 @@ static zend_bool php_openssl_validate_iv(char **piv, size_t *piv_len, size_t iv_
 	}
 
 	if (*piv_len < iv_required_len) {
-		php_error_docref(NULL, E_WARNING, "IV passed is only %d bytes long, cipher expects an IV of precisely %d bytes, padding with \\0", *piv_len, iv_required_len);
+		php_error_docref(NULL, E_WARNING, "IV passed is only %zd bytes long, cipher expects an IV of precisely %zd bytes, padding with \\0", *piv_len, iv_required_len);
 		memcpy(iv_new, *piv, *piv_len);
 		*piv_len = iv_required_len;
 		*piv = iv_new;
 		return 1;
 	}
 
-	php_error_docref(NULL, E_WARNING, "IV passed is %d bytes long which is longer than the %d expected by selected cipher, truncating", *piv_len, iv_required_len);
+	php_error_docref(NULL, E_WARNING, "IV passed is %zd bytes long which is longer than the %zd expected by selected cipher, truncating", *piv_len, iv_required_len);
 	memcpy(iv_new, *piv, iv_required_len);
 	*piv_len = iv_required_len;
 	*piv = iv_new;
