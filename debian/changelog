@@ -1,3 +1,10 @@
+php7.0 (7.0.4-1~dotdeb+8.1) stable; urgency=medium
+
+  * Imported Upstream version 7.0.4
+  * Patches refresh for 7.0.4
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 03 Mar 2016 16:31:35 +0000
+
 php7.0 (7.0.3-1~dotdeb+8.1) stable; urgency=medium
 
   * Imported Upstream version 7.0.3
