@@ -3642,7 +3642,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=3
+PHP_RELEASE_VERSION=4
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -9475,7 +9475,7 @@ $as_echo "$ext_output" >&6; }
 
 
 
-if test "$BUILD_PHPDBG" == "" && test "$PHP_PHPDBG" != "no"; then
+if test "$BUILD_PHPDBG" = "" && test "$PHP_PHPDBG" != "no"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether termios.h defines TIOCGWINSZ" >&5
 $as_echo_n "checking whether termios.h defines TIOCGWINSZ... " >&6; }
 if ${ac_cv_sys_tiocgwinsz_in_termios_h+:} false; then :
@@ -57386,13 +57386,13 @@ $as_echo "$ext_output" >&6; }
 
 if test "$PHP_OPCACHE" != "no"; then
 
-  if test "$PHP_OPCACHE_FILE" == "yes"; then
+  if test "$PHP_OPCACHE_FILE" = "yes"; then
 
 $as_echo "#define HAVE_OPCACHE_FILE_CACHE 1" >>confdefs.h
 
   fi
 
-  if test "$PHP_HUGE_CODE_PAGES" == "yes"; then
+  if test "$PHP_HUGE_CODE_PAGES" = "yes"; then
 
 $as_echo "#define HAVE_HUGE_CODE_PAGES 1" >>confdefs.h
 
