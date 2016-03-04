@@ -4590,6 +4590,7 @@ PHPAPI size_t php_strip_tags_ex(char *rbuf, int len, int *stateptr, char *allow,
 	int br, i=0, depth=0, in_q = 0;
 	int state = 0, pos;
 	char *allow_free = NULL;
+	char is_xml = 0;
 
 	if (stateptr)
 		state = *stateptr;
@@ -4689,7 +4690,10 @@ PHPAPI size_t php_strip_tags_ex(char *rbuf, int len, int *stateptr, char *allow,
 				switch (state) {
 					case 1: /* HTML/XML */
 						lc = '>';
-						in_q = state = 0;
+						if (is_xml && *(p -1) == '-') {
+							break;
+						}
+						in_q = state = is_xml = 0;
 						if (allow) {
 							if (tp - tbuf >= PHP_TAG_BUF_SIZE) {
 								pos = tp - tbuf;
@@ -4818,8 +4822,8 @@ PHPAPI size_t php_strip_tags_ex(char *rbuf, int len, int *stateptr, char *allow,
 				 * state == 2 (PHP). Switch back to HTML.
 				 */
 
-				if (state == 2 && p > buf+2 && strncasecmp(p-2, "xm", 2) == 0) {
-					state = 1;
+				if (state == 2 && p > buf+4 && strncasecmp(p-4, "<?xm", 4) == 0) {
+					state = 1; is_xml=1;
 					break;
 				}
 
