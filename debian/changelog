@@ -1,3 +1,9 @@
+php5 (5.6.19-1~dotdeb+zts+7.1) oldstable; urgency=medium
+
+  * Imported Upstream version 5.6.19
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 04 Mar 2016 06:56:15 +0000
+
 php5 (5.6.18-1~dotdeb+zts+7.1) oldstable; urgency=medium
 
   * Imported Upstream version 5.6.18
