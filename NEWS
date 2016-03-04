@@ -1,16 +1,62 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+03 Mar 2016, PHP 5.6.19
+
+- CLI server:
+  . Fixed bug #71559 (Built-in HTTP server, we can download file in web by bug).
+    (Johannes, Anatol)
+
+- CURL:
+  . Fixed bug #71523 (Copied handle with new option CURLOPT_HTTPHEADER crashes
+    while curl_multi_exec). (Laruence)
+
+- Date:
+  . Fixed bug #68078 (Datetime comparisons ignore microseconds). (Willem-Jan
+    Zijderveld)
+  . Fixed bug #71525 (Calls to date_modify will mutate timelib_rel_time,
+    causing date_date_set issues). (Sean DuBois)
+
+- Fileinfo:
+  . Fixed bug #71434 (finfo throws notice for specific python file). (Laruence)
+
+- FPM:
+  . Fixed bug #62172 (FPM not working with Apache httpd 2.4 balancer/fcgi
+    setup). (Matt Haught, Remi)
+
+- Opcache:
+  . Fixed bug  #71584 (Possible use-after-free of ZCG(cwd) in Zend Opcache).
+    (Yussuf Khalil)
+
+- PDO MySQL:
+  . Fixed bug #71569 (#70389 fix causes segmentation fault). (Nikita)
+
+- Phar:
+  . Fixed bug #71498 (Out-of-Bound Read in phar_parse_zipfile()). (Stas)
+
+- Standard:
+  . Fixed bug #70720 (strip_tags improper php code parsing). (Julien)
+
+- WDDX:
+  . Fixed bug #71587 (Use-After-Free / Double-Free in WDDX Deserialize). (Stas)
+
+- XSL:
+  . Fixed bug #71540 (NULL pointer dereference in xsl_ext_function_php()).
+    (Stas)
+
+- Zip:
+  . Fixed bug #71561 (NULL pointer dereference in Zip::ExtractTo). (Laruence)
+
 04 Feb 2016, PHP 5.6.18
 
 - Core:
-  . Fixed bug #71039 (exec functions ignore length but look for NULL termination).
-    (Anatol)
+  . Fixed bug #71039 (exec functions ignore length but look for NULL
+    termination). (Anatol)
   . Fixed bug #71089 (No check to duplicate zend_extension). (Remi)
   . Fixed bug #71201 (round() segfault on 64-bit builds). (Anatol)
   . Added support for new HTTP 451 code. (Julien)
   . Fixed bug #71273 (A wrong ext directory setup in php.ini leads to crash).
     (Anatol)
-  . Fixed bug #71323 (Output of stream_get_meta_data can be falsified by its 
+  . Fixed bug #71323 (Output of stream_get_meta_data can be falsified by its
     input). (Leo Gaspard)
   . Fixed bug #71459 (Integer overflow in iptcembed()). (Stas)
 
@@ -25,6 +71,9 @@ PHP                                                                        NEWS
   . Fixed bug #71127 (Define in auto_prepend_file is overwrite). (Laruence)
   . Fixed bug #71024 (Unable to use PHP 7.0 x64 side-by-side with PHP 5.6 x32
     on the same server). (Anatol)
+
+- PCRE:
+  . Upgraded bundled PCRE library to 8.38.
 
 - Phar:
   . Fixed bug #71354 (Heap corruption in tar/zip/phar parser). (Stas)
@@ -80,8 +129,8 @@ PHP                                                                        NEWS
   . Fixed bug #60052 (Integer returned as a 64bit integer on X64_86). (Mariuz)
 
 - WDDX:
-  . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet Deserialization).
-    (taoguangchen at icloud dot com)
+  . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet
+    Deserialization). (taoguangchen at icloud dot com)
   . Fixed bug #70741 (Session WDDX Packet Deserialization Type Confusion
     Vulnerability). (taoguangchen at icloud dot com)
 
