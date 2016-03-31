@@ -1,5 +1,98 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+31 Mar 2016 PHP 7.0.5
+
+- Core:
+  . Huge pages disabled by default. (Rasmus)
+  . Added ability to enable huge pages in Zend Memory Manager through
+    the environment variable USE_ZEND_ALLOC_HUGE_PAGES=1. (Dmitry)
+  . Fixed bug #71756 (Call-by-reference widens scope to uninvolved functions
+    when used in switch). (Laruence)
+  . Fixed bug #71729 (Possible crash in zend_bin_strtod, zend_oct_strtod,
+    zend_hex_strtod). (Laruence)
+  . Fixed bug #71695 (Global variables are reserved before execution).
+    (Laruence)
+  . Fixed bug #71629 (Out-of-bounds access in php_url_decode in context
+    php_stream_url_wrap_rfc2397). (mt at debian dot org)
+  . Fixed bug #71622 (Strings used in pass-as-reference cannot be used to
+    invoke C::$callable()). (Bob)
+  . Fixed bug #71596 (Segmentation fault on ZTS with date function
+    (setlocale)). (Anatol)
+  . Fixed bug #71535 (Integer overflow in zend_mm_alloc_heap()). (Dmitry)
+  . Fixed bug #71470 (Leaked 1 hashtable iterators). (Nikita)
+  . Fixed bug #71575 (ISO C does not allow extra ‘;’ outside of a function).
+    (asgrim)
+  . Fixed bug #71724 (yield from does not count EOLs). (Nikita)
+  . Fixed bug #71767 (ReflectionMethod::getDocComment returns the wrong
+    comment). (Grigorii Sokolik)
+  . Fixed bug #71806 (php_strip_whitespace() fails on some numerical values).
+    (Nikita)
+  . Fixed bug #71624 (`php -R` (PHP_MODE_PROCESS_STDIN) is broken).
+    (Sean DuBois)
+
+- CLI Server:
+  . Fixed bug #69953 (Support MKCALENDAR request method). (Christoph)
+
+- Curl:
+  . Fixed bug #71694 (Support constant CURLM_ADDED_ALREADY). (mpyw)
+
+- Date:
+  . Fixed bug #71635 (DatePeriod::getEndDate segfault). (Thomas Punt)
+
+- Fileinfo:
+  . Fixed bug #71527 (Buffer over-write in finfo_open with malformed magic
+    file). (Anatol)
+
+- libxml:
+  . Fixed bug #71536 (Access Violation crashes php-cgi.exe). (Anatol)
+
+- mbstring:
+  . Fixed bug #71906 (AddressSanitizer: negative-size-param (-1) in
+    mbfl_strcut). (Stas)
+
+- ODBC:
+  . Fixed bug #47803, #69526 (Executing prepared statements is succesfull only
+    for the first two statements). (einavitamar at gmail dot com, Anatol)
+
+- PCRE:
+  . Fixed bug #71659 (segmentation fault in pcre running twig tests).
+    (nish dot aravamudan at canonical dot com)
+
+- PDO_DBlib:
+  . Bug #54648 (PDO::MSSQL forces format of datetime fields).
+    (steven dot lambeth at gmx dot de, Anatol)
+
+- Phar:
+  . Fixed bug #71625 (Crash in php7.dll with bad phar filename).
+    (Anatol)
+  . Fixed bug #71317 (PharData fails to open specific file). (Jos Elstgeest)
+  . Fixed bug #71860 (Invalid memory write in phar on filename with \0 in
+    name). (Stas)
+
+- phpdbg:
+  . Fixed crash when advancing (except step) inside an internal function. (Bob)
+
+- Session:
+  . Fixed Bug #71683 (Null pointer dereference in zend_hash_str_find_bucket).
+    (Yasuo)
+
+- SNMP:
+  . Fixed bug #71704 (php_snmp_error() Format String Vulnerability).
+    (andrew at jmpesp dot org)
+
+- SPL:
+  . Fixed bug #71617 (private properties lost when unserializing ArrayObject).
+    (Nikita)
+
+- Standard:
+  . Fixed bug #71660 (array_column behaves incorrectly after foreach by
+    reference). (Laruence)
+  . Fixed bug #71798 (Integer Overflow in php_raw_url_encode).
+    (taoguangchen at icloud dot com, Stas)
+
+- Zip:
+  . Update bundled libzip to 1.1.2. (Remi, Anatol)
+
 03 Mar 2016 PHP 7.0.4
 
 - Core:

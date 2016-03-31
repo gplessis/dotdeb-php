@@ -398,7 +398,7 @@ void shutdown_executor(void) /* {{{ */
 	zend_shutdown_fpu();
 
 #ifdef ZEND_DEBUG
-	if (EG(ht_iterators_used)) {
+	if (EG(ht_iterators_used) && !CG(unclean_shutdown)) {
 		zend_error(E_WARNING, "Leaked %" PRIu32 " hashtable iterators", EG(ht_iterators_used));
 	}
 #endif
@@ -850,6 +850,9 @@ int zend_call_function(zend_fcall_info *fci, zend_fcall_info_cache *fci_cache) /
 		GC_REFCOUNT((zend_object*)func->op_array.prototype)++;
 		ZEND_ADD_CALL_FLAG(call, ZEND_CALL_CLOSURE);
 	}
+
+	/* PHP-7 doesn't support symbol_table substitution for functions */
+	ZEND_ASSERT(fci->symbol_table == NULL);
 
 	if (func->type == ZEND_USER_FUNCTION) {
 		int call_via_handler = (func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE) != 0;
