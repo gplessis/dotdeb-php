@@ -155,7 +155,7 @@ ZEND_DECLARE_MODULE_GLOBALS(exif)
 #define EXIF_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(exif, v)
 
 #if defined(ZTS) && defined(COMPILE_DL_EXIF)
-ZEND_TSRMLS_CACHE_DEFINE();
+ZEND_TSRMLS_CACHE_DEFINE()
 #endif
 
 /* {{{ PHP_INI
@@ -4074,7 +4074,7 @@ PHP_FUNCTION(exif_read_data)
 	exif_discard_imageinfo(&ImageInfo);
 
 #ifdef EXIF_DEBUG
-	php_error_docref1(NULL, Z_STRVAL_PP(p_name), E_NOTICE, "done");
+	php_error_docref1(NULL, p_name, E_NOTICE, "done");
 #endif
 }
 /* }}} */

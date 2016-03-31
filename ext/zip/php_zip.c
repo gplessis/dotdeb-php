@@ -16,7 +16,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1506,7 +1505,7 @@ static ZIPARCHIVE_METHOD(close)
 	ze_obj = Z_ZIP_P(self);
 
 	if ((err = zip_close(intern))) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", zip_strerror(intern));
+		php_error_docref(NULL, E_WARNING, "%s", zip_strerror(intern));
 		zip_discard(intern);
 	}
 
@@ -3134,7 +3133,6 @@ static PHP_MINFO_FUNCTION(zip)
 	php_info_print_table_start();
 
 	php_info_print_table_row(2, "Zip", "enabled");
-	php_info_print_table_row(2, "Extension Version","$Id$");
 	php_info_print_table_row(2, "Zip version", PHP_ZIP_VERSION);
 	php_info_print_table_row(2, "Libzip version", LIBZIP_VERSION);
 

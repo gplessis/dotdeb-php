@@ -3642,7 +3642,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=4
+PHP_RELEASE_VERSION=5
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -78888,11 +78888,12 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-    exit (strcmp((char *)crypt("rasmuslerdorf","rl"),"rl.3StKT.4T8M"));
+	char *encrypted = crypt("rasmuslerdorf","rl");
+	exit(!encrypted || strcmp(encrypted,"rl.3StKT.4T8M"));
 #else
-	exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -78935,11 +78936,12 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-  exit (strcmp((char *)crypt("rasmuslerdorf","_J9..rasm"),"_J9..rasmBYk8r9AiWNc"));
+	char *encrypted = crypt("rasmuslerdorf","_J9..rasm");
+	exit(!encrypted || strcmp(encrypted,"_J9..rasmBYk8r9AiWNc"));
 #else
-  exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -78982,20 +78984,22 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-    char salt[15], answer[40];
+	char salt[15], answer[40];
+	char *encrypted;
 
-    salt[0]='$'; salt[1]='1'; salt[2]='$';
-    salt[3]='r'; salt[4]='a'; salt[5]='s';
-    salt[6]='m'; salt[7]='u'; salt[8]='s';
-    salt[9]='l'; salt[10]='e'; salt[11]='$';
-    salt[12]='\0';
-    strcpy(answer,salt);
-    strcat(answer,"rISCgZzpwk3UhDidwXvin0");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
+	salt[0]='$'; salt[1]='1'; salt[2]='$';
+	salt[3]='r'; salt[4]='a'; salt[5]='s';
+	salt[6]='m'; salt[7]='u'; salt[8]='s';
+	salt[9]='l'; salt[10]='e'; salt[11]='$';
+	salt[12]='\0';
+	strcpy(answer,salt);
+	strcat(answer,"rISCgZzpwk3UhDidwXvin0");
+	encrypted = crypt("rasmuslerdorf",salt);
+	exit(!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -79038,17 +79042,19 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-    char salt[30], answer[70];
+	char salt[30], answer[70];
+	char *encrypted;
 
-    salt[0]='$'; salt[1]='2'; salt[2]='a'; salt[3]='$'; salt[4]='0'; salt[5]='7'; salt[6]='$'; salt[7]='\0';
-    strcat(salt,"rasmuslerd............");
-    strcpy(answer,salt);
-    strcpy(&answer[29],"nIdrcHdxcUxWomQX9j6kvERCFjTg7Ra");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
+	salt[0]='$'; salt[1]='2'; salt[2]='a'; salt[3]='$'; salt[4]='0'; salt[5]='7'; salt[6]='$'; salt[7]='\0';
+	strcat(salt,"rasmuslerd............");
+	strcpy(answer,salt);
+	strcpy(&answer[29],"nIdrcHdxcUxWomQX9j6kvERCFjTg7Ra");
+	encrypted = crypt("rasmuslerdorf",salt);
+	exit(!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -79091,16 +79097,18 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-    char salt[21], answer[21+86];
+	char salt[21], answer[21+86];
+	char *encrypted;
 
-    strcpy(salt,"\$6\$rasmuslerdorf\$");
-    strcpy(answer, salt);
-    strcat(answer, "EeHCRjm0bljalWuALHSTs1NB9ipEiLEXLhYeXdOpx22gmlmVejnVXFhd84cEKbYxCo.XuUTrW.RLraeEnsvWs/");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
+	strcpy(salt,"\$6\$rasmuslerdorf\$");
+	strcpy(answer, salt);
+	strcat(answer, "EeHCRjm0bljalWuALHSTs1NB9ipEiLEXLhYeXdOpx22gmlmVejnVXFhd84cEKbYxCo.XuUTrW.RLraeEnsvWs/");
+	encrypted = crypt("rasmuslerdorf",salt);
+	exit(!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -79143,17 +79151,18 @@ else
 #include <crypt.h>
 #endif
 
-main() {
+int main() {
 #if HAVE_CRYPT
-    char salt[21], answer[21+43];
+	char salt[21], answer[21+43];
+	char *encrypted;
 
-    strcpy(salt,"\$5\$rasmuslerdorf\$");
-    strcpy(answer, salt);
-    strcat(answer, "cFAm2puLCujQ9t.0CxiFIIvFi4JyQx5UncCt/xRIX23");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
-
+	strcpy(salt,"\$5\$rasmuslerdorf\$");
+	strcpy(answer, salt);
+	strcat(answer, "cFAm2puLCujQ9t.0CxiFIIvFi4JyQx5UncCt/xRIX23");
+	encrypted = crypt("rasmuslerdorf",salt);
+	exit(!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }
 _ACEOF
@@ -91534,6 +91543,7 @@ EOF
 			lib/zip_get_archive_comment.c lib/zip_get_archive_flag.c lib/zip_get_compression_implementation.c\
 			lib/zip_get_encryption_implementation.c lib/zip_get_file_comment.c lib/zip_get_name.c lib/zip_get_num_entries.c \
 			lib/zip_get_num_files.c lib/zip_memdup.c lib/zip_name_locate.c lib/zip_new.c lib/zip_open.c lib/zip_rename.c lib/zip_replace.c\
+			lib/zip_hash.c \
 			lib/zip_set_archive_comment.c lib/zip_set_archive_flag.c lib/zip_set_default_password.c lib/zip_set_file_comment.c\
 			lib/zip_set_file_compression.c lib/zip_set_name.c lib/zip_source_buffer.c lib/zip_source_close.c lib/zip_source_crc.c\
 			lib/zip_source_deflate.c lib/zip_source_error.c lib/zip_source_file.c lib/zip_source_filep.c lib/zip_source_free.c\
@@ -94851,7 +94861,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 94854 "configure"
+#line 94864 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -96729,7 +96739,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 96732 "configure"' > conftest.$ac_ext
+  echo '#line 96742 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -98127,7 +98137,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 98130 "configure"
+#line 98140 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98285,11 +98295,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98288: $lt_compile\"" >&5)
+   (eval echo "\"configure:98298: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98292: \$? = $ac_status" >&5
+   echo "configure:98302: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98583,11 +98593,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98586: $lt_compile\"" >&5)
+   (eval echo "\"configure:98596: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98590: \$? = $ac_status" >&5
+   echo "configure:98600: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98687,11 +98697,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98690: $lt_compile\"" >&5)
+   (eval echo "\"configure:98700: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:98694: \$? = $ac_status" >&5
+   echo "configure:98704: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -99151,7 +99161,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99154 "configure"
+#line 99164 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -99193,7 +99203,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99196 "configure"
+#line 99206 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -100710,7 +100720,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100713 "configure"
+#line 100723 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -100810,7 +100820,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100813 "configure"
+#line 100823 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -101875,7 +101885,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101878 "configure"
+#line 101888 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -101918,7 +101928,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101921 "configure"
+#line 101931 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -103170,11 +103180,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103173: $lt_compile\"" >&5)
+   (eval echo "\"configure:103183: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:103177: \$? = $ac_status" >&5
+   echo "configure:103187: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -103274,11 +103284,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103277: $lt_compile\"" >&5)
+   (eval echo "\"configure:103287: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:103281: \$? = $ac_status" >&5
+   echo "configure:103291: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
