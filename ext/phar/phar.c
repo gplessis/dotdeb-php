@@ -1791,8 +1791,11 @@ static int phar_analyze_path(const char *fname, const char *ext, int ext_len, in
 #ifdef PHP_WIN32
 				phar_unixify_path_separators(realpath, strlen(realpath));
 #endif
-				slash = strstr(realpath, filename) + ((ext - fname) + ext_len);
-				*slash = '\0';
+				slash = strstr(realpath, filename);
+				if (slash) {
+					slash += ((ext - fname) + ext_len);
+					*slash = '\0';
+				}
 				slash = strrchr(realpath, '/');
 
 				if (slash) {
@@ -2238,6 +2241,10 @@ int phar_split_fname(const char *filename, int filename_len, char **arch, int *a
 	char *save;
 #endif
 	int ext_len;
+
+	if (CHECK_NULL_PATH(filename, filename_len)) {
+		return FAILURE;
+	}
 
 	if (!strncasecmp(filename, "phar://", 7)) {
 		filename += 7;
