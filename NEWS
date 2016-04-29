@@ -1,5 +1,126 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+28 Apr 2016 PHP 7.0.6
+
+- Core:
+  . Fixed bug #71930 (_zval_dtor_func: Assertion `(arr)->gc.refcount <= 1'
+    failed). (Laruence)
+  . Fixed bug #71922 (Crash on assert(new class{})). (Nikita)
+  . Fixed bug #71914 (Reference is lost in "switch"). (Laruence)
+  . Fixed bug #71871 (Interfaces allow final and abstract functions). (Nikita)
+  . Fixed Bug #71859 (zend_objects_store_call_destructors operates on realloced
+    memory, crashing). (Laruence)
+  . Fixed bug #71841 (EG(error_zval) is not handled well). (Laruence)
+  . Fixed bug #71750 (Multiple Heap Overflows in php_raw_url_encode/
+    php_url_encode). (Stas)
+  . Fixed bug #71731 (Null coalescing operator and ArrayAccess). (Nikita)
+  . Fixed bug #71609 (Segmentation fault on ZTS with gethostbyname). (krakjoe)
+  . Fixed bug #71428 (inheritance and allow_null). (krakjoe)
+  . Fixed bug #71414 (Inheritance, traits and interfaces). (krakjoe)
+  . Fixed bug #71359 (Null coalescing operator and magic). (krakjoe)
+  . Fixed bug #71334 (Cannot access array keys while uksort()). (Nikita)
+  . Fixed bug #69659 (ArrayAccess, isset() and the offsetExists method).
+    (Nikita)
+  . Fixed bug #69537 (__debugInfo with empty string for key gives error).
+    (krakjoe)
+  . Fixed bug #62059 (ArrayObject and isset are not friends). (Nikita)
+  . Fixed bug #71980 (Decorated/Nested Generator is Uncloseable in Finally).
+    (Nikita)
+
+- BCmath:
+  . Fixed bug #72093 (bcpowmod accepts negative scale and corrupts
+    _one_ definition). (Stas)
+
+- Curl:
+  . Fixed bug #71831 (CURLOPT_NOPROXY applied as long instead of string).
+    (Michael Sierks)
+
+- Date:
+  . Fixed bug #71889 (DateInterval::format Segmentation fault). (Thomas Punt)
+
+- EXIF:
+  . Fixed bug #72094 (Out of bounds heap read access in exif header processing). (Stas)
+
+- GD:
+  . Fixed bug #71912 (libgd: signedness vulnerability). (Stas)
+
+- Intl:
+  . Fixed bug #71516 (IntlDateFormatter looses locale if pattern is set via
+    constructor). (Anatol)
+  . Fixed bug #70455 (Missing constant: IntlChar::NO_NUMERIC_VALUE). (Anatol)
+  . Fixed bug #70451, #70452 (Inconsistencies in return values of IntlChar
+    methods). (Daniel Persson)
+  . Fixed bug #68893 (Stackoverflow in datefmt_create). (Anatol)
+  . Fixed bug #66289 (Locale::lookup incorrectly returns en or en_US if locale
+    is empty). (Anatol)
+  . Fixed bug #70484 (selectordinal doesn't work with named parameters).
+    (Anatol)
+  . Fixed bug #72061 (Out-of-bounds reads in zif_grapheme_stripos with negative
+    offset). (Stas)
+
+- ODBC:
+  . Fixed bug #63171 (Script hangs after max_execution_time). (Remi)
+
+- Opcache:
+  . Fixed bug #71843 (null ptr deref ZEND_RETURN_SPEC_CONST_HANDLER).
+    (Laruence)
+
+- PDO:
+  . Fixed bug #52098 (Own PDOStatement implementation ignore __call()).
+    (Daniel kalaspuffar, Julien)
+  . Fixed bug #71447 (Quotes inside comments not properly handled). (Matteo)
+
+- PDO_DBlib:
+  . Fixed bug #71943 (dblib_handle_quoter needs to allocate an extra byte).
+    (Adam Baratz)
+  . Add DBLIB-specific attributes for controlling timeouts. (Adam Baratz)
+
+- PDO_pgsql:
+  . Fixed bug #62498 (pdo_pgsql inefficient when getColumnMeta() is used).
+    (Joseph Bylund)
+
+- Postgres:
+  . Fixed bug #71820 (pg_fetch_object binds parameters before call
+    constructor). (Anatol)
+  . Fixed bug #71998 (Function pg_insert does not insert when column
+    type = inet). (Anatol)
+
+- SOAP:
+  . Fixed bug #71986 (Nested foreach assign-by-reference creates broken
+    variables). (Laruence)
+
+- SPL:
+  . Fixed bug #71838 (Deserializing serialized SPLObjectStorage-Object can't
+    access properties in PHP). (Nikita)
+  . Fixed bug #71735 (Double-free in SplDoublyLinkedList::offsetSet). (Stas)
+  . Fixed bug #67582 (Cloned SplObjectStorage with overwritten getHash fails
+    offsetExists()). (Nikita)
+  . Fixed bug #52339 (SPL autoloader breaks class_exists()). (Nikita)
+
+- Standard:
+  . Fixed bug #71995 (Returning the same var twice from __sleep() produces
+    broken serialized data). (Laruence)
+  . Fixed bug #71940 (Unserialize crushes on restore object reference).
+    (Laruence)
+  . Fixed bug #71969 (str_replace returns an incorrect resulting array after
+    a foreach by reference). (Laruence)
+  . Fixed bug #71891 (header_register_callback() and
+    register_shutdown_function()). (Laruence)
+  . Fixed bug #71884 (Null pointer deref (segfault) in
+    stream_context_get_default). (Laruence)
+  . Fixed bug #71840 (Unserialize accepts wrongly data). (Ryat, Laruence)
+  . Fixed bug #71837 (Wrong arrays behaviour). (Laruence)
+  . Fixed bug #71827 (substr_replace bug, string length). (krakjoe)
+  . Fixed bug #67512 (php_crypt() crashes if crypt_r() does not exist or
+    _REENTRANT is not defined). (Nikita)
+  . Fixed bug #72116 (array_fill optimization breaks implementation). (Bob)
+
+- XML:
+  . Fixed bug #72099 (xml_parse_into_struct segmentation fault). (Stas)
+
+- Zip:
+  . Fixed bug #71923 (integer overflow in ZipArchive::getFrom*). (Stas)
+
 31 Mar 2016 PHP 7.0.5
 
 - Core:
@@ -59,12 +180,11 @@ PHP                                                                        NEWS
     (nish dot aravamudan at canonical dot com)
 
 - PDO_DBlib:
-  . Bug #54648 (PDO::MSSQL forces format of datetime fields).
+  . Fixed bug #54648 (PDO::MSSQL forces format of datetime fields).
     (steven dot lambeth at gmx dot de, Anatol)
 
 - Phar:
-  . Fixed bug #71625 (Crash in php7.dll with bad phar filename).
-    (Anatol)
+  . Fixed bug #71625 (Crash in php7.dll with bad phar filename). (Anatol)
   . Fixed bug #71317 (PharData fails to open specific file). (Jos Elstgeest)
   . Fixed bug #71860 (Invalid memory write in phar on filename with \0 in
     name). (Stas)
@@ -73,7 +193,7 @@ PHP                                                                        NEWS
   . Fixed crash when advancing (except step) inside an internal function. (Bob)
 
 - Session:
-  . Fixed Bug #71683 (Null pointer dereference in zend_hash_str_find_bucket).
+  . Fixed bug #71683 (Null pointer dereference in zend_hash_str_find_bucket).
     (Yasuo)
 
 - SNMP:

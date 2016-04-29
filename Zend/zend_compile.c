@@ -611,16 +611,29 @@ static inline void zend_end_loop(int cont_addr) /* {{{ */
 
 void zend_do_free(znode *op1) /* {{{ */
 {
-	if (op1->op_type==IS_TMP_VAR) {
-		zend_op *opline = get_next_op(CG(active_op_array));
+	if (op1->op_type == IS_TMP_VAR) {
+		zend_op *opline = &CG(active_op_array)->opcodes[CG(active_op_array)->last-1];
+
+		while (opline->opcode == ZEND_END_SILENCE) {
+			opline--;
+		}
+
+		if (opline->result_type == IS_TMP_VAR && opline->result.var == op1->u.op.var) {
+			if (opline->opcode == ZEND_BOOL || opline->opcode == ZEND_BOOL_NOT) {
+				return;
+			}
+		}
+
+		opline = get_next_op(CG(active_op_array));
 
 		opline->opcode = ZEND_FREE;
 		SET_NODE(opline->op1, op1);
 		SET_UNUSED(opline->op2);
-	} else if (op1->op_type==IS_VAR) {
+	} else if (op1->op_type == IS_VAR) {
 		zend_op *opline = &CG(active_op_array)->opcodes[CG(active_op_array)->last-1];
-
-		while (opline->opcode == ZEND_END_SILENCE || opline->opcode == ZEND_EXT_FCALL_END || opline->opcode == ZEND_OP_DATA) {
+		while (opline->opcode == ZEND_END_SILENCE ||
+				opline->opcode == ZEND_EXT_FCALL_END ||
+				opline->opcode == ZEND_OP_DATA) {
 			opline--;
 		}
 		if (opline->result_type == IS_VAR
@@ -650,7 +663,7 @@ void zend_do_free(znode *op1) /* {{{ */
 					SET_UNUSED(opline->op2);
 					return;
 				}
-				if (opline->result_type==IS_VAR
+				if (opline->result_type == IS_VAR
 					&& opline->result.var == op1->u.op.var) {
 					if (opline->opcode == ZEND_NEW) {
 						opline->result_type |= EXT_TYPE_UNUSED;
@@ -1203,7 +1216,7 @@ ZEND_API int zend_unmangle_property_name_ex(const zend_string *name, const char 
 
 	*class_name = NULL;
 
-	if (ZSTR_VAL(name)[0] != '\0') {
+	if (!ZSTR_LEN(name) || ZSTR_VAL(name)[0] != '\0') {
 		*prop_name = ZSTR_VAL(name);
 		if (prop_len) {
 			*prop_len = ZSTR_LEN(name);
@@ -4636,7 +4649,7 @@ void zend_begin_method_decl(zend_op_array *op_array, zend_string *name, zend_boo
 	zend_string *lcname;
 
 	if (in_interface) {
-		if ((op_array->fn_flags & ZEND_ACC_PPP_MASK) != ZEND_ACC_PUBLIC) {
+		if (!is_public || (op_array->fn_flags & (ZEND_ACC_FINAL|ZEND_ACC_ABSTRACT))) {
 			zend_error_noreturn(E_COMPILE_ERROR, "Access type for interface method "
 				"%s::%s() must be omitted", ZSTR_VAL(ce->name), ZSTR_VAL(name));
 		}
@@ -5298,10 +5311,6 @@ void zend_compile_class_decl(zend_ast *ast) /* {{{ */
 
 	CG(active_class_entry) = ce;
 
-	if (implements_ast) {
-		zend_compile_implements(&declare_node, implements_ast);
-	}
-
 	zend_compile_stmt(stmt_ast);
 
 	/* Reset lineno for final opcodes and errors */
@@ -5358,11 +5367,15 @@ void zend_compile_class_decl(zend_ast *ast) /* {{{ */
 		zend_emit_op(NULL, ZEND_BIND_TRAITS, &declare_node, NULL);
 	}
 
+	if (implements_ast) {
+		zend_compile_implements(&declare_node, implements_ast);
+	}
+
 	if (!(ce->ce_flags & (ZEND_ACC_INTERFACE|ZEND_ACC_EXPLICIT_ABSTRACT_CLASS))
-		&& (extends_ast || ce->num_interfaces > 0)
+		&& (extends_ast || implements_ast)
 	) {
 		zend_verify_abstract_class(ce);
-		if (ce->num_interfaces && !(ce->ce_flags & ZEND_ACC_IMPLEMENT_TRAITS)) {
+		if (implements_ast) {
 			zend_emit_op(NULL, ZEND_VERIFY_ABSTRACT_CLASS, &declare_node, NULL);
 		}
 	}
@@ -6054,7 +6067,7 @@ void zend_compile_short_circuiting(znode *result, zend_ast *ast) /* {{{ */
 
 				zval_ptr_dtor(&right_node.u.constant);
 			} else {
-				zend_emit_op(result, ZEND_BOOL, &right_node, NULL);
+				zend_emit_op_tmp(result, ZEND_BOOL, &right_node, NULL);
 			}
 		}
 
