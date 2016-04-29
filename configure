@@ -3642,7 +3642,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=5
+PHP_RELEASE_VERSION=6
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -5775,6 +5775,72 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ZEND_GCC_GLOBAL_REGS" >&5
 $as_echo "$ZEND_GCC_GLOBAL_REGS" >&6; }
 
+
+
+# =================================================================================
+#  http://www.gnu.org/software/autoconf-archive/ax_func_which_gethostbyname_r.html
+# =================================================================================
+#
+# SYNOPSIS
+#
+#   AX_FUNC_WHICH_GETHOSTBYNAME_R
+#
+# DESCRIPTION
+#
+#   Determines which historical variant of the gethostbyname_r() call
+#   (taking three, five, or six arguments) is available on the system and
+#   defines one of the following macros accordingly:
+#
+#     HAVE_FUNC_GETHOSTBYNAME_R_6
+#     HAVE_FUNC_GETHOSTBYNAME_R_5
+#     HAVE_FUNC_GETHOSTBYNAME_R_3
+#
+#   as well as
+#
+#     HAVE_GETHOSTBYNAME_R
+#
+#   If used in conjunction with gethostname.c, the API demonstrated in
+#   test.c can be used regardless of which gethostbyname_r() is available.
+#   These example files can be found at
+#   http://www.csn.ul.ie/~caolan/publink/gethostbyname_r
+#
+#   based on David Arnold's autoconf suggestion in the threads faq
+#
+#   Originally named "AC_caolan_FUNC_WHICH_GETHOSTBYNAME_R". Rewritten for
+#   Autoconf 2.5x, and updated for 2.68 by Daniel Richard G.
+#
+# LICENSE
+#
+#   Copyright (c) 2008 Caolan McNamara <caolan@skynet.ie>
+#   Copyright (c) 2008 Daniel Richard G. <skunk@iskunk.org>
+#
+#   This program is free software; you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License as published by the
+#   Free Software Foundation; either version 2 of the License, or (at your
+#   option) any later version.
+#
+#   This program is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#   Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License along
+#   with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#   As a special exception, the respective Autoconf Macro's copyright owner
+#   gives unlimited permission to copy, distribute and modify the configure
+#   scripts that are the output of Autoconf when processing the Macro. You
+#   need not follow the terms of the GNU General Public License when using
+#   or distributing such scripts, even though portions of the text of the
+#   Macro appear in them. The GNU General Public License (GPL) does govern
+#   all other use of the material that constitutes the Autoconf Macro.
+#
+#   This special exception to the GPL applies to versions of the Autoconf
+#   Macro released by the Autoconf Archive. When you make and distribute a
+#   modified version of the Autoconf Macro, you may extend this special
+#   exception to the GPL to apply to your modified version as well.
+
+#serial 7
 
 
 
@@ -57307,33 +57373,12 @@ if test "${enable_opcache_file+set}" = set; then :
 else
 
   PHP_OPCACHE_FILE=yes
-  test "$PHP_ENABLE_ALL" && PHP_OPCACHE_FILE=$PHP_ENABLE_ALL
+
 
 fi
 
 
-
-ext_output="yes, shared"
-ext_shared=yes
-case $PHP_OPCACHE_FILE in
-shared,*)
-  PHP_OPCACHE_FILE=`echo "$PHP_OPCACHE_FILE"|$SED 's/^shared,//'`
-  ;;
-shared)
-  PHP_OPCACHE_FILE=yes
-  ;;
-no)
-  ext_output=no
-  ext_shared=no
-  ;;
-*)
-  ext_output=yes
-  ext_shared=no
-  ;;
-esac
-
-
-
+ext_output=$PHP_OPCACHE_FILE
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
 
@@ -57351,33 +57396,12 @@ if test "${enable_huge_code_pages+set}" = set; then :
 else
 
   PHP_HUGE_CODE_PAGES=yes
-  test "$PHP_ENABLE_ALL" && PHP_HUGE_CODE_PAGES=$PHP_ENABLE_ALL
+
 
 fi
 
 
-
-ext_output="yes, shared"
-ext_shared=yes
-case $PHP_HUGE_CODE_PAGES in
-shared,*)
-  PHP_HUGE_CODE_PAGES=`echo "$PHP_HUGE_CODE_PAGES"|$SED 's/^shared,//'`
-  ;;
-shared)
-  PHP_HUGE_CODE_PAGES=yes
-  ;;
-no)
-  ext_output=no
-  ext_shared=no
-  ;;
-*)
-  ext_output=yes
-  ext_shared=no
-  ;;
-esac
-
-
-
+ext_output=$PHP_HUGE_CODE_PAGES
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ext_output" >&5
 $as_echo "$ext_output" >&6; }
 
@@ -57906,7 +57930,7 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 
-if test "$flock_type" == "unknown"; then
+if test "$flock_type" = "unknown"; then
 	as_fn_error $? "Don't know how to define struct flock on this system, set --enable-opcache=no" "$LINENO" 5
 fi
 
@@ -94861,7 +94885,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 94864 "configure"
+#line 94888 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -95412,6 +95436,210 @@ _ACEOF
 
 fi
 done
+
+
+
+
+    ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking how many arguments gethostbyname_r() takes" >&5
+$as_echo_n "checking how many arguments gethostbyname_r() takes... " >&6; }
+
+    if ${ac_cv_func_which_gethostbyname_r+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+
+################################################################
+
+ac_cv_func_which_gethostbyname_r=unknown
+
+#
+# ONE ARGUMENT (sanity check)
+#
+
+# This should fail, as there is no variant of gethostbyname_r() that takes
+# a single argument. If it actually compiles, then we can assume that
+# netdb.h is not declaring the function, and the compiler is thereby
+# assuming an implicit prototype. In which case, we're out of luck.
+#
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netdb.h>
+int
+main ()
+{
+
+            char *name = "www.gnu.org";
+            (void)gethostbyname_r(name) /* ; */
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_func_which_gethostbyname_r=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+#
+# SIX ARGUMENTS
+# (e.g. Linux)
+#
+
+if test "$ac_cv_func_which_gethostbyname_r" = "unknown"; then
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netdb.h>
+int
+main ()
+{
+
+            char *name = "www.gnu.org";
+            struct hostent ret, *retp;
+            char buf[1024];
+            int buflen = 1024;
+            int my_h_errno;
+            (void)gethostbyname_r(name, &ret, buf, buflen, &retp, &my_h_errno) /* ; */
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_func_which_gethostbyname_r=six
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+
+#
+# FIVE ARGUMENTS
+# (e.g. Solaris)
+#
+
+if test "$ac_cv_func_which_gethostbyname_r" = "unknown"; then
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netdb.h>
+int
+main ()
+{
+
+            char *name = "www.gnu.org";
+            struct hostent ret;
+            char buf[1024];
+            int buflen = 1024;
+            int my_h_errno;
+            (void)gethostbyname_r(name, &ret, buf, buflen, &my_h_errno) /* ; */
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_func_which_gethostbyname_r=five
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+
+#
+# THREE ARGUMENTS
+# (e.g. AIX, HP-UX, Tru64)
+#
+
+if test "$ac_cv_func_which_gethostbyname_r" = "unknown"; then
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netdb.h>
+int
+main ()
+{
+
+            char *name = "www.gnu.org";
+            struct hostent ret;
+            struct hostent_data data;
+            (void)gethostbyname_r(name, &ret, &data) /* ; */
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_func_which_gethostbyname_r=three
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+
+################################################################
+
+
+fi
+
+case "$ac_cv_func_which_gethostbyname_r" in
+    three|five|six)
+
+$as_echo "#define HAVE_GETHOSTBYNAME_R 1" >>confdefs.h
+
+    ;;
+esac
+
+case "$ac_cv_func_which_gethostbyname_r" in
+    three)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: three" >&5
+$as_echo "three" >&6; }
+
+$as_echo "#define HAVE_FUNC_GETHOSTBYNAME_R_3 1" >>confdefs.h
+
+    ;;
+
+    five)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: five" >&5
+$as_echo "five" >&6; }
+
+$as_echo "#define HAVE_FUNC_GETHOSTBYNAME_R_5 1" >>confdefs.h
+
+    ;;
+
+    six)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: six" >&5
+$as_echo "six" >&6; }
+
+$as_echo "#define HAVE_FUNC_GETHOSTBYNAME_R_6 1" >>confdefs.h
+
+    ;;
+
+    no)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find function declaration in netdb.h" >&5
+$as_echo "cannot find function declaration in netdb.h" >&6; }
+    ;;
+
+    unknown)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: can't tell" >&5
+$as_echo "can't tell" >&6; }
+    ;;
+
+    *)
+    as_fn_error $? "internal error" "$LINENO" 5
+    ;;
+esac
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
 
 
 
@@ -96739,7 +96967,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 96742 "configure"' > conftest.$ac_ext
+  echo '#line 96970 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -98137,7 +98365,7 @@ else
       LDFLAGS="$LDFLAGS -Wl,-exported_symbols_list,conftest.sym"
 
 cat > conftest.$ac_ext <<EOF
-#line 98140 "configure"
+#line 98368 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -98295,11 +98523,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98298: $lt_compile\"" >&5)
+   (eval echo "\"configure:98526: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98302: \$? = $ac_status" >&5
+   echo "configure:98530: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98593,11 +98821,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98596: $lt_compile\"" >&5)
+   (eval echo "\"configure:98824: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:98600: \$? = $ac_status" >&5
+   echo "configure:98828: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -98697,11 +98925,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:98700: $lt_compile\"" >&5)
+   (eval echo "\"configure:98928: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:98704: \$? = $ac_status" >&5
+   echo "configure:98932: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -99161,7 +99389,7 @@ _LT_EOF
        # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99164 "configure"
+#line 99392 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -99203,7 +99431,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	 # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 99206 "configure"
+#line 99434 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -100720,7 +100948,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100723 "configure"
+#line 100951 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -100820,7 +101048,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 100823 "configure"
+#line 101051 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -101885,7 +102113,7 @@ case $host_os in
       # Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101888 "configure"
+#line 102116 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -101928,7 +102156,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
 	# Determine the default libpath from the value encoded in an empty executable.
 
 cat > conftest.$ac_ext <<EOF
-#line 101931 "configure"
+#line 102159 "configure"
 #include "confdefs.h"
 int main() {
 ; return 0; }
@@ -103180,11 +103408,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103183: $lt_compile\"" >&5)
+   (eval echo "\"configure:103411: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "configure:103187: \$? = $ac_status" >&5
+   echo "configure:103415: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -103284,11 +103512,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"configure:103287: $lt_compile\"" >&5)
+   (eval echo "\"configure:103515: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "configure:103291: \$? = $ac_status" >&5
+   echo "configure:103519: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
