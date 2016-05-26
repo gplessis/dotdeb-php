@@ -1,5 +1,92 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+26 May 2016 PHP 7.0.7
+
+- Core:
+  . Fixed bug #72162 (use-after-free - error_reporting). (Laruence)
+  . Add compiler option to disable special case function calls. (Joe)
+  . Fixed bug #72101 (crash on complex code). (Dmitry)
+  . Fixed bug #72100 (implode() inserts garbage into resulting string when
+    joins very big integer). (Mikhail Galanin)
+  . Fixed bug #72057 (PHP Hangs when using custom error handler and typehint).
+    (Nikita Nefedov)
+  . Fixed bug #72038 (Function calls with values to a by-ref parameter don't
+    always throw a notice). (Bob)
+  . Fixed bug #71737 (Memory leak in closure with parameter named $this).
+    (Nikita)
+  . Fixed bug #72059 (?? is not allowed on constant expressions). (Bob, Marcio)
+  . Fixed bug #72159 (Imported Class Overrides Local Class Name). (Nikita)
+
+- Curl:
+  . Fixed bug #68658 (Define CURLE_SSL_CACERT_BADFILE). (Pierrick)
+
+- DBA:
+  . Fixed bug #72157 (use-after-free caused by dba_open). (Shm, Laruence)
+
+- GD:
+  . Fixed bug #72227 (imagescale out-of-bounds read). (Stas)
+
+- Intl:
+  . Fixed #72241 (get_icu_value_internal out-of-bounds read). (Stas)
+
+- JSON:
+  . Fixed bug #72069 (Behavior \JsonSerializable different from json_encode).
+    (Laruence)
+
+- Mbstring:
+  . Fixed bug #72164 (Null Pointer Dereference - mb_ereg_replace). (Laruence)
+
+- OCI8:
+  . Fixed bug #71600 (oci_fetch_all segfaults when selecting more than eight
+    columns). (Tian Yang)
+
+- Opcache:
+  . Fixed bug #72014 (Including a file with anonymous classes multiple times
+    leads to fatal error). (Laruence)
+
+- OpenSSL:
+  . Fixed bug #72165 (Null pointer dereference - openssl_csr_new). (Anatol)
+
+- PCNTL:
+  . Fixed bug #72154 (pcntl_wait/pcntl_waitpid array internal structure
+    overwrite). (Laruence)
+
+- POSIX:
+  . Fixed bug #72133 (php_posix_group_to_array crashes if gr_passwd is NULL).
+    (esminis at esminis dot lt)
+
+- Postgres:
+  . Fixed bug #72028 (pg_query_params(): NULL converts to empty string).
+    (Laruence)
+  . Fixed bug #71062 (pg_convert() doesn't accept ISO 8601 for datatype
+    timestamp). (denver at timothy dot io)
+  . Fixed bug #72151 (mysqli_fetch_object changed behaviour). (Anatol)
+
+- Reflection:
+  . Fixed bug #72174 (ReflectionProperty#getValue() causes __isset call).
+    (Nikita)
+
+- Session:
+  . Fixed bug #71972 (Cyclic references causing session_start(): Failed to
+    decode session object). (Laruence)
+
+- Sockets:
+  . Added socket_export_stream() function for getting a stream compatible
+    resource from a socket resource. (Chris Wright, Bob)
+
+- SPL:
+  . Fixed bug #72051 (The reference in CallbackFilterIterator doesn't work as
+    expected). (Laruence)
+
+- SQLite3:
+  . Fixed bug #68849 (bindValue is not using the right data type). (Anatol)
+
+- Standard:
+  . Fixed bug #72075 (Referencing socket resources breaks stream_select).
+    (Laruence)
+  . Fixed bug #72031 (array_column() against an array of objects discards all
+    values matching null). (Nikita)
+
 28 Apr 2016 PHP 7.0.6
 
 - Core:
@@ -15,7 +102,6 @@ PHP                                                                        NEWS
     php_url_encode). (Stas)
   . Fixed bug #71731 (Null coalescing operator and ArrayAccess). (Nikita)
   . Fixed bug #71609 (Segmentation fault on ZTS with gethostbyname). (krakjoe)
-  . Fixed bug #71428 (inheritance and allow_null). (krakjoe)
   . Fixed bug #71414 (Inheritance, traits and interfaces). (krakjoe)
   . Fixed bug #71359 (Null coalescing operator and magic). (krakjoe)
   . Fixed bug #71334 (Cannot access array keys while uksort()). (Nikita)
@@ -42,7 +128,7 @@ PHP                                                                        NEWS
   . Fixed bug #72094 (Out of bounds heap read access in exif header processing). (Stas)
 
 - GD:
-  . Fixed bug #71912 (libgd: signedness vulnerability). (Stas)
+  . Fixed bug #71912 (libgd: signedness vulnerability). (CVE-2016-3074) (Stas)
 
 - Intl:
   . Fixed bug #71516 (IntlDateFormatter looses locale if pattern is set via
@@ -119,7 +205,8 @@ PHP                                                                        NEWS
   . Fixed bug #72099 (xml_parse_into_struct segmentation fault). (Stas)
 
 - Zip:
-  . Fixed bug #71923 (integer overflow in ZipArchive::getFrom*). (Stas)
+  . Fixed bug #71923 (integer overflow in ZipArchive::getFrom*).
+    (CVE-2016-3078) (Stas)
 
 31 Mar 2016 PHP 7.0.5
 
@@ -162,14 +249,14 @@ PHP                                                                        NEWS
 
 - Fileinfo:
   . Fixed bug #71527 (Buffer over-write in finfo_open with malformed magic
-    file). (Anatol)
+    file). (CVE-2015-8865) (Anatol)
 
 - libxml:
   . Fixed bug #71536 (Access Violation crashes php-cgi.exe). (Anatol)
 
 - mbstring:
   . Fixed bug #71906 (AddressSanitizer: negative-size-param (-1) in
-    mbfl_strcut). (Stas)
+    mbfl_strcut). (CVE-2016-4073) (Stas)
 
 - ODBC:
   . Fixed bug #47803, #69526 (Executing prepared statements is succesfull only
@@ -187,7 +274,7 @@ PHP                                                                        NEWS
   . Fixed bug #71625 (Crash in php7.dll with bad phar filename). (Anatol)
   . Fixed bug #71317 (PharData fails to open specific file). (Jos Elstgeest)
   . Fixed bug #71860 (Invalid memory write in phar on filename with \0 in
-    name). (Stas)
+    name). (CVE-2016-4072) (Stas)
 
 - phpdbg:
   . Fixed crash when advancing (except step) inside an internal function. (Bob)
@@ -198,7 +285,7 @@ PHP                                                                        NEWS
 
 - SNMP:
   . Fixed bug #71704 (php_snmp_error() Format String Vulnerability).
-    (andrew at jmpesp dot org)
+    (CVE-2016-4071) (andrew at jmpesp dot org)
 
 - SPL:
   . Fixed bug #71617 (private properties lost when unserializing ArrayObject).
@@ -207,7 +294,7 @@ PHP                                                                        NEWS
 - Standard:
   . Fixed bug #71660 (array_column behaves incorrectly after foreach by
     reference). (Laruence)
-  . Fixed bug #71798 (Integer Overflow in php_raw_url_encode).
+  . Fixed bug #71798 (Integer Overflow in php_raw_url_encode). (CVE-2016-4070)
     (taoguangchen at icloud dot com, Stas)
 
 - Zip:
@@ -232,7 +319,8 @@ PHP                                                                        NEWS
     using count). (Nikita)
   . Fixed bug #71601 (finally block not executed after yield from). (Bob)
   . Fixed bug #71637 (Multiple Heap Overflow due to integer overflows in 
-    xml/filter_url/addcslashes). (Stas)
+    xml/filter_url/addcslashes). (CVE-2016-4344, CVE-2016-4345, CVE-2016-4346)
+    (Stas)
 
 - CLI server:
   . Fixed bug #71559 (Built-in HTTP server, we can download file in web by bug).
@@ -268,7 +356,7 @@ PHP                                                                        NEWS
 
 - SOAP:
   . Fixed bug #71610 (Type Confusion Vulnerability - SOAP /
-    make_http_soap_request()). (Stas)
+    make_http_soap_request()). (CVE-2016-3185) (Stas)
 
 - Standard:
   . Fixed bug #71603 (compact() maintains references in php7). (Laruence)
@@ -330,13 +418,18 @@ PHP                                                                        NEWS
   . Fixed bug #71475 (openssl_seal() uninitialized memory usage). (Stas)
 
 - PCRE:
-  . Upgraded pcrelib to 8.38.
+  . Upgraded pcrelib to 8.38. (CVE-2015-8383, CVE-2015-8386, CVE-2015-8387,
+    CVE-2015-8389, CVE-2015-8390, CVE-2015-8391, CVE-2015-8393, CVE-2015-8394)
 
 - Phar:
-  . Fixed bug #71354 (Heap corruption in tar/zip/phar parser). (Stas)
+  . Fixed bug #71354 (Heap corruption in tar/zip/phar parser). (CVE-2016-4342)
+    (Stas)
+  . Fixed bug #71331 (Uninitialized pointer in phar_make_dirstream()).
+    (CVE-2016-4343) (Stas)
   . Fixed bug #71391 (NULL Pointer Dereference in phar_tar_setupmetadata()).
     (Stas)
-  . Fixed bug #71488 (Stack overflow when decompressing tar archives). (Stas)
+  . Fixed bug #71488 (Stack overflow when decompressing tar archives).
+    (CVE-2016-2554) (Stas)
 
 - SOAP:
   . Fixed bug #70979 (crash with bad soap request). (Anatol)
@@ -412,7 +505,7 @@ PHP                                                                        NEWS
 
 - GD:
   . Fixed bug #70976 (Memory Read via gdImageRotateInterpolated Array Index
-    Out of Bounds). (emmanuel dot law at gmail dot com)
+    Out of Bounds). (CVE-2016-1903) (emmanuel dot law at gmail dot com)
 
 - Mbstring:
   . Fixed bug #71066 (mb_send_mail: Program terminated with signal SIGSEGV,
@@ -440,7 +533,7 @@ PHP                                                                        NEWS
 
 - Standard:
   . Fixed bug #71270 (Heap BufferOver Flow in escapeshell functions).
-    (emmanuel dot law at gmail dot com)
+    (CVE-2016-1904) (emmanuel dot law at gmail dot com)
 
 - WDDX:
   . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet
@@ -985,7 +1078,7 @@ PHP                                                                        NEWS
   . Implemented FR #70438 (Add IV parameter for openssl_seal and openssl_open)
     (Jakub Zelenka)
   . Fixed bug #70014 (openssl_random_pseudo_bytes() is not cryptographically
-    secure). (Stas)
+    secure). (CVE-2015-8867) (Stas)
   . Fixed bug #69882 (OpenSSL error "key values mismatch" after
     openssl_pkcs12_read with extra cert). (Tomasz Sawicki)
   . Added "alpn_protocols" SSL context option allowing encrypted client/server
@@ -1233,7 +1326,8 @@ PHP                                                                        NEWS
     (Daniel Lowrey & Bob Weinand)
 
 - Zip:
-  . Fixed bug #70322 (ZipArchive::close() doesn't indicate errors). (cmb)
+  . Fixed bug #70322 (ZipArchive::close() doesn't indicate errors).
+    (CVE-2014-9767) (cmb)
   . Fixed bug #70350 (ZipArchive::extractTo allows for directory traversal when
     creating directories). (neal at fb dot com)
   . Added ZipArchive::setCompressionName and ZipArchive::setCompressionIndex

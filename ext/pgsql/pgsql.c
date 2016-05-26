@@ -1968,7 +1968,7 @@ PHP_FUNCTION(pg_query_params)
 		params = (char **)safe_emalloc(sizeof(char *), num_params, 0);
 
 		ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pv_param_arr), tmp) {
-
+			ZVAL_DEREF(tmp);
 			if (Z_TYPE_P(tmp) == IS_NULL) {
 				params[i] = NULL;
 			} else {
@@ -2777,13 +2777,14 @@ static void php_pgsql_fetch_hash(INTERNAL_FUNCTION_PARAMETERS, zend_long result_
 		zend_fcall_info fci;
 		zend_fcall_info_cache fcc;
 		zval retval;
-		zend_bool props_handled = 0;
 
 		ZVAL_COPY_VALUE(&dataset, return_value);
 		object_and_properties_init(return_value, ce, NULL);
 		if (!ce->default_properties_count && !ce->__set) {
 			Z_OBJ_P(return_value)->properties = Z_ARR(dataset);
-			props_handled = 1;
+		} else {
+			zend_merge_properties(return_value, Z_ARRVAL(dataset));
+			zval_ptr_dtor(&dataset);
 		}
 
 		if (ce->constructor) {
@@ -2806,9 +2807,6 @@ static void php_pgsql_fetch_hash(INTERNAL_FUNCTION_PARAMETERS, zend_long result_
 					 * argument passed by reference.
 					 */
 					zend_throw_exception(zend_ce_exception, "Parameter ctor_params must be an array", 0);
-					if (!props_handled) {
-						zval_ptr_dtor(&dataset);
-					}
 					return;
 				}
 			}
@@ -2821,13 +2819,6 @@ static void php_pgsql_fetch_hash(INTERNAL_FUNCTION_PARAMETERS, zend_long result_
 
 			if (zend_call_function(&fci, &fcc) == FAILURE) {
 				zend_throw_exception_ex(zend_ce_exception, 0, "Could not execute %s::%s()", ce->name, ce->constructor->common.function_name);
-				if (fci.params) {
-					efree(fci.params);
-				}
-				if (!props_handled) {
-					zval_ptr_dtor(&dataset);
-				}
-				return;
 			} else {
 				zval_ptr_dtor(&retval);
 			}
@@ -2836,15 +2827,6 @@ static void php_pgsql_fetch_hash(INTERNAL_FUNCTION_PARAMETERS, zend_long result_
 			}
 		} else if (ctor_params) {
 			zend_throw_exception_ex(zend_ce_exception, 0, "Class %s does not have a constructor hence you cannot use ctor_params", ce->name);
-			if (!props_handled) {
-				zval_ptr_dtor(&dataset);
-			}
-			return;
-		}
-
-		if (!props_handled) {
-			zend_merge_properties(return_value, Z_ARRVAL(dataset));
-			zval_ptr_dtor(&dataset);
 		}
 	}
 }
@@ -6148,8 +6130,8 @@ PHP_PGSQL_API int php_pgsql_convert(PGconn *pg_link, const char *table_name, con
 							/* The inet type holds an IPv4 or IPv6 host address, and optionally its subnet, all in one field. See more in the doc.
 							 	The regex might still be not perfect, but catches the most of IP variants. We might decide to remove the regex
 								at all though and let the server side to handle it.*/
-							if (php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])(\/[0-9]{1,3})?$", 0) == FAILURE
-								&& php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\/[0-9]{1,3})?$", 0) == FAILURE) {
+							if (php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])(\\/[0-9]{1,3})?$", 0) == FAILURE
+								&& php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/[0-9]{1,3})?$", 0) == FAILURE) {
 								err = 1;
 							}
 							else {
@@ -6183,7 +6165,7 @@ PHP_PGSQL_API int php_pgsql_convert(PGconn *pg_link, const char *table_name, con
 							ZVAL_STRINGL(&new_val, "NOW()", sizeof("NOW()")-1);
 						} else {
 							/* better regex? */
-							if (php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^([0-9]{4}[/-][0-9]{1,2}[/-][0-9]{1,2})([ \\t]+(([0-9]{1,2}:[0-9]{1,2}){1}(:[0-9]{1,2}){0,1}(\\.[0-9]+){0,1}([ \\t]*([+-][0-9]{1,4}(:[0-9]{1,2}){0,1}|[-a-zA-Z_/+]{1,50})){0,1})){0,1}$", 1) == FAILURE) {
+							if (php_pgsql_convert_match(Z_STRVAL_P(val), Z_STRLEN_P(val), "^([0-9]{4}[/-][0-9]{1,2}[/-][0-9]{1,2})(([ \\t]+|T)(([0-9]{1,2}:[0-9]{1,2}){1}(:[0-9]{1,2}){0,1}(\\.[0-9]+){0,1}([ \\t]*([+-][0-9]{1,4}(:[0-9]{1,2}){0,1}|[-a-zA-Z_/+]{1,50})){0,1})){0,1}$", 1) == FAILURE) {
 								err = 1;
 							} else {
 								ZVAL_STRING(&new_val, Z_STRVAL_P(val));
