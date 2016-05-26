@@ -1,3 +1,9 @@
+php5 (5.5.36-1~dotdeb+7.1) oldstable; urgency=medium
+
+  * Imported Upstream version 5.5.36
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 26 May 2016 21:30:27 +0000
+
 php5 (5.5.35-1~dotdeb+7.1) oldstable; urgency=medium
 
   * Imported Upstream version 5.5.35
