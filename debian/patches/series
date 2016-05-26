@@ -24,3 +24,4 @@
 0043-Remove-W3C-validation-icon-to-not-expose-the-reader-.patch
 0044-Don-t-put-INSTALL_ROOT-into-phar.phar-exec-stanza.patch
 0045-XMLRPC-EPI-library-has-to-be-linked-as-lxmlrpc-epi.patch
+0047-Fixed-bug-71573-Segfault-core-dumped-if-paramno-beyo.patch
