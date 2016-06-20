@@ -1,10 +1,9 @@
 #!/bin/sh
-set -e
-CONFFILE=${1:-/etc/php/@PHP_VERSION@/fpm/php-fpm.conf}
-errors=$(/usr/sbin/php-fpm@PHP_VERSION@ --fpm-config "$CONFFILE" -t 2>&1 | grep "\[ERROR\]" || true);
-if [ -n "$errors" ]; then
-    echo "Please fix your configuration file..."
-    echo $errors
+/usr/sbin/php-fpm@PHP_VERSION@ -t >/dev/null 2>/dev/null
+ret=$?
+if [ "$ret" -ne 0 ]; then
+    echo "PHP FPM configuration is broken:"
+    /usr/sbin/php-fpm@PHP_VERSION@ -t
     exit 1
 fi
 exit 0

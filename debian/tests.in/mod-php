@@ -4,15 +4,15 @@ set -e
 # Author: Robie Basak <robie.basak@ubuntu.com>
 
 
-# /etc/apache2/mods-available/php7.0.{conf,load} should exist.
+# /etc/apache2/mods-available/php@PHP_VERSION@.{conf,load} should exist.
 
-if [ ! -f /etc/apache2/mods-available/php7.0.conf ]; then
-    echo "/etc/apache2/mods-available/php7.0.conf not found" >&2
+if [ ! -f /etc/apache2/mods-available/php@PHP_VERSION@.conf ]; then
+    echo "/etc/apache2/mods-available/php@PHP_VERSION@.conf not found" >&2
     exit 1
 fi
 
-if [ ! -f /etc/apache2/mods-available/php7.0.load ]; then
-    echo "/etc/apache2/mods-available/php7.0.load not found" >&2
+if [ ! -f /etc/apache2/mods-available/php@PHP_VERSION@.load ]; then
+    echo "/etc/apache2/mods-available/php@PHP_VERSION@.load not found" >&2
     exit 1
 fi
 
@@ -25,14 +25,14 @@ EOT
 # mode here.
 a2dismod actions 2>/dev/null || true
 a2dismod cgi 2>/dev/null || true
-a2disconf php7.0-cgi 2>/dev/null || true
+a2disconf php@PHP_VERSION@-cgi 2>/dev/null || true
 
 # Make sure that fpm configuration is disabled for the same reasons we disabled
 # CGI mechanisms
 a2dismod proxy_fcgi 2>/dev/null || true
-a2disconf php7.0-fpm 2>/dev/null || true
+a2disconf php@PHP_VERSION@-fpm 2>/dev/null || true
 
-a2enmod php7.0 2>/dev/null || true
+a2enmod php@PHP_VERSION@ 2>/dev/null || true
 service apache2 restart 2>/dev/null
 result=`wget -O- http://localhost/hello.php 2>/dev/null`
 test "$result" = "Hello, world!"

@@ -18,10 +18,10 @@
 0031-expose_all_built_and_installed_apis.patch
 0033-zlib-largefile-function-renaming.patch
 0034-php-fpm-do-reload-on-SIGHUP.patch
-0037-php-5.4.9-fixheader.patch
-0040-hack-phpdbg-to-explicitly-link-with-libedit.patch
-0042-Add-patch-to-remove-build-timestamps-from-generated-.patch
-0043-Remove-W3C-validation-icon-to-not-expose-the-reader-.patch
-0044-Don-t-put-INSTALL_ROOT-into-phar.phar-exec-stanza.patch
-0045-XMLRPC-EPI-library-has-to-be-linked-as-lxmlrpc-epi.patch
+0036-php-5.4.9-fixheader.patch
+0039-hack-phpdbg-to-explicitly-link-with-libedit.patch
+0041-Add-patch-to-remove-build-timestamps-from-generated-.patch
+0042-Remove-W3C-validation-icon-to-not-expose-the-reader-.patch
+0043-Don-t-put-INSTALL_ROOT-into-phar.phar-exec-stanza.patch
+0044-XMLRPC-EPI-library-has-to-be-linked-as-lxmlrpc-epi.patch
 0047-Fixed-bug-71573-Segfault-core-dumped-if-paramno-beyo.patch

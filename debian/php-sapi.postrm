@@ -6,6 +6,24 @@ set -e
 
 php_enable() { return 0; }
 
+if [ "$1" = "remove" ]; then
+    if [ -e /usr/lib/php/php-maintscript-helper ]; then
+	. /usr/lib/php/php-maintscript-helper
+
+	mods=$(phpquery -M -v @PHP_VERSION@)
+	for mod in $mods; do
+	    php_invoke dismod @PHP_VERSION@ @sapi@ $mod
+	done
+    else
+	for mod in /etc/php/@PHP_VERSION@/conf.d/*.ini; do 
+	    rm -f $mod
+	    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+		rm -f $mod$ext
+	    done
+	done
+    fi
+fi
+
 if [ "$1" = "purge" ]; then
     phpini=/etc/php/@PHP_VERSION@/@sapi@/php.ini
     # remove the flag to remember the original state
@@ -22,14 +40,16 @@ if [ "$1" = "purge" ]; then
     if which ucfr >/dev/null; then
 	ucfr --purge @package@ $phpini
     fi
-fi
 
-if [ -e /usr/lib/php/php-maintscript-helper ]; then
-    . /usr/lib/php/php-maintscript-helper
-
-    mods=$(phpquery -M -v @PHP_VERSION@)
-    for mod in $mods; do
-	php_invoke dismod @PHP_VERSION@ @sapi@ $mod
+    for dir in \
+	/etc/php/@PHP_VERSION@/@sapi@/conf.d \
+	/etc/php/@PHP_VERSION@/@sapi@ \
+	/etc/php/@PHP_VERSION@/ \
+	/etc/php; do
+	
+	if [ -d $dir ]; then
+	    rmdir --ignore-fail-on-non-empty $dir
+	fi
     done
 fi
 

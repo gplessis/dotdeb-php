@@ -1,0 +1,3 @@
+if [ "$1" = "remove" -o "$1" = "deconfigure" ]; then
+    update-alternatives --remove libphp@PHP_MAJOR@ /usr/lib/libphp@PHP_VERSION@.so
+fi

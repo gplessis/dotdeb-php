@@ -1,0 +1,19 @@
+# php@PHP_VERSION@-fpm - The PHP FastCGI Process Manager
+
+description "The PHP @PHP_VERSION@ FastCGI Process Manager"
+author "Ondřej Surý <ondrej@debian.org>"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+# you can uncomment this with recent upstart
+# reload signal USR2
+
+pre-start script
+mkdir -p /run/php
+chmod 0755 /run/php
+chown www-data:www-data /run/php
+end script
+
+respawn
+exec /usr/sbin/php-fpm@PHP_VERSION@ --nodaemonize --fpm-config /etc/php/@PHP_VERSION@/fpm/php-fpm.conf

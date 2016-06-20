@@ -4,35 +4,40 @@ set -e
 
 #EXTRA#
 
+if [ "$1" = "remove" ]; then
+    if [ -e /usr/lib/php/php-maintscript-helper ] ; then
+	. /usr/lib/php/php-maintscript-helper
+
+	for dsoname in @extensions@; do
+	    php_invoke dismod @PHP_VERSION@ ALL ${dsoname}
+	done
+    fi
+fi
+
 if [ "$1" = "purge" ]; then
-    inidir=/etc/php/mods-available
-    for dsoname in @modules@; do
+    inidir=/etc/php/@PHP_VERSION@/mods-available
+
+    for dsoname in @extensions@; do
 	inifile=${dsoname}.ini
 
-        # Query which package has this conffile registered
-	if which ucfq >/dev/null; then
-	    ucfp=$(ucfq -w ${inidir}/${inifile} | cut -f 2 -d:)
+	for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+	    rm -f ${inidir}/${inifile}${ext}
+	done
+	rm -f ${inidir}/${inifile}
+	if which ucf >/dev/null; then
+	    ucf --purge ${inidir}/${inifile}
 	fi
-	    
-        # Only work with the config file if it still belongs to us
-	if test "$ucfp" = @package@; then
-	    for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
-		rm -f ${inidir}/${inifile}${ext}
+	if which ucfr >/dev/null; then
+	    ucfr --purge @package@ ${inidir}/${inifile}
+	fi
+
+	# Final cleanup of possible leftover symlinks
+	find /etc/php/ -type l | \
+	    while read symlink; do
+		if [ "$(readlink $symlink)" = "${inidir}/$inifile" ]; then
+		    rm -f "${symlink}"
+		fi
 	    done
-	    rm -f ${inidir}/${inifile}
-	    if which ucf >/dev/null; then
-		ucf --purge ${inidir}/${inifile}
-	    fi
-	    if which ucfr >/dev/null; then
-		ucfr --purge @package@ ${inidir}/${inifile}
-	    fi
-	fi
-	
-	if [ -e /usr/lib/php/php-maintscript-helper ] ; then
-	    . /usr/lib/php/php-maintscript-helper
-		
-	    php_invoke dismod ALL ALL ${dsoname}
-	fi
     done
 fi
 

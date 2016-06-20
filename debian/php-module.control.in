@@ -1,14 +1,20 @@
 Package: @package@
 Architecture: any
-Depends: php-common,
+Depends: php-common (>= 1:35),
          ucf,
          ${misc:Depends},
          ${php:Depends},
+	 ${php-@ext@:Depends},
          ${shlibs:Depends}
-Pre-Depends: ${misc:Pre-Depends}
+Pre-Depends: ${misc:Pre-Depends},
+	     ${php-@ext@:Pre-Depends}
 Built-Using: ${php:Built-Using}
+Replaces: ${php-@ext@:Replaces}
+Breaks: ${php-@ext@:Breaks}
+Conflicts: ${php-@ext@:Conflicts}
+Provides: ${php-@ext@:Provides}
 Description: @description@ module for PHP
- This package provides a @description@ module for PHP.
+ This package provides the @description@ module(s) for PHP.
  .
  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
  open source general-purpose scripting language that is especially suited

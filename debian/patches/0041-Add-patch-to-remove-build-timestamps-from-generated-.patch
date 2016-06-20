@@ -1,5 +1,5 @@
 From: Thijs Kinkhorst <thijs@debian.org>
-Date: Mon, 15 Jun 2016 09:18:03 +0200
+Date: Wed, 15 Jun 2016 09:18:03 +0200
 Subject: Add patch to remove build timestamps from generated binaries.
 
 ---

@@ -11,6 +11,41 @@ Files: TSRM/*
 Copyright: 1999-2006 Andi Gutmans, Sascha Schumann, Zeev Suraski.
 License: BSD-TSRM
 
+Files: pear/install-pear-nozlib.phar
+Copyright:
+ 1996-2005 Daniel Stenberg <daniel@haxx.se>
+ 1997-2006 The PHP Group
+ 2004 The PEAR Group
+ 2001-2015 The PEAR developers
+ 2004-2005 Michael Wallner <mike@iworks.at>
+ 2004-2008 Greg Beaver <cellog@php.net>
+ Alexander Merz <alexmerz@php.net>
+ Baba Buehler <baba@babaz.com>
+ Bertrand Mansion <bmansion@mamasam.com>
+ David C. Morse <morse@php.net>
+ Hannes Magnusson <bjori@php.net>
+ Hans Lellelid <hans@velum.net>
+ Helgi Þormar Þorbjörnsson <helgi@php.net>
+ Ian Eure <ieure@php.net>
+ Mark Wiesemann <wiesemann@php.net>
+ Martin Jansen <mj@php.net>
+ Moritz Heidkamp <moritz.heidkamp@invision-team.de>
+ Paul M. Jones <pmjones@php.net>
+ Pierre-Alain Joye <paj@pearfr.org>
+ Sara Golemon <pollita@php.net>
+ Stephan Schmidt
+ Sterling Hughes <sterling@php.net>
+ Stig Bakken <ssb@php.net>
+ Tatsuhiko Miyagawa
+ Tomas V. V. Cox <cox@idecnet.com>
+ Vincent Blavet <vincent@blavet.net>
+ Wez Furlong <wez@thebrainroom.com>
+ 1997-2008 Vincent Blavet <vincent@phpconcept.net>
+ 2003 Sérgio Gonçalves Carvalho
+ 2003-2008 Stephan Schmidt <schst@php.net>
+ 2008 Chuck Burgess <ashnazg@php.net>
+License: BSD-2-clause and LGPL-3+
+
 Files: Zend/*
 Copyright: 1999-2006 Zend Technologies Ltd.
 License: Zend-Engine-2.00
@@ -24,6 +59,11 @@ Files: sapi/fpm/*
 Copyright: 2007-2009 Andrei Nigmatulin
 License: BSD-2-clause
 
+Files: ext/bcmath/libbcmath/*
+Copyright: 1991, 1992, 1993, 1994, 1997 Free Software Foundation, Inc.
+	   2000 Philip A. Nelson
+License: LGPL-2+
+
 Files: ext/fileinfo/libmagic/*
 Copyright: 1985-1995 Ian F. Darwin
 	   1994-2009 Christos Zoulas <christos@zoulas.com>
@@ -33,7 +73,7 @@ Files: ext/date/lib/*
 Copyright: 2015 Derick Rethans
 License: Expat
 
-Files: ext/mbstring/libmbfl/LICENSE
+Files: ext/mbstring/libmbfl/*
 Copyright: 1998,1999,2000,2001 HappySize, Inc.
 License: LGPL-2.1
 
@@ -41,7 +81,7 @@ Files: debian/*
 Copyright: Ondřej Surý <ondrej@debian.org>
 License: Expat
 
-Files: debian/patches/use_embedded_timezonedb.patch
+Files: debian/patches/0013-Add-support-for-use-of-the-system-timezone-database.patch
 Copyright: 2008 Red Hat, Inc.
 License: PHP-3.01
 
@@ -50,6 +90,71 @@ Copyright: 1997-2002 Makoto Matsumoto and Takuji Nishimura,
 	   2000-2003 Richard J. Wagner
 	   1999-2015 The PHP Group.
 License: BSD-3-clause and PHP-3.01
+
+Files: ext/pdo_odbc/odbc_driver.c
+Copyright: 1999-2015 The PHP Group.
+License: PHP-3.0
+
+Files: ext/gd/tests/Rochester-Regular.otf
+Copyright: 2012 Sideshow
+License: Apache-2.0
+
+License: PHP-3.0
+ -------------------------------------------------------------------- 
+                   The PHP License, version 3.0
+ Copyright (c) 1999 - 2006 The PHP Group. All rights reserved.
+ -------------------------------------------------------------------- 
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, is permitted provided that the following conditions
+ are met:
+ .
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+ . 
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the
+      distribution.
+ . 
+   3. The name "PHP" must not be used to endorse or promote products
+      derived from this software without prior written permission. For
+      written permission, please contact group@php.net.
+ .  
+   4. Products derived from this software may not be called "PHP", nor
+      may "PHP" appear in their name, without prior written permission
+      from group@php.net.  You may indicate that your software works in
+      conjunction with PHP by saying "Foo for PHP" instead of calling
+      it "PHP Foo" or "phpfoo"
+ . 
+   5. The PHP Group may publish revised and/or new versions of the
+      license from time to time. Each version will be given a
+      distinguishing version number.
+      Once covered code has been published under a particular version
+      of the license, you may always continue to use it under the terms
+      of that version. You may also choose to use such covered code
+      under the terms of any subsequent version of the license
+      published by the PHP Group. No one other than the PHP Group has
+      the right to modify the terms applicable to covered code created
+      under this License.
+ .
+   6. Redistributions of any form whatsoever must retain the following
+      acknowledgment:
+      "This product includes PHP, freely available from
+      <http://www.php.net/>".
+ .
+ THIS SOFTWARE IS PROVIDED BY THE PHP DEVELOPMENT TEAM ``AS IS'' AND 
+ ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+ PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PHP
+ DEVELOPMENT TEAM OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 License: PHP-3.01
  --------------------------------------------------------------------
@@ -208,6 +313,24 @@ License: BSD-3-clause
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+License: LGPL-2+
+ This library is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2 can be found in ‘/usr/share/common-licenses/LGPL-2’.
+
 License: LGPL-2.1
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -225,6 +348,24 @@ License: LGPL-2.1
  .
  On Debian systems, the complete text of the GNU Lesser General Public
  License version 2.1 can be found in ‘/usr/share/common-licenses/LGPL-2.1’.
+
+License: LGPL-3+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian GNU/Linux systems, the complete text of the GNU Lesser General
+ Public License can be found in `/usr/share/common-licenses/LGPL'.
 
 License: BSD-2-clause
  Redistribution and use in source and binary forms, with or without
@@ -295,3 +436,22 @@ License: BSD-TSRM
  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: Apache-2.0
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+ .
+      http://www.apache.org/licenses/LICENSE-2.0
+ .
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ .
+ On Debian systems, the full text of the Apache Software License version 2 can
+ be found in the file `/usr/share/common-licenses/Apache-2.0'.

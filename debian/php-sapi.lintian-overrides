@@ -5,6 +5,8 @@
 # Not a spelling mistake, tz code for Tahiti
 @sapi@: spelling-error-in-binary * taht that
 @sapi@: missing-dependency-on-phpapi
+# dh-apache2 bug: http://bugs.debian.org/796328
+libapache2-mod-php@PHP_VERSION@: apache2-module-depends-on-real-apache2-package apache2-bin
 libapache2-mod-php@PHP_VERSION@: embedded-library usr/lib/apache2/modules/libphp@PHP_VERSION@.so: file
 libapache2-mod-php@PHP_VERSION@: apache2-module-does-not-ship-load-file libphp@PHP_VERSION@
 libapache2-mod-php@PHP_VERSION@: non-standard-apache2-module-package-name libapache2-mod-php@PHP_VERSION@ != libapache2-libphp@PHP_VERSION@

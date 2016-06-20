@@ -3,14 +3,14 @@ set -e
 
 # Author: Robie Basak <robie.basak@ubuntu.com>
 
-# /etc/apache2/conf-available/php7.0-cgi.conf should exist.
+# /etc/apache2/conf-available/php@PHP_VERSION@-cgi.conf should exist.
 
-if [ ! -f /etc/apache2/conf-available/php7.0-cgi.conf ]; then
-    echo "/etc/apache2/conf-available/php7.0-cgi.conf not found" >&2
+if [ ! -f /etc/apache2/conf-available/php@PHP_VERSION@-cgi.conf ]; then
+    echo "/etc/apache2/conf-available/php@PHP_VERSION@-cgi.conf not found" >&2
     exit 1
 fi
 
-echo "Action application/x-httpd-php /cgi-bin/php7.0" >> /etc/apache2/conf-available/php7.0-cgi.conf
+echo "Action application/x-httpd-php /cgi-bin/php@PHP_VERSION@" >> /etc/apache2/conf-available/php@PHP_VERSION@-cgi.conf
 
 cat > /var/www/html/hello.php <<EOT
 <?php echo "Hello, world!\n"; ?>
@@ -18,15 +18,15 @@ EOT
 
 # Make sure that any mod_php mechanism is disabled, since we want to get CGI
 # mode here.
-a2dismod php7.0 2>/dev/null || true
+a2dismod php@PHP_VERSION@ 2>/dev/null || true
 
 # Ensure that fpm is disabled, since we want to get CGI here
 a2dismod proxy-fcgi 2>/dev/null || true
-a2disconf php7.0 2>/dev/null || true
+a2disconf php@PHP_VERSION@ 2>/dev/null || true
 
 a2enmod actions 2>/dev/null || true
 a2enmod cgi 2>/dev/null || true
-a2enconf php7.0-cgi 2>/dev/null || true
+a2enconf php@PHP_VERSION@-cgi 2>/dev/null || true
 service apache2 restart 2>/dev/null
 result=`wget -O- http://localhost/hello.php 2>/dev/null`
 test "$result" = "Hello, world!"

@@ -25,6 +25,9 @@ if [ "$1" = "configure" ]; then
 	done
     fi
 
+    if [ -n "$2" ] && dpkg --compare-versions "$2" lt "7.0.3-2~"; then
+	rm -f /etc/php/@PHP_VERSION@/@sapi@/conf.d/20-opcache.ini;
+    fi	    
 fi
 
 #DEBHELPER#

@@ -1,0 +1,14 @@
+Tests: cli
+Depends: php@PHP_VERSION@-cli, wget
+
+Tests: cgi
+Depends: apache2, php@PHP_VERSION@-cgi, wget
+Restrictions: needs-root
+
+Tests: mod-php
+Depends: apache2, libapache2-mod-php@PHP_VERSION@, wget
+Restrictions: needs-root
+
+Tests: fpm
+Depends: apache2, php@PHP_VERSION@-fpm, wget
+Restrictions: needs-root

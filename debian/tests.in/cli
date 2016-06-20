@@ -8,5 +8,5 @@ cat > hello.php <<EOT
 <?php echo "Hello, world!\n"; ?>
 EOT
 
-result=`php7.0 hello.php`
+result=`php@PHP_VERSION@ hello.php`
 test "$result" = "Hello, world!"

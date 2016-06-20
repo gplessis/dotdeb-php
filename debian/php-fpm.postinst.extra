@@ -1,3 +1,22 @@
+if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+    . /usr/share/apache2/apache2-maintscript-helper
+
+    php_enable() {
+	# Don't enable PHP FPM by default when Apache 2 is installed
+	apache2_msg notice "NOTICE: Not enabling PHP @PHP_VERSION@ FPM by default."
+	apache2_msg notice "NOTICE: To enable PHP @PHP_VERSION@ FPM in Apache2 do:"
+	apache2_msg notice "NOTICE: a2enmod proxy_fcgi setenvif"
+	apache2_msg notice "NOTICE: a2enconf php@PHP_VERSION@-fpm"
+	apache2_msg notice "NOTICE: You are seeing this message because you have apache2 package installed."
+	return 1
+    }
+else
+    php_enable() {
+	# Don't enable PHP FPM by default when Apache 2 is not installed
+	return 1
+    }
+fi
+
 if [ "$1" = "triggered" ] && [ "$2" = "/etc/php/@PHP_VERSION@/fpm/conf.d" ]; then
     invoke-rc.d php@PHP_VERSION@-fpm restart
 fi

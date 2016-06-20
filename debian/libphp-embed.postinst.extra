@@ -1,1 +1,6 @@
+if [ "$1" = "configure" ]; then
+    update-alternatives \
+	--install /usr/lib/libphp@PHP_MAJOR@.so libphp@PHP_MAJOR@ /usr/lib/libphp@PHP_VERSION@.so @PHP_MAJOR@@PHP_MINOR@
+fi
+
 [ "$1" = "configure" ] && ldconfig

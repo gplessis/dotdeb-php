@@ -1,0 +1,7 @@
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
+    for sapi in $(phpquery -v @PHP_VERSION@ -S); do
+	if [ -h /etc/php/@PHP_VERSION@/$sapi/conf.d/20-xml.ini ]; then
+	    rm /etc/php/@PHP_VERSION@/$sapi/conf.d/20-xml.ini;
+	fi
+    done
+fi

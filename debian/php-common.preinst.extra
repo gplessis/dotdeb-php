@@ -1,0 +1,26 @@
+if [ "$1" = "upgrade" ]; then
+    for inidir in /etc/php/mods-available /etc/php/@PHP_VERSION@/mods-available; do
+	for dsoname in zlib; do
+	    inifile=${dsoname}.ini
+	    if [ -e ${inidir}/${inifile} ]; then
+		for ext in '~' '%' .bak .ucf-new .ucf-old .ucf-dist;  do
+		    rm -f ${inidir}/${inifile}${ext}
+		done
+		rm -f ${inidir}/${inifile}
+		if which ucf >/dev/null; then
+		    ucf --purge ${inidir}/${inifile} >/dev/null || true
+		fi
+		if which ucfr >/dev/null; then
+		    ucfr --force --purge @package@ ${inidir}/${inifile} >/dev/null || true
+		fi
+	    fi
+	    # Cleanup of the old symlinks (including broken symlinks)
+	    find /etc/php/ -type l | \
+		while read symlink; do
+		    if [ "$(readlink $symlink)" = "${inidir}/$inifile" ]; then
+			rm -f "${symlink}"
+		    fi
+		done
+	done
+    done
+fi

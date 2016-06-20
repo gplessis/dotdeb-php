@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+# PHP-FPM test based on mod-php test
+# Author: Neal Gompa <ngompa13@gmail.com>
+
+# /etc/apache2/conf-available/php@PHP_VERSION@-fpm.conf should exist.
+
+if [ ! -f /etc/apache2/conf-available/php@PHP_VERSION@-fpm.conf ]; then
+    echo "/etc/apache2/conf-available/php@PHP_VERSION@-fpm.conf not found" >&2
+    exit 1
+fi
+
+cat > /var/www/html/hello.php <<EOT
+<?php echo "Hello, world!\n"; ?>
+EOT
+
+# Make sure that any CGI mechanism is disabled, since we want to test
+# php-fpm here.
+a2dismod actions 2>/dev/null || true
+a2dismod cgi 2>/dev/null || true
+a2disconf php@PHP_VERSION@-cgi 2>/dev/null || true
+
+# Ensure that mod_php is disabled
+a2dismod php@PHP_VERSION@ 2>/dev/null || true
+
+# php-fpm configuration requires mod_proxy_fcgi
+a2enmod proxy_fcgi 2>/dev/null || true
+a2enconf php@PHP_VERSION@-fpm 2>/dev/null || true
+service apache2 restart 2>/dev/null
+result=`wget -O- http://localhost/hello.php 2>/dev/null`
+test "$result" = "Hello, world!"
