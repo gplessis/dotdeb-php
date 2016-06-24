@@ -1,3 +1,11 @@
+php7.0 (7.0.8-1~dotdeb+8.1) stable; urgency=medium
+
+  * Sync with Debian
+  * Imported Upstream version 7.0.8
+  * Remove 0047-Fixed-bug-71573-Segfault-core-dumped-if-paramno-beyo.patch
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 24 Jun 2016 16:59:36 +0000
+
 php7.0 (7.0.7-1~dotdeb+8.1) stable; urgency=medium
 
   * Imported Upstream version 7.0.7
