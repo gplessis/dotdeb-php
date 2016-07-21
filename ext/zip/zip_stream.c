@@ -101,13 +101,13 @@ static int php_zip_ops_stat(php_stream *stream, php_stream_statbuf *ssb TSRMLS_D
 {
 	struct zip_stat sb;
 	const char *path = stream->orig_path;
-	int path_len = strlen(stream->orig_path);
+	size_t path_len = strlen(stream->orig_path);
 	char *file_basename;
 	size_t file_basename_len;
 	char file_dirname[MAXPATHLEN];
 	struct zip *za;
 	char *fragment;
-	int fragment_len;
+	size_t fragment_len;
 	int err;
 
 	fragment = strchr(path, '#');
@@ -214,7 +214,7 @@ php_stream *php_stream_zip_open(char *filename, char *path, char *mode STREAMS_D
 			self = emalloc(sizeof(*self));
 
 			self->za = stream_za;
-			self->zf = zf; 
+			self->zf = zf;
 			self->stream = NULL;
 			self->cursor = 0;
 			stream = php_stream_alloc(&php_stream_zipio_ops, self, NULL, mode);
@@ -241,7 +241,7 @@ php_stream *php_stream_zip_opener(php_stream_wrapper *wrapper,
 											char **opened_path,
 											php_stream_context *context STREAMS_DC TSRMLS_DC)
 {
-	int path_len;
+	size_t path_len;
 
 	char *file_basename;
 	size_t file_basename_len;
@@ -250,7 +250,7 @@ php_stream *php_stream_zip_opener(php_stream_wrapper *wrapper,
 	struct zip *za;
 	struct zip_file *zf = NULL;
 	char *fragment;
-	int fragment_len;
+	size_t fragment_len;
 	int err;
 
 	php_stream *stream = NULL;
@@ -293,7 +293,7 @@ php_stream *php_stream_zip_opener(php_stream_wrapper *wrapper,
 			self = emalloc(sizeof(*self));
 
 			self->za = za;
-			self->zf = zf; 
+			self->zf = zf;
 			self->stream = NULL;
 			self->cursor = 0;
 			stream = php_stream_alloc(&php_stream_zipio_ops, self, NULL, mode);
