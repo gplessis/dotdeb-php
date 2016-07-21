@@ -188,7 +188,7 @@ gdImagePtr gdImageCreateTrueColor (int sx, int sy)
 		return NULL;
 	}
 
-	if (overflow2(sizeof(int), sx)) {
+	if (overflow2(sizeof(int *), sx)) {
 		return NULL;
 	}
 
@@ -597,15 +597,18 @@ void gdImageColorDeallocate (gdImagePtr im, int color)
 
 void gdImageColorTransparent (gdImagePtr im, int color)
 {
+	if (color < 0) {
+		return;
+	}
 	if (!im->trueColor) {
+		if((color >= im->colorsTotal)) {
+			return;
+		}
+		/* Make the old transparent color opaque again */
 		if (im->transparent != -1) {
 			im->alpha[im->transparent] = gdAlphaOpaque;
 		}
-		if (color > -1 && color < im->colorsTotal && color < gdMaxColors) {
-			im->alpha[color] = gdAlphaTransparent;
-		} else {
-			return;
-		}
+		im->alpha[color] = gdAlphaTransparent;
 	}
 	im->transparent = color;
 }
@@ -1053,11 +1056,13 @@ void gdImageAABlend (gdImagePtr im)
 	}
 }
 
+static void _gdImageFilledHRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+
 static void gdImageHLine(gdImagePtr im, int y, int x1, int x2, int col)
 {
 	if (im->thick > 1) {
 		int thickhalf = im->thick >> 1;
-		gdImageFilledRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col);
+		_gdImageFilledHRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col);
 	} else {
 		if (x2 < x1) {
 			int t = x2;
@@ -1294,54 +1299,9 @@ void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col)
 	long x, y, inc;
 	long dx, dy,tmp;
 
-	if (y1 < 0 && y2 < 0) {
+	/* 2.0.10: Nick Atty: clip to edges of drawing rectangle, return if no points need to be drawn */
+	if (!clip_1d(&x1,&y1,&x2,&y2,gdImageSX(im)) || !clip_1d(&y1,&x1,&y2,&x2,gdImageSY(im))) {
 		return;
-	}
-	if (y1 < 0) {
-		x1 += (y1 * (x1 - x2)) / (y2 - y1);
-		y1 = 0;
-	}
-	if (y2 < 0) {
-		x2 += (y2 * (x1 - x2)) / (y2 - y1);
-		y2 = 0;
-	}
-
-	/* bottom edge */
-	if (y1 >= im->sy && y2 >= im->sy) {
-		return;
-	}
-	if (y1 >= im->sy) {
-		x1 -= ((im->sy - y1) * (x1 - x2)) / (y2 - y1);
-		y1 = im->sy - 1;
-	}
-	if (y2 >= im->sy) {
-		x2 -= ((im->sy - y2) * (x1 - x2)) / (y2 - y1);
-		y2 = im->sy - 1;
-	}
-
-	/* left edge */
-	if (x1 < 0 && x2 < 0) {
-		return;
-	}
-	if (x1 < 0) {
-		y1 += (x1 * (y1 - y2)) / (x2 - x1);
-		x1 = 0;
-	}
-	if (x2 < 0) {
-		y2 += (x2 * (y1 - y2)) / (x2 - x1);
-		x2 = 0;
-	}
-	/* right edge */
-	if (x1 >= im->sx && x2 >= im->sx) {
-		return;
-	}
-	if (x1 >= im->sx) {
-		y1 -= ((im->sx - x1) * (y1 - y2)) / (x2 - x1);
-		x1 = im->sx - 1;
-	}
-	if (x2 >= im->sx) {
-		y2 -= ((im->sx - x2) * (y1 - y2)) / (x2 - x1);
-		x2 = im->sx - 1;
 	}
 
 	dx = x2 - x1;
@@ -2122,10 +2082,53 @@ void gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 	}
 }
 
-void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+static void _gdImageFilledHRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
 	int x, y;
 
+	if (x1 == x2 && y1 == y2) {
+		gdImageSetPixel(im, x1, y1, color);
+		return;
+	}
+
+	if (x1 > x2) {
+		x = x1;
+		x1 = x2;
+		x2 = x;
+	}
+
+	if (y1 > y2) {
+		y = y1;
+		y1 = y2;
+		y2 = y;
+	}
+
+	if (x1 < 0) {
+		x1 = 0;
+	}
+
+	if (x2 >= gdImageSX(im)) {
+		x2 = gdImageSX(im) - 1;
+	}
+
+	if (y1 < 0) {
+		y1 = 0;
+	}
+
+	if (y2 >= gdImageSY(im)) {
+		y2 = gdImageSY(im) - 1;
+	}
+
+	for (x = x1; (x <= x2); x++) {
+		for (y = y1; (y <= y2); y++) {
+			gdImageSetPixel (im, x, y, color);
+		}
+	}
+}
+
+static void _gdImageFilledVRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+{
+	int x, y;
 
 	if (x1 == x2 && y1 == y2) {
 		gdImageSetPixel(im, x1, y1, color);
@@ -2165,6 +2168,11 @@ void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int 
 			gdImageSetPixel (im, x, y, color);
 		}
 	}
+}
+
+void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+{
+	_gdImageFilledVRectangle(im, x1, y1, x2, y2, color);
 }
 
 void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h)
@@ -2668,6 +2676,19 @@ void gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 		if (p[i].y > maxy) {
 			maxy = p[i].y;
 		}
+	}
+	/* necessary special case: horizontal line */
+	if (n > 1 && miny == maxy) {
+		x1 = x2 = p[0].x;
+		for (i = 1; (i < n); i++) {
+			if (p[i].x < x1) {
+				x1 = p[i].x;
+			} else if (p[i].x > x2) {
+				x2 = p[i].x;
+			}
+		}
+		gdImageLine(im, x1, miny, x2, miny, c);
+		return;
 	}
 	pmaxy = maxy;
 	/* 2.0.16: Optimization by Ilia Chipitsine -- don't waste time offscreen */
