@@ -218,8 +218,7 @@ Depends: autoconf (>= 2.63),
          ${perl:Depends}
 Conflicts: ${libtool:Conflicts}
 Architecture: any
-Recommends: dh-php,
-            pkg-php-tools
+Recommends: dh-php
 Description: Files for PHP@PHP_VERSION@ module development
  This package provides the files from the PHP@PHP_VERSION@ source needed for compiling
  additional modules.
