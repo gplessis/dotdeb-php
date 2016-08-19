@@ -22,7 +22,7 @@ Index: dotdeb-php/php.ini-development
 ===================================================================
 --- dotdeb-php.orig/php.ini-development
 +++ dotdeb-php/php.ini-development
-@@ -1415,7 +1415,7 @@ session.save_handler = files
+@@ -1414,7 +1414,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
  ; http://php.net/session.save-path
@@ -35,7 +35,7 @@ Index: dotdeb-php/php.ini-production
 ===================================================================
 --- dotdeb-php.orig/php.ini-production
 +++ dotdeb-php/php.ini-production
-@@ -1367,7 +1367,7 @@ session.save_handler = files
+@@ -1366,7 +1366,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
  ; http://php.net/session.save-path
