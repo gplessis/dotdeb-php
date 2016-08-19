@@ -63,6 +63,9 @@
 static int le_gd, le_gd_font;
 
 #include <gd.h>
+#ifndef HAVE_GD_BUNDLED
+# include <gd_errors.h>
+#endif
 #include <gdfontt.h>  /* 1 Tiny font */
 #include <gdfonts.h>  /* 2 Small font */
 #include <gdfontmb.h> /* 3 Medium bold font */
@@ -1021,7 +1024,19 @@ static void php_free_gd_font(zend_resource *rsrc)
 void php_gd_error_method(int type, const char *format, va_list args)
 {
 
-	php_verror(NULL, "", type, format, args);
+	switch (type) {
+		case GD_DEBUG:
+		case GD_INFO:
+		case GD_NOTICE:
+			type = E_NOTICE;
+			break;
+		case GD_WARNING:
+			type = E_WARNING;
+			break;
+		default:
+			type = E_ERROR;
+	}
+	php_verror(NULL, "", type, format, args TSRMLS_CC);
 }
 /* }}} */
 #endif
@@ -1047,6 +1062,7 @@ PHP_MINIT_FUNCTION(gd)
 	REGISTER_LONG_CONSTANT("IMG_PNG", 4, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("IMG_WBMP", 8, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("IMG_XPM", 16, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("IMG_WEBP", 32, CONST_CS | CONST_PERSISTENT);
 
 	/* special colours for gd */
 	REGISTER_LONG_CONSTANT("IMG_COLOR_TILED", gdTiled, CONST_CS | CONST_PERSISTENT);
@@ -1514,11 +1530,11 @@ PHP_FUNCTION(imagetruecolortopalette)
 		RETURN_FALSE;
 	}
 
-	if (ncolors <= 0) {
-		php_error_docref(NULL, E_WARNING, "Number of colors has to be greater than zero");
+	if (ncolors <= 0 || ZEND_LONG_INT_OVFL(ncolors)) {
+		php_error_docref(NULL, E_WARNING, "Number of colors has to be greater than zero and no more than %d", INT_MAX);
 		RETURN_FALSE;
 	}
-	gdImageTrueColorToPalette(im, dither, ncolors);
+	gdImageTrueColorToPalette(im, dither, (int)ncolors);
 
 	RETURN_TRUE;
 }
@@ -2123,6 +2139,9 @@ PHP_FUNCTION(imagetypes)
 	ret |= 8;
 #if defined(HAVE_GD_XPM)
 	ret |= 16;
+#endif
+#ifdef HAVE_GD_WEBP
+	ret |= 32;
 #endif
 
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -3011,6 +3030,11 @@ PHP_FUNCTION(imagegammacorrect)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "rdd", &IM, &input, &output) == FAILURE) {
 		return;
+	}
+
+	if ( input <= 0.0 || output <= 0.0 ) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Gamma values should be positive");
+		RETURN_FALSE;
 	}
 
 	if ((im = (gdImagePtr)zend_fetch_resource(Z_RES_P(IM), "Image", le_gd)) == NULL) {
@@ -4618,7 +4642,7 @@ PHP_FUNCTION(imagecropauto)
 
 		case GD_CROP_THRESHOLD:
 			if (color < 0 || (!gdImageTrueColor(im) && color >= gdImageColorsTotal(im))) {
-				php_error_docref(NULL, E_WARNING, "Color argument missing with threshold mode");
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Color argument missing with threshold mode");
 				RETURN_FALSE;
 			}
 			im_crop = gdImageCropThreshold(im, color, (float) threshold);
