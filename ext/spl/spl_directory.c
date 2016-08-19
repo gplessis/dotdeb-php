@@ -657,7 +657,7 @@ zend_function *spl_filesystem_object_get_method_check(zend_object **object, zend
 {
 	spl_filesystem_object *fsobj = spl_filesystem_from_obj(*object);
 
-	if (fsobj->u.dir.entry.d_name[0] == '\0' && fsobj->orig_path == NULL) {
+	if (fsobj->u.dir.dirp == NULL && fsobj->orig_path == NULL) {
 		zend_function *func;
 		zend_string *tmp = zend_string_init("_bad_state_ex", sizeof("_bad_state_ex") - 1, 0);
 		func = zend_get_std_object_handlers()->get_method(object, tmp, NULL);
@@ -2657,7 +2657,7 @@ SPL_METHOD(SplFileObject, fputcsv)
 /* }}} */
 
 /* {{{ proto void SplFileObject::setCsvControl([string delimiter [, string enclosure [, string escape ]]])
-   Set the delimiter and enclosure character used in fgetcsv */
+   Set the delimiter, enclosure and escape character used in fgetcsv */
 SPL_METHOD(SplFileObject, setCsvControl)
 {
 	spl_filesystem_object *intern = Z_SPLFILESYSTEM_P(getThis());
@@ -2700,11 +2700,11 @@ SPL_METHOD(SplFileObject, setCsvControl)
 /* }}} */
 
 /* {{{ proto array SplFileObject::getCsvControl()
-   Get the delimiter and enclosure character used in fgetcsv */
+   Get the delimiter, enclosure and escape character used in fgetcsv */
 SPL_METHOD(SplFileObject, getCsvControl)
 {
 	spl_filesystem_object *intern = Z_SPLFILESYSTEM_P(getThis());
-	char delimiter[2], enclosure[2];
+	char delimiter[2], enclosure[2], escape[2];
 
 	array_init(return_value);
 
@@ -2712,9 +2712,12 @@ SPL_METHOD(SplFileObject, getCsvControl)
 	delimiter[1] = '\0';
 	enclosure[0] = intern->u.file.enclosure;
 	enclosure[1] = '\0';
+	escape[0] = intern->u.file.escape;
+	escape[1] = '\0';
 
 	add_next_index_string(return_value, delimiter);
 	add_next_index_string(return_value, enclosure);
+	add_next_index_string(return_value, escape);
 }
 /* }}} */
 
