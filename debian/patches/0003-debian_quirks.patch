@@ -68,7 +68,7 @@ Index: dotdeb-php/php.ini-development
 ===================================================================
 --- dotdeb-php.orig/php.ini-development
 +++ dotdeb-php/php.ini-development
-@@ -696,7 +696,7 @@ default_charset = "UTF-8"
+@@ -695,7 +695,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
@@ -81,7 +81,7 @@ Index: dotdeb-php/php.ini-production
 ===================================================================
 --- dotdeb-php.orig/php.ini-production
 +++ dotdeb-php/php.ini-production
-@@ -696,7 +696,7 @@ default_charset = "UTF-8"
+@@ -695,7 +695,7 @@ default_charset = "UTF-8"
  ;;;;;;;;;;;;;;;;;;;;;;;;;
  
  ; UNIX: "/path1:/path2"
