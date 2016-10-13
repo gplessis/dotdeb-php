@@ -1019,6 +1019,7 @@ static int add_zendext_info(zend_extension *ext) /* {{{ */ {
 }
 /* }}} */
 
+#ifdef HAVE_LIBDL
 PHPDBG_API const char *phpdbg_load_module_or_extension(char **path, char **name) /* {{{ */ {
 	DL_HANDLE handle;
 	char *extension_dir;
@@ -1159,6 +1160,7 @@ quit:
 	return NULL;
 }
 /* }}} */
+#endif
 
 PHPDBG_COMMAND(dl) /* {{{ */
 {
@@ -1539,12 +1541,18 @@ ex_is_caught:
 			goto next;
 		}
 
+		/* not while in conditionals */
+		phpdbg_print_opline_ex(execute_data, 0);
+
 		/* perform seek operation */
 		if ((PHPDBG_G(flags) & PHPDBG_SEEK_MASK) && !(PHPDBG_G(flags) & PHPDBG_IN_EVAL)) {
 			/* current address */
 			zend_ulong address = (zend_ulong) execute_data->opline;
 
 			if (PHPDBG_G(seek_ex) != execute_data) {
+				if (PHPDBG_G(flags) & PHPDBG_IS_STEPPING) {
+					goto stepping;
+				}
 				goto next;
 			}
 
@@ -1588,10 +1596,8 @@ ex_is_caught:
 			}
 		}
 
-		/* not while in conditionals */
-		phpdbg_print_opline_ex(execute_data, 0);
-
 		if (PHPDBG_G(flags) & PHPDBG_IS_STEPPING && (PHPDBG_G(flags) & PHPDBG_STEP_OPCODE || execute_data->opline->lineno != PHPDBG_G(last_line))) {
+stepping:
 			PHPDBG_G(flags) &= ~PHPDBG_IS_STEPPING;
 			DO_INTERACTIVE(1);
 		}
