@@ -1,5 +1,126 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+13 Oct 2016 PHP 7.0.12
+
+- Core:
+  . Fixed bug #73025 (Heap Buffer Overflow in virtual_popen of
+    zend_virtual_cwd.c). (cmb)
+  . Fixed bug #72703 (Out of bounds global memory read in BF_crypt triggered by
+    password_verify). (Anatol)
+  . Fixed bug #73058 (crypt broken when salt is 'too' long). (Anatol)
+  . Fixed bug #69579 (Invalid free in extension trait). (John Boehr)
+  . Fixed bug #73156 (segfault on undefined function). (Dmitry)
+  . Fixed bug #73163 (PHP hangs if error handler throws while accessing undef
+    const in default value). (Nikita)
+  . Fixed bug #73172 (parse error: Invalid numeric literal). (Nikita, Anatol)
+  . Fixed for #73240 (Write out of bounds at number_format). (Stas)
+  . Fixed bug #73147 (Use After Free in PHP7 unserialize()). (Stas)
+  . Fixed bug #73189 (Memcpy negative size parameter php_resolve_path). (Stas)
+
+- BCmath:
+  . Fix bug #73190 (memcpy negative parameter _bc_new_num_ex). (Stas)
+
+- COM:
+  . Fixed bug #73126 (Cannot pass parameter 1 by reference). (Anatol)
+
+- Date:
+  . Fixed bug #73091 (Unserializing DateInterval object may lead to __toString
+    invocation). (Stas)
+
+- DOM:
+  . Fixed bug #73150 (missing NULL check in dom_document_save_html). (Stas)
+
+- Filter:
+  . Fixed bug #72972 (Bad filter for the flags FILTER_FLAG_NO_RES_RANGE and
+    FILTER_FLAG_NO_PRIV_RANGE). (julien)
+  . Fixed bug #73054 (default option ignored when object passed to int filter).
+    (cmb)
+
+- GD:
+  . Fixed bug #67325 (imagetruecolortopalette: white is duplicated in palette).
+    (cmb)
+  . Fixed bug #50194 (imagettftext broken on transparent background w/o
+    alphablending). (cmb)
+  . Fixed bug #73003 (Integer Overflow in gdImageWebpCtx of gd_webp.c). (trylab,
+    cmb)
+  . Fixed bug #53504 (imagettfbbox gives incorrect values for bounding box).
+    (Mark Plomer, cmb)
+  . Fixed bug #73157 (imagegd2() ignores 3rd param if 4 are given). (cmb)
+  . Fixed bug #73155 (imagegd2() writes wrong chunk sizes on boundaries). (cmb)
+  . Fixed bug #73159 (imagegd2(): unrecognized formats may result in corrupted
+    files). (cmb)
+  . Fixed bug #73161 (imagecreatefromgd2() may leak memory). (cmb)
+
+- Intl:
+  . Fixed bug #73218 (add mitigation for ICU int overflow). (Stas)
+
+- Mbstring:
+  . Fixed bug #66797 (mb_substr only takes 32-bit signed integer). (cmb)
+  . Fixed bug #66964 (mb_convert_variables() cannot detect recursion) (Yasuo)
+  . Fixed bug #72992 (mbstring.internal_encoding doesn't inherit default_charset).
+    (Yasuo)
+
+- Mysqlnd:
+  . Fixed bug #72489 (PHP Crashes When Modifying Array Containing MySQLi Result
+    Data). (Nikita)
+
+- Opcache:
+  . Fixed bug #72982 (Memory leak in zend_accel_blacklist_update_regexp()
+    function). (Laruence)
+
+- OpenSSL:
+  . Fixed bug #73072 (Invalid path SNI_server_certs causes segfault).
+    (Jakub Zelenka)
+  . Fixed bug #73276 (crash in openssl_random_pseudo_bytes function). (Stas)
+  . Fixed bug #73275 (crash in openssl_encrypt function). (Stas)
+
+- PCRE:
+  . Fixed bug #73121 (Bundled PCRE doesn't compile because JIT isn't supported
+    on s390). (Anatol)
+  . Fixed bug #73174 (heap overflow in php_pcre_replace_impl). (Stas)
+
+- PDO_DBlib:
+  . Fixed bug #72414 (Never quote values as raw binary data). (Adam Baratz)
+  . Allow \PDO::setAttribute() to set query timeouts. (Adam Baratz)
+  . Handle SQLDECIMAL/SQLNUMERIC types, which are used by later TDS versions.
+    (Adam Baratz)
+  . Add common PDO test suite. (Adam Baratz)
+  . Free error and message strings when cleaning up PDO instances.
+    (Adam Baratz)
+  . Fixed bug #67130 (\PDOStatement::nextRowset() should succeed when all rows
+    in current rowset haven't been fetched). (Peter LeBrun)
+  . Ignore potentially misleading dberr values. (Chris Kings-Lynne)
+
+- phpdbg:
+  . Fixed bug #72996 (phpdbg_prompt.c undefined reference to DL_LOAD). (Nikita)
+  . Fixed next command not stopping when leaving function. (Bob)
+
+- Session:
+  . Fixed bug #68015 (Session does not report invalid uid for files save handler).
+    (Yasuo)
+  . Fixed bug #73100 (session_destroy null dereference in ps_files_path_create).
+    (cmb)
+
+- SimpleXML:
+  . Fixed bug #73293 (NULL pointer dereference in SimpleXMLElement::asXML()).
+    (Stas)
+
+- SOAP:
+  . Fixed bug #71711 (Soap Server Member variables reference bug). (Nikita)
+  . Fixed bug #71996 (Using references in arrays doesn't work like expected).
+    (Nikita)
+
+- SPL:
+  . Fixed bug #73257, #73258 (SplObjectStorage unserialize allows use of
+    non-object as key). (Stas)
+
+- SQLite3:
+  . Updated bundled SQLite3 to 3.14.2. (cmb)
+
+- Zip:
+  . Fixed bug #70752 (Depacking with wrong password leaves 0 length files).
+    (cmb)
+
 15 Sep 2016 PHP 7.0.11
 
 - Core:
@@ -151,6 +272,8 @@ PHP                                                                        NEWS
   . Fixed bug #72683 (getmxrr broken). (Anatol)
   . Fixed bug #72742 (memory allocator fails to realloc small block to large
     one). (Stas)
+  . Fixed URL rewriter partially. It would not rewrite '//example.com/' URL
+    unconditionally. Only requested host(HTTP_HOST) is rewritten. (Yasuo)
 
 - Bz2:
   . Fixed bug #72837 (integer overflow in bzdecompress caused heap
@@ -1417,6 +1540,8 @@ PHP                                                                        NEWS
 
 - Filter:
   . New FILTER_VALIDATE_DOMAIN and better RFC conformance for FILTER_VALIDATE_URL. (Kevin Dunglas)
+  . Fixed bug #67167 (Wrong return value from FILTER_VALIDATE_BOOLEAN,
+    FILTER_NULL_ON_FAILURE). (levim)
 
 - FPM:
   . Fixed bug #70538 ("php-fpm -i" crashes). (rainer dot jung at
