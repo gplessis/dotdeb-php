@@ -205,6 +205,21 @@ Description: command-line interpreter for the PHP scripting language
  open source general-purpose scripting language that is especially suited
  for web development and can be embedded into HTML.
 
+Package: php@PHP_VERSION@-dbg
+Depends: libapache2-mod-php@PHP_VERSION@ (= ${binary:Version}) | php@PHP_VERSION@-cgi (= ${binary:Version}) | php@PHP_VERSION@-cli (= ${binary:Version}) | php@PHP_VERSION@-fpm (= ${binary:Version}) | libphp@PHP_VERSION@-embed (= ${binary:Version}) | php@PHP_VERSION@-phpdbg (= ${binary:Version}),
+         ${misc:Depends}
+Recommends: gdb
+Section: debug
+Priority: extra
+Architecture: any
+Description: Debug symbols for PHP@PHP_VERSION@
+ This package provides the debug symbols for PHP@PHP_VERSION@ needed for properly
+ debugging errors in PHP@PHP_VERSION@ with gdb.
+ .
+ PHP (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used
+ open source general-purpose scripting language that is especially suited
+ for web development and can be embedded into HTML.
+
 Package: php@PHP_VERSION@-dev
 Depends: autoconf (>= 2.63),
          automake (>= 1.11),

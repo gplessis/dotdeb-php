@@ -56,6 +56,7 @@ PHP_DEV      := php$(PHP_NAME_VERSION)-dev
 PHP_APACHE2  := libapache2-mod-php$(PHP_NAME_VERSION)
 PHP_CGI      := php$(PHP_NAME_VERSION)-cgi
 PHP_CLI      := php$(PHP_NAME_VERSION)-cli
+PHP_DBG      := php$(PHP_NAME_VERSION)-dbg
 PHP_PHPDBG   := php$(PHP_NAME_VERSION)-phpdbg
 
 # Generic commands
@@ -564,7 +565,7 @@ override_dh_installchangelogs-indep:
 	dh_installchangelogs -i NEWS
 
 override_dh_strip:
-	dh_strip --dbgsym-migration='php$(PHP_NAME_VERSION)-dbg' || dh_strip
+	dh_strip --dbg-package=$(PHP_DBG)
 
 override_dh_makeshlibs-arch:
 	dh_makeshlibs -a -p$(PHP_LIBEMBED) -V '$(PHP_LIBEMBED) (>= $(PHP_MAJOR_VERSION).$(PHP_MINOR_VERSION))'
