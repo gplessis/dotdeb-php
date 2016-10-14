@@ -1,3 +1,11 @@
+php7.0 (7.0.12-1~dotdeb+8.1) stable; urgency=medium
+
+  * Imported Upstream version 7.0.12
+  * Patches refresh for 7.0.12
+  * Bring back php7.0-dbg
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Thu, 13 Oct 2016 23:39:19 +0000
+
 php7.0 (7.0.11-1~dotdeb+8.1) stable; urgency=medium
 
   * Imported Upstream version 7.0.11
