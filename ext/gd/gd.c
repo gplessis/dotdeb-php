@@ -1644,7 +1644,7 @@ PHP_FUNCTION(imageistruecolor)
 /* }}} */
 
 /* {{{ proto void imagetruecolortopalette(resource im, bool ditherFlag, int colorsWanted)
-   Convert a true colour image to a palette based image with a number of colours, optionally using dithering. */
+   Convert a true color image to a palette based image with a number of colors, optionally using dithering. */
 PHP_FUNCTION(imagetruecolortopalette)
 {
 	zval *IM;
@@ -1670,8 +1670,8 @@ PHP_FUNCTION(imagetruecolortopalette)
 
 
 
-/* {{{ proto void imagetruecolortopalette(resource im, bool ditherFlag, int colorsWanted)
-   Convert a true colour image to a palette based image with a number of colours, optionally using dithering. */
+/* {{{ proto void imagepalettetotruecolor(resource im)
+   Convert a palette based image to a true color image. */
 PHP_FUNCTION(imagepalettetotruecolor)
 {
 	zval *IM;
@@ -2614,11 +2614,11 @@ static void _php_image_output(INTERNAL_FUNCTION_PARAMETERS, int image_type, char
 
 	if (argc > 1) {
 		fn = file;
-		if (argc == 3) {
+		if (argc >= 3) {
 			q = quality;
-		}
-		if (argc == 4) {
-			t = type;
+			if (argc == 4) {
+				t = type;
+			}
 		}
 	}
 
@@ -3854,7 +3854,7 @@ static void php_imagettftext_common(INTERNAL_FUNCTION_PARAMETERS, int mode, int 
 {
 	zval *IM, *EXT = NULL;
 	gdImagePtr im=NULL;
-	long col = -1, x = -1, y = -1;
+	long col = -1, x = 0, y = 0;
 	int str_len, fontname_len, i, brect[8];
 	double ptsize, angle;
 	char *str = NULL, *fontname = NULL;
