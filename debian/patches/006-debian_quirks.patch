@@ -89,7 +89,7 @@ Index: dotdeb-php/php.ini-production
  ;
  ; Windows: "\path1;\path2"
  ;include_path = ".;c:\php\includes"
-@@ -867,48 +867,6 @@ default_socket_timeout = 60
+@@ -879,48 +879,6 @@ default_socket_timeout = 60
  ; If you only provide the name of the extension, PHP will look for it in its
  ; default extension directory.
  ;
