@@ -12,7 +12,7 @@ Index: dotdeb-php/ext/session/session.c
 ===================================================================
 --- dotdeb-php.orig/ext/session/session.c
 +++ dotdeb-php/ext/session/session.c
-@@ -831,7 +831,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
+@@ -828,7 +828,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
  /* {{{ PHP_INI
   */
  PHP_INI_BEGIN()
