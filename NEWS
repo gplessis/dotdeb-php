@@ -1,5 +1,71 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+10 Nov 2016 PHP 7.0.13
+
+- Core:
+  . Fixed bug #73350 (Exception::__toString() cause circular references).
+    (Laruence)
+  . Fixed bug #73181 (parse_str() without a second argument leads to crash).
+    (Nikita)
+  . Fixed bug #66773 (Autoload with Opcache allows importing conflicting class
+    name to namespace). (Nikita)
+  . Fixed bug #66862 ((Sub-)Namespaces unexpected behaviour). (Nikita)
+  . Fix pthreads detection when cross-compiling (ffontaine)
+  . Fixed bug #73337 (try/catch not working with two exceptions inside a same
+    operation). (Dmitry)
+  . Fixed bug #73338 (Exception thrown from error handler causes valgrind
+    warnings (and crashes)). (Bob, Dmitry)
+  . Fixed bug #73329 ((Float)"Nano" == NAN). (Anatol)
+
+- GD:
+  . Fixed bug #73213 (Integer overflow in imageline() with antialiasing). (cmb)
+  . Fixed bug #73272 (imagescale() is not affected by, but affects
+    imagesetinterpolation()). (cmb)
+  . Fixed bug #73279 (Integer overflow in gdImageScaleBilinearPalette()). (cmb)
+  . Fixed bug #73280 (Stack Buffer Overflow in GD dynamicGetbuf). (cmb)
+  . Fixed bug #72482 (Ilegal write/read access caused by gdImageAALine
+    overflow). (cmb)
+  . Fixed bug #72696 (imagefilltoborder stackoverflow on truecolor images).
+    (cmb)
+
+- IMAP:
+  . Fixed bug #73418 (Integer Overflow in "_php_imap_mail" leads to crash).
+    (Anatol)
+
+- OCI8
+  . Fixed bug #71148 (Bind reference overwritten on PHP 7). (Oracle Corp.)
+
+- phpdbg:
+  . Properly allow for stdin input from a file. (Bob)
+  . Add -s command line option / stdin command for reading script from stdin.
+    (Bob)
+  . Ignore non-executable opcodes in line mode of phpdbg_end_oplog(). (Bob)
+  . Fixed bug #70776 (Simple SIGINT does not have any effect with -rr). (Bob)
+  . Fixed bug #71234 (INI files are loaded even invoked as -n --version). (Bob)
+
+- Session:
+  . Fixed bug #73273 (session_unset() empties values from all variables in which
+    is $_session stored). (Nikita)
+
+- SOAP:
+  . Fixed bug #73037 (SoapServer reports Bad Request when gzipped). (Anatol)
+  . Fixed bug #73237 (Nested object in "any" element overwrites other fields).
+    (Keith Smiley)
+  . Fixed bug #69137 (Peer verification fails when using a proxy with SoapClient)
+    (Keith Smiley)
+
+- SQLite3:
+  . Fixed bug #73333 (2147483647 is fetched as string). (cmb)
+
+- Standard:
+  . Fixed bug #73203 (passing additional_parameters causes mail to fail). (cmb)
+  . Fixed bug #71241 (array_replace_recursive sometimes mutates its parameters).
+    (adsr)
+
+- Wddx:
+  . Fixed bug #73331 (NULL Pointer Dereference in WDDX Packet Deserialization
+    with PDORow). (Stas)
+
 13 Oct 2016 PHP 7.0.12
 
 - Core:
