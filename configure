@@ -3450,7 +3450,7 @@ EOF
     if test -n "$val"; then
       echo "$var='$val' \\" >> config.nice
       if test `expr "X$ac_configure_args" : ".*${var}.*"` != 0; then
-        clean_configure_args=$(echo $clean_configure_args | sed -e "s/'$var=$val'//")
+        clean_configure_args=$(echo $clean_configure_args | sed -e "s#'$var=$val'##")
       fi
     fi
   done
@@ -3649,7 +3649,7 @@ ac_config_headers="$ac_config_headers main/php_config.h"
 
 PHP_MAJOR_VERSION=7
 PHP_MINOR_VERSION=0
-PHP_RELEASE_VERSION=13
+PHP_RELEASE_VERSION=14
 PHP_EXTRA_VERSION=""
 PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
 PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
@@ -20578,7 +20578,7 @@ $as_echo "yes" >&6; }
       debug_flags="-DSQLITE_DEBUG=1"
     fi
 
-    other_flags="-DSQLITE_ENABLE_FTS3=1 -DSQLITE_CORE=1 -DSQLITE_ENABLE_COLUMN_METADATA=1"
+    other_flags="-DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_FTS4=1 -DSQLITE_ENABLE_FTS5=1 -DSQLITE_CORE=1 -DSQLITE_ENABLE_COLUMN_METADATA=1"
 
 	    if test "$PHP_INTL" = "yes" && test "$PHP_INTL_SHARED" != "yes"; then
       other_flags="$other_flags -DSQLITE_ENABLE_ICU=1"
@@ -67384,7 +67384,7 @@ EOF
         threadsafe_flags="-DSQLITE_THREADSAFE=0"
       fi
 
-      other_flags="-DSQLITE_ENABLE_FTS3=1 -DSQLITE_CORE=1 -DSQLITE_ENABLE_COLUMN_METADATA=1"
+      other_flags="-DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_FTS4=1 -DSQLITE_ENABLE_FTS5=1 -DSQLITE_CORE=1 -DSQLITE_ENABLE_COLUMN_METADATA=1"
 
 	        if test "$PHP_INTL" = "yes" && test "$PHP_INTL_SHARED" != "yes"; then
         other_flags="$other_flags -DSQLITE_ENABLE_ICU=1"

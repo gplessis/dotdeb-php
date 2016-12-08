@@ -117,6 +117,8 @@ int ini_parse(void);
 #define YYFREE free
 #endif
 
+#define ZEND_SYSTEM_INI CG(ini_parser_unbuffered_errors)
+
 /* {{{ zend_ini_do_op()
 */
 static void zend_ini_do_op(char type, zval *result, zval *op1, zval *op2)
@@ -157,7 +159,7 @@ static void zend_ini_do_op(char type, zval *result, zval *op1, zval *op2)
 	}
 
 	str_len = zend_sprintf(str_result, "%d", i_result);
-	ZVAL_PSTRINGL(result, str_result, str_len);
+	ZVAL_NEW_STR(result, zend_string_init(str_result, str_len, ZEND_SYSTEM_INI));
 }
 /* }}} */
 
@@ -165,7 +167,11 @@ static void zend_ini_do_op(char type, zval *result, zval *op1, zval *op2)
 */
 static void zend_ini_init_string(zval *result)
 {
-	ZVAL_EMPTY_PSTRING(result);
+	if (ZEND_SYSTEM_INI) {
+		ZVAL_EMPTY_PSTRING(result);
+	} else {
+		ZVAL_EMPTY_STRING(result);
+	}
 }
 /* }}} */
 
@@ -178,8 +184,12 @@ static void zend_ini_add_string(zval *result, zval *op1, zval *op2)
 	if (Z_TYPE_P(op1) != IS_STRING) {
 		zend_string *str = zval_get_string(op1);
 		/* ZEND_ASSERT(!Z_REFCOUNTED_P(op1)); */
-		ZVAL_PSTRINGL(op1, ZSTR_VAL(str), ZSTR_LEN(str));
-		zend_string_release(str);
+		if (ZEND_SYSTEM_INI) {
+			ZVAL_PSTRINGL(op1, ZSTR_VAL(str), ZSTR_LEN(str));
+			zend_string_release(str);
+		} else {
+			ZVAL_STR(op1, str);
+		}
 	}
 	op1_len = (int)Z_STRLEN_P(op1);
 	
@@ -188,7 +198,7 @@ static void zend_ini_add_string(zval *result, zval *op1, zval *op2)
 	}
 	length = op1_len + (int)Z_STRLEN_P(op2);
 
-	ZVAL_NEW_STR(result, zend_string_extend(Z_STR_P(op1), length, 1));
+	ZVAL_NEW_STR(result, zend_string_extend(Z_STR_P(op1), length, ZEND_SYSTEM_INI));
 	memcpy(Z_STRVAL_P(result) + op1_len, Z_STRVAL_P(op2), Z_STRLEN_P(op2) + 1);
 }
 /* }}} */
@@ -211,7 +221,7 @@ static void zend_ini_get_constant(zval *result, zval *name)
 			convert_to_string(&tmp);
 			c = &tmp;
 		}
-		ZVAL_PSTRINGL(result, Z_STRVAL_P(c), Z_STRLEN_P(c));
+		ZVAL_NEW_STR(result, zend_string_init(Z_STRVAL_P(c), Z_STRLEN_P(c), ZEND_SYSTEM_INI));
 		if (c == &tmp) {
 			zend_string_release(Z_STR(tmp));
 		}
@@ -231,11 +241,11 @@ static void zend_ini_get_var(zval *result, zval *name)
 
 	/* Fetch configuration option value */
 	if ((curval = zend_get_configuration_directive(Z_STR_P(name))) != NULL) {
-		ZVAL_PSTRINGL(result, Z_STRVAL_P(curval), Z_STRLEN_P(curval));
+		ZVAL_NEW_STR(result, zend_string_init(Z_STRVAL_P(curval), Z_STRLEN_P(curval), ZEND_SYSTEM_INI));
 	/* ..or if not found, try ENV */
 	} else if ((envvar = zend_getenv(Z_STRVAL_P(name), Z_STRLEN_P(name))) != NULL ||
 			   (envvar = getenv(Z_STRVAL_P(name))) != NULL) {
-		ZVAL_PSTRING(result, envvar);
+		ZVAL_NEW_STR(result, zend_string_init(envvar, strlen(envvar), ZEND_SYSTEM_INI));
 	} else {
 		zend_ini_init_string(result);
 	}
@@ -713,12 +723,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   288,   288,   289,   293,   300,   308,   321,   322,   326,
-     327,   331,   332,   333,   334,   335,   339,   340,   344,   345,
-     346,   350,   351,   352,   353,   354,   355,   359,   360,   361,
-     362,   363,   364,   368,   369,   370,   371,   372,   373,   374,
-     378,   382,   383,   384,   385,   386,   390,   391,   392,   393,
-     394
+       0,   300,   300,   301,   305,   312,   320,   333,   334,   338,
+     339,   343,   344,   345,   346,   347,   351,   352,   356,   357,
+     358,   362,   363,   364,   365,   366,   367,   371,   372,   373,
+     374,   375,   376,   380,   381,   382,   383,   384,   385,   386,
+     390,   394,   395,   396,   397,   398,   402,   403,   404,   405,
+     406
 };
 #endif
 
@@ -1297,7 +1307,78 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yytype);
+  switch (yytype)
+    {
+          case 4: /* TC_RAW  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 5: /* TC_CONSTANT  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 6: /* TC_NUMBER  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 7: /* TC_STRING  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 8: /* TC_WHITESPACE  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 9: /* TC_LABEL  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 10: /* TC_OFFSET  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 12: /* TC_VARNAME  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 14: /* BOOL_TRUE  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 15: /* BOOL_FALSE  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+    case 16: /* NULL_NULL  */
+
+      { zval_ptr_dtor(&((*yyvaluep))); }
+
+        break;
+
+
+      default:
+        break;
+    }
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 

@@ -33,6 +33,7 @@
 #include "zend_alloc.h"
 #include "phpdbg_eol.h"
 #include "phpdbg_print.h"
+#include "phpdbg_help.h"
 
 #include "ext/standard/basic_functions.h"
 
@@ -119,6 +120,10 @@ static inline void php_phpdbg_globals_ctor(zend_phpdbg_globals *pg) /* {{{ */
 #endif
 
 	pg->eol = PHPDBG_EOL_LF;
+
+	pg->stdin_file = NULL;
+
+	pg->cur_command = NULL;
 } /* }}} */
 
 static PHP_MINIT_FUNCTION(phpdbg) /* {{{ */
@@ -1654,7 +1659,7 @@ phpdbg_main:
 			PHPDBG_G(io)[PHPDBG_STDOUT].ptr = stdout;
 			PHPDBG_G(io)[PHPDBG_STDOUT].fd = fileno(stdout);
 			if (show_help) {
-				phpdbg_do_help(NULL);
+				phpdbg_do_help_cmd(exec);
 			} else if (show_version) {
 				phpdbg_out(
 					"phpdbg %s (built: %s %s)\nPHP %s, Copyright (c) 1997-2016 The PHP Group\n%s",
@@ -1934,7 +1939,7 @@ phpdbg_main:
 			if (PHPDBG_G(ops)) {
 				phpdbg_print_opcodes(print_opline_func);
 			} else {
-				quiet_write(PHPDBG_G(io)[PHPDBG_STDERR].fd, ZEND_STRL("No opcodes could be compiled | No file specified or compilation failed?\n"));
+				zend_quiet_write(PHPDBG_G(io)[PHPDBG_STDERR].fd, ZEND_STRL("No opcodes could be compiled | No file specified or compilation failed?\n"));
 			}
 			goto phpdbg_out;
 		}
