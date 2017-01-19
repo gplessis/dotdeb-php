@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 7                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2016 The PHP Group                                |
+   | Copyright (c) 1997-2017 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -860,9 +860,6 @@ again:
 			return;
 
 		case IS_OBJECT: {
-				zval retval;
-				zval fname;
-				int res;
 				zend_class_entry *ce = Z_OBJCE_P(struc);
 
 				if (ce->serialize != NULL) {
@@ -891,32 +888,39 @@ again:
 				}
 
 				if (ce != PHP_IC_ENTRY && zend_hash_str_exists(&ce->function_table, "__sleep", sizeof("__sleep")-1)) {
+					zval fname, tmp, retval;
+					int res;
+
+					ZVAL_COPY(&tmp, struc);
 					ZVAL_STRINGL(&fname, "__sleep", sizeof("__sleep") - 1);
 					BG(serialize_lock)++;
-					res = call_user_function_ex(CG(function_table), struc, &fname, &retval, 0, 0, 1, NULL);
+					res = call_user_function_ex(CG(function_table), &tmp, &fname, &retval, 0, 0, 1, NULL);
 					BG(serialize_lock)--;
 					zval_dtor(&fname);
 
 					if (EG(exception)) {
 						zval_ptr_dtor(&retval);
+						zval_ptr_dtor(&tmp);
 						return;
 					}
 
 					if (res == SUCCESS) {
 						if (Z_TYPE(retval) != IS_UNDEF) {
 							if (HASH_OF(&retval)) {
-								php_var_serialize_class(buf, struc, &retval, var_hash);
+								php_var_serialize_class(buf, &tmp, &retval, var_hash);
 							} else {
 								php_error_docref(NULL, E_NOTICE, "__sleep should return an array only containing the names of instance-variables to serialize");
 								/* we should still add element even if it's not OK,
 								 * since we already wrote the length of the array before */
 								smart_str_appendl(buf,"N;", 2);
 							}
-							zval_ptr_dtor(&retval);
 						}
+						zval_ptr_dtor(&retval);
+						zval_ptr_dtor(&tmp);
 						return;
 					}
 					zval_ptr_dtor(&retval);
+					zval_ptr_dtor(&tmp);
 				}
 
 				/* fall-through */

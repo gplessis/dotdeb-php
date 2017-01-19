@@ -1,5 +1,97 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+19 Jan 2017 PHP 7.0.15
+
+- Core:
+  . Fixed bug #73792 (invalid foreach loop hangs script). (Dmitry)
+  . Fixed bug #73663 ("Invalid opcode 65/16/8" occurs with a variable created
+    with list()). (Laruence)
+  . Fixed bug #73585 (Logging of "Internal Zend error - Missing class
+    information" missing class name). (Laruence)
+  . Fixed bug #73753 (unserialized array pointer not advancing). (David Walker)
+  . Fixed bug #73825 (Heap out of bounds read on unserialize in
+    finish_nested_data()). (Stas)
+  . Fixed bug #73831 (NULL Pointer Dereference while unserialize php object).
+    (Stas)
+  . Fixed bug #73832 (Use of uninitialized memory in unserialize()). (Stas)
+  . Fixed bug #73092 (Unserialize use-after-free when resizing object's
+    properties hash table). (Nikita)
+  . Fixed bug #69425 (Use After Free in unserialize()). (Nikita)
+  . Fixed bug #72731 (Type Confusion in Object Deserialization). (Nikita)
+
+- COM:
+  . Fixed bug #73679 (DOTNET read access violation using invalid codepage).
+    (Anatol)
+
+- DOM:
+  . Fixed bug #67474 (getElementsByTagNameNS filter on default ns). (aboks)
+
+- EXIF:
+  . Bug bug #73737 (FPE when parsing a tag format). (Stas)
+
+- GD:
+  . Fixed bug #73869 (Signed Integer Overflow gd_io.c). (cmb)
+  . Fixed bug #73868 (DOS vulnerability in gdImageCreateFromGd2Ctx()). (cmb)
+
+- GMP:
+  . Fixed bug #70513 (GMP Deserialization Type Confusion Vulnerability).
+    (Nikita)
+
+- Mysqli:
+  . Fixed bug #73462 (Persistent connections don't set $connect_errno).
+    (darkain)
+
+- Mysqlnd:
+  . Fixed issue with decoding BIT columns when having more than one rows in the
+    result set. 7.0+ problem. (Andrey)
+  . Fixed bug #73800 (sporadic segfault with MYSQLI_OPT_INT_AND_FLOAT_NATIVE). 
+	(vanviegen)
+
+- PCRE:
+  . Fixed bug #73612 (preg_*() may leak memory). (cmb)
+
+- PDO_Firebird:
+  . Fixed bug #72931 (PDO_FIREBIRD with Firebird 3.0 not work on returning
+    statement). (Dorin Marcoci)
+
+- Phar:
+  . Fixed bug #73773 (Seg fault when loading hostile phar). (Stas)
+  . Fixed bug #73768 (Memory corruption when loading hostile phar). (Stas)
+  . Fixed bug #73764 (Crash while loading hostile phar archive). (Stas)
+
+- Phpdbg:
+  . Fixed bug #73615 (phpdbg without option never load .phpdbginit at startup).
+    (Bob)
+  . Fixed issue getting executable lines from custom wrappers. (Bob)
+  . Fixed bug #73704 (phpdbg shows the wrong line in files with shebang). (Bob)
+
+- Reflection:
+  . Fixed bug #46103 (ReflectionObject memory leak). (Nikita)
+
+- Streams:
+  . Fixed bug #73586 (php_user_filter::$stream is not set to the stream the
+    filter is working on). (Dmitry)
+
+- SQLite3:
+  . Reverted fix for bug #73530	(Unsetting result set may reset other result
+    set). (cmb)
+
+- Standard:
+  . Fixed bug #73594 (dns_get_record does not populate $additional out
+    parameter). (Bruce Weirdan)
+  . Fixed bug #70213 (Unserialize context shared on double class lookup).
+    (Taoguang Chen)
+  . Fixed bug #73154 (serialize object with __sleep function crash). (Nikita)
+  . Fixed bug #70490 (get_browser function is very slow). (Nikita)
+  . Fixed bug #73265 (Loading browscap.ini at startup causes high memory usage).
+    (Nikita)
+  . Fixed bug #31875 (get_defined_functions additional param to exclude
+	disabled functions). (willianveiga)
+
+- Zlib:
+  . Fixed bug #73373 (deflate_add does not verify that output was not truncated).
+    (Matt Bonneau)
+
 08 Dec 2016 PHP 7.0.14
 
 - Core:
@@ -41,11 +133,11 @@ PHP                                                                        NEWS
   . Fixed bug #73087, #61183, #71494 (Memory corruption in bindParam).
     (Dorin Marcoci)
 
-- Phar:
-  . Fixed bug #73580 (Phar::isValidPharFilename illegal memory access). (Stas)
-
 - Postgres:
   . Fixed bug #73498 (Incorrect SQL generated for pg_copy_to()). (Craig Duncan)
+
+- Phar:
+  . Fixed bug #73580 (Phar::isValidPharFilename illegal memory access). (Stas)
 
 - Soap:
   . Fixed bug #73538 (SoapClient::__setSoapHeaders doesn't overwrite SOAP
@@ -65,7 +157,8 @@ PHP                                                                        NEWS
 
 - Wddx:
   . Fixed bug #73631 (Invalid read when wddx decodes empty boolean element).
-    (Stas)
+  (Stas)
+
 - XML:
   . Fixed bug #72135 (malformed XML causes fault) (edgarsandi)
 

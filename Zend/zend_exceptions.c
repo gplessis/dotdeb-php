@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | Zend Engine                                                          |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2016 Zend Technologies Ltd. (http://www.zend.com) |
+   | Copyright (c) 1998-2017 Zend Technologies Ltd. (http://www.zend.com) |
    +----------------------------------------------------------------------+
    | This source file is subject to version 2.00 of the Zend license,     |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -186,7 +186,9 @@ ZEND_API void zend_clear_exception(void) /* {{{ */
 	}
 	OBJ_RELEASE(EG(exception));
 	EG(exception) = NULL;
-	EG(current_execute_data)->opline = EG(opline_before_exception);
+	if (EG(current_execute_data)) {
+		EG(current_execute_data)->opline = EG(opline_before_exception);
+	}
 #if ZEND_DEBUG
 	EG(opline_before_exception) = NULL;
 #endif
