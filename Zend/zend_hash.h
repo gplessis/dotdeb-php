@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | Zend Engine                                                          |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2016 Zend Technologies Ltd. (http://www.zend.com) |
+   | Copyright (c) 1998-2017 Zend Technologies Ltd. (http://www.zend.com) |
    +----------------------------------------------------------------------+
    | This source file is subject to version 2.00 of the Zend license,     |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -298,6 +298,16 @@ static zend_always_inline zval *zend_hash_str_find_ind(const HashTable *ht, cons
 	zv = zend_hash_str_find(ht, str, len);
 	return (zv && Z_TYPE_P(zv) == IS_INDIRECT) ? 
 		((Z_TYPE_P(Z_INDIRECT_P(zv)) != IS_UNDEF) ? Z_INDIRECT_P(zv) : NULL) : zv;
+}
+
+
+static zend_always_inline int zend_hash_str_exists_ind(const HashTable *ht, const char *str, size_t len)
+{
+	zval *zv;
+
+	zv = zend_hash_str_find(ht, str, len);
+	return zv && (Z_TYPE_P(zv) != IS_INDIRECT ||
+			Z_TYPE_P(Z_INDIRECT_P(zv)) != IS_UNDEF);
 }
 
 

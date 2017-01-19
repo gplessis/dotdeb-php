@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | Zend Engine                                                          |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2016 Zend Technologies Ltd. (http://www.zend.com) |
+   | Copyright (c) 1998-2017 Zend Technologies Ltd. (http://www.zend.com) |
    +----------------------------------------------------------------------+
    | This source file is subject to version 2.00 of the Zend license,     |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -519,6 +519,7 @@ ZEND_API zend_generator *zend_generator_update_current(zend_generator *generator
 							generator->execute_fake.prev_execute_data = original_execute_data;
 						}
 
+						root->execute_data->opline--; /* ZEND_YIELD(_FROM) already advance, so decrement opline to throw from correct place */
 						zend_throw_exception(zend_ce_ClosedGeneratorException, "Generator yielded from aborted, no return value available", 0);
 
 						EG(current_execute_data) = original_execute_data;

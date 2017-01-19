@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | Zend OPcache                                                         |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2016 The PHP Group                                |
+   | Copyright (c) 1998-2017 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -107,8 +107,6 @@ static ZEND_INI_MH(OnUpdateMemoryConsumption)
 #else
 	char *base = (char *) ts_resource(*((int *) mh_arg2));
 #endif
-	zend_long megabyte, overflow;
-	double dummy;
 
 	/* keep the compiler happy */
 	(void)entry; (void)mh_arg2; (void)mh_arg3; (void)stage;
@@ -132,10 +130,10 @@ static ZEND_INI_MH(OnUpdateMemoryConsumption)
 
 		ini_entry->value = zend_string_init(new_new_value, 1, 1);
 	}
-	megabyte = 1024 * 1024;
-	ZEND_SIGNED_MULTIPLY_LONG(memsize, megabyte, *p, dummy, overflow);
-	if (UNEXPECTED(overflow)) {
+	if (UNEXPECTED(memsize > ZEND_ULONG_MAX / (1024 * 1024))) {
 		*p = ZEND_ULONG_MAX;
+	} else {
+		*p = memsize * (1024 * 1024);
 	}
 	return SUCCESS;
 }
