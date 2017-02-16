@@ -15,7 +15,7 @@ Index: dotdeb-php/acinclude.m4
 ===================================================================
 --- dotdeb-php.orig/acinclude.m4
 +++ dotdeb-php/acinclude.m4
-@@ -2283,7 +2283,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
+@@ -2286,7 +2286,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
      fi
  
      for i in $PHP_KERBEROS; do
@@ -24,7 +24,7 @@ Index: dotdeb-php/acinclude.m4
          PHP_KERBEROS_DIR=$i
          break
        fi
-@@ -2362,7 +2362,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+@@ -2365,7 +2365,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
        if test -r $i/include/openssl/evp.h; then
          OPENSSL_INCDIR=$i/include
        fi
@@ -50,15 +50,15 @@ Index: dotdeb-php/ext/gmp/config.m4
 ===================================================================
 --- dotdeb-php.orig/ext/gmp/config.m4
 +++ dotdeb-php/ext/gmp/config.m4
-@@ -5,6 +5,7 @@ if test "$PHP_GMP" != "no"; then
- 
+@@ -8,6 +8,7 @@ if test "$PHP_GMP" != "no"; then
    for i in $PHP_GMP /usr/local /usr; do
      test -f $i/include/gmp.h && GMP_DIR=$i && break
+     test -f $i/include/$MACHINE_INCLUDES/gmp.h && GMP_DIR=$i && break
 +    test -f $i/include/$DEB_HOST_MULTIARCH/gmp.h && GMP_DIR=$i && break
    done
  
    if test -z "$GMP_DIR"; then
-@@ -20,6 +21,7 @@ if test "$PHP_GMP" != "no"; then
+@@ -23,6 +24,7 @@ if test "$PHP_GMP" != "no"; then
  
    PHP_ADD_LIBRARY_WITH_PATH(gmp, $GMP_DIR/$PHP_LIBDIR, GMP_SHARED_LIBADD)
    PHP_ADD_INCLUDE($GMP_DIR/include)

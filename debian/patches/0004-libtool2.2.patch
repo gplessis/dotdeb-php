@@ -14,9 +14,9 @@ Index: dotdeb-php/scripts/phpize.in
  builddir="`pwd`"
  SED="@SED@"
  
--FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool libtool.m4"
+-FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool libtool.m4 ax_check_compile_flag.m4"
 +aclocaldir="$prefix/share/aclocal"
-+FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool"
++FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool ax_check_compile_flag.m4"
 +LIBTOOL_FILES="libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4"
  FILES="acinclude.m4 Makefile.global config.sub config.guess ltmain.sh run-tests*.php"
  CLEAN_FILES="$FILES *.o *.lo *.la .deps .libs/ build/ modules/ install-sh \
