@@ -652,6 +652,11 @@ Other
   Since 7.0.9, getenv() has optional second parameter, making it only
   consider local environment and not SAPI environment if true.
 
+- fopen()
+  Since 7.0.16, mode 'e' was added, which sets the close-on-exec flag
+  on the opened file descriptor. This mode is only available in PHP compiled on
+  POSIX.1-2008 conform systems.
+
 ========================================
 6. New Functions
 ========================================
@@ -722,6 +727,13 @@ out, that the corresponding SDK isn't available anymore.
   Mhash is not an extension anymore, use function_exists("mhash") to check whether
   it is avaliable.
 
+- PDO_Firebird
+  As of PHP 7.0.16, the fetched data for integer fields is aware of the Firebird
+  datatypes. Previously all integers was fetched as strings, starting with the
+  aforementioned PHP version integer fields are translated to the PHP integer
+  datatype. The 64-bit integers are still fetched as strings in 32-bit PHP
+  builds.
+
 - GD
   The bundled libgd requires libwebp instead of libvpx for the WebP functionality.
 
@@ -788,6 +800,7 @@ out, that the corresponding SDK isn't available anymore.
   . Removed asp_tags ini directive. Trying to enable it will result in a fatal
     error.
   . Removed always_populate_raw_post_data ini directive.
+  . realpath_cache_size set to 4096k by default
 
 ========================================
 12. Windows Support
