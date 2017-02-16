@@ -1,5 +1,86 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+16 Feb 2017 PHP 7.0.16
+
+- Core:
+  . Fixed bug #73916 (zend_print_flat_zval_r doesn't consider reference).
+    (Laruence)
+  . Fixed bug #73876 (Crash when exporting **= in expansion of assign op).
+    (Sara)
+  . Fixed bug #73969 (segfault in debug_print_backtrace). (andrewnester)
+  . Fixed bug #73973 (assertion error in debug_zval_dump). (andrewnester)
+
+- DOM:
+  . Fixed bug #54382 (getAttributeNodeNS doesn't get xmlns* attributes).
+    (aboks)
+
+- DTrace:
+  . Fixed bug #73965 (DTrace reported as enabled when disabled). (Remi)
+
+- FPM:
+  . Fixed bug #67583 (double fastcgi_end_request on max_children limit).
+    (Dmitry Saprykin)
+  . Fixed bug #69865 (php-fpm does not close stderr when using syslog). 
+    (m6w6)
+
+- GD:
+  . Fixed bug #73968 (Premature failing of XBM reading). (cmb)
+
+- GMP:
+  . Fixed bug #69993 (test for gmp.h needs to test machine includes).
+    (Jordan Gigov) 
+
+- Intl:
+  . Fix bug #73956 (Link use CC instead of CXX). (Remi)
+
+- LDAP:
+  . Fixed bug #73933 (error/segfault with ldap_mod_replace and opcache).
+    (Laruence)
+
+- MySQLi:
+  . Fixed bug #73949 (leak in mysqli_fetch_object). (krakjoe)
+
+- Mysqlnd:
+  . Fixed bug #69899 (segfault on close() after free_result() with mysqlnd).
+    (Richard Fussenegger)
+
+- Opcache:
+  . Fixed bug #73983 (crash on finish work with phar in cli + opcache).
+    (Anatol)
+
+- OpenSSL:
+  . Fixed bug #71519 (add serial hex to return value array). (xrobau)
+
+- PDO_Firebird:
+  . Implemented FR #72583 (All data are fetched as strings). (Dorin Marcoci)
+
+- PDO_PgSQL:
+  . Fixed bug #73959 (lastInsertId fails to throw an exception for wrong 
+    sequence name). (andrewnester)
+
+- Phar:
+  . Fixed bug #70417 (PharData::compress() doesn't close temp file). (cmb)
+
+- posix:
+  . Fixed bug #71219 (configure script incorrectly checks for ttyname_r). (atoth)
+
+- Session:
+  . Fixed bug #69582 (session not readable by root in CLI). (EvgeniySpinov)
+
+- SPL:
+  . Fixed bug #73896 (spl_autoload() crashes when calls magic _call()). (Dmitry)
+
+- Standard:
+  . Fixed bug #69442 (closing of fd incorrect when PTS enabled). (jaytaph)
+  . Fixed bug #47021 (SoapClient stumbles over WSDL delivered with
+    "Transfer-Encoding: chunked"). (Rowan Collins)
+  . Fixed bug #72974 (imap is undefined service on AIX). (matthieu.sarter)
+  . Fixed bug #72979 (money_format stores wrong length AIX). (matthieu.sarter)
+
+- ZIP:
+  . Fixed bug #70103 (ZipArchive::addGlob ignores remove_all_path option). (cmb,
+    Mitch Hagstrand)
+
 19 Jan 2017 PHP 7.0.15
 
 - Core:

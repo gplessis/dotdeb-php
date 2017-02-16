@@ -1376,8 +1376,11 @@ main() {
   dir = opendir("/");
   if (!dir) 
     exit(1);
-  if (readdir_r(dir, (struct dirent *) entry, &pentry) == 0)
+  if (readdir_r(dir, (struct dirent *) entry, &pentry) == 0) {
+    close(dir);
     exit(0);
+  }
+  close(dir);
   exit(1);
 }
     ],[
@@ -3109,6 +3112,9 @@ AC_DEFUN([PHP_CHECK_BUILTIN_CTZLL], [
   AC_DEFINE_UNQUOTED([PHP_HAVE_BUILTIN_CTZLL], [$have_builtin_ctzll], [Whether the compiler supports __builtin_ctzll])
 
 ])
+
+dnl Load the AX_CHECK_COMPILE_FLAG macro from the autoconf archive.
+m4_include([build/ax_check_compile_flag.m4])
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 ## Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007,
 ## 2008  Free Software Foundation, Inc.

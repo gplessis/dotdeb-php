@@ -1376,8 +1376,11 @@ main() {
   dir = opendir("/");
   if (!dir) 
     exit(1);
-  if (readdir_r(dir, (struct dirent *) entry, &pentry) == 0)
+  if (readdir_r(dir, (struct dirent *) entry, &pentry) == 0) {
+    close(dir);
     exit(0);
+  }
+  close(dir);
   exit(1);
 }
     ],[
@@ -3109,3 +3112,6 @@ AC_DEFUN([PHP_CHECK_BUILTIN_CTZLL], [
   AC_DEFINE_UNQUOTED([PHP_HAVE_BUILTIN_CTZLL], [$have_builtin_ctzll], [Whether the compiler supports __builtin_ctzll])
 
 ])
+
+dnl Load the AX_CHECK_COMPILE_FLAG macro from the autoconf archive.
+m4_include([build/ax_check_compile_flag.m4])
