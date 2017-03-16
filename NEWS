@@ -1,5 +1,76 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+16 Mar 2017 PHP 7.0.17
+
+- Core:
+  . Fixed bug #73989 (PHP 7.1 Segfaults within Symfony test suite).
+    (Dmitry, Laruence)
+  . Fixed bug #74084 (Out of bound read - zend_mm_alloc_small). (Laruence)
+  . Fixed bug #73807 (Performance problem with processing large post request).
+    (Nikita)
+  . Fixed bug #73998 (array_key_exists fails on arrays created by
+    get_object_vars). (mhagstrand)
+  . Fixed bug #73954 (NAN check fails on Alpine Linux with musl). (Andrea)
+  . Fixed bug #74039 (is_infinite(-INF) returns false). (Christian Schmidt)
+  . Fixed bug #73677 (Generating phar.phar core dump with gcc ASAN enabled
+    build). (ondrej)
+
+- Apache:
+  . Fixed bug #61471 (Incomplete POST does not timeout but is passed to PHP).
+    (Zheng Shao)
+
+- Date:
+  . Fixed bug #72719 (Relative datetime format ignores weekday on sundays
+    only). (Derick)
+  . Fixed bug #73294 (DateTime wrong when date string is negative). (Derick)
+  . Fixed bug #73489 (wrong timestamp when call setTimeZone multi times with
+    UTC offset). (xiami, Derick)
+  . Fixed bug #73858 (first/last day of' flag is not being reset). (Derick)
+  . Fixed bug #73942 ($date->modify('Friday this week') doesn't return a Friday
+    if $date is a Sunday). (Derick)
+  . Fixed bug #74057 (wrong day when using "this week" in strtotime). (Derick)
+
+- FPM:
+  . Fixed bug #69860 (php-fpm process accounting is broken with keepalive).
+    (Denis Yeldandi)
+
+- Hash:
+  . Fixed bug #73127 (gost-crypto hash incorrect if input data contains long
+    0xFF sequence). (Grundik)
+
+- GD:
+  . Fixed bug #74031 (ReflectionFunction for imagepng is missing last two
+    parameters). (finwe)
+
+- Mysqlnd:
+  . Fixed bug #74021 (fetch_array broken data. Data more then MEDIUMBLOB).
+    (Andrew Nester, Nikita)
+
+- Opcache:
+  . Fixed bug #74152 (if statement says true to a null variable). (Laruence)
+  . Fixed bug #74019 (Segfault with list). (Laruence)
+
+- OpenSSL:
+  . Fixed bug #74022 (PHP Fast CGI crashes when reading from a pfx file).
+    (Anatol)
+
+- Standard:
+  . Fixed bug #74148 (ReflectionFunction incorrectly reports the number of
+    arguments). (Laruence)
+  . Fixed bug #74005 (mail.add_x_header causes RFC-breaking lone line feed).
+    (Anatol)
+  . Fixed bug #73118 (is_callable callable name reports misleading value for
+    anonymous classes). (Adam Saponara)
+  . Fixed bug #74105 (PHP on Linux should use /dev/urandom when getrandom is
+    not available). (Benjamin Robin)
+
+- Streams:
+  . Fixed bug #73496 (Invalid memory access in zend_inline_hash_func).
+    (Laruence)
+  . Fixed bug #74090 (stream_get_contents maxlength>-1 returns empty string).
+    (Anatol)
+
+
 16 Feb 2017 PHP 7.0.16
 
 - Core:
