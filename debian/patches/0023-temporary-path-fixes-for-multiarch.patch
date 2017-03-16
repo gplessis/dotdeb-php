@@ -24,7 +24,7 @@ Index: dotdeb-php/acinclude.m4
          PHP_KERBEROS_DIR=$i
          break
        fi
-@@ -2365,7 +2365,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+@@ -2367,7 +2367,7 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
        if test -r $i/include/openssl/evp.h; then
          OPENSSL_INCDIR=$i/include
        fi
