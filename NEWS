@@ -1,5 +1,43 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+13 Apr 2017 PHP 7.0.18
+
+- Core:
+  . Fixed bug #73370 (falsely exits with "Out of Memory" when using
+    USE_ZEND_ALLOC=0). (Nikita)
+  . Fixed bug #73960 (Leak with instance method calling static method with
+    referenced return). (Nikita)
+  . Fixed bug #74265 (Build problems after 7.0.17 release: undefined reference
+    to `isfinite'). (Nikita)
+  . Fixed bug #74302 (yield fromLABEL is over-greedy). (Sara)
+
+- Apache:
+  . Reverted patch for bug #61471, fixes bug #74318. (Anatol)
+
+- Date:
+  . Fixed bug #72096 (Swatch time value incorrect for dates before 1970). (mcq8)
+
+- DOM:
+  . Fixed bug #74004 (LIBXML_NOWARNING flag ingnored on loadHTML*).
+    (somedaysummer)
+
+- iconv:
+  . Fixed bug #74230 (iconv fails to fail on surrogates). (Anatol)
+
+- OpenSSL:
+  . Fixed bug #72333 (fwrite() on non-blocking SSL sockets doesn't work).
+    (Jakub Zelenka)
+
+- PDO MySQL:
+  . Fixed bug #71003 (Expose MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT to PDO
+    interface). (Thomas Orozco)
+
+- Streams:
+  . Fixed bug #74216 (Correctly fail on invalid IP address ports). (Sara)
+
+- Zlib:
+  . Fixed bug #74240 (deflate_add can allocate too much memory). (Matt Bonneau)
+
 16 Mar 2017 PHP 7.0.17
 
 - Core:
@@ -53,6 +91,9 @@ PHP                                                                        NEWS
 - OpenSSL:
   . Fixed bug #74022 (PHP Fast CGI crashes when reading from a pfx file).
     (Anatol)
+
+- PDO_OCI:
+  . Fixed bug #54379 (PDO_OCI: UTF-8 output gets truncated). (gureedo / Oracle)
 
 - Standard:
   . Fixed bug #74148 (ReflectionFunction incorrectly reports the number of
