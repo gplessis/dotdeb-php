@@ -1462,7 +1462,9 @@ static void zend_jmp_optimization(zend_code_block *block, zend_op_array *op_arra
 						break;
 					}
 				}
-				if (last_op->op1_type & (IS_VAR|IS_TMP_VAR)) {
+				if (last_op->op1_type == IS_CV) {
+					break;
+				} else if (last_op->op1_type & (IS_VAR|IS_TMP_VAR)) {
 					last_op->opcode = ZEND_FREE;
 					last_op->op2.num = 0;
 					block->op2_to = NULL;
@@ -1997,6 +1999,10 @@ void optimize_cfg(zend_op_array *op_array, zend_optimizer_ctx *ctx)
 #endif
 
 	if (op_array->fn_flags & ZEND_ACC_HAS_FINALLY_BLOCK) {
+		return;
+	}
+
+	if ((uint64_t) op_array->last * (op_array->last_var + op_array->T) > 512 * 1024 * 1024) {
 		return;
 	}
 
