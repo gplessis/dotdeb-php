@@ -11,7 +11,7 @@ Index: dotdeb-php/configure.in
 ===================================================================
 --- dotdeb-php.orig/configure.in
 +++ dotdeb-php/configure.in
-@@ -1206,8 +1206,10 @@ ZEND_MODULE_API_NO=`$EGREP '#define ZEND
+@@ -1207,8 +1207,10 @@ ZEND_MODULE_API_NO=`$EGREP '#define ZEND
  
  AC_SUBST(ZEND_MODULE_API_NO)
  
@@ -23,7 +23,7 @@ Index: dotdeb-php/configure.in
    if test "$oldstyleextdir" = "yes"; then
      if test "$PHP_DEBUG" = "1"; then
        part1=debug
-@@ -1351,6 +1353,7 @@ PHP_SUBST(CXX)
+@@ -1352,6 +1354,7 @@ PHP_SUBST(CXX)
  PHP_SUBST(CXXFLAGS)
  PHP_SUBST(CXXFLAGS_CLEAN)
  PHP_SUBST_OLD(DEBUG_CFLAGS)
