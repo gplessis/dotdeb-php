@@ -1,0 +1,84 @@
+Index: dotdeb-php/main/php_ini.c
+===================================================================
+--- dotdeb-php.orig/main/php_ini.c
++++ dotdeb-php/main/php_ini.c
+@@ -280,7 +280,7 @@ static void php_ini_parser_cb(zval *arg1
+ 				size_t key_len;
+ 
+ 				/* PATH sections */
+-				if (zend_string_equals_literal_ci(Z_STR_P(arg1), "PATH")) {
++				if (!zend_binary_strncasecmp(Z_STRVAL_P(arg1), Z_STRLEN_P(arg1), "PATH", sizeof("PATH") - 1, sizeof("PATH") - 1)) {
+ 					key = Z_STRVAL_P(arg1);
+ 					key = key + sizeof("PATH") - 1;
+ 					key_len = Z_STRLEN_P(arg1) - sizeof("PATH") + 1;
+@@ -291,7 +291,7 @@ static void php_ini_parser_cb(zval *arg1
+ 					TRANSLATE_SLASHES_LOWER(key);
+ 
+ 				/* HOST sections */
+-				} else if (zend_string_equals_literal_ci(Z_STR_P(arg1), "HOST")) {
++				} else if (!zend_binary_strncasecmp(Z_STRVAL_P(arg1), Z_STRLEN_P(arg1), "HOST", sizeof("HOST") - 1, sizeof("HOST") - 1)) {
+ 					key = Z_STRVAL_P(arg1);
+ 					key = key + sizeof("HOST") - 1;
+ 					key_len = Z_STRLEN_P(arg1) - sizeof("HOST") + 1;
+@@ -328,7 +328,9 @@ static void php_ini_parser_cb(zval *arg1
+ 						zend_hash_init(Z_ARRVAL(section_arr), 8, NULL, (dtor_func_t) config_zval_dtor, 1);
+ 						entry = zend_hash_str_update(target_hash, key, key_len, &section_arr);
+ 					}
+-					active_ini_hash = Z_ARRVAL_P(entry);
++					if (Z_TYPE_P(entry) == IS_ARRAY) {
++						active_ini_hash = Z_ARRVAL_P(entry);
++					}
+ 				}
+ 			}
+ 			break;
+Index: dotdeb-php/sapi/cli/tests/023.phpt
+===================================================================
+--- /dev/null
++++ dotdeb-php/sapi/cli/tests/023.phpt
+@@ -0,0 +1,46 @@
++--TEST--
++HOST/PATH ini sections test for cli
++--SKIPIF--
++<?php
++if (!getenv("TEST_PHP_EXECUTABLE")) die("skip TEST_PHP_EXECUTABLE not set");
++if (substr(PHP_OS, 0, 3) == "WIN") die("skip non windows test");
++?>
++--FILE--
++<?php
++$php = getenv("TEST_PHP_EXECUTABLE");
++$cwd = getcwd();
++$ini_file = __DIR__ . "/023.ini";
++file_put_contents($ini_file, <<<INI
++; no sections should match as cli doesn't support any
++memory_limit = 40M
++[PATH={$cwd}]
++memory_limit = 50M
++[PATH=/does/not/exist]
++memory_limit = 60M
++[HOST=some_fake_host]
++memory_limit = 70M
++INI
++);
++$desc = array(
++	0 => array("pipe", "r"),
++	1 => array("pipe", "w"),
++	2 => array("pipe", "w"),
++);
++$pipes = array();
++$proc = proc_open("$php -c $ini_file -r 'echo ini_get(\"memory_limit\");'", $desc, $pipes);
++if (!$proc) {
++	exit(1);
++}
++var_dump(stream_get_contents($pipes[1]));
++var_dump(stream_get_contents($pipes[2]));
++
++proc_terminate($proc);
++proc_close($proc);
++?>
++--CLEAN--
++<?php
++unlink(__DIR__ . "/023.ini");
++?>
++--EXPECTF--
++string(3) "40M"
++string(0) ""
