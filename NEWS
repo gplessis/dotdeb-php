@@ -1,5 +1,125 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+03 Aug 2017 PHP 7.0.22
+
+- Core:
+  . Fixed bug #74832 (Loading PHP extension with already registered function 
+    name leads to a crash). (jpauli)
+  . Fixed bug #74780 (parse_url() borken when query string contains colon). 
+    (jhdxr)
+  . Fixed bug #74761 (Unary operator expected error on some systems). (petk)
+  . Fixed bug #73900 (Use After Free in unserialize() SplFixedArray). (nikic)
+  . Fixed bug #74913 (fixed incorrect poll.h include). (petk)
+  . Fixed bug #74906 (fixed incorrect errno.h include). (petk)
+
+- Date:
+  . Fixed bug #74852 (property_exists returns true on unknown DateInterval 
+    property). (jhdxr)
+
+- OCI8:
+  . Fixed bug #74625 (Integer overflow in oci_bind_array_by_name). (Ingmar Runge)
+
+- Opcache:
+  . Fixed bug #74840 (Opcache overwrites argument of GENERATOR_RETURN within
+    finally). (Bob)
+
+- PDO:
+  . Fixed bug #69356 (PDOStatement::debugDumpParams() truncates query). (Adam
+    Baratz)
+
+- SPL:
+  . Fixed bug #73471 (PHP freezes with AppendIterator). (jhdxr)
+
+- SQLite3:
+  . Fixed bug #74883 (SQLite3::__construct() produces "out of memory" exception
+    with invalid flags). (Anatol)
+
+- Wddx:
+  . Fixed bug #73173 (huge memleak when wddx_unserialize).
+    (tloi at fortinet dot com)
+
+- zlib:
+  . Fixed bug #73944 (dictionary option of inflate_init() does not work).
+    (wapmorgan)
+
+06 Jul 2017 PHP 7.0.21
+
+- Core:
+  . Fixed bug #74738 (Multiple [PATH=] and [HOST=] sections not properly
+    parsed). (Manuel Mausz)
+  . Fixed bug #74658 (Undefined constants in array properties result in broken
+    properties). (Laruence)
+  . Fixed misparsing of abstract unix domain socket names. (Sara)
+  . Fixed bug #74101, bug #74614 (Unserialize Heap Use-After-Free (READ: 1) in
+    zval_get_type). (Nikita)
+  . Fixed bug #74111 (Heap buffer overread (READ: 1) finish_nested_data from
+    unserialize). (Nikita)
+  . Fixed bug #74603 (PHP INI Parsing Stack Buffer Overflow Vulnerability).
+    (Stas)
+  . Fixed bug #74819 (wddx_deserialize() heap out-of-bound read via
+    php_parse_date()). (Derick)
+
+- DOM:
+  . Fixed bug #69373 (References to deleted XPath query results). (ttoohey)
+
+- GD:
+  . Fixed bug #74435 (Buffer over-read into uninitialized memory). (cmb)
+
+- Intl:
+  . Fixed bug #73473 (Stack Buffer Overflow in msgfmt_parse_message). (libnex)
+  . Fixed bug #74705 (Wrong reflection on Collator::getSortKey and
+    collator_get_sort_key). (Tyson Andre, Remi)
+  . Fixed bug #73634 (grapheme_strpos illegal memory access). (Stas)
+
+- Mbstring:
+  . Add oniguruma upstream fix (CVE-2017-9224, CVE-2017-9226, CVE-2017-9227,
+    CVE-2017-9228, CVE-2017-9229) (Remi, Mamoru TASAKA)
+
+- OCI8:
+  . Add TAF callback (PR #2459). (KoenigsKind)
+
+- Opcache:
+  . Fixed bug #74663 (Segfault with opcache.memory_protect and
+    validate_timestamp). (Laruence)
+
+- OpenSSL:
+  . Fixed bug #74651 (negative-size-param (-1) in memcpy in zif_openssl_seal()).
+    (Stas)
+
+- PCRE:
+  . Fixed bug #74087 (Segmentation fault in PHP7.1.1(compiled using the bundled PCRE library)).
+    (Stas)
+
+- PDO_OCI:
+  . Support Instant Client 12.2 in --with-pdo-oci configure option.
+    (Tianfang Yang)
+
+- Reflection:
+  . Fixed bug #74673 (Segfault when cast Reflection object to string with
+    undefined constant). (Laruence)
+
+- SPL:
+  . Fixed bug #74478 (null coalescing operator failing with SplFixedArray).
+    (jhdxr)
+
+- Standard:
+  . Fixed bug #74708 (Invalid Reflection signatures for random_bytes and
+    random_int). (Tyson Andre, Remi)
+  . Fixed bug #73648 (Heap buffer overflow in substr). (Stas)
+
+- FTP:
+  . Fixed bug #74598 (ftp:// wrapper ignores context arg). (Sara)
+
+- PHAR:
+  . Fixed bug #74386 (Phar::__construct reflection incorrect). (villfa)
+
+- SOAP
+  . Fixed bug #74679 (Incorrect conversion array with WSDL_CACHE_MEMORY).
+    (Dmitry)
+
+- Streams:
+  . Fixed bug #74556 (stream_socket_get_name() returns '\0'). (Sara)
+
 8 Jun 2017 PHP 7.0.20
 
 - Core:
@@ -2466,4 +2586,3 @@ PHP                                                                        NEWS
   . Update bundled libzip to 1.0.1. (Remi, Anatol)
   . Fixed bug #67161 (ZipArchive::getStream() returns NULL for certain file).
     (Christoph M. Becker)
-
