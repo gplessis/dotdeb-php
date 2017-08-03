@@ -101,7 +101,7 @@ Index: dotdeb-php/sapi/litespeed/lsapi_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/litespeed/lsapi_main.c
 +++ dotdeb-php/sapi/litespeed/lsapi_main.c
-@@ -1090,9 +1090,9 @@ static int cli_main( int argc, char * ar
+@@ -1098,9 +1098,9 @@ static int cli_main( int argc, char * ar
              case 'v':
                  if (php_request_startup() != FAILURE) {
  #if ZEND_DEBUG
@@ -117,7 +117,7 @@ Index: dotdeb-php/sapi/phpdbg/phpdbg.c
 ===================================================================
 --- dotdeb-php.orig/sapi/phpdbg/phpdbg.c
 +++ dotdeb-php/sapi/phpdbg/phpdbg.c
-@@ -1662,10 +1662,8 @@ phpdbg_main:
+@@ -1666,10 +1666,8 @@ phpdbg_main:
  				phpdbg_do_help_cmd(exec);
  			} else if (show_version) {
  				phpdbg_out(
