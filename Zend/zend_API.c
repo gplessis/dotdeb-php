@@ -1087,8 +1087,6 @@ ZEND_API void zend_merge_properties(zval *obj, HashTable *properties) /* {{{ */
 ZEND_API int zend_update_class_constants(zend_class_entry *class_type) /* {{{ */
 {
 	if (!(class_type->ce_flags & ZEND_ACC_CONSTANTS_UPDATED)) {
-		class_type->ce_flags |= ZEND_ACC_CONSTANTS_UPDATED;
-
 		if (class_type->parent) {
 			if (UNEXPECTED(zend_update_class_constants(class_type->parent) != SUCCESS)) {
 				return FAILURE;
@@ -1162,7 +1160,9 @@ ZEND_API int zend_update_class_constants(zend_class_entry *class_type) /* {{{ */
 
 			*scope = old_scope;
 		}
+		class_type->ce_flags |= ZEND_ACC_CONSTANTS_UPDATED;
 	}
+
 	return SUCCESS;
 }
 /* }}} */
@@ -2028,17 +2028,19 @@ ZEND_API zend_module_entry* zend_register_module_ex(zend_module_entry *module) /
 		zend_string_release(lcname);
 		return NULL;
 	}
-	zend_string_release(lcname);
 	module = module_ptr;
 	EG(current_module) = module;
 
 	if (module->functions && zend_register_functions(NULL, module->functions, NULL, module->type)==FAILURE) {
+		zend_hash_del(&module_registry, lcname);
+		zend_string_release(lcname);
 		EG(current_module) = NULL;
 		zend_error(E_CORE_WARNING,"%s: Unable to register functions, unable to load", module->name);
 		return NULL;
 	}
 
 	EG(current_module) = NULL;
+	zend_string_release(lcname);
 	return module;
 }
 /* }}} */
