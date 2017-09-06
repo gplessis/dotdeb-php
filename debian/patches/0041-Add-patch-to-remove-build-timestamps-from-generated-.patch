@@ -101,7 +101,7 @@ Index: dotdeb-php/sapi/litespeed/lsapi_main.c
 ===================================================================
 --- dotdeb-php.orig/sapi/litespeed/lsapi_main.c
 +++ dotdeb-php/sapi/litespeed/lsapi_main.c
-@@ -1098,9 +1098,9 @@ static int cli_main( int argc, char * ar
+@@ -1043,9 +1043,9 @@ static int cli_main( int argc, char * ar
              case 'v':
                  if (php_request_startup() != FAILURE) {
  #if ZEND_DEBUG
