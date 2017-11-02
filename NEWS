@@ -1,5 +1,47 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+26 Oct 2017 PHP 7.0.25
+
+- Core:
+  . Fixed bug #75241 (Null pointer dereference in zend_mm_alloc_small()).
+    (Laruence)
+  . Fixed bug #75236 (infinite loop when printing an error-message). (Andrea)
+  . Fixed bug #75252 (Incorrect token formatting on two parse errors in one
+    request). (Nikita)
+  . Fixed bug #75220 (Segfault when calling is_callable on parent). 
+    (andrewnester)
+  . Fixed bug #75290 (debug info of Closures of internal functions contain
+    garbage argument names). (Andrea)
+
+- Apache2Handler:
+  . Fixed bug #75311 (error: 'zend_hash_key' has no member named 'arKey' in
+    apache2handler). (mcarbonneaux)
+
+- Date:
+  . Fixed bug #75055 (Out-Of-Bounds Read in timelib_meridian()). (Derick)
+
+- Intl:
+  . Fixed bug #75318 (The parameter of UConverter::getAliases() is not
+    optional). (cmb)
+
+- mcrypt:
+  . Fixed bug #72535 (arcfour encryption stream filter crashes php). (Leigh)
+
+- OCI8:
+  . Fixed incorrect reference counting. (Dmitry, Tianfang Yang)
+
+- PCRE:
+  . Fixed bug #75207 (applied upstream patch for CVE-2016-1283). (Anatol)
+
+- litespeed:
+  . Fixed bug #75248 (Binary directory doesn't get created when building 
+    only litespeed SAPI). (petk)
+  . Fixed bug #75251 (Missing program prefix and suffix). (petk)
+
+- SPL:
+  . Fixed bug #73629 (SplDoublyLinkedList::setIteratorMode masks intern flags).
+    (J. Jeising, cmb)
+
 28 Sep 2017 PHP 7.0.24
 
 - Core:
@@ -28,7 +70,7 @@ PHP                                                                        NEWS
 - Intl:
   . Fixed bug #75090 (IntlGregorianCalendar doesn't have constants from parent
     class). (tpunt)
-  . Fixed bug #75193 (segfault in collator_convert_object_to_string). (Remi)
+  . Fixed bug #75193 (segfault in collator_convert_object_to_string). (Remi)
 
 - PDO_OCI:
   . Fixed bug #74631 (PDO_PCO with PHP-FPM: OCI environment initialized
