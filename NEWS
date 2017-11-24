@@ -1,5 +1,61 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+23 Nov 2017 PHP 7.0.26
+
+- Core:
+  . Fixed bug #75420 (Crash when modifing property name in __isset for
+    BP_VAR_IS). (Laruence)
+  . Fixed bug #75368 (mmap/munmap trashing on unlucky allocations). (Nikita,
+    Dmitry)
+
+- CLI:
+  . Fixed bug #75287 (Builtin webserver crash after chdir in a shutdown
+    function). (Laruence)
+
+- Enchant:
+  . Fixed bug #53070 (enchant_broker_get_path crashes if no path is set). (jelle
+    van der Waa, cmb)
+  . Fixed bug #75365 (Enchant still reports version 1.1.0). (cmb)
+
+- Exif:
+  . Fixed bug #75301 (Exif extension has built in revision version). (Peter
+    Kokot)
+
+- GD:
+  . Fixed bug #65148 (imagerotate may alter image dimensions). (cmb)
+  . Fixed bug #75437 (Wrong reflection on imagewebp). (Fabien Villepinte)
+
+- intl:
+  . Fixed bug #75317 (UConverter::setDestinationEncoding changes source instead 
+    of destination). (andrewnester)
+
+- interbase:
+  . Fixed bug #75453 (Incorrect reflection for ibase_[p]connect). (villfa)
+
+- Mysqli:
+  . Fixed bug #75434 (Wrong reflection for mysqli_fetch_all function). (Fabien
+    Villepinte)
+
+- OCI8:
+  . Fixed valgrind issue. (Tianfang Yang)
+
+- Opcache:
+  . Fixed bug #75373 (Warning Internal error: wrong size calculation). (Laruence, Dmitry)
+
+- OpenSSL:
+  . Fixed bug #75363 (openssl_x509_parse leaks memory). (Bob, Jakub Zelenka)
+  . Fixed bug #75307 (Wrong reflection for openssl_open function). (villfa)
+
+- PGSQL:
+  . Fixed bug #75419 (Default link incorrectly cleared/linked by pg_close()). (Sara)
+
+- SOAP:
+  . Fixed bug #75464 (Wrong reflection on SoapClient::__setSoapHeaders). (villfa)
+
+- Zlib:
+  . Fixed bug #75299 (Wrong reflection on inflate_init and inflate_add). (Fabien
+    Villepinte)
+
 26 Oct 2017 PHP 7.0.25
 
 - Core:
@@ -89,6 +145,7 @@ PHP                                                                        NEWS
   . Fixed bug #74947 (Segfault in scanner on INF number). (Laruence)
   . Fixed bug #74954 (null deref and segfault in zend_generator_resume()). (Bob)
   . Fixed bug #74725 (html_errors=1 breaks unhandled exceptions). (Andrea)
+  . Fixed bug #75349 (NAN comparison). (Sara)
 
 - cURL:
   . Fixed bug #74125 (Fixed finding CURL on systems with multiarch support).
