@@ -24,3 +24,4 @@
 0042-Remove-W3C-validation-icon-to-not-expose-the-reader-.patch
 0043-Don-t-put-INSTALL_ROOT-into-phar.phar-exec-stanza.patch
 0044-XMLRPC-EPI-library-has-to-be-linked-as-lxmlrpc-epi.patch
+0050-php-7.0.26_segfault.patch
