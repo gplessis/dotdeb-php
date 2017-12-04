@@ -1,3 +1,10 @@
+php7.0 (7.0.26-1~dotdeb+8.2) oldstable; urgency=medium
+
+  [ Guillaume Plessis ]
+  * Fixed bug #75573
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Mon,  4 Dec 2017 19:52:42 +0000
+
 php7.0 (7.0.26-1~dotdeb+8.1) oldstable; urgency=medium
 
   [ Guillaume Plessis ]
