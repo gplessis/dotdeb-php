@@ -1,5 +1,43 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+04 Jan 2018 PHP 7.0.27
+
+- CLI Server:
+  . Fixed bug #60471 (Random "Invalid request (unexpected EOF)" using a router
+    script). (SammyK)
+
+- Core:
+  . Fixed bug #75384 (PHP seems incompatible with OneDrive files on demand).
+    (Anatol)
+  . Fixed bug #75573 (Segmentation fault in 7.1.12 and 7.0.26). (Laruence)
+
+- FPM:
+  . Fixed bug #64938 (libxml_disable_entity_loader setting is shared between
+    requests). (Remi)
+
+- GD:
+  . Fixed bug #75571 (Potential infinite loop in gdImageCreateFromGifCtx). (cmb)
+
+- Opcache:
+  . Fixed bug #75579 (Interned strings buffer overflow may cause crash).
+    (Dmitry)
+
+- PCRE:
+  . Fixed bug #74183 (preg_last_error not returning error code after error).
+    (Andrew Nester)
+
+- Phar:
+  . Fixed bug #74782 (Reflected XSS in .phar 404 page). (Stas)
+
+- Standard:
+  . Fixed bug #75535 (Inappropriately parsing HTTP response leads to PHP
+    segment fault). (Nikita)
+  . Fixed bug #75409 (accept EFAULT in addition to ENOSYS as indicator 
+    that getrandom() is missing). (sarciszewski)
+
+- Zip:
+  . Fixed bug #75540 (Segfault with libzip 1.3.1). (Remi)
+
 23 Nov 2017 PHP 7.0.26
 
 - Core:

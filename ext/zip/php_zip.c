@@ -1513,8 +1513,12 @@ static ZIPARCHIVE_METHOD(close)
 	ze_obj = Z_ZIP_P(self);
 
 	if ((err = zip_close(intern))) {
+#if LIBZIP_VERSION_MAJOR == 1 && LIBZIP_VERSION_MINOR == 3 && LIBZIP_VERSION_MICRO == 1
+		php_error_docref(NULL, E_WARNING, "%s", "zip_close have failed");
+#else
 		php_error_docref(NULL, E_WARNING, "%s", zip_strerror(intern));
 		zip_discard(intern);
+#endif
 	}
 
 	efree(ze_obj->filename);
