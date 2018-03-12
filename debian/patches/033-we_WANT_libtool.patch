@@ -11,10 +11,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: dotdeb-php/build/build2.mk
+Index: Local/build/build2.mk
 ===================================================================
---- dotdeb-php.orig/build/build2.mk
-+++ dotdeb-php/build/build2.mk
+--- Local.orig/build/build2.mk
++++ Local/build/build2.mk
 @@ -46,7 +46,8 @@ $(TOUCH_FILES):
  
  aclocal.m4: configure.in acinclude.m4

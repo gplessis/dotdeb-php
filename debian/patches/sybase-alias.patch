@@ -1,7 +1,7 @@
-Index: dotdeb-php/ext/mssql/php_mssql.c
+Index: Local/ext/mssql/php_mssql.c
 ===================================================================
---- dotdeb-php.orig/ext/mssql/php_mssql.c
-+++ dotdeb-php/ext/mssql/php_mssql.c
+--- Local.orig/ext/mssql/php_mssql.c
++++ Local/ext/mssql/php_mssql.c
 @@ -178,6 +178,38 @@ const zend_function_entry mssql_function
   	PHP_FE(mssql_execute,				arginfo_mssql_execute)
  	PHP_FE(mssql_free_statement,		arginfo_mssql_free_statement)

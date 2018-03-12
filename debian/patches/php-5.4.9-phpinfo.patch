@@ -3,10 +3,10 @@ Drop "Configure Command" from phpinfo as it doesn't
 provide any useful information.
 The available extensions are not related to this command.
 
-Index: dotdeb-php/ext/standard/info.c
+Index: Local/ext/standard/info.c
 ===================================================================
---- dotdeb-php.orig/ext/standard/info.c
-+++ dotdeb-php/ext/standard/info.c
+--- Local.orig/ext/standard/info.c
++++ Local/ext/standard/info.c
 @@ -949,9 +949,6 @@ PHPAPI void php_print_info(int flag TSRM
  #ifdef ARCHITECTURE
  		php_info_print_table_row(2, "Architecture", ARCHITECTURE);
@@ -17,10 +17,10 @@ Index: dotdeb-php/ext/standard/info.c
  
  		if (sapi_module.pretty_name) {
  			php_info_print_table_row(2, "Server API", sapi_module.pretty_name );
-Index: dotdeb-php/ext/standard/tests/general_functions/phpinfo.phpt
+Index: Local/ext/standard/tests/general_functions/phpinfo.phpt
 ===================================================================
---- dotdeb-php.orig/ext/standard/tests/general_functions/phpinfo.phpt
-+++ dotdeb-php/ext/standard/tests/general_functions/phpinfo.phpt
+--- Local.orig/ext/standard/tests/general_functions/phpinfo.phpt
++++ Local/ext/standard/tests/general_functions/phpinfo.phpt
 @@ -20,7 +20,6 @@ PHP Version => %s
  
  System => %s

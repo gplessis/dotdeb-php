@@ -4,10 +4,10 @@ Origin: vendor
 Forwarded: no
 Last-Update: 2010-01-18
 
-Index: dotdeb-php/ext/recode/config9.m4
+Index: Local/ext/recode/config9.m4
 ===================================================================
---- dotdeb-php.orig/ext/recode/config9.m4
-+++ dotdeb-php/ext/recode/config9.m4
+--- Local.orig/ext/recode/config9.m4
++++ Local/ext/recode/config9.m4
 @@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
    fi
  

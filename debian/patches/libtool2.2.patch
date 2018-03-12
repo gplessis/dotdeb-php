@@ -1,7 +1,7 @@
-Index: dotdeb-php/scripts/phpize.in
+Index: Local/scripts/phpize.in
 ===================================================================
---- dotdeb-php.orig/scripts/phpize.in
-+++ dotdeb-php/scripts/phpize.in
+--- Local.orig/scripts/phpize.in
++++ Local/scripts/phpize.in
 @@ -6,10 +6,16 @@ datarootdir='@datarootdir@'
  exec_prefix="`eval echo @exec_prefix@`"
  phpdir="$prefix/lib/php5/build"

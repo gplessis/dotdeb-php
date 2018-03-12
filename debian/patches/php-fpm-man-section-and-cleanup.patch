@@ -5,10 +5,10 @@ Origin: vendor
 Forwarded: http://bugs.php.net/52476
 Last-Update: 2010-07-29
 
-Index: dotdeb-php/sapi/fpm/php-fpm.8.in
+Index: Local/sapi/fpm/php-fpm.8.in
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/php-fpm.8.in
-+++ dotdeb-php/sapi/fpm/php-fpm.8.in
+--- Local.orig/sapi/fpm/php-fpm.8.in
++++ Local/sapi/fpm/php-fpm.8.in
 @@ -139,22 +139,8 @@ The configuration file for the php-fpm d
  .TP
  .B php.ini
