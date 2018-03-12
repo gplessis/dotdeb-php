@@ -7,10 +7,10 @@ Subject: libtool_fixes
  configure.in      | 2 --
  2 files changed, 5 deletions(-)
 
-Index: dotdeb-php/TSRM/configure.in
+Index: Local/TSRM/configure.in
 ===================================================================
---- dotdeb-php.orig/TSRM/configure.in
-+++ dotdeb-php/TSRM/configure.in
+--- Local.orig/TSRM/configure.in
++++ Local/TSRM/configure.in
 @@ -17,9 +17,6 @@ TSRM_BASIC_CHECKS
  TSRM_THREADS_CHECKS
  	
@@ -21,10 +21,10 @@ Index: dotdeb-php/TSRM/configure.in
  
  dnl TSRM_PTHREAD
  
-Index: dotdeb-php/configure.in
+Index: Local/configure.in
 ===================================================================
---- dotdeb-php.orig/configure.in
-+++ dotdeb-php/configure.in
+--- Local.orig/configure.in
++++ Local/configure.in
 @@ -1427,8 +1427,6 @@ AC_PROVIDE_IFELSE([PHP_REQUIRE_CXX], [],
  ])
  AC_PROG_LIBTOOL

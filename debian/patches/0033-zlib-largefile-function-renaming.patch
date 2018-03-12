@@ -6,10 +6,10 @@ Subject: zlib-largefile-function-renaming
  ext/zlib/zlib.c | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
-Index: dotdeb-php/ext/zlib/zlib.c
+Index: Local/ext/zlib/zlib.c
 ===================================================================
---- dotdeb-php.orig/ext/zlib/zlib.c
-+++ dotdeb-php/ext/zlib/zlib.c
+--- Local.orig/ext/zlib/zlib.c
++++ Local/ext/zlib/zlib.c
 @@ -49,6 +49,18 @@
  int le_deflate;
  int le_inflate;

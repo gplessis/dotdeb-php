@@ -7,10 +7,10 @@ Make generated php_config.h constant across rebuilds.
  configure.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: dotdeb-php/configure.in
+Index: Local/configure.in
 ===================================================================
---- dotdeb-php.orig/configure.in
-+++ dotdeb-php/configure.in
+--- Local.orig/configure.in
++++ Local/configure.in
 @@ -1290,7 +1290,7 @@ fi
  EXTRA_LDFLAGS="$EXTRA_LDFLAGS $PHP_LDFLAGS"
  EXTRA_LDFLAGS_PROGRAM="$EXTRA_LDFLAGS_PROGRAM $PHP_LDFLAGS"

@@ -6,10 +6,10 @@ Subject: libtool2.2
  scripts/phpize.in | 7 +++++--
  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Index: dotdeb-php/scripts/phpize.in
+Index: Local/scripts/phpize.in
 ===================================================================
---- dotdeb-php.orig/scripts/phpize.in
-+++ dotdeb-php/scripts/phpize.in
+--- Local.orig/scripts/phpize.in
++++ Local/scripts/phpize.in
 @@ -9,7 +9,9 @@ includedir="$prefix/include/php/@DEBIAN_
  builddir="`pwd`"
  SED="@SED@"

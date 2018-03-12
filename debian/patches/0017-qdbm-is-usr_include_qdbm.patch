@@ -6,10 +6,10 @@ Subject: qdbm-is-usr_include_qdbm
  ext/dba/config.m4 | 4 ++++
  1 file changed, 4 insertions(+)
 
-Index: dotdeb-php/ext/dba/config.m4
+Index: Local/ext/dba/config.m4
 ===================================================================
---- dotdeb-php.orig/ext/dba/config.m4
-+++ dotdeb-php/ext/dba/config.m4
+--- Local.orig/ext/dba/config.m4
++++ Local/ext/dba/config.m4
 @@ -113,6 +113,10 @@ if test "$PHP_QDBM" != "no"; then
        THIS_PREFIX=$i
        THIS_INCLUDE=$i/include/depot.h

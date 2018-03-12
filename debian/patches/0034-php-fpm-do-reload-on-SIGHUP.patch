@@ -8,10 +8,10 @@ Subject: php-fpm-do-reload-on-SIGHUP
  sapi/fpm/php-fpm.8.in      | 2 +-
  3 files changed, 9 insertions(+), 1 deletion(-)
 
-Index: dotdeb-php/sapi/fpm/fpm/fpm_events.c
+Index: Local/sapi/fpm/fpm/fpm_events.c
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/fpm/fpm_events.c
-+++ dotdeb-php/sapi/fpm/fpm/fpm_events.c
+--- Local.orig/sapi/fpm/fpm/fpm_events.c
++++ Local/sapi/fpm/fpm/fpm_events.c
 @@ -113,6 +113,11 @@ static void fpm_got_signal(struct fpm_ev
  				zlog(ZLOG_NOTICE, "Reloading in progress ...");
  				fpm_pctl(FPM_PCTL_STATE_RELOADING, FPM_PCTL_ACTION_SET);
@@ -24,10 +24,10 @@ Index: dotdeb-php/sapi/fpm/fpm/fpm_events.c
  		}
  
  		if (fpm_globals.is_child) {
-Index: dotdeb-php/sapi/fpm/fpm/fpm_signals.c
+Index: Local/sapi/fpm/fpm/fpm_signals.c
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/fpm/fpm_signals.c
-+++ dotdeb-php/sapi/fpm/fpm/fpm_signals.c
+--- Local.orig/sapi/fpm/fpm/fpm_signals.c
++++ Local/sapi/fpm/fpm/fpm_signals.c
 @@ -160,6 +160,7 @@ static void sig_handler(int signo) /* {{
  		[SIGINT]  = 'I',
  		[SIGUSR1] = '1',
@@ -52,10 +52,10 @@ Index: dotdeb-php/sapi/fpm/fpm/fpm_signals.c
  	    0 > sigaction(SIGCHLD,  &act_dfl,  0) ||
  	    0 > sigaction(SIGQUIT,  &act,      0)) {
  
-Index: dotdeb-php/sapi/fpm/php-fpm.8.in
+Index: Local/sapi/fpm/php-fpm.8.in
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/php-fpm.8.in
-+++ dotdeb-php/sapi/fpm/php-fpm.8.in
+--- Local.orig/sapi/fpm/php-fpm.8.in
++++ Local/sapi/fpm/php-fpm.8.in
 @@ -150,7 +150,7 @@ Once started, php-fpm then responds to s
  .TP
  .B SIGUSR1 			\fPre-open log file

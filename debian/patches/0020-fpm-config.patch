@@ -6,10 +6,10 @@ Subject: fpm-config
  sapi/fpm/php-fpm.conf.in | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Index: dotdeb-php/sapi/fpm/php-fpm.conf.in
+Index: Local/sapi/fpm/php-fpm.conf.in
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/php-fpm.conf.in
-+++ dotdeb-php/sapi/fpm/php-fpm.conf.in
+--- Local.orig/sapi/fpm/php-fpm.conf.in
++++ Local/sapi/fpm/php-fpm.conf.in
 @@ -14,14 +14,14 @@
  ; Pid file
  ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@

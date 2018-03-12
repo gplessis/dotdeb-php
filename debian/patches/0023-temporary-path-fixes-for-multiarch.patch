@@ -11,10 +11,10 @@ Subject: temporary-path-fixes-for-multiarch
  ext/pdo_dblib/config.m4 | 2 +-
  6 files changed, 8 insertions(+), 6 deletions(-)
 
-Index: dotdeb-php/acinclude.m4
+Index: Local/acinclude.m4
 ===================================================================
---- dotdeb-php.orig/acinclude.m4
-+++ dotdeb-php/acinclude.m4
+--- Local.orig/acinclude.m4
++++ Local/acinclude.m4
 @@ -2286,7 +2286,7 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
      fi
  
@@ -33,10 +33,10 @@ Index: dotdeb-php/acinclude.m4
          OPENSSL_LIBDIR=$i/$PHP_LIBDIR
        fi
        test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
-Index: dotdeb-php/ext/dba/config.m4
+Index: Local/ext/dba/config.m4
 ===================================================================
---- dotdeb-php.orig/ext/dba/config.m4
-+++ dotdeb-php/ext/dba/config.m4
+--- Local.orig/ext/dba/config.m4
++++ Local/ext/dba/config.m4
 @@ -239,7 +239,7 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
      AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
    fi
@@ -46,10 +46,10 @@ Index: dotdeb-php/ext/dba/config.m4
        lib_found="";
        PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
          AC_TRY_LINK([
-Index: dotdeb-php/ext/gmp/config.m4
+Index: Local/ext/gmp/config.m4
 ===================================================================
---- dotdeb-php.orig/ext/gmp/config.m4
-+++ dotdeb-php/ext/gmp/config.m4
+--- Local.orig/ext/gmp/config.m4
++++ Local/ext/gmp/config.m4
 @@ -8,6 +8,7 @@ if test "$PHP_GMP" != "no"; then
    for i in $PHP_GMP /usr/local /usr; do
      test -f $i/include/gmp.h && GMP_DIR=$i && break
@@ -66,10 +66,10 @@ Index: dotdeb-php/ext/gmp/config.m4
  
    PHP_NEW_EXTENSION(gmp, gmp.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
    PHP_SUBST(GMP_SHARED_LIBADD)
-Index: dotdeb-php/ext/ldap/config.m4
+Index: Local/ext/ldap/config.m4
 ===================================================================
---- dotdeb-php.orig/ext/ldap/config.m4
-+++ dotdeb-php/ext/ldap/config.m4
+--- Local.orig/ext/ldap/config.m4
++++ Local/ext/ldap/config.m4
 @@ -117,7 +117,7 @@ if test "$PHP_LDAP" != "no"; then
      LDAP_PTHREAD=
    fi
@@ -79,10 +79,10 @@ Index: dotdeb-php/ext/ldap/config.m4
      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
  
-Index: dotdeb-php/ext/pcre/config0.m4
+Index: Local/ext/pcre/config0.m4
 ===================================================================
---- dotdeb-php.orig/ext/pcre/config0.m4
-+++ dotdeb-php/ext/pcre/config0.m4
+--- Local.orig/ext/pcre/config0.m4
++++ Local/ext/pcre/config0.m4
 @@ -21,7 +21,7 @@ PHP_ARG_WITH(pcre-regex,,
      AC_MSG_RESULT([$PCRE_INCDIR])
  
@@ -92,10 +92,10 @@ Index: dotdeb-php/ext/pcre/config0.m4
        test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
      done
      
-Index: dotdeb-php/ext/pdo_dblib/config.m4
+Index: Local/ext/pdo_dblib/config.m4
 ===================================================================
---- dotdeb-php.orig/ext/pdo_dblib/config.m4
-+++ dotdeb-php/ext/pdo_dblib/config.m4
+--- Local.orig/ext/pdo_dblib/config.m4
++++ Local/ext/pdo_dblib/config.m4
 @@ -46,7 +46,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
      PHP_LIBDIR=lib
    fi

@@ -6,10 +6,10 @@ Subject: no_apache_installed
  sapi/apache2handler/config.m4 | 8 --------
  1 file changed, 8 deletions(-)
 
-Index: dotdeb-php/sapi/apache2handler/config.m4
+Index: Local/sapi/apache2handler/config.m4
 ===================================================================
---- dotdeb-php.orig/sapi/apache2handler/config.m4
-+++ dotdeb-php/sapi/apache2handler/config.m4
+--- Local.orig/sapi/apache2handler/config.m4
++++ Local/sapi/apache2handler/config.m4
 @@ -58,14 +58,6 @@ if test "$PHP_APXS2" != "no"; then
  
    APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"

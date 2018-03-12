@@ -6,10 +6,10 @@ Subject: recode_is_shared
  ext/recode/config9.m4 | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: dotdeb-php/ext/recode/config9.m4
+Index: Local/ext/recode/config9.m4
 ===================================================================
---- dotdeb-php.orig/ext/recode/config9.m4
-+++ dotdeb-php/ext/recode/config9.m4
+--- Local.orig/ext/recode/config9.m4
++++ Local/ext/recode/config9.m4
 @@ -13,6 +13,6 @@ if test "$PHP_RECODE" != "no"; then
    fi
  

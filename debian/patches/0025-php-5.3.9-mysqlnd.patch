@@ -7,10 +7,10 @@ Subject: php-5.3.9-mysqlnd
  ext/pdo_mysql/pdo_mysql.c | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Index: dotdeb-php/ext/mysqlnd/mysqlnd.c
+Index: Local/ext/mysqlnd/mysqlnd.c
 ===================================================================
---- dotdeb-php.orig/ext/mysqlnd/mysqlnd.c
-+++ dotdeb-php/ext/mysqlnd/mysqlnd.c
+--- Local.orig/ext/mysqlnd/mysqlnd.c
++++ Local/ext/mysqlnd/mysqlnd.c
 @@ -958,7 +958,7 @@ MYSQLND_METHOD(mysqlnd_conn_data, connec
  		if (host_len == sizeof("localhost") - 1 && !strncasecmp(host, "localhost", host_len)) {
  			DBG_INF_FMT("socket=%s", socket_or_pipe? socket_or_pipe:"n/a");
@@ -20,10 +20,10 @@ Index: dotdeb-php/ext/mysqlnd/mysqlnd.c
  			}
  			transport_len = mnd_sprintf(&transport, 0, "unix://%s", socket_or_pipe);
  			unix_socket = TRUE;
-Index: dotdeb-php/ext/pdo_mysql/pdo_mysql.c
+Index: Local/ext/pdo_mysql/pdo_mysql.c
 ===================================================================
---- dotdeb-php.orig/ext/pdo_mysql/pdo_mysql.c
-+++ dotdeb-php/ext/pdo_mysql/pdo_mysql.c
+--- Local.orig/ext/pdo_mysql/pdo_mysql.c
++++ Local/ext/pdo_mysql/pdo_mysql.c
 @@ -53,7 +53,7 @@ ZEND_DECLARE_MODULE_GLOBALS(pdo_mysql)
  #  define PDO_MYSQL_UNIX_ADDR PHP_MYSQL_UNIX_SOCK_ADDR
  # else

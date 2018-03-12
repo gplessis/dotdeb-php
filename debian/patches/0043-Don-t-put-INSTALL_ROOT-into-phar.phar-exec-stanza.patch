@@ -6,10 +6,10 @@ Subject: Don't put $(INSTALL_ROOT) into phar.phar exec stanza
  ext/phar/Makefile.frag | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: dotdeb-php/ext/phar/Makefile.frag
+Index: Local/ext/phar/Makefile.frag
 ===================================================================
---- dotdeb-php.orig/ext/phar/Makefile.frag
-+++ dotdeb-php/ext/phar/Makefile.frag
+--- Local.orig/ext/phar/Makefile.frag
++++ Local/ext/phar/Makefile.frag
 @@ -18,7 +18,7 @@ PHP_PHARCMD_EXECUTABLE = ` \
  	else \
  		$(top_srcdir)/build/shtool echo -n -- "$(PHP_EXECUTABLE)"; \

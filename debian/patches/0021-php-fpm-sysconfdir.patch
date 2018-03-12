@@ -6,10 +6,10 @@ Subject: php-fpm-sysconfdir
  sapi/fpm/fpm/fpm_conf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: dotdeb-php/sapi/fpm/fpm/fpm_conf.c
+Index: Local/sapi/fpm/fpm/fpm_conf.c
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/fpm/fpm_conf.c
-+++ dotdeb-php/sapi/fpm/fpm/fpm_conf.c
+--- Local.orig/sapi/fpm/fpm/fpm_conf.c
++++ Local/sapi/fpm/fpm/fpm_conf.c
 @@ -1679,7 +1679,7 @@ int fpm_conf_init_main(int test_conf, in
  		char *tmp;
  

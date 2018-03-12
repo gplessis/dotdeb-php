@@ -8,10 +8,10 @@ Subject: session_save_path
  php.ini-production    | 2 +-
  3 files changed, 3 insertions(+), 3 deletions(-)
 
-Index: dotdeb-php/ext/session/session.c
+Index: Local/ext/session/session.c
 ===================================================================
---- dotdeb-php.orig/ext/session/session.c
-+++ dotdeb-php/ext/session/session.c
+--- Local.orig/ext/session/session.c
++++ Local/ext/session/session.c
 @@ -832,7 +832,7 @@ static PHP_INI_MH(OnUpdateRfc1867Freq) /
  /* {{{ PHP_INI
   */
@@ -21,10 +21,10 @@ Index: dotdeb-php/ext/session/session.c
  	STD_PHP_INI_ENTRY("session.name",               "PHPSESSID", PHP_INI_ALL, OnUpdateName, session_name,       php_ps_globals,    ps_globals)
  	PHP_INI_ENTRY("session.save_handler",           "files",     PHP_INI_ALL, OnUpdateSaveHandler)
  	STD_PHP_INI_BOOLEAN("session.auto_start",       "0",         PHP_INI_PERDIR, OnUpdateBool,   auto_start,         php_ps_globals,    ps_globals)
-Index: dotdeb-php/php.ini-development
+Index: Local/php.ini-development
 ===================================================================
---- dotdeb-php.orig/php.ini-development
-+++ dotdeb-php/php.ini-development
+--- Local.orig/php.ini-development
++++ Local/php.ini-development
 @@ -1343,7 +1343,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.
@@ -34,10 +34,10 @@ Index: dotdeb-php/php.ini-development
  
  ; Whether to use strict session mode.
  ; Strict session mode does not accept uninitialized session ID and regenerate
-Index: dotdeb-php/php.ini-production
+Index: Local/php.ini-production
 ===================================================================
---- dotdeb-php.orig/php.ini-production
-+++ dotdeb-php/php.ini-production
+--- Local.orig/php.ini-production
++++ Local/php.ini-production
 @@ -1337,7 +1337,7 @@ session.save_handler = files
  ; where MODE is the octal representation of the mode. Note that this
  ; does not overwrite the process's umask.

@@ -6,10 +6,10 @@ Subject: php.ini_securitynotes
  php.ini-development | 6 ++++++
  1 file changed, 6 insertions(+)
 
-Index: dotdeb-php/php.ini-development
+Index: Local/php.ini-development
 ===================================================================
---- dotdeb-php.orig/php.ini-development
-+++ dotdeb-php/php.ini-development
+--- Local.orig/php.ini-development
++++ Local/php.ini-development
 @@ -291,6 +291,12 @@ serialize_precision = 17
  ; and below.  This directive makes most sense if used in a per-directory
  ; or per-virtualhost web server configuration file.

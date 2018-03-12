@@ -6,10 +6,10 @@ Subject: php-fpm-man-section-and-cleanup
  sapi/fpm/php-fpm.8.in | 22 ++--------------------
  1 file changed, 2 insertions(+), 20 deletions(-)
 
-Index: dotdeb-php/sapi/fpm/php-fpm.8.in
+Index: Local/sapi/fpm/php-fpm.8.in
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/php-fpm.8.in
-+++ dotdeb-php/sapi/fpm/php-fpm.8.in
+--- Local.orig/sapi/fpm/php-fpm.8.in
++++ Local/sapi/fpm/php-fpm.8.in
 @@ -139,22 +139,8 @@ The configuration file for the php-fpm d
  .TP
  .B php.ini

@@ -6,10 +6,10 @@ Subject: php-5.2.4-embed
  sapi/embed/config.m4 | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: dotdeb-php/sapi/embed/config.m4
+Index: Local/sapi/embed/config.m4
 ===================================================================
---- dotdeb-php.orig/sapi/embed/config.m4
-+++ dotdeb-php/sapi/embed/config.m4
+--- Local.orig/sapi/embed/config.m4
++++ Local/sapi/embed/config.m4
 @@ -12,7 +12,7 @@ if test "$PHP_EMBED" != "no"; then
    case "$PHP_EMBED" in
      yes|shared)

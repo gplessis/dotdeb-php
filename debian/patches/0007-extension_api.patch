@@ -7,10 +7,10 @@ Subject: extension_api
  scripts/php-config.in | 4 ++++
  2 files changed, 8 insertions(+), 1 deletion(-)
 
-Index: dotdeb-php/configure.in
+Index: Local/configure.in
 ===================================================================
---- dotdeb-php.orig/configure.in
-+++ dotdeb-php/configure.in
+--- Local.orig/configure.in
++++ Local/configure.in
 @@ -1207,8 +1207,10 @@ ZEND_MODULE_API_NO=`$EGREP '#define ZEND
  
  AC_SUBST(ZEND_MODULE_API_NO)
@@ -31,10 +31,10 @@ Index: dotdeb-php/configure.in
  PHP_SUBST_OLD(EXTENSION_DIR)
  PHP_SUBST_OLD(EXTRA_LDFLAGS)
  PHP_SUBST_OLD(EXTRA_LDFLAGS_PROGRAM)
-Index: dotdeb-php/scripts/php-config.in
+Index: Local/scripts/php-config.in
 ===================================================================
---- dotdeb-php.orig/scripts/php-config.in
-+++ dotdeb-php/scripts/php-config.in
+--- Local.orig/scripts/php-config.in
++++ Local/scripts/php-config.in
 @@ -19,6 +19,7 @@ php_cli_binary=NONE
  php_cgi_binary=NONE
  configure_options="@CONFIGURE_OPTIONS@"
