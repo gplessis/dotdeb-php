@@ -1,7 +1,7 @@
-Index: dotdeb-php/sapi/fpm/php-fpm.conf.in
+Index: Local/sapi/fpm/php-fpm.conf.in
 ===================================================================
---- dotdeb-php.orig/sapi/fpm/php-fpm.conf.in
-+++ dotdeb-php/sapi/fpm/php-fpm.conf.in
+--- Local.orig/sapi/fpm/php-fpm.conf.in
++++ Local/sapi/fpm/php-fpm.conf.in
 @@ -165,7 +165,7 @@ group = @php_fpm_group@
  ;                            (IPv6 and IPv4-mapped) on a specific port;
  ;   '/path/to/unix/socket' - to listen on a unix socket.
