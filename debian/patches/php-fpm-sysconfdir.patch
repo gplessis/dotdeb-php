@@ -2,7 +2,7 @@ Index: Local/sapi/fpm/fpm/fpm_conf.c
 ===================================================================
 --- Local.orig/sapi/fpm/fpm/fpm_conf.c
 +++ Local/sapi/fpm/fpm/fpm_conf.c
-@@ -1661,7 +1661,7 @@ int fpm_conf_init_main(int test_conf, in
+@@ -1664,7 +1664,7 @@ int fpm_conf_init_main(int test_conf, in
  		char *tmp;
  
  		if (fpm_globals.prefix == NULL) {
