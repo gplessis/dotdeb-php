@@ -1,3 +1,10 @@
+php5 (5.6.38-1~dotdeb+7.1) oldoldstable; urgency=medium
+
+  [ Guillaume Plessis ]
+  * New upstream version 5.6.38
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Fri, 14 Sep 2018 08:21:23 +0000
+
 php5 (5.6.37-1~dotdeb+7.1) oldoldstable; urgency=medium
 
   [ Guillaume Plessis ]
