@@ -1,3 +1,10 @@
+php7.0 (7.0.33-1~dotdeb+8.1) oldstable; urgency=medium
+
+  [ Guillaume Plessis ]
+  * New upstream version 7.0.33
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 08 Dec 2018 01:09:35 +0000
+
 php7.0 (7.0.32-1~dotdeb+8.1) oldstable; urgency=medium
 
   [ Guillaume Plessis ]
