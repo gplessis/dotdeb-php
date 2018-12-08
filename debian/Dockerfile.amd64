@@ -1,23 +1,17 @@
-# This is a generic Dockerfile to ease Debian packaging
-#
-# Requirements:
-#   * Docker >= 1.5
 # Usage:
-#   # docker build -t build-jessie-amd64-php70 -f debian/Dockerfile.amd64 .
-#   # docker run build-jessie-amd64-php70
-#   # ID=$(docker ps -l -q)
-#   # docker cp $ID:/usr/src ~/Downloads/
-#   # docker rm $ID
+#  docker build --pull -t build-jessie-amd64 -f debian/Dockerfile.amd64 .
+#  docker run build-jessie-amd64
+#  ID=$(docker ps -l -q)
+#  docker cp $ID:/usr/src ~/Downloads/
+#  docker rm $ID
 
-FROM dotdeb/debian:jessie-amd64
-MAINTAINER Guillaume Plessis "gui@dotdeb.org"
+FROM debian:jessie
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update
-RUN apt-get dist-upgrade -y
-
-RUN apt-get install -y build-essential devscripts equivs libwww-perl
+RUN apt-get update \
+    && apt-get dist-upgrade -y \
+    && apt-get install -y build-essential devscripts equivs libwww-perl
 
 ADD debian/control /root/
 RUN mk-build-deps --install --tool 'apt-get -y' --remove /root/control && rm -f /root/control
