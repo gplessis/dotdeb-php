@@ -1,3 +1,10 @@
+php5 (5.6.40-1~dotdeb+zts+7.1) oldoldstable; urgency=medium
+
+  [ Guillaume Plessis ]
+  * New upstream version 5.6.40
+
+ -- Guillaume Plessis <gui@dotdeb.org>  Sat, 12 Jan 2019 17:39:05 +0000
+
 php5 (5.6.39-1~dotdeb+zts+7.1) oldoldstable; urgency=medium
 
   [ Guillaume Plessis ]
