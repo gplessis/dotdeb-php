@@ -511,6 +511,10 @@ override_dh_install-arch: remove-files-stamp prepare-fpm-pools
 	$(SED) -e'/memory_limit =/ s/128M/-1/g;' \
 	    -e'/session.gc_probability =/ s/1/0/g' \
 	  > debian/$(PHP_COMMON)/usr/lib/php/$(PHP_NAME_VERSION)/php.ini-production.cli
+	  
+	cat php.ini-production | tr "\t" " " | \
+	$(SED) -e'/session.gc_probability =/ s/1/0/g' \
+	  > debian/$(PHP_COMMON)/usr/lib/php/$(PHP_NAME_VERSION)/php.ini-production.fpm
 
 	cat php.ini-development | tr "\t" " " | \
 	$(SED) -e'/session.gc_probability =/ s/1/0/g;' \
